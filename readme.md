@@ -1,3 +1,3 @@
-# Loopy Action
+# Turnis
 
-Browser Automation with human in loop.
+Platform for apps.
