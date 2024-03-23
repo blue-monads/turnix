@@ -1,4 +1,6 @@
 <script>
+    let email = "";
+    let password = "";
 </script>
 
 <div class="flex justify-center items-center">
@@ -10,18 +12,28 @@
             <article class="flex flex-col">
                 <label class="label">
                     <span>Username:</span>
-                    <input class="input p-2" type="text" placeholder="username" />
+                    <input
+                        class="input p-2"
+                        type="text"
+                        bind:value={email}
+                        placeholder="Email"
+                    />
                 </label>
 
                 <label class="label">
                     <span>Password:</span>
-                    <input class="input p-2" type="password" placeholder="password" />
+                    <input
+                        bind:value={password}
+                        class="input p-2"
+                        type="password"
+                        placeholder="password"
+                    />
                 </label>
             </article>
         </div>
         <hr class="opacity-50" />
         <footer class="p-4 flex justify-start items-center space-x-4">
-            <button type="button" class="btn variant-filled-primary">
+            <button type="button" disabled={!email || !password} class="btn variant-filled-primary">
                 <span>Submit</span>
             </button>
         </footer>
