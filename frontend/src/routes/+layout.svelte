@@ -9,6 +9,8 @@
 	import "./styles.css";
 	import Setting from "../compo/icons/Setting.svelte";
 
+	import Logo from  "../compo/logo.png"
+
 	let currentTile = "";
 
 	const sibarItems = [
@@ -23,7 +25,14 @@
 	<div slot="sidebarLeft" class="h-screen">
 		<AppRail>
 			<svelte:fragment slot="lead">
-				<AppRailAnchor href="/">(icon)</AppRailAnchor>
+				<AppRailAnchor href="/">
+
+					<div class="flex justify-center items-center p-2">
+						<img src={Logo} alt="logo">						
+					</div>
+
+
+				</AppRailAnchor>
 			</svelte:fragment>
 
 			{#each sibarItems as item, index}
@@ -34,12 +43,16 @@
 					value={index}
 				>
 					<svelte:fragment slot="lead">
-						<svelte:component this={item.icon}></svelte:component>
+						<div class="flex flex-col justify-center items-center">
+							<svelte:component this={item.icon}></svelte:component>
+
+							<span class="text-xs">
+								{item.name}
+							</span>
+						</div>
 					</svelte:fragment>
 
-					<span>
-						{item.name}
-					</span>
+
 				</AppRailTile>
 			{/each}
 		</AppRail>
