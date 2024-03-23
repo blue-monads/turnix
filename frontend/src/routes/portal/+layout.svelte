@@ -8,7 +8,7 @@
 	} from "@skeletonlabs/skeleton";
 	import Setting from "../../compo/icons/Setting.svelte";
 
-	import Logo from  "../../compo/logo.png"
+	import Logo from  "../../lib/images/logo.png"
 
 	let currentTile = "";
 
