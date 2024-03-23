@@ -23,7 +23,7 @@
 
 <AppShell>
 	<div slot="sidebarLeft" class="h-screen">
-		<AppRail>
+		<AppRail width="w-16">
 			<svelte:fragment slot="lead">
 				<AppRailAnchor href="/">
 
