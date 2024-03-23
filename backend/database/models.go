@@ -11,7 +11,7 @@ type User struct {
 	Email           string     `json:"email" db:"email,omitempty"`
 	Phone           string     `json:"phone" db:"phone,omitempty"`
 	Bio             string     `json:"bio" db:"bio"`
-	Password        string     `json:"password" db:"password"`
+	Password        string     `json:"password" db:"password,omitempty"`
 	IsEmailVerified bool       `json:"isEmailVerified" db:"isEmailVerified"`
 	ExtraMeta       string     `json:"extrameta" db:"extrameta,omitempty"`
 	CreatedAt       *time.Time `json:"createdAt" db:"createdAt,omitempty"`

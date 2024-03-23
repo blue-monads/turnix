@@ -49,5 +49,5 @@ func (a *App) Run() error {
 
 	a.bindRoutes(r)
 
-	return r.Run()
+	return r.Run(":7777")
 }

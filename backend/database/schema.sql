@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS Users (
   name TEXT NOT NULL,
   utype TEXT NOT NULL DEFAULT 'real', -- real, device
   email TEXT,
-  phone TEXT,
+  phone TEXT NOT NULL DEFAULT '',
   bio TEXT NOT NULL DEFAULT '',
   password TEXT NOT NULL,
   isEmailVerified BOOLEAN NOT NULL DEFAULT FALSE,
@@ -11,9 +11,7 @@ CREATE TABLE IF NOT EXISTS Users (
   createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   ownedBy INTEGER NOT NULL DEFAULT 0,
   accessToken TEXT NOT NULL DEFAULT '',
-
-  unique(email),
-  unique(phone)
+  unique(email)
 );
 
 CREATE TABLE IF NOT EXISTS Projects (
