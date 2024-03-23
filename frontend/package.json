@@ -28,6 +28,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@krowten/svelte-heroicons": "^0.1.0"
+		"@krowten/svelte-heroicons": "^0.1.0",
+		"axios": "^1.6.8"
 	}
 }
