@@ -1,9 +1,13 @@
 package app
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/bornjre/trunis/backend/database"
 	"github.com/bornjre/trunis/backend/token"
 	"github.com/bwmarrin/snowflake"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,6 +34,18 @@ func New(db *database.DB, signer *token.TokenService) *App {
 func (a *App) Run() error {
 
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete},
+		AllowHeaders:     []string{"Origin", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "https://github.com"
+		},
+		MaxAge: 12 * time.Hour,
+	}))
 
 	a.bindRoutes(r)
 
