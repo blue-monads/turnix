@@ -3,11 +3,11 @@
 
 <svelte:head>
 	<title>Home</title>
-	<meta name="description" content="Home" />
+	<meta name="description" content="Svelte demo app" />
 </svelte:head>
 
 
-<div>Home</div>
+<div>Portal</div>
 
 
 
