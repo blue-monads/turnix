@@ -40,6 +40,20 @@ func NewDB() (*DB, error) {
 	}, nil
 }
 
+func (db *DB) Init() error {
+
+	users, err := db.ListUser()
+	if err != nil {
+		return err
+	}
+
+	if len(users) != 0 {
+		return nil
+	}
+
+	return db.RunSeed()
+}
+
 func (db *DB) Close() error {
 	return db.sess.Close()
 }
