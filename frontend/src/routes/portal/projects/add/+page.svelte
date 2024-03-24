@@ -16,7 +16,7 @@
                 ftype: "SELECT",
                 key_name: "ptype",
                 name: "type",
-                options: ["laction"],
+                options: ["onloop"],
             },
         ],
         name: "Add Project",
