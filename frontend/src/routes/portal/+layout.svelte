@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Icon from "@krowten/svelte-heroicons/Icon.svelte";
 	import {
 		AppBar,
 		AppRail,
@@ -8,7 +9,7 @@
 	} from "@skeletonlabs/skeleton";
 	import Logo from "../../lib/images/logo.png";
 	import { onMount } from "svelte";
-	import Icon from "@krowten/svelte-heroicons/Icon.svelte";
+
 	import { API } from "$lib/api/api";
 	import ContextThis from "./contextThis.svelte";
 
@@ -31,12 +32,10 @@
 	let api: API;
 
 	const load = () => {
-		api = new API()
+		api = new API();
+	};
 
-	}
-
-	load()
-
+	load();
 </script>
 
 <AppShell>

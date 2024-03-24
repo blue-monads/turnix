@@ -37,15 +37,15 @@ export class API {
         return this.client.post("/project", data)
     }
 
-    updateProject = (pid: number, data: object) => {
+    updateProject = (pid: string, data: object) => {
         return this.client.post(`/project/${pid}`, data)
     }
 
-    getProject = (pid: number) => {
+    getProject = (pid: string) => {
         return this.client.get(`/project/${pid}`)
     }
 
-    removeProject = (pid: number) => {
+    removeProject = (pid: string) => {
         return this.client.delete(`/project/${pid}`)
     }
 

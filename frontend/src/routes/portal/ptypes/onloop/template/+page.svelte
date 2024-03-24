@@ -42,19 +42,24 @@
             {
                 Name: "watch",
                 Class: "bg-green-400",
-                Action: async (id, data) => {
-                    
-                    
+                Action: async (id) => {
+                    nav.gotoProjectOnloopTemplateWatch(pid, id);
                 },
             },
             {
                 Name: "edit",
-                Action: async (id) => {},
+                Action: async (id) => {
+                    nav.gotoProjectOnloopTemplateEdit(pid, id);
+                },
             },
             {
                 Name: "delete",
                 Class: "bg-red-400",
-                Action: async (id) => {},
+                Action: async (id) => {
+                    await api.removeTemplate(pid, id)
+
+                    load()
+                },
             },
         ]}
     />

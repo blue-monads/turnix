@@ -29,6 +29,11 @@ export const gotoProjectOnloopTemplateEdit = (pid: string, tid: string) => {
     goto(`/portal/ptypes/onloop/template/edit?pid=${pid}&tid=${tid}`)
 }
 
+export const gotoProjectOnloopTemplateWatch = (pid: string, tid: string) => {
+    goto(`/portal/ptypes/onloop/template/watch?pid=${pid}&tid=${tid}`)
+}
+
+
 export const gotoProjectOnloopQueues = (pid: string, tid: string) => {
     goto(`/portal/ptypes/onloop/queue?pid=${pid}&tid=${tid}`)
 }
