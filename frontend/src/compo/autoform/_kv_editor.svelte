@@ -3,7 +3,7 @@
   export let data = {};
   export let onChange: Function | undefined =  undefined;
 
-  $: _data = { ...data };
+  $: _data = { ...(typeof data === "string" ? JSON.parse(data) : data )  };
 
   export const getData = () => ({ ..._data });
 

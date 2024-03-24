@@ -29,6 +29,8 @@ func (a *App) addQueueMessage(claim *token.AccessClaim, ctx *gin.Context) (any, 
 		return nil, err
 	}
 
+	data.Submitter = claim.UserId
+
 	return a.db.AddQueueMessage(data)
 }
 

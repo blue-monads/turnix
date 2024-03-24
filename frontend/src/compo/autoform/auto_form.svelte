@@ -164,7 +164,9 @@
         {:else if field.ftype === "KEY_VALUE_TEXT"}
           <KvEditor
             data={data[field.key_name] || {}}
-            onChange={setValue(field.key_name)}
+            onChange={(data) => {
+              setValue(field.key_name)(JSON.stringify(data))
+            }}
           />
         {:else}
           <div>Not impl</div>

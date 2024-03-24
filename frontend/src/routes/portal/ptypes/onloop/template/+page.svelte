@@ -46,6 +46,15 @@
                     nav.gotoProjectOnloopTemplateWatch(pid, id);
                 },
             },
+
+            {
+                Name: "push",
+                Class: "bg-orange-400",
+                Action: async (id) => {
+                    nav.gotoProjectOnloopQueueAdd(pid, id)
+                },
+            },
+
             {
                 Name: "edit",
                 Action: async (id) => {
