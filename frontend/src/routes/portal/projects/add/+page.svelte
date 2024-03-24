@@ -1,7 +1,11 @@
 <script lang="ts">
-    import { api } from "$lib/api";
     import { gotoPorjects } from "$lib/nav";
     import AutoForm from "../../../../compo/autoform/auto_form.svelte";
+
+    import type { API } from "$lib/api";
+    import { getContext } from "svelte";
+
+    const api = getContext("__api__") as API;
 
     let message = "";
 </script>
