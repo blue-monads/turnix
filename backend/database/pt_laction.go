@@ -1,12 +1,18 @@
 package database
 
-import "github.com/upper/db/v4"
+import (
+	"github.com/k0kubun/pp"
+	"github.com/upper/db/v4"
+)
 
 // queue messages
 
 func (d *DB) AddQueueMessage(data *PTLactionQueueMessage) (int64, error) {
+
 	if !d.userHasAccess(int64(data.Submitter), int64(data.ProjectID)) {
 		if !d.isOwner(int64(data.Submitter), int64(data.ProjectID)) {
+			pp.Println("@DD", data)
+
 			return 0, errNotFound
 		}
 	}
@@ -125,6 +131,7 @@ func (d *DB) UpdateTemplate(ownerId int64, id int64, projectId int64, data map[s
 }
 
 func (d *DB) ListTemplate(ownerId int64, projectId int64) ([]PTLactionTemplate, error) {
+	pp.Println("@DD", ownerId)
 
 	if !d.isOwner(ownerId, projectId) {
 		return nil, errNotFound

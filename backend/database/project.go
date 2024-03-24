@@ -113,7 +113,8 @@ func (d *DB) RemoveUserFromPoject(ownerid int64, userId int64, projectId int64) 
 // private
 
 func (d *DB) isOwner(ownerid int64, projId int64) bool {
-	exist, err := d.projectTable().Find(db.Cond{"id": ownerid, "projectId": projId}).Exists()
+	exist, err := d.projectTable().Find(db.Cond{"owner": ownerid, "id": projId}).Exists()
+
 	if err != nil {
 		log.Println("owner check error", err)
 		return false
