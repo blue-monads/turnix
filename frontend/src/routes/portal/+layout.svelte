@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import {
 		AppBar,
 		AppRail,
@@ -7,8 +7,9 @@
 		AppShell,
 	} from "@skeletonlabs/skeleton";
 	import Setting from "../../compo/icons/Setting.svelte";
-
-	import Logo from  "../../lib/images/logo.png"
+	import Logo from "../../lib/images/logo.png";
+    import { initApi } from "$lib/api";
+    import { onMount } from "svelte";
 
 	let currentTile = "";
 
@@ -19,6 +20,13 @@
 			icon: Setting,
 		},
 	];
+
+	onMount(() => {
+		initApi()
+	})
+
+
+	
 </script>
 
 <AppShell>
@@ -26,12 +34,9 @@
 		<AppRail width="w-16">
 			<svelte:fragment slot="lead">
 				<AppRailAnchor href="/">
-
 					<div class="flex justify-center items-center p-2">
-						<img src={Logo} alt="logo">						
+						<img src={Logo} alt="logo" />
 					</div>
-
-
 				</AppRailAnchor>
 			</svelte:fragment>
 
@@ -39,19 +44,20 @@
 				<AppRailTile
 					bind:group={currentTile}
 					name={item.name}
-
 					value={index}
 				>
 					<svelte:fragment slot="lead">
-						<a class="flex flex-col justify-center items-center" href={item.link}>
-							<svelte:component this={item.icon}></svelte:component>
+						<a
+							class="flex flex-col justify-center items-center"
+							href={item.link}
+						>
+							<svelte:component this={item.icon}
+							></svelte:component>
 							<span class="text-xs">
 								{item.name}
 							</span>
 						</a>
 					</svelte:fragment>
-
-
 				</AppRailTile>
 			{/each}
 		</AppRail>

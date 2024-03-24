@@ -41,10 +41,10 @@ func (a *App) Run() error {
 		AllowHeaders:     []string{"Origin", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
 		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://github.com"
+			return true
 		},
-		MaxAge: 12 * time.Hour,
 	}))
 
 	a.bindRoutes(r)

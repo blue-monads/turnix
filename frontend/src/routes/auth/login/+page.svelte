@@ -1,6 +1,23 @@
 <script>
+    import { login } from "$lib/api/auth";
+
     let email = "";
     let password = "";
+
+    const loginHandle = async () => {
+        const resp = await login({
+            email, 
+            password
+        }) 
+        if (resp.status !== 200) {
+            return
+        }
+
+        localStorage.setItem("access_token", resp.data["access_token"] )
+
+        window.location.pathname = "/portal"
+    }
+
 </script>
 
 <div class="flex justify-center items-center">
@@ -33,7 +50,7 @@
         </div>
         <hr class="opacity-50" />
         <footer class="p-4 flex justify-start items-center space-x-4">
-            <button type="button" disabled={!email || !password} class="btn variant-filled-primary">
+            <button on:click={loginHandle} type="button" class="btn variant-filled-primary">
                 <span>Submit</span>
             </button>
         </footer>

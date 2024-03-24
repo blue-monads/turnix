@@ -67,7 +67,7 @@ type loginDetails struct {
 }
 
 func (a *App) login(ctx *gin.Context) {
-	data := loginDetails{}
+	data := &loginDetails{}
 	err := ctx.Bind(data)
 	if err != nil {
 		WriteAuthErr(ctx, err)
