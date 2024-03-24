@@ -8,7 +8,6 @@
 		AppShell,
 	} from "@skeletonlabs/skeleton";
 	import Logo from "../../lib/images/logo.png";
-	import { onMount } from "svelte";
 
 	import { API } from "$lib/api/api";
 	import ContextThis from "./contextThis.svelte";
@@ -20,12 +19,6 @@
 			link: "/portal/projects",
 			name: "Projects",
 			icon: "rectangle-group",
-		},
-
-		{
-			link: "/portal/setting",
-			name: "Setting",
-			icon: "adjustments-horizontal",
 		},
 	];
 
@@ -68,6 +61,15 @@
 					</svelte:fragment>
 				</AppRailTile>
 			{/each}
+			
+			<div slot="trail" class="mb-4">
+				<a
+					class="flex flex-col justify-center items-center rounded-full bg-secondary-100 hover:bg-secondary-200 p-2"
+					href={"/portal/self"}
+				>
+					<Icon name="user" class="w-6 h-6" />
+				</a>
+			</div>
 		</AppRail>
 	</div>
 
