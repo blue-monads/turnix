@@ -1,7 +1,9 @@
 <script lang="ts">
-    import { AppBar } from '@skeletonlabs/skeleton';
-    import {  onMount } from "svelte";
     import Autotable from "../../../compo/autotable/autotable.svelte";
+    import PageLayout from "../../../compo/pagelayout/pagelayout.svelte";
+    import { onMount } from "svelte";
+    import * as nav from "$lib/nav";
+
     import { api } from "$lib/api";
 
     let datas: any[] = [];
@@ -19,24 +21,17 @@
     });
 </script>
 
-
-<AppBar> 
-    <svelte:fragment slot="lead">
-        <h2 class="h3">Projects</h2>
-    </svelte:fragment>
-    
-    <svelte:fragment slot="trail">
-        <button type="button" class="btn variant-filled-primary text-secondary-50">Add</button>
-    </svelte:fragment>
-</AppBar>
-
-
-<Autotable
-    key_names={[
-        ["name", "Name"],
-        ["ptype", "Project type"],
-        ["owner", "Owner"],
-    ]}
-    {datas}
-    actions={[]}
-/>
+<PageLayout
+    title="projects"
+    actions={[{ name: "add", actionFn: nav.gotoAddProject }]}
+>
+    <Autotable
+        key_names={[
+            ["name", "Name"],
+            ["ptype", "Project type"],
+            ["owner", "Owner"],
+        ]}
+        {datas}
+        actions={[]}
+    />
+</PageLayout>

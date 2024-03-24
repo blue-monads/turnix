@@ -6,10 +6,10 @@
 		AppRailTile,
 		AppShell,
 	} from "@skeletonlabs/skeleton";
-	import Setting from "../../compo/icons/Setting.svelte";
 	import Logo from "../../lib/images/logo.png";
-    import { initApi } from "$lib/api";
-    import { onMount } from "svelte";
+	import { initApi } from "$lib/api";
+	import { onMount } from "svelte";
+	import Icon from "@krowten/svelte-heroicons/Icon.svelte";
 
 	let currentTile = "";
 
@@ -17,28 +17,32 @@
 		{
 			link: "/portal/projects",
 			name: "Projects",
-			icon: Setting,
+			icon: "archive-box",
+		},
+
+		{
+			link: "/portal/setting",
+			name: "Setting",
+			icon: "adjustments-horizontal",
 		},
 	];
 
 	onMount(() => {
-		initApi()
-	})
-
-
-	
+		initApi();
+	});
 </script>
 
 <AppShell>
 	<div slot="sidebarLeft" class="h-screen">
-		<AppRail width="w-16">
-			<svelte:fragment slot="lead">
+		<AppRail width="w-14">
+			<div slot="lead" class="mb-4">
 				<AppRailAnchor href="/">
 					<div class="flex justify-center items-center p-2">
 						<img src={Logo} alt="logo" />
 					</div>
 				</AppRailAnchor>
-			</svelte:fragment>
+			</div>
+
 
 			{#each sibarItems as item, index}
 				<AppRailTile
@@ -51,8 +55,7 @@
 							class="flex flex-col justify-center items-center"
 							href={item.link}
 						>
-							<svelte:component this={item.icon}
-							></svelte:component>
+							<Icon name={item.icon} class="w-6 h-6" />
 							<span class="text-xs">
 								{item.name}
 							</span>
