@@ -25,12 +25,43 @@
     actions={[{ name: "add", actionFn: nav.gotoAddProject }]}
 >
     <Autotable
+        action_key={"id"}
         key_names={[
+            ["id", "ID"],
             ["name", "Name"],
             ["ptype", "Project type"],
             ["owner", "Owner"],
         ]}
         {datas}
-        actions={[]}
+        color={["ptype"]}
+        actions={[
+            {
+                Name: "explore",
+                Class: "bg-green-400",
+                Action: async (id, data) => {
+                    const ptype = data["ptype"];
+                    if (ptype === "laction") {
+                        nav.gotoProjectLactions(id);
+                    }
+                },
+            },
+
+            {
+                Name: "edit",
+
+                Action: async (id) => {
+                    nav.gotoEditProject(id);
+                },
+            },
+            {
+                Name: "delete",
+                Class: "bg-red-400",
+                Action: async (id) => {
+                    await api.removeProject(id);
+
+                    load();
+                },
+            },
+        ]}
     />
 </PageLayout>

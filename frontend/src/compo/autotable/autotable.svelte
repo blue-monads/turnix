@@ -3,7 +3,12 @@
 
   import Icon from "@krowten/svelte-heroicons/Icon.svelte";
 
-  export let actions: any = [];
+  export let actions: {
+    Action: Function;
+    Class?: string;
+    icon?: string;
+    Name: string;
+  }[] = [];
   export let key_names: any = [];
   export let datas: any = [];
   export let action_key = "";
@@ -71,7 +76,7 @@
               {#each extern_actions as action}
                 <button
                   on:click={() => action.Action(data[action_key], data)}
-                  class="flex m-1 text-white  transform hover:scale-110 btn btn-sm {action.Class ||
+                  class="flex m-1 text-white transform hover:scale-110 btn btn-sm {action.Class ||
                     'bg-blue-400'}"
                 >
                   {#if action["icon"]}

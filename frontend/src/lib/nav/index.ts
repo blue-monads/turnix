@@ -10,18 +10,21 @@ export const gotoAddProject = () => {
     goto("/portal/projects/add")
 }
 
-export const gotoEditProject = () => {
-    goto("/portal/projects/edit")
+export const gotoEditProject = (pid: string) => {
+    goto(`/portal/projects/edit?pid=${pid}`)
 }
 
-export const gotoProjectLactions = () => {
-    goto("/portal/projects/ptype/laction")
+
+// ptypes
+
+export const gotoProjectLactions = (pid: string) => {
+    goto(`/portal/ptypes/laction?pid=${pid}`)
 }
 
-export const gotoAddProjectLactions = () => {
-    goto("/portal/projects/ptype/laction/add")
+export const gotoAddProjectLactions = (pid: string) => {
+    goto(`/portal/ptypes/laction/add?pid=${pid}`)
 }
 
-export const gotoEditProjectLactions = () => {
-    goto("/portal/projects/ptype/laction/edit")
+export const gotoEditProjectLactions = (pid: string) => {
+    goto(`/portal/ptypes/laction/edit`)
 }
