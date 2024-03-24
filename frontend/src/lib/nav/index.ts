@@ -18,13 +18,13 @@ export const gotoEditProject = (pid: string) => {
 // ptypes
 
 export const gotoProjectLactions = (pid: string) => {
-    goto(`/portal/ptypes/laction?pid=${pid}`)
+    goto(`/portal/ptypes/onloop?pid=${pid}`)
 }
 
 export const gotoAddProjectLactions = (pid: string) => {
-    goto(`/portal/ptypes/laction/add?pid=${pid}`)
+    goto(`/portal/ptypes/onloop/add?pid=${pid}`)
 }
 
 export const gotoEditProjectLactions = (pid: string) => {
-    goto(`/portal/ptypes/laction/edit`)
+    goto(`/portal/ptypes/onloop/edit`)
 }

@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS ProjectUsers (
 
 
 
-CREATE TABLE IF NOT EXISTS PTLactionTemplates (
+CREATE TABLE IF NOT EXISTS pt_onloop_Templates(
   id INTEGER PRIMARY KEY,
   name TEXT NOT NULL DEFAULT '',
   ttype TEXT NOT NULL DEFAULT 'bexec',
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS PTLactionTemplates (
 );
 
 
-CREATE TABLE IF NOT EXISTS PTLactionQueueMessages (
+CREATE TABLE IF NOT EXISTS pt_onloop_QueueMessages(
   id INTEGER PRIMARY KEY,
   submitter INTEGER NOT NULL,
   contents JSON NOT NULL DEFAULT '{}',

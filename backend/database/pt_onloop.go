@@ -150,11 +150,11 @@ func (d *DB) ListTemplate(ownerId int64, projectId int64) ([]PTLactionTemplate, 
 // private
 
 func (d *DB) templatesTable() db.Collection {
-	return d.table("PTLactionTemplates")
+	return d.table("pt_onloop_Templates")
 }
 
 // private
 
 func (d *DB) queueMessageTable() db.Collection {
-	return d.table("PTLactionQueueMessages")
+	return d.table("pt_onloop_QueueMessages")
 }
