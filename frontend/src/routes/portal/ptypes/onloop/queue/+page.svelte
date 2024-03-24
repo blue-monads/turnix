@@ -13,7 +13,7 @@
     let datas: any[] = [];
 
     const load = async () => {
-        const resp = await api.listQueueMessages(pid)
+        const resp = await api.listQueueMessages(pid);
         if (resp.status !== 200) {
             return;
         }
@@ -25,7 +25,14 @@
 
 <PageLayout
     title="Onloop Queue Messages"
-    actions={[{ name: "add", actionFn: nav.gotoProjectOnloopQueueAdd }]}
+    actions={[
+        {
+            name: "add",
+            actionFn: () => {
+                nav.gotoProjectOnloopQueueAdd(pid, $params["tid"]);
+            },
+        },
+    ]}
 >
     <Autotable
         action_key={"id"}
@@ -33,20 +40,26 @@
             ["id", "ID"],
             ["submitter", "Submitter"],
             ["status", "Status"],
-            ["createdAt", "Created At"]
+            ["createdAt", "Created At"],
         ]}
         {datas}
         color={["ttype"]}
         actions={[
             {
-                Name: "explore",
+                Name: "edit",
                 Class: "bg-green-400",
-                Action: async (id, data) => {},
+                Action: async (id, data) => {
+                    nav.gotoProjectOnloopQueueEdit(pid, $params["tid"], id);
+                },
             },
             {
                 Name: "delete",
                 Class: "bg-red-400",
-                Action: async (id) => {},
+                Action: async (id) => {
+                    await api.removeUpdateQueueMessage(pid, id);
+
+                    load();
+                },
             },
         ]}
     />
