@@ -63,8 +63,8 @@ export class API {
         return this.client.get(`/pt/laction/template/${pid}`)
     }
 
-    addTemplate = (pid: string) => {
-        return this.client.post(`/pt/laction/template/${pid}`)
+    addTemplate = (pid: string, data: object) => {
+        return this.client.post(`/pt/laction/template/${pid}`, data)
     }
 
     updateTemplate = (pid: string, tid: string, data: object) => {

@@ -1,48 +1,54 @@
 <script lang="ts">
-    import { getContext } from "svelte";
+    import AutoForm from "../../../../../../compo/autoform/auto_form.svelte";
+    import { gotoProjectOnloopQueues, gotoProjectOnloopTemplates } from "$lib/nav";
+    import { params } from "$lib/params";
     import type { API } from "$lib/api";
+    import { getContext } from "svelte";
+
+    let pid = $params["pid"];
+    let tid = $params["tid"];
 
     const api = getContext("__api__") as API;
 
     let message = "";
 </script>
 
-<div class="p-2">
-    <div class="card">
-        <header class="card-header">
-            <h4 class="h4">Add Template</h4>
-        </header>
+<AutoForm
+    data={{}}
+    {message}
+    schema={{
+        fields: [
+            { ftype: "TEXT", key_name: "name", name: "Name" },
+            {
+                ftype: "SELECT",
+                key_name: "ttype",
+                name: "type",
+                options: ["bexec"],
+            },
+            {
+                ftype: "KEY_VALUE_TEXT",
+                key_name: "consts",
+                name: "Constants",
+            },
+            {
+                ftype: "LONG_TEXT",
+                key_name: "contentScript",
+                name: "Content script",
+            },
+        ],
+        name: "Add Template",
+        required_fields: ["name"],
+    }}
+    onSave={async (newdata) => {
+        const resp = await  api.addQueueMessage(pid, {
+            ...newdata,
+            projectId: Number(pid),
+            templateId: Number(tid),
+        });
+        if (resp.status !== 200) {
+            return
+        }
 
-        <section class="p-4 flex flex-col gap-4">
-            <label class="label">
-                <span>Name</span>
-                <input class="input p-1" type="text" placeholder="Input" />
-            </label>
-
-            <label class="label">
-                <span>Type</span>
-                <select class="select">
-                    <option value="bexec">Browser Execute</option>
-                </select>
-            </label>
-
-            <label class="label">
-                <span>Content script</span>
-                <textarea
-                    class="textarea p-1"
-                    rows="4"
-                    placeholder={"(ctx) => {}"}
-                />
-            </label>
-
-            <label class="flex items-center space-x-2">
-                <input class="checkbox" type="checkbox" />
-                <p>Can publisher read result ?</p>
-            </label>
-            
-        </section>
-        <footer class="card-footer flex justify-end">
-            <button class="btn variant-filled"> save </button>
-        </footer>
-    </div>
-</div>
+        gotoProjectOnloopQueues(pid, tid)
+    }}
+/>

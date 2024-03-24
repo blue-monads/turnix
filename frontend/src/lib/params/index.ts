@@ -9,7 +9,7 @@ export const params = derived([navigating], ([ndata]) => {
         params = new URLSearchParams(location.search)
     }
 
-    let o = {}
+    let o: Record<string, string> = {}
     
     params.forEach((v, k) => { o[k] = v })
     return o

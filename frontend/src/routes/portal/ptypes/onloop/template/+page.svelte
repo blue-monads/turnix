@@ -25,7 +25,9 @@
 
 <PageLayout
     title="OnLoop Templates"
-    actions={[{ name: "add", actionFn: nav.gotoAddProjectLactions }]}
+    actions={[
+        { name: "add", actionFn: () => nav.gotoProjectOnloopTemplateAdd(pid) },
+    ]}
 >
     <Autotable
         action_key={"id"}
@@ -38,11 +40,13 @@
         color={["ttype"]}
         actions={[
             {
-                Name: "explore",
+                Name: "watch",
                 Class: "bg-green-400",
-                Action: async (id, data) => {},
+                Action: async (id, data) => {
+                    
+                    
+                },
             },
-
             {
                 Name: "edit",
                 Action: async (id) => {},

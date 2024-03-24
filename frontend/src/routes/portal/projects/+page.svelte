@@ -40,8 +40,8 @@
                 Class: "bg-green-400",
                 Action: async (id, data) => {
                     const ptype = data["ptype"];
-                    if (ptype === "laction") {
-                        nav.gotoProjectLactions(id);
+                    if (ptype === "onloop") {
+                        nav.gotoProjectOnloopTemplates(id);
                     }
                 },
             },
