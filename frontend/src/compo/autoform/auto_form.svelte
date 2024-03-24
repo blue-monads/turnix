@@ -3,11 +3,10 @@
   import type { Schema } from "./form";
   import MultiText from "./_multi_text.svelte";
   import Action from "./_action.svelte";
-  import { generateId } from "../../utils";
   import Icon from "@krowten/svelte-heroicons/Icon.svelte";
 
   export let schema: Schema;
-  export let data = {};
+  export let data: Record<string, any> = {};
   export let modified = false;
   export let message = "";
   export let onSave: (data: any) => Promise<void>;
@@ -22,19 +21,19 @@
     "ORIGINAL_DATA",
     data,
     "SCHEMA",
-    schema
+    schema,
   );
 
-  const get = (name) => data[name] || "";
-  const set = (name) => (ev) => {
+  const get = (name: string): any => data[name] || "";
+  const set = (name: string) => (ev: any) => {
     setValue(name)(ev.target.value);
   };
 
-  const setNumber = (name) => (ev) => {
+  const setNumber = (name: string) => (ev: any) => {
     setValue(name)(Number(ev.target.value));
   };
 
-  const setBool = (name) => (ev) => {
+  const setBool = (name: string) => (ev: any) => {
     setValue(name)(Boolean(ev.target.checked));
   };
 
@@ -44,14 +43,14 @@
   };
 
   const newSlug = (field: string) => {
-    const s = generateId();
+    const s = "fixme";
     mod_data = { ...mod_data, [field]: s };
     return s;
   };
 </script>
 
 <div class="h-full w-full bg-indigo-100 p-10 overflow-auto">
-  <div class="p-5 bg-white w-full ">
+  <div class="p-5 bg-white w-full">
     <div class="text-2xl text-indigo-900">{schema.name}</div>
     <p class="text-red-500">{message || ""}</p>
 

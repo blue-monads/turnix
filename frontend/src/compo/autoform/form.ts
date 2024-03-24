@@ -18,12 +18,7 @@ export interface Field {
     | "INT"
     | "KEY_VALUE_TEXT"
     | "USER_GROUP"
-    | "USER"
-    | "BPRINT"
-    | "PLUG"
-    | "AGENT"
-    | "HANDLER"
-    | "RESOURCE";
+    | "USER"    
 
   linked_fields?: string[];
   disabled?: boolean;
