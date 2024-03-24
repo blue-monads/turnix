@@ -28,7 +28,7 @@ func (a *App) listProjects(claim *token.AccessClaim, ctx *gin.Context) (any, err
 
 func (a *App) addProject(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
 	data := database.Project{}
-	err := ctx.Bind(data)
+	err := ctx.Bind(&data)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (a *App) updateProject(claim *token.AccessClaim, ctx *gin.Context) (any, er
 	}
 
 	data := make(map[string]any)
-	err = ctx.Bind(data)
+	err = ctx.Bind(&data)
 	if err != nil {
 		return nil, err
 	}

@@ -7,9 +7,10 @@
 		AppShell,
 	} from "@skeletonlabs/skeleton";
 	import Logo from "../../lib/images/logo.png";
-	import { initApi } from "$lib/api";
 	import { onMount } from "svelte";
 	import Icon from "@krowten/svelte-heroicons/Icon.svelte";
+	import { API } from "$lib/api/api";
+	import ContextThis from "./contextThis.svelte";
 
 	let currentTile = "";
 
@@ -17,7 +18,7 @@
 		{
 			link: "/portal/projects",
 			name: "Projects",
-			icon: "archive-box",
+			icon: "rectangle-group",
 		},
 
 		{
@@ -27,9 +28,15 @@
 		},
 	];
 
-	onMount(() => {
-		initApi();
-	});
+	let api: API;
+
+	const load = () => {
+		api = new API()
+
+	}
+
+	load()
+
 </script>
 
 <AppShell>
@@ -42,7 +49,6 @@
 					</div>
 				</AppRailAnchor>
 			</div>
-
 
 			{#each sibarItems as item, index}
 				<AppRailTile
@@ -66,5 +72,9 @@
 		</AppRail>
 	</div>
 
-	<slot />
+	<ContextThis {api}>
+		<svelte:fragment>
+			<slot />
+		</svelte:fragment>
+	</ContextThis>
 </AppShell>

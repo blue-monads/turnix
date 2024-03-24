@@ -21,7 +21,7 @@ type User struct {
 
 type Project struct {
 	ID        int64  `djson:"id" db:"id,omitempty"`
-	Ptype     string `json:"ptype" db:"ptype.omitempty"`
+	Ptype     string `json:"ptype" db:"ptype,omitempty"`
 	Name      string `json:"name" db:"name"`
 	OwnerID   int64  `json:"owner" db:"owner"`
 	ExtraMeta string `json:"extrameta" db:"extrameta,omitempty"`

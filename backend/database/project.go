@@ -42,7 +42,7 @@ func (d *DB) UpdateProject(id int64, ownerId int64, data map[string]any) error {
 func (d *DB) ListOwnProjects(ownerId int64) ([]Project, error) {
 	datas := make([]Project, 0)
 
-	err := d.projectTable().Find(db.Cond{"owner": ownerId}).All(datas)
+	err := d.projectTable().Find(db.Cond{"owner": ownerId}).All(&datas)
 	if err != nil {
 		return nil, err
 	}
