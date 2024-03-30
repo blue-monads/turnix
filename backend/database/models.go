@@ -17,6 +17,7 @@ type User struct {
 	CreatedAt       *time.Time `json:"createdAt" db:"createdAt,omitempty"`
 	OwnedBy         int64      `json:"ownedBy" db:"ownedBy,omitempty"`
 	AccessToken     string     `json:"accessToken" db:"accessToken,omitempty"`
+	Disabled        string     `json:"disabled" db:"disabled,omitempty"`
 }
 
 type Project struct {
