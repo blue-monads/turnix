@@ -49,7 +49,7 @@ func (d *DB) GetQueueMessage(ownerId, projectId, id int64) (*PTLactionQueueMessa
 
 	data := &PTLactionQueueMessage{}
 
-	err := d.queueMessageTable().Find(db.Cond{"projectId": projectId, "id": id}).Update(data)
+	err := d.queueMessageTable().Find(db.Cond{"projectId": projectId, "id": id}).One(data)
 	if err != nil {
 		return nil, err
 	}
