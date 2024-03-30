@@ -51,6 +51,18 @@ func (d *DB) ListUser() ([]User, error) {
 	return users, nil
 }
 
+func (d *DB) ListUserByOwner(owner int64) ([]User, error) {
+
+	users := make([]User, 0)
+
+	err := d.userTable().Find(db.Cond{"owner": owner}).All(&users)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
 func (d *DB) DeleteUser(id int64) error {
 	return d.userTable().Find(db.Cond{"id": id}).Delete()
 }

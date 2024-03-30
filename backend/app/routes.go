@@ -16,6 +16,15 @@ func (a *App) bindRoutes(e *gin.Engine) {
 
 	apiv1 := e.Group("/api/v1")
 
+	apiv1.GET("/self", a.accessMiddleware(a.selfInfo))
+	apiv1.GET("/self/change_password", a.accessMiddleware(a.selfChangePassword))
+
+	apiv1.GET("/self/users", a.accessMiddleware(a.selfUsers))
+	apiv1.POST("/self/users", a.accessMiddleware(a.selfAddUser))
+	apiv1.GET("/self/users/:uid", a.accessMiddleware(a.selfGetUser))
+	apiv1.POST("/self/users/:uid", a.accessMiddleware(a.selfUpdateUser))
+	apiv1.DELETE("/self/users/:uid", a.accessMiddleware(a.selfDeleteUser))
+
 	apiv1.GET("/project", a.accessMiddleware(a.listProjects))
 	apiv1.POST("/project", a.accessMiddleware(a.addProject))
 	apiv1.POST("/project/:pid", a.accessMiddleware(a.updateProject))
