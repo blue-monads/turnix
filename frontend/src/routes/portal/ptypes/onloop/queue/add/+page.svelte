@@ -22,7 +22,6 @@
     {message}
     schema={{
         fields: [
-            { ftype: "TEXT", key_name: "name", name: "Name" },
             {
                 ftype: "KEY_VALUE_TEXT",
                 key_name: "contents",

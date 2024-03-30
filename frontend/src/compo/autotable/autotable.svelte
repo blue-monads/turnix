@@ -74,13 +74,14 @@
           <td class="px-3 py-1">
             <div class="flex flex-row">
               {#each extern_actions as action}
+                {@const icon = actions["icon"]}
                 <button
                   on:click={() => action.Action(data[action_key], data)}
                   class="flex m-1 text-white transform hover:scale-110 btn btn-sm {action.Class ||
                     'bg-blue-400'}"
                 >
-                  {#if action["icon"]}
-                    <Icon name={action["icon"]} class="h-5 w-5" />
+                  {#if icon}
+                    <Icon name={icon} class="h-5 w-5" />
                   {/if}
 
                   {action.Name}</button

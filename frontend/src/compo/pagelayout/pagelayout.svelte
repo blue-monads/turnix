@@ -1,28 +1,41 @@
 <script lang="ts">
     import { AppBar } from "@skeletonlabs/skeleton";
+    import Icon from "@krowten/svelte-heroicons/Icon.svelte";
+
     export let title: string;
-    export let actions: { name: string; actionFn: Function }[];
+    export let actions: { name: string; icon?: string, actionFn: Function }[];
 </script>
 
 <AppBar>
     <svelte:fragment slot="lead">
-        <h2 class="h3 capitalize">{title}</h2>
+        <h4 class="h4 capitalize">{title}</h4>
     </svelte:fragment>
 
-    <svelte:fragment slot="trail">
+    <div slot="trail" class="">
         {#if actions}
             {#each actions as action}
                 <button
-                    type="button"
                     on:click={() => {
                         action.actionFn();
                     }}
-                    class="btn variant-filled-primary text-secondary-50"
-                    >{action.name}</button
+                    class="btn btn-sm variant-filled-primary text-secondary-50"
+                    >
+
+                    {#if action.icon}
+                        <Icon name={action.icon} class="h-4 w-4" />
+                    {/if}
+
+                    
+                    {action.name}
+                    
+                    
+                    </button
                 >
             {/each}
         {/if}
-    </svelte:fragment>
+    </div>
 </AppBar>
 
-<slot />
+<div class="p-2">
+    <slot />
+</div>

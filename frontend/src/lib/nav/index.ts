@@ -43,7 +43,7 @@ export const gotoProjectOnloopQueueAdd = (pid: string, tid: string) => {
 }
 
 
-export const gotoProjectOnloopQueueEdit = (pid: string, tid: string, mid: string) => {
-    goto(`/portal/ptypes/onloop/queue/edit?pid=${pid}&tid=${tid}&mid=${mid}`)
+export const gotoProjectOnloopQueuePreview = (pid: string, tid: string, mid: string) => {
+    goto(`/portal/ptypes/onloop/queue/preview?pid=${pid}&tid=${tid}&mid=${mid}`)
 }
 

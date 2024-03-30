@@ -41,9 +41,17 @@
         actions={[
             {
                 Name: "watch",
-                Class: "bg-green-400",
+                Class: "bg-yellow-400",
                 Action: async (id) => {
                     nav.gotoProjectOnloopTemplateWatch(pid, id);
+                },
+            },
+
+            {
+                Name: "explore",
+                Class: "bg-green-400",
+                Action: async (id) => {
+                    nav.gotoProjectOnloopQueues(pid, id)
                 },
             },
 
@@ -54,6 +62,8 @@
                     nav.gotoProjectOnloopQueueAdd(pid, id)
                 },
             },
+
+
 
             {
                 Name: "edit",

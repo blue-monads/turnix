@@ -98,8 +98,8 @@ export class API {
         return this.client.post(`/pt/laction/queue/${pid}/${qid}`, data)
     }
 
-    getQueueMessage = (pid: string, qid: string) => {
-        return this.client.get(`/pt/laction/queue/${pid}/${qid}`)
+    getQueueMessage = (pid: string, mid: string) => {
+        return this.client.get(`/pt/laction/queue/${pid}/${mid}`)
     }
 
     removeUpdateQueueMessage = (pid: string, qid: string) => {

@@ -28,6 +28,7 @@
     actions={[
         {
             name: "add",
+            icon: "plus",
             actionFn: () => {
                 nav.gotoProjectOnloopQueueAdd(pid, $params["tid"]);
             },
@@ -38,6 +39,7 @@
         action_key={"id"}
         key_names={[
             ["id", "ID"],
+
             ["submitter", "Submitter"],
             ["status", "Status"],
             ["createdAt", "Created At"],
@@ -46,10 +48,10 @@
         color={["ttype"]}
         actions={[
             {
-                Name: "edit",
+                Name: "preview",
                 Class: "bg-green-400",
                 Action: async (id, data) => {
-                    nav.gotoProjectOnloopQueueEdit(pid, $params["tid"], id);
+                    nav.gotoProjectOnloopQueuePreview(pid, $params["tid"], id);
                 },
             },
             {
