@@ -1,6 +1,6 @@
 <script lang="ts">
-    import Autotable from "../../../compo/autotable/autotable.svelte";
-    import PageLayout from "../../../compo/pagelayout/pagelayout.svelte";
+    import Autotable from "../../../lib/compo/autotable/autotable.svelte";
+    import PageLayout from "../../../lib/compo/pagelayout/pagelayout.svelte";
     import { getContext, onMount } from "svelte";
     import * as nav from "$lib/nav";
     import type { API } from "$lib/api";

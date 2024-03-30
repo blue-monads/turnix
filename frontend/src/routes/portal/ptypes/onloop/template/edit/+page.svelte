@@ -1,6 +1,5 @@
 <script lang="ts">
-    import AutoForm from "../../../../../../compo/autoform/auto_form.svelte";
-    import Loader from "../../../../../../compo/loader/loader.svelte";
+    import { AutoForm, PageLayout, AutoTable, Loader } from "$lib/compo";
 
     import { gotoProjectOnloopTemplates } from "$lib/nav";
     import { params } from "$lib/params";
@@ -14,28 +13,26 @@
 
     let message = "";
     let loading = true;
-    let data = {}
+    let data = {};
 
-    const load = async  () => {
-        loading = true
-        const resp = await api.getTemplate(pid, tid )
+    const load = async () => {
+        loading = true;
+        const resp = await api.getTemplate(pid, tid);
         if (resp.status !== 200) {
-            return
+            return;
         }
         data = resp.data;
-        loading = false
-    }
+        loading = false;
+    };
 
-    load()
-
-
+    load();
 </script>
 
 {#if loading}
     <Loader />
 {:else}
     <AutoForm
-        data={data}
+        {data}
         {message}
         schema={{
             fields: [

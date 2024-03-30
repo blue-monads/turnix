@@ -1,21 +1,25 @@
 <script lang="ts">
-    import { AutoForm } from "$lib/compo";
-    import {
-        gotoProjectOnloopQueues,
-        gotoProjectOnloopTemplates,
-    } from "$lib/nav";
+    import AutoForm from "../../../../../../lib/compo/autoform/auto_form.svelte";
     import { params } from "$lib/params";
     import type { API } from "$lib/api";
     import { getContext } from "svelte";
-    import { stringify } from "postcss";
 
     let pid = $params["pid"];
-    let tid = $params["tid"];
+    let mid = $params["mid"];
+    let message = "";
+
 
     const api = getContext("__api__") as API;
 
-    let message = "";
+    const load = async () => {
+        
+
+    }
+
+
+
 </script>
+
 
 <AutoForm
     data={{}}
@@ -43,15 +47,7 @@
         required_fields: ["name"],
     }}
     onSave={async (newdata) => {
-        const resp = await api.addQueueMessage(pid, {
-            ...newdata,
-            projectId: Number(pid),
-            templateId: Number(tid),
-        });
-        if (resp.status !== 200) {
-            return;
-        }
 
-        gotoProjectOnloopQueues(pid, tid);
+
     }}
 />

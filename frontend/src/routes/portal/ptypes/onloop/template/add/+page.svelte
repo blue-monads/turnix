@@ -1,5 +1,5 @@
 <script lang="ts">
-    import AutoForm from "../../../../../../compo/autoform/auto_form.svelte";
+    import { AutoForm, PageLayout, AutoTable } from "$lib/compo";
     import { gotoProjectOnloopTemplates } from "$lib/nav";
     import { params } from "$lib/params";
     import type { API } from "$lib/api";
@@ -38,12 +38,12 @@
         required_fields: ["name"],
     }}
     onSave={async (newdata) => {
-        const resp = await api.addTemplate(pid, newdata)
+        const resp = await api.addTemplate(pid, newdata);
         if (resp.status !== 200) {
             message = resp.data;
             return;
         }
 
-        gotoProjectOnloopTemplates(pid)
+        gotoProjectOnloopTemplates(pid);
     }}
 />

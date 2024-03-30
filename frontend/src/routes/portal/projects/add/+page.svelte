@@ -1,6 +1,7 @@
 <script lang="ts">
     import { gotoPorjects } from "$lib/nav";
-    import AutoForm from "../../../../compo/autoform/auto_form.svelte";
+    import { AutoForm, PageLayout, AutoTable } from "$lib/compo";
+
 
     import type { API } from "$lib/api";
     import { getContext } from "svelte";

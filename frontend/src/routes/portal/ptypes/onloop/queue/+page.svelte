@@ -1,6 +1,5 @@
 <script lang="ts">
-    import Autotable from "../../../../../compo/autotable/autotable.svelte";
-    import PageLayout from "../../../../../compo/pagelayout/pagelayout.svelte";
+    import { AutoForm, PageLayout, AutoTable } from "$lib/compo";
     import { getContext, onMount } from "svelte";
     import * as nav from "$lib/nav";
     import type { API } from "$lib/api";
@@ -35,7 +34,7 @@
         },
     ]}
 >
-    <Autotable
+    <AutoTable
         action_key={"id"}
         key_names={[
             ["id", "ID"],
