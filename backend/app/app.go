@@ -15,6 +15,7 @@ type App struct {
 	db        *database.DB
 	signer    *signer.Signer
 	flakeNode *snowflake.Node
+	globalJS  []byte
 }
 
 func New(db *database.DB, signer *signer.Signer) *App {
@@ -28,6 +29,13 @@ func New(db *database.DB, signer *signer.Signer) *App {
 		db:        db,
 		signer:    signer,
 		flakeNode: node,
+		globalJS: []byte(`
+		
+		window["red_john_was_here"] = true;
+		
+		
+		
+		`),
 	}
 }
 

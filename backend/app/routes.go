@@ -25,6 +25,11 @@ func (a *App) bindRoutes(e *gin.Engine) {
 	a.apiRoutes(root)
 	a.pages(root)
 
+	root.GET("/global.js", func(ctx *gin.Context) {
+
+		ctx.Data(http.StatusOK, httpx.CtypeJS, a.globalJS)
+	})
+
 	e.NoRoute(a.noRoute)
 
 	e.GET("/ping", a.ping)
@@ -80,10 +85,10 @@ func (a *App) noRoute(ctx *gin.Context) {
 
 		switch pparts[2] {
 		case "portal":
-			ctx.Redirect(http.StatusFound, "/z/portal")
+			ctx.Redirect(http.StatusFound, "/z/pages/portal")
 			return
 		case "auth":
-			ctx.Redirect(http.StatusFound, "/z/auth/login")
+			ctx.Redirect(http.StatusFound, "/z/pages/auth/login")
 			return
 		default:
 			return

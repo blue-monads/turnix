@@ -14,7 +14,7 @@ export class API {
         if (browser) {
             access_token = localStorage.getItem("access_token")
             if (!access_token) {
-                window.location.pathname = "/auth/login"
+                window.location.pathname = "/z/pages/auth/login"
             }
         }
 

@@ -16,7 +16,7 @@
 
 	const sibarItems = [
 		{
-			link: "/portal/projects",
+			link: "/z/pages/portal/projects",
 			name: "Projects",
 			icon: "rectangle-group",
 		},
@@ -65,7 +65,7 @@
 			<div slot="trail" class="mb-4">
 				<a
 					class="flex flex-col justify-center items-center rounded-full bg-secondary-100 hover:bg-secondary-200 p-2"
-					href={"/portal/self"}
+					href={"/z/pages/portal/self"}
 				>
 					<Icon name="user" class="w-6 h-6" />
 				</a>

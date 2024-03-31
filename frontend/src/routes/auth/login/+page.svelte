@@ -15,7 +15,7 @@
 
         localStorage.setItem("access_token", resp.data["access_token"] )
 
-        window.location.pathname = "/portal"
+        window.location.pathname = "/z/pages/portal"
     }
 
 </script>
