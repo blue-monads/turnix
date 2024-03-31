@@ -28,11 +28,22 @@ func Run() error {
 		Signer: signer,
 		ProjectTypes: []*xproject.TypeDefination{
 			{
-				Name:               "On Loop",
-				Slug:               "onloop",
-				Info:               "Perform action with you on loop",
-				Icon:               "arrow-path",
-				InterceptFileEvent: false,
+				Name: "On Loop",
+				Slug: "onloop",
+				Info: "Perform action with you on loop",
+				Icon: "arrow-path",
+			},
+			{
+				Name: "Trackers",
+				Slug: "tracker",
+				Info: "Track everything",
+				Icon: "map-pin",
+			},
+			{
+				Name: "Books",
+				Slug: "books",
+				Info: "Track everything",
+				Icon: "book-open",
 			},
 		},
 	})
