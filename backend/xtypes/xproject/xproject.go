@@ -4,6 +4,7 @@ import (
 	"io/fs"
 
 	"github.com/bornjre/trunis/backend/xtypes"
+	"github.com/bornjre/trunis/backend/xtypes/xfiles"
 	"github.com/bornjre/trunis/backend/xtypes/xsockd"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -17,6 +18,18 @@ type PojectTypeBuilderOption struct {
 
 type PojectTypeBuilder func(opt PojectTypeBuilderOption)
 
+type ProjectTypeDefination struct {
+	Name               string
+	Slug               string
+	Info               string
+	Icon               string
+	Perminssions       []string
+	Builder            PojectTypeBuilder
+	GlobalJS           string
+	AssetData          fs.FS
+	InterceptFileEvent bool
+}
+
 type ProjectType interface {
 	Init(pid int64) error
 
@@ -28,15 +41,6 @@ type ProjectType interface {
 
 	OnSockdMessage(msg *xsockd.Message) error
 	OnSockdConn(opts *xsockd.ConnectOptions) error
-}
 
-type ProjectTypeDefination struct {
-	Name         string
-	Slug         string
-	Info         string
-	Icon         string
-	Perminssions []string
-	Builder      PojectTypeBuilder
-	GlobalJS     string
-	AssetData    fs.FS
+	OnFileEvent(event *xfiles.Event) error
 }
