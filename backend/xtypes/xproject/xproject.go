@@ -20,7 +20,9 @@ type PojectTypeBuilder func(opt PojectTypeBuilderOption)
 type ProjectType interface {
 	Init(pid int64) error
 
-	IsInitilized(pid int64) bool
+	IsInitilized(pid int64) (bool, error)
+
+	DeInit(pid int64) error
 
 	HttpHandle(group *gin.RouterGroup)
 
@@ -29,8 +31,10 @@ type ProjectType interface {
 }
 
 type ProjectTypeDefination struct {
-	Icon         string
 	Name         string
+	Slug         string
+	Info         string
+	Icon         string
 	Perminssions []string
 	Builder      PojectTypeBuilder
 	GlobalJS     string
