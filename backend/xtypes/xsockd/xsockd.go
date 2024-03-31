@@ -1,5 +1,7 @@
 package xsockd
 
+import "github.com/bornjre/trunis/backend/database"
+
 type Message struct {
 	ConnId    int64
 	ProjectId int64
@@ -9,7 +11,7 @@ type Message struct {
 }
 
 type ConnectOptions struct {
-	Project int64
+	Project *database.Project
 	ConnId  int64
 	UserId  int64
 	Conn    Conn
@@ -24,6 +26,8 @@ type Conn interface {
 }
 
 type Sockd interface {
+	Connect(userId, pid int64, conn Conn) error
+
 	SendDirect(pid int64, connId int64, payload []byte) error
 	SendDirectBatch(pid int64, conns []int64, payload []byte) error
 

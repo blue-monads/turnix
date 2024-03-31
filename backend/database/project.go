@@ -23,7 +23,19 @@ func (d *DB) RemoveProject(id int64, ownerId int64) error {
 	return d.projectTable().Find(db.Cond{"id": id, "owner": ownerId}).Delete()
 }
 
-func (d *DB) GetProject(id int64, ownerId int64) (*Project, error) {
+func (d *DB) GetProject(id int64) (*Project, error) {
+	data := &Project{}
+
+	err := d.projectTable().Find(db.Cond{"id": id}).One(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+
+}
+
+func (d *DB) GetProjectByOwner(id int64, ownerId int64) (*Project, error) {
 	data := &Project{}
 
 	err := d.projectTable().Find(db.Cond{"id": id, "owner": ownerId}).One(data)

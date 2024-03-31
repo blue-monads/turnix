@@ -58,6 +58,10 @@ func (db *DB) Close() error {
 	return db.sess.Close()
 }
 
+func (db *DB) GetSession() db.Session {
+	return db.sess
+}
+
 func (db *DB) table(name string) db.Collection {
 	return db.sess.Collection(name)
 }
