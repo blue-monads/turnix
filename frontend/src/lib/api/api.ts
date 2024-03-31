@@ -29,8 +29,8 @@ export class API {
 
     // projects
 
-    listProjects = () => {
-        return this.client.get("/project")
+    listProjects = (ptype?: string) => {
+        return this.client.get(`/project?ptype=${ptype}`)
     }
 
     addProject = (data: object) => {
