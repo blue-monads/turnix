@@ -51,10 +51,16 @@ func (d *DB) UpdateProject(id int64, ownerId int64, data map[string]any) error {
 	return d.projectTable().Find(db.Cond{"id": id, "owner": ownerId}).Update(data)
 }
 
-func (d *DB) ListOwnProjects(ownerId int64) ([]Project, error) {
+func (d *DB) ListOwnProjects(ownerId int64, ptype string) ([]Project, error) {
 	datas := make([]Project, 0)
 
-	err := d.projectTable().Find(db.Cond{"owner": ownerId}).All(&datas)
+	cond := db.Cond{"owner": ownerId}
+
+	if ptype != "" {
+		cond["ptype"] = ptype
+	}
+
+	err := d.projectTable().Find(cond).All(&datas)
 	if err != nil {
 		return nil, err
 	}
@@ -66,13 +72,19 @@ type TPProjects struct {
 	Project int64 `db:"projectId"`
 }
 
-func (d *DB) ListThirdPartyProjects(userid int64) ([]Project, error) {
+func (d *DB) ListThirdPartyProjects(userid int64, ptype string) ([]Project, error) {
+
+	cond := db.Cond{
+		"userId": userid,
+	}
 
 	projs := make([]TPProjects, 0)
 
-	err := d.projectUserTable().Find(db.Cond{
-		"userId": userid,
-	}).Select("projectId").All(&projs)
+	if ptype != "" {
+		cond["ptype"] = ptype
+	}
+
+	err := d.projectUserTable().Find(cond).Select("projectId").All(&projs)
 
 	if err != nil {
 		return nil, err

@@ -10,12 +10,14 @@ import (
 
 func (a *App) listProjects(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
-	ownpjs, err := a.db.ListOwnProjects(claim.UserId)
+	ptype := ctx.Query("ptype")
+
+	ownpjs, err := a.db.ListOwnProjects(claim.UserId, ptype)
 	if err != nil {
 		return nil, err
 	}
 
-	tprojs, err := a.db.ListThirdPartyProjects(claim.UserId)
+	tprojs, err := a.db.ListThirdPartyProjects(claim.UserId, ptype)
 	if err != nil {
 		return nil, err
 	}

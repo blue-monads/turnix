@@ -3,6 +3,7 @@ package app
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 
 	"github.com/bornjre/trunis/backend/xtypes/xproject"
 )
@@ -11,6 +12,7 @@ type Def struct {
 	Name       string `json:"name"`
 	Slug       string `json:"slug"`
 	Icon       string `json:"icon,omitempty"`
+	Link       string `json:"link,omitempty"`
 	IsExternal bool   `json:"is_external"`
 }
 
@@ -23,6 +25,7 @@ func buildGlobalJS(projTypes []*xproject.TypeDefination) ([]byte, error) {
 			Name:       ptype.Name,
 			Slug:       ptype.Slug,
 			Icon:       ptype.Icon,
+			Link:       fmt.Sprintf("/z/pages/portal/ptypes/%s", ptype.Slug),
 			IsExternal: ptype.AssetData != nil,
 		})
 	}
