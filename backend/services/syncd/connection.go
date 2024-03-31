@@ -4,7 +4,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/bornjre/trunis/backend/syncd/syncdtypes"
 	"github.com/bornjre/trunis/backend/xtypes/xproject"
 	"github.com/bornjre/trunis/backend/xtypes/xsockd"
 )
@@ -72,7 +71,7 @@ func (c *Connection) writeLoop() {
 					Err(err).
 					Msg("logid.SockdWriteErr")
 
-				if errors.Is(err, syncdtypes.ErrConnClosed) {
+				if errors.Is(err, xsockd.ErrConnClosed) {
 					return
 				}
 			}

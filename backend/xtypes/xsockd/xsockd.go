@@ -1,6 +1,14 @@
 package xsockd
 
-import "github.com/bornjre/trunis/backend/database"
+import (
+	"errors"
+
+	"github.com/bornjre/trunis/backend/database"
+)
+
+var (
+	ErrConnClosed = errors.New("err: connection closed")
+)
 
 type Message struct {
 	ConnId    int64
