@@ -6,9 +6,10 @@ import (
 	"net/http"
 
 	"github.com/bornjre/trunis/backend/database"
-	"github.com/bornjre/trunis/backend/token"
 	_ "github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
+
+	"github.com/bornjre/trunis/backend/services/signer"
 )
 
 func (a *App) signUpDirect(ctx *gin.Context) {
@@ -34,7 +35,7 @@ func (a *App) signUpDirect(ctx *gin.Context) {
 
 	log.Println("created user", id)
 
-	token, err := a.signer.SignAccess(&token.AccessClaim{
+	token, err := a.signer.SignAccess(&signer.AccessClaim{
 		XID:    a.flakeNode.Generate().Int64(),
 		UserId: id,
 	})
@@ -86,7 +87,7 @@ func (a *App) login(ctx *gin.Context) {
 		return
 	}
 
-	token, err := a.signer.SignAccess(&token.AccessClaim{
+	token, err := a.signer.SignAccess(&signer.AccessClaim{
 		XID:    a.flakeNode.Generate().Int64(),
 		UserId: int64(user.ID),
 	})
@@ -102,7 +103,7 @@ func (a *App) login(ctx *gin.Context) {
 
 }
 
-func (a *App) accessMiddleware(fn func(claim *token.AccessClaim, ctx *gin.Context) (any, error)) func(ctx *gin.Context) {
+func (a *App) accessMiddleware(fn func(claim *signer.AccessClaim, ctx *gin.Context) (any, error)) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 
 		claim, err := a.withAccess(ctx)
@@ -116,7 +117,7 @@ func (a *App) accessMiddleware(fn func(claim *token.AccessClaim, ctx *gin.Contex
 
 }
 
-func (a *App) withAccess(ctx *gin.Context) (*token.AccessClaim, error) {
+func (a *App) withAccess(ctx *gin.Context) (*signer.AccessClaim, error) {
 
 	tok := ctx.GetHeader("Authorization")
 	claim, err := a.signer.ParseAccess(tok)

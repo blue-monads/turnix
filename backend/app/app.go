@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/bornjre/trunis/backend/database"
-	"github.com/bornjre/trunis/backend/token"
+	"github.com/bornjre/trunis/backend/services/signer"
 	"github.com/bwmarrin/snowflake"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -13,11 +13,11 @@ import (
 
 type App struct {
 	db        *database.DB
-	signer    *token.TokenService
+	signer    *signer.Signer
 	flakeNode *snowflake.Node
 }
 
-func New(db *database.DB, signer *token.TokenService) *App {
+func New(db *database.DB, signer *signer.Signer) *App {
 
 	node, err := snowflake.NewNode(0)
 	if err != nil {

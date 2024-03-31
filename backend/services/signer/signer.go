@@ -1,4 +1,4 @@
-package token
+package signer
 
 import (
 	"crypto/sha256"
@@ -33,19 +33,19 @@ type InviteClaim struct {
 
 var ErrInvalidToken = errors.New("INVALID TOKEN")
 
-type TokenService struct {
+type Signer struct {
 	signer *branca.Branca
 }
 
-func New(key []byte) *TokenService {
+func New(key []byte) *Signer {
 	masterKey := pbkdf2.Key(key, []byte("SALTY_SALMON"), 2048, 32, sha256.New)
 
-	return &TokenService{
+	return &Signer{
 		signer: branca.NewBranca(string(masterKey)),
 	}
 }
 
-func (t *TokenService) parse(token string, dest any) error {
+func (t *Signer) parse(token string, dest any) error {
 	str, err := t.signer.DecodeToString(token)
 	if err != nil {
 		return err
@@ -54,7 +54,7 @@ func (t *TokenService) parse(token string, dest any) error {
 	return json.Unmarshal([]byte(str), dest)
 }
 
-func (t *TokenService) sign(o any) (string, error) {
+func (t *Signer) sign(o any) (string, error) {
 	out, err := json.Marshal(o)
 	if err != nil {
 		return "", nil
@@ -63,7 +63,7 @@ func (t *TokenService) sign(o any) (string, error) {
 	return t.signer.EncodeToString(string(out))
 }
 
-func (ts *TokenService) ParseAccess(tstr string) (*AccessClaim, error) {
+func (ts *Signer) ParseAccess(tstr string) (*AccessClaim, error) {
 
 	claim := &AccessClaim{}
 
@@ -79,14 +79,14 @@ func (ts *TokenService) ParseAccess(tstr string) (*AccessClaim, error) {
 	return claim, nil
 }
 
-func (ts *TokenService) SignAccess(claim *AccessClaim) (string, error) {
+func (ts *Signer) SignAccess(claim *AccessClaim) (string, error) {
 
 	claim.Typeid = TokenTypeAccess
 
 	return ts.sign(claim)
 }
 
-func (ts *TokenService) ParseInvite(tstr string) (*InviteClaim, error) {
+func (ts *Signer) ParseInvite(tstr string) (*InviteClaim, error) {
 
 	claim := &InviteClaim{}
 
@@ -102,7 +102,7 @@ func (ts *TokenService) ParseInvite(tstr string) (*InviteClaim, error) {
 	return claim, nil
 }
 
-func (ts *TokenService) SignInvite(claim *InviteClaim) (string, error) {
+func (ts *Signer) SignInvite(claim *InviteClaim) (string, error) {
 
 	claim.Typeid = TokenTypeEmailInvite
 

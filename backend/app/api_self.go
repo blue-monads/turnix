@@ -5,11 +5,11 @@ import (
 	"strconv"
 
 	"github.com/bornjre/trunis/backend/database"
-	"github.com/bornjre/trunis/backend/token"
+	"github.com/bornjre/trunis/backend/services/signer"
 	"github.com/gin-gonic/gin"
 )
 
-func (a *App) selfInfo(claim *token.AccessClaim, _ *gin.Context) (any, error) {
+func (a *App) selfInfo(claim *signer.AccessClaim, _ *gin.Context) (any, error) {
 
 	usr, err := a.db.GetUser(claim.UserId)
 	if err != nil {
@@ -29,7 +29,7 @@ type changePasswordRequest struct {
 
 var errIncorrectOldPassword = errors.New("err invalid old password")
 
-func (a *App) selfChangePassword(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) selfChangePassword(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	data := &changePasswordRequest{}
 	err := ctx.Bind(data)
@@ -49,11 +49,11 @@ func (a *App) selfChangePassword(claim *token.AccessClaim, ctx *gin.Context) (an
 	return MessageOk, nil
 }
 
-func (a *App) selfUsers(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) selfUsers(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 	return a.db.ListUserByOwner(claim.UserId)
 }
 
-func (a *App) selfAddUser(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) selfAddUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	data := &database.User{}
 
@@ -70,7 +70,7 @@ func (a *App) selfAddUser(claim *token.AccessClaim, ctx *gin.Context) (any, erro
 
 var errNotAllowed = errors.New("err Not Allowed")
 
-func (a *App) selfGetUser(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) selfGetUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	usr, err := a.db.GetUser(claim.UserId)
 	if err != nil {
@@ -87,7 +87,7 @@ func (a *App) selfGetUser(claim *token.AccessClaim, ctx *gin.Context) (any, erro
 	return usr, nil
 }
 
-func (a *App) selfUpdateUser(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) selfUpdateUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	data := make(map[string]any)
 	ctx.Bind(&data)
@@ -116,7 +116,7 @@ func (a *App) selfUpdateUser(claim *token.AccessClaim, ctx *gin.Context) (any, e
 	return MessageOk, nil
 }
 
-func (a *App) selfDeleteUser(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) selfDeleteUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	uid, err := strconv.ParseInt(ctx.Param("uid"), 10, 64)
 	if err != nil {

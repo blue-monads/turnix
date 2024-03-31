@@ -3,7 +3,7 @@ package backend
 import (
 	"github.com/bornjre/trunis/backend/app"
 	"github.com/bornjre/trunis/backend/database"
-	"github.com/bornjre/trunis/backend/token"
+	"github.com/bornjre/trunis/backend/services/signer"
 )
 
 func Run() error {
@@ -20,7 +20,7 @@ func Run() error {
 		return err
 	}
 
-	signer := token.New([]byte("A_long_HARD_Token"))
+	signer := signer.New([]byte("A_long_HARD_Token"))
 
 	as := app.New(db, signer)
 

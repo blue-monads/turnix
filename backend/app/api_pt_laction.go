@@ -4,11 +4,11 @@ import (
 	"strconv"
 
 	"github.com/bornjre/trunis/backend/database"
-	"github.com/bornjre/trunis/backend/token"
+	"github.com/bornjre/trunis/backend/services/signer"
 	"github.com/gin-gonic/gin"
 )
 
-func (a *App) listQueueMessages(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) listQueueMessages(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	id, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	if err != nil {
@@ -21,7 +21,7 @@ func (a *App) listQueueMessages(claim *token.AccessClaim, ctx *gin.Context) (any
 
 }
 
-func (a *App) addQueueMessage(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) addQueueMessage(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 	data := &database.PTLactionQueueMessage{}
 
 	err := ctx.Bind(data)
@@ -34,7 +34,7 @@ func (a *App) addQueueMessage(claim *token.AccessClaim, ctx *gin.Context) (any, 
 	return a.db.AddQueueMessage(data)
 }
 
-func (a *App) getQueueMessage(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) getQueueMessage(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 	pid, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (a *App) getQueueMessage(claim *token.AccessClaim, ctx *gin.Context) (any, 
 	return a.db.GetQueueMessage(claim.UserId, pid, qid)
 }
 
-func (a *App) removeUpdateQueueMessage(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) removeUpdateQueueMessage(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	pid, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	if err != nil {
@@ -64,7 +64,7 @@ func (a *App) removeUpdateQueueMessage(claim *token.AccessClaim, ctx *gin.Contex
 	return nil, err
 }
 
-func (a *App) updateQueueMessage(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) updateQueueMessage(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 	pid, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (a *App) updateQueueMessage(claim *token.AccessClaim, ctx *gin.Context) (an
 	return nil, err
 }
 
-func (a *App) pushQueueMessage(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) pushQueueMessage(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	pid, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	if err != nil {
@@ -112,7 +112,7 @@ func (a *App) pushQueueMessage(claim *token.AccessClaim, ctx *gin.Context) (any,
 
 }
 
-func (a *App) queryQueueMessage(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) queryQueueMessage(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	id, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	if err != nil {
@@ -132,7 +132,7 @@ func (a *App) queryQueueMessage(claim *token.AccessClaim, ctx *gin.Context) (any
 
 // templates
 
-func (a *App) listTemplates(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) listTemplates(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 	id, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	if err != nil {
 		return nil, err
@@ -141,7 +141,7 @@ func (a *App) listTemplates(claim *token.AccessClaim, ctx *gin.Context) (any, er
 	return a.db.ListTemplate(claim.UserId, id)
 }
 
-func (a *App) addTemplate(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) addTemplate(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	id, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	if err != nil {
@@ -159,7 +159,7 @@ func (a *App) addTemplate(claim *token.AccessClaim, ctx *gin.Context) (any, erro
 	return a.db.AddTemplate(claim.UserId, data)
 }
 
-func (a *App) getTemplate(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) getTemplate(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 	pid, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	if err != nil {
 		return nil, err
@@ -173,7 +173,7 @@ func (a *App) getTemplate(claim *token.AccessClaim, ctx *gin.Context) (any, erro
 	return a.db.GetTemplate(claim.UserId, pid, tid)
 }
 
-func (a *App) removeTemplate(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) removeTemplate(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	pid, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	if err != nil {
@@ -189,7 +189,7 @@ func (a *App) removeTemplate(claim *token.AccessClaim, ctx *gin.Context) (any, e
 	return nil, err
 }
 
-func (a *App) updateTemplate(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *App) updateTemplate(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 	pid, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	if err != nil {
 		return nil, err
