@@ -12,8 +12,15 @@ type ConnectOptions struct {
 	Project int64
 	ConnId  int64
 	UserId  int64
-	Conn    any
+	Conn    Conn
 	Tags    []string
+}
+
+type Conn interface {
+	Id() int64
+	Write([]byte) error
+	Close() error
+	Read() ([]byte, error)
 }
 
 type Sockd interface {
