@@ -74,7 +74,7 @@ func (a *App) getProject(claim *token.AccessClaim, ctx *gin.Context) (any, error
 		return nil, err
 	}
 
-	return a.db.GetProject(id, claim.UserId)
+	return a.db.GetProjectByOwner(id, claim.UserId)
 }
 
 func (a *App) inviteUserToPoject(claim *token.AccessClaim, ctx *gin.Context) (any, error) {
