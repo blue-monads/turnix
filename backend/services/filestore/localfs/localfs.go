@@ -21,7 +21,14 @@ type LocalFS struct {
 	basePath string
 }
 
-func (l *LocalFS) ListFolder(ctx context.Context, tenantId, fpath string) ([]*xfiles.BlobInfo, error) {
+func New(basepath string) *LocalFS {
+
+	return &LocalFS{
+		basePath: basepath,
+	}
+}
+
+func (l *LocalFS) ListFolder(ctx context.Context, fpath string) ([]*xfiles.BlobInfo, error) {
 
 	files, err := os.ReadDir(l.folderPath(fpath))
 	if err != nil {
@@ -48,7 +55,7 @@ func (l *LocalFS) ListFolder(ctx context.Context, tenantId, fpath string) ([]*xf
 
 }
 
-func (l *LocalFS) NewFolder(ctx context.Context, tenantId, fpath, name string) error {
+func (l *LocalFS) NewFolder(ctx context.Context, fpath, name string) error {
 	pp.Println("@NEW_FOLDER", fpath, name)
 	pp.Println("@base_path", l.basePath)
 	finalPath := path.Join(l.basePath, fpath, name)
@@ -64,11 +71,11 @@ func (l *LocalFS) NewFolder(ctx context.Context, tenantId, fpath, name string) e
 
 }
 
-func (l *LocalFS) DeleteFolder(ctx context.Context, tenantId, fpath string) error {
+func (l *LocalFS) DeleteFolder(ctx context.Context, fpath string) error {
 	return os.RemoveAll(l.folderPath(fpath))
 }
 
-func (l *LocalFS) RenameFolder(ctx context.Context, tenantId, fpath, newname string) error {
+func (l *LocalFS) RenameFolder(ctx context.Context, fpath, newname string) error {
 	dir, _ := path.Split(fpath)
 
 	// check if its a folder and exists
@@ -76,7 +83,7 @@ func (l *LocalFS) RenameFolder(ctx context.Context, tenantId, fpath, newname str
 	return os.Rename(l.folderPath(fpath), path.Join(l.basePath, dir, newname))
 }
 
-func (l *LocalFS) CompressFolder(ctx context.Context, tenantId, fpath string) (xfiles.FData, error) {
+func (l *LocalFS) CompressFolder(ctx context.Context, fpath string) (xfiles.FData, error) {
 
 	folderToZip := l.folderPath(fpath)
 
@@ -118,7 +125,7 @@ func (l *LocalFS) CompressFolder(ctx context.Context, tenantId, fpath string) (x
 
 }
 
-func (l *LocalFS) TreeFolder(ctx context.Context, tenantId, fpath string) ([]*xfiles.BlobInfo, error) {
+func (l *LocalFS) TreeFolder(ctx context.Context, fpath string) ([]*xfiles.BlobInfo, error) {
 	folderToZip := l.folderPath(fpath)
 	respblobs := make([]*xfiles.BlobInfo, 0)
 
@@ -144,7 +151,7 @@ func (l *LocalFS) TreeFolder(ctx context.Context, tenantId, fpath string) ([]*xf
 	return respblobs, nil
 }
 
-func (l *LocalFS) GetFile(ctx context.Context, tenantId, fpath string) (xfiles.FData, error) {
+func (l *LocalFS) GetFile(ctx context.Context, fpath string) (xfiles.FData, error) {
 
 	ffile := l.folderPath(fpath)
 	exist, err := l.fileExists(ffile)
@@ -159,7 +166,7 @@ func (l *LocalFS) GetFile(ctx context.Context, tenantId, fpath string) (xfiles.F
 	return fdatautil.NewFromFile(ffile, false), nil
 }
 
-func (l *LocalFS) RenameFile(ctx context.Context, tenantId, fpath, name, newname string) error {
+func (l *LocalFS) RenameFile(ctx context.Context, fpath, name, newname string) error {
 
 	ffile := l.filePath(fpath, name)
 
@@ -175,7 +182,7 @@ func (l *LocalFS) RenameFile(ctx context.Context, tenantId, fpath, name, newname
 	return os.Rename(ffile, l.filePath(fpath, newname))
 }
 
-func (l *LocalFS) DuplicateFile(ctx context.Context, tenantId, fpath, name, newname string) error {
+func (l *LocalFS) DuplicateFile(ctx context.Context, fpath, name, newname string) error {
 
 	ffile := l.filePath(fpath, name)
 
@@ -211,7 +218,7 @@ func (l *LocalFS) DuplicateFile(ctx context.Context, tenantId, fpath, name, newn
 
 }
 
-func (l *LocalFS) MoveFile(ctx context.Context, tenantId, fpath, newfpath string) error {
+func (l *LocalFS) MoveFile(ctx context.Context, fpath, newfpath string) error {
 	ffile := l.filePath(fpath, "")
 
 	exist, err := l.fileExists(ffile)
@@ -226,19 +233,19 @@ func (l *LocalFS) MoveFile(ctx context.Context, tenantId, fpath, newfpath string
 	return os.Rename(ffile, l.folderPath(newfpath))
 }
 
-func (l *LocalFS) NewFile(ctx context.Context, tenantId, fpath, name string, data xfiles.FData) error {
+func (l *LocalFS) NewFile(ctx context.Context, fpath, name string, data xfiles.FData) error {
 	return l.writeFile(ctx, fpath, name, data)
 }
 
-func (l *LocalFS) UpdateFile(ctx context.Context, tenantId, fpath, name string, data xfiles.FData) error {
+func (l *LocalFS) UpdateFile(ctx context.Context, fpath, name string, data xfiles.FData) error {
 	return l.writeFile(ctx, fpath, name, data)
 }
 
-func (l *LocalFS) DeleteFile(ctx context.Context, tenantId, fpath, name string) error {
+func (l *LocalFS) DeleteFile(ctx context.Context, fpath, name string) error {
 	return os.Remove(l.filePath(fpath, name))
 }
 
-func (l *LocalFS) CompressFiles(ctx context.Context, tenantId, fpath string, files []string) (xfiles.FData, error) {
+func (l *LocalFS) CompressFiles(ctx context.Context, fpath string, files []string) (xfiles.FData, error) {
 
 	zfile, err := os.CreateTemp("", "*temphia_cab_folder.zip")
 	if err != nil {

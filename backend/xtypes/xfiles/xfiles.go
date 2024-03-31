@@ -13,8 +13,8 @@ type BlobInfo struct {
 }
 
 type FilesService interface {
-	ProjectFiles() FileStore
-	UserFiles() FileStore
+	ProjectFiles(pid int64) FileStore
+	UserFiles(uid int64) FileStore
 }
 
 type FileStore interface {
