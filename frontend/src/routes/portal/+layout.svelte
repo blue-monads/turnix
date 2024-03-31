@@ -14,17 +14,14 @@
 
 	let currentTile = "";
 
-	const sibarItems = [
-		{
-			link: "/z/pages/portal/projects",
-			name: "Projects",
-			icon: "rectangle-group",
-		},
-	];
+	let sibarItems: object[] = [];
 
 	let api: API;
 
 	const load = () => {
+		const ptypes: object[] = window["__turnis_ptypes__"] || [];
+		sibarItems = ptypes;
+
 		api = new API();
 	};
 
@@ -45,23 +42,27 @@
 			{#each sibarItems as item, index}
 				<AppRailTile
 					bind:group={currentTile}
-					name={item.name}
+					name={item["name"]}
 					value={index}
 				>
 					<svelte:fragment slot="lead">
 						<a
 							class="flex flex-col justify-center items-center"
-							href={item.link}
+							href={item["link"]}
 						>
-							<Icon name={item.icon} class="w-6 h-6" />
+							<Icon
+								name={item["icon"] || "link"}
+								class="w-6 h-6"
+							/>
+
 							<span class="text-xs">
-								{item.name}
+								{item["name"]}
 							</span>
 						</a>
 					</svelte:fragment>
 				</AppRailTile>
 			{/each}
-			
+
 			<div slot="trail" class="mb-4">
 				<a
 					class="flex flex-col justify-center items-center rounded-full bg-secondary-100 hover:bg-secondary-200 p-2"

@@ -10,22 +10,22 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type PojectTypeBuilderOption struct {
+type BuilderOption struct {
 	App xtypes.App
 
 	Logger zerolog.Logger
 }
 
-type PojectTypeBuilder func(opt PojectTypeBuilderOption)
+type TypeBuilder func(opt BuilderOption) (ProjectType, error)
 
-type ProjectTypeDefination struct {
+type TypeDefination struct {
 	Name               string
 	Slug               string
 	Info               string
 	Icon               string
 	Perminssions       []string
-	Builder            PojectTypeBuilder
-	GlobalJS           string
+	Builder            TypeBuilder
+	GlobalJS           []byte
 	AssetData          fs.FS
 	InterceptFileEvent bool
 }

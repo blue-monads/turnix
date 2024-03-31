@@ -6,6 +6,7 @@ import (
 
 	"github.com/bornjre/trunis/backend/database"
 	"github.com/bornjre/trunis/backend/services/signer"
+	"github.com/bornjre/trunis/backend/xtypes/xproject"
 	"github.com/bwmarrin/snowflake"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -18,24 +19,30 @@ type App struct {
 	globalJS  []byte
 }
 
-func New(db *database.DB, signer *signer.Signer) *App {
+type Options struct {
+	DB     *database.DB
+	Signer *signer.Signer
+
+	ProjectTypes []*xproject.TypeDefination
+}
+
+func New(opts Options) *App {
 
 	node, err := snowflake.NewNode(0)
 	if err != nil {
 		panic(err)
 	}
 
+	out, err := buildGlobalJS(opts.ProjectTypes)
+	if err != nil {
+		panic(err)
+	}
+
 	return &App{
-		db:        db,
-		signer:    signer,
+		db:        opts.DB,
+		signer:    opts.Signer,
 		flakeNode: node,
-		globalJS: []byte(`
-		
-		window["red_john_was_here"] = true;
-		
-		
-		
-		`),
+		globalJS:  out,
 	}
 }
 
