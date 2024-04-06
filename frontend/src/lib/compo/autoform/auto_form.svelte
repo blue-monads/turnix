@@ -50,13 +50,13 @@
 </script>
 
 <div class="h-full w-full bg-indigo-100 p-10 overflow-auto">
-  <div class="p-5 bg-white w-full">
-    <div class="text-2xl text-indigo-900">{schema.name}</div>
+  <div class="p-5  w-full card">
+    <h3 class="h3">{schema.name}</h3>
     <p class="text-red-500">{message || ""}</p>
 
     {#each schema.fields as field, idx}
       <div class="flex-col flex py-3">
-        <label for={`field-${idx}`} class="pb-2 text-gray-700 font-semibold"
+        <label for={`field-${idx}`} class="pb-2  label"
           >{field.name}</label
         >
 
@@ -68,7 +68,7 @@
             value={get(field.key_name)}
             on:change={set(field.key_name)}
             disabled={field.disabled}
-            class="p-2 shadow rounded-lg bg-gray-100 outline-none focus:bg-gray-200"
+            class="p-2 input"
           />
 
           <datalist id="field-{idx}-datalist">
@@ -86,7 +86,7 @@
                 value={get(field.key_name)}
                 on:change={set(field.key_name)}
                 disabled={field.disabled}
-                class="p-2 shadow rounded-lg bg-gray-100 outline-none focus:bg-gray-200 w-full"
+                class="p-2 input"
               />
 
               <datalist id="field-{idx}-datalist">
@@ -96,7 +96,7 @@
               </datalist>
             {:else}
               <select
-                class="p-1 rounded border w-full"
+                class="p-1 input"
                 id="field-{idx}"
                 value={get(field.key_name)}
                 on:change={set(field.key_name)}
@@ -142,7 +142,7 @@
             value={get(field.key_name)}
             on:change={set(field.key_name)}
             disabled={field.disabled}
-            class="p-2 shadow rounded-lg bg-gray-100 outline-none focus:bg-gray-200"
+            class="p-2 input"
           />
         {:else if field.ftype === "INT"}
           <input
@@ -159,7 +159,7 @@
             id={`field-${idx}`}
             value={get(field.key_name) || false}
             on:change={setBool(field.key_name)}
-            class="p-2 shadow rounded-lg bg-gray-100 outline-none focus:bg-gray-200"
+            class="p-2 input"
           />
         {:else if field.ftype === "KEY_VALUE_TEXT"}
           <KvEditor
