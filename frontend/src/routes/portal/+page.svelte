@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { API } from "$lib/api";
 	import { getContext } from "svelte";
-	import { getModalStore, type ModalSettings } from "@skeletonlabs/skeleton";
+	import { AppBar, getModalStore, type ModalSettings } from "@skeletonlabs/skeleton";
 
 	const api = getContext("__api__") as API;
 
@@ -37,6 +37,14 @@
 <svelte:head>
 	<title>Projects</title>
 </svelte:head>
+
+<AppBar>
+	<svelte:fragment slot="lead">
+        <h4 class="h4">Home</h4>
+    </svelte:fragment>
+
+</AppBar>
+
 
 <div class="p-4 flex flex-wrap gap-2">
 	{#each projects as proj}
