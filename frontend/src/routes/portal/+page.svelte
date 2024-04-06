@@ -7,6 +7,7 @@
 		type ModalSettings,
 	} from "@skeletonlabs/skeleton";
 	import { FloatyButton } from "$lib/compo";
+	import Icon from "@krowten/svelte-heroicons/Icon.svelte";
 
 	const api = getContext("__api__") as API;
 
@@ -73,9 +74,11 @@
 
 			<footer class="card-footer flex justify-end gap-2">
 				<button class="btn variant-filled">explore</button>
+
 				<button class="btn variant-filled variant-filled-warning"
-					>delete</button
-				>
+					>
+					<Icon name="adjustments-horizontal" class="w-6 h-6" />
+				</button>
 			</footer>
 		</div>
 	{/each}
