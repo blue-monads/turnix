@@ -70,6 +70,21 @@
 				</div>
 
 				<ul class="space-y-4 pt-10">
+
+					<li class="border rounded">
+						<a
+							on:click={toggle}
+							class="h-12 px-4 flex justify-center items-center w-full text-gray-700 focus:text-orange-500 uppercase gap-2"
+							href="/z/pages/portal">
+							<Icon
+								name="home"
+								class="w-6 h-6"
+							/>
+							Home
+						</a>
+					</li>
+
+
 					{#each sibarItems as item, index}
 						<li class="border rounded">
 							<a
