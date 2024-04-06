@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { API } from "$lib/api";
 	import { getContext } from "svelte";
+	import { getModalStore, type ModalSettings } from "@skeletonlabs/skeleton";
+
 	const api = getContext("__api__") as API;
 
 	let projects = [
@@ -21,6 +23,13 @@
 
 		projects = resp.data;
 	};
+
+	const modal: ModalSettings = {
+		type: "component",
+		component: "picker",
+	};
+
+	const store = getModalStore();
 
 	load();
 </script>
@@ -62,7 +71,12 @@
 </div>
 
 <div class="fixed bottom-5 right-5">
-	<button class="btn-icon variant-filled bg-primary-hover-token">
+	<button
+		class="btn-icon variant-filled bg-primary-hover-token"
+		on:click={() => {
+			store.trigger(modal);
+		}}
+	>
 		<svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
 			<path
 				fill-rule="evenodd"

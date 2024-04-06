@@ -4,7 +4,6 @@
     import { getContext, onMount } from "svelte";
     import * as nav from "$lib/nav";
     import type { API } from "$lib/api";
-
     export let ptype = "";
     export let title = "projects";
 
@@ -23,7 +22,7 @@
     load();
 </script>
 
-<PageLayout title={title} actions={[{ name: "add", actionFn: nav.gotoAddProject }]}>
+<PageLayout {title} actions={[{ name: "add", actionFn: nav.gotoAddProject }]}>
     <AutoTable
         action_key={"id"}
         key_names={[
