@@ -1,5 +1,5 @@
 <script lang="ts">
-    import ProjectListings from "../../../container/project_listings.svelte";
+    import ProjectListings from "../../../container/project/listings.svelte";
 </script>
 
-<ProjectListings />
+<ProjectListings  />
