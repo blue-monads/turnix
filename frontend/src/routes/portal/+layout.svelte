@@ -6,9 +6,21 @@
 		AppRailAnchor,
 		AppRailTile,
 		AppShell,
+		type PopupSettings,
 	} from "@skeletonlabs/skeleton";
-	import Logo from "../../lib/images/logo.png";
+	import { popup } from "@skeletonlabs/skeleton";
+	import {
+		computePosition,
+		autoUpdate,
+		offset,
+		shift,
+		flip,
+		arrow,
+	} from "@floating-ui/dom";
 
+	import { storePopup } from "@skeletonlabs/skeleton";
+
+	import Logo from "../../lib/images/logo.png";
 	import { API } from "$lib/api/api";
 	import ContextThis from "./contextThis.svelte";
 
@@ -29,6 +41,14 @@
 	const toggle = () => {
 		showMobileModal = !showMobileModal;
 	};
+
+	const popupHover: PopupSettings = {
+		event: "hover",
+		target: "popupHover",
+		placement: "right",
+	};
+
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	load();
 </script>
@@ -72,7 +92,10 @@
 {/if}
 
 <AppShell>
-	<div slot="header" class="flex flex-row md:hidden justify-between bg-surface-100-800-token">
+	<div
+		slot="header"
+		class="flex flex-row md:hidden justify-between bg-surface-100-800-token"
+	>
 		<div class="flex p-1">
 			<button on:click={toggle}>
 				<Icon name="bars-3" class="w-6 h-6" />
@@ -89,7 +112,10 @@
 		</div>
 	</div>
 
-	<div slot="sidebarLeft" class="h-screen hidden md:block bg-gradient-to-br variant-gradient-primary-secondary">
+	<div
+		slot="sidebarLeft"
+		class="h-screen hidden md:block bg-gradient-to-br variant-gradient-primary-secondary"
+	>
 		<AppRail width="w-14">
 			<div slot="lead" class="mb-4">
 				<AppRailAnchor href="/z/pages/portal">
@@ -99,25 +125,23 @@
 				</AppRailAnchor>
 			</div>
 
-			{#each sibarItems as item, index}
-				<AppRailTile
-					bind:group={currentTile}
-					name={item["name"]}
-					value={index}
-				>
-					<svelte:fragment slot="lead">
-						<a
-							class="flex flex-col justify-center items-center"
-							href={item["link"]}
-						>
-							<Icon
-								name={item["icon"] || "link"}
-								class="w-6 h-6"
-							/>
-						</a>
-					</svelte:fragment>
-				</AppRailTile>
-			{/each}
+			<div class="flex flex-col">
+				{#each sibarItems as item, index}
+				{@const popupHover = { event: "hover", target: `popupHover-${index}`,placement: "right",}}
+					<a
+						use:popup={popupHover}
+						class="p-4 hover:bg-secondary-50 [&>*]:pointer-events-none"
+						href={item["link"]}
+					>
+						<Icon name={item["icon"] || "link"} class="w-6 h-6" />
+					</a>
+
+					<div class="card p-2 variant-filled-secondary" data-popup={`popupHover-${index}`}>
+						<p>{item["name"] || ""}</p>
+					</div>
+
+				{/each}
+			</div>
 
 			<div slot="trail" class="mb-4">
 				<a
