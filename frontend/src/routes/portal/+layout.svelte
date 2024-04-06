@@ -92,7 +92,7 @@
 	<div slot="sidebarLeft" class="h-screen hidden md:block">
 		<AppRail width="w-14">
 			<div slot="lead" class="mb-4">
-				<AppRailAnchor href="/z/pages/portal/projects">
+				<AppRailAnchor href="/z/pages/portal">
 					<div class="flex justify-center items-center p-2">
 						<img src={Logo} alt="logo" />
 					</div>

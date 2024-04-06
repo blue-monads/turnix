@@ -21,11 +21,13 @@ type User struct {
 }
 
 type Project struct {
-	ID        int64  `json:"id" db:"id,omitempty"`
-	Ptype     string `json:"ptype" db:"ptype,omitempty"`
-	Name      string `json:"name" db:"name"`
-	OwnerID   int64  `json:"owner" db:"owner"`
-	ExtraMeta string `json:"extrameta" db:"extrameta,omitempty"`
+	ID           int64  `json:"id" db:"id,omitempty"`
+	Name         string `json:"name" db:"name"`
+	Info         string `json:"info" db:"info"`
+	Ptype        string `json:"ptype" db:"ptype,omitempty"`
+	OwnerID      int64  `json:"owner" db:"owner"`
+	ExtraMeta    string `json:"extrameta" db:"extrameta,omitempty"`
+	IsInitilized bool   `json:"isInitilized" db:"isInitilized,omitempty"`
 }
 
 type ProjectUser struct {

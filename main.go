@@ -9,6 +9,8 @@ import (
 
 func main() {
 
+	// migration.Migrate()
+
 	err := backend.Run()
 	if err != nil {
 		log.Fatalln(err)

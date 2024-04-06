@@ -23,6 +23,17 @@ func (db *DB) RunSeed() error {
 		IsEmailVerified: true,
 		OwnedBy:         userId,
 	})
+	if err != nil {
+		return err
+	}
+
+	_, err = db.AddProject(&Project{
+		Name:         "zesus",
+		Info:         "This is test proj",
+		Ptype:        "onloop",
+		OwnerID:      userId,
+		IsInitilized: true,
+	})
 
 	return err
 
