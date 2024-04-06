@@ -89,7 +89,7 @@
 		</div>
 	</div>
 
-	<div slot="sidebarLeft" class="h-screen hidden md:block">
+	<div slot="sidebarLeft" class="h-screen hidden md:block bg-gradient-to-br variant-gradient-primary-secondary">
 		<AppRail width="w-14">
 			<div slot="lead" class="mb-4">
 				<AppRailAnchor href="/z/pages/portal">

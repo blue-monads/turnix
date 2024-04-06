@@ -40,7 +40,7 @@
 
 <div class="p-4 flex flex-wrap gap-2">
 	{#each projects as proj}
-		<div class="card p-1 w-96">
+		<div class="card p-1 w-96 hover:bg-secondary-backdrop-token">
 			<header class="card-header">
 				<img
 					src={`https://picsum.photos/seed/${proj.id}/512/300`}
