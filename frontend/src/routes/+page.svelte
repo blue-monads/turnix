@@ -7,14 +7,16 @@
 	<meta name="description" content="Home" />
 </svelte:head>
 
-<AppBar>
-	
-	<svelte:fragment slot="headline">Turnis</svelte:fragment>
-	<svelte:fragment slot="trail">
-		<a href="/z/pages/portal">Portal</a>
-		<a href="/z/pages/auth/login">Login</a>
-		<a href="/z/pages/auth/login">Signup</a>
-	</svelte:fragment>
+<div class="w-full h-full">
+	<AppBar>
+		<svelte:fragment slot="lead">Turnis</svelte:fragment>
+		
+		<svelte:fragment slot="trail">
+			<a class="hover:underline" href="/z/pages/portal">Portal</a>
+			<a class="hover:underline" href="/z/pages/auth/login">Login</a>
+			<a class="hover:underline" href="/z/pages/auth/login">Signup</a>
+		</svelte:fragment>
 
 
-</AppBar>
+	</AppBar>
+</div>
