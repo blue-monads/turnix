@@ -59,7 +59,7 @@
         </section>
 
         <footer class="flex justify-end p-2 gap-2">
-            <a href="/z/pages/portal/self/reset-password" class="btn variant-ghost-secondary" >
+            <a href="/z/pages/portal/self/change-password" class="btn variant-ghost-secondary" >
                 Change Password
             </a>
             
