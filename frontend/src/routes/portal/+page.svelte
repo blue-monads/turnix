@@ -29,13 +29,6 @@
 
 		projects = resp.data;
 	};
-
-	const modal: ModalSettings = {
-		type: "component",
-		component: "picker",
-		meta: { api },
-	};
-
 	const store = getModalStore();
 
 	load();
@@ -74,9 +67,20 @@
 			</section>
 
 			<footer class="card-footer flex justify-end gap-2">
-				<button class="btn variant-filled">explore</button>
+				<button on:click={() => {}} class="btn variant-filled">
+					explore
+				</button>
 
-				<button class="btn variant-filled variant-filled-warning">
+				<button
+					on:click={() => {
+						store.trigger({
+							type: "component",
+							component: "project_options",
+							meta: { api, data: proj },
+						});
+					}}
+					class="btn variant-filled variant-filled-warning"
+				>
 					<Icon name="adjustments-horizontal" class="w-6 h-6" />
 				</button>
 			</footer>
@@ -86,6 +90,10 @@
 
 <FloatyButton
 	handler={() => {
-		store.trigger(modal);
+		store.trigger({
+			type: "component",
+			component: "project_picker",
+			meta: { api },
+		});
 	}}
 />

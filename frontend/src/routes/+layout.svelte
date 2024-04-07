@@ -1,17 +1,16 @@
 <script lang="ts">
-	import {
-		Modal,
-		getModalStore,
-		type ModalComponent,
-	} from "@skeletonlabs/skeleton";
+	import { Modal,getModalStore, type ModalComponent } from "@skeletonlabs/skeleton";
 	import { initializeStores } from "@skeletonlabs/skeleton";
 	import Picker from "./portal/projects/picker.svelte";
-
+    import Options from "./portal/projects/options.svelte";
 	import "./styles.css";
+
 	initializeStores();
 
 	const modalRegistry: Record<string, ModalComponent> = {
-		picker: { ref: Picker },
+		project_picker: { ref: Picker },
+		project_options: {ref: Options}
+
 	};
 </script>
 
