@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS UserDevices (
   contentHash TEXT NOT NULL DEFAULT '', 
   contents TEXT NOT NULL DEFAULT '', 
   ownedBy INTEGER NOT NULL, 
+  pinnedProjectId INTEGER NOT NULL 0,
   extrameta JSON NOT NULL DEFAULT '{}', 
   expiresOn timestamptz not null, 
   FOREIGN KEY (ownedBy) REFERENCES Users(id)
