@@ -17,6 +17,7 @@ type App struct {
 	signer    *signer.Signer
 	flakeNode *snowflake.Node
 	globalJS  []byte
+	ptypeDefs []*xproject.TypeDefination
 }
 
 type Options struct {
@@ -43,6 +44,7 @@ func New(opts Options) *App {
 		signer:    opts.Signer,
 		flakeNode: node,
 		globalJS:  out,
+		ptypeDefs: opts.ProjectTypes,
 	}
 }
 

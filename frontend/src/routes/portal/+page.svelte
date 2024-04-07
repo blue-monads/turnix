@@ -33,6 +33,7 @@
 	const modal: ModalSettings = {
 		type: "component",
 		component: "picker",
+		meta: { api },
 	};
 
 	const store = getModalStore();
@@ -75,8 +76,7 @@
 			<footer class="card-footer flex justify-end gap-2">
 				<button class="btn variant-filled">explore</button>
 
-				<button class="btn variant-filled variant-filled-warning"
-					>
+				<button class="btn variant-filled variant-filled-warning">
 					<Icon name="adjustments-horizontal" class="w-6 h-6" />
 				</button>
 			</footer>

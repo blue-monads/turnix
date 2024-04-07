@@ -58,6 +58,8 @@ func (a *App) apiRoutes(root *gin.RouterGroup) {
 	apiv1.POST("/project/:pid/user", a.accessMiddleware(a.inviteUserToPoject))     // invite
 	apiv1.DELETE("/project/:pid/user", a.accessMiddleware(a.removeUserFromPoject)) // remove from project
 
+	apiv1.GET("/project_types", a.accessMiddleware(a.ListProjectTypes))
+
 	// project type
 
 	apiv1.GET("/pt/laction/template/:pid", a.accessMiddleware(a.listTemplates))

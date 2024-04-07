@@ -8,6 +8,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type ProjectTypes struct {
+	Name       string `json:"name"`
+	Ptype      string `json:"ptype"`
+	Info       string `json:"info"`
+	Icon       string `json:"icon"`
+	IsExternal bool   `json:"is_external"`
+}
+
+func (a *App) ListProjectTypes(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	pdefs := make([]ProjectTypes, 0)
+
+	for _, pdef := range a.ptypeDefs {
+		pdefs = append(pdefs, ProjectTypes{
+			Name:       pdef.Name,
+			Ptype:      pdef.Slug,
+			Icon:       pdef.Icon,
+			Info:       pdef.Info,
+			IsExternal: false,
+		})
+
+	}
+
+	return pdefs, nil
+}
+
 func (a *App) listProjects(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	ptype := ctx.Query("ptype")

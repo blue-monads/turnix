@@ -24,16 +24,16 @@ CREATE TABLE IF NOT EXISTS UserDevices (
   contentHash TEXT NOT NULL DEFAULT '', 
   contents TEXT NOT NULL DEFAULT '', 
   ownedBy INTEGER NOT NULL, 
-  pinnedProjectId INTEGER NOT NULL 0,
+  pinnedProjectId INTEGER NOT NULL DEFAULT 0,
   extrameta JSON NOT NULL DEFAULT '{}', 
-  expiresOn timestamptz not null, 
+  expiresOn TIMESTAMP not null, 
   FOREIGN KEY (ownedBy) REFERENCES Users(id)
 );
 
 create table UserMessages(
   id INTEGER PRIMARY KEY, 
   title text not null default '', 
-  read boolean not null default false, 
+  isRead boolean not null default false, 
   type text not null default "messsage", 
   contents text not null, 
   toUser text not null, 

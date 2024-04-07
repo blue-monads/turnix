@@ -19,15 +19,25 @@ type BuilderOption struct {
 type TypeBuilder func(opt BuilderOption) (ProjectType, error)
 
 type TypeDefination struct {
-	Name               string
-	Slug               string
-	Info               string
-	Icon               string
-	Perminssions       []string
-	Builder            TypeBuilder
-	GlobalJS           []byte
-	AssetData          fs.FS
-	InterceptFileEvent bool
+	Name                string
+	Slug                string
+	Info                string
+	Icon                string
+	NewFormSchemaFields []PTypeField
+	Perminssions        []string
+	Builder             TypeBuilder
+	GlobalJS            []byte
+	AssetData           fs.FS
+	InterceptFileEvent  bool
+}
+
+type PTypeField struct {
+	Name       string   `json:"name"`
+	KeyName    string   `json:"key_name"`
+	Ftype      string   `json:"ftype"`
+	Disabled   bool     `json:"disabled"`
+	Options    []string `json:"options"`
+	IsRequired bool     `json:"is_required"`
 }
 
 type ProjectType interface {
