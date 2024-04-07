@@ -4,12 +4,16 @@
   import MultiText from "./_multi_text.svelte";
   import Action from "./_action.svelte";
   import Icon from "@krowten/svelte-heroicons/Icon.svelte";
+  import { createEventDispatcher } from "svelte";
 
   export let schema: Schema;
   export let data: Record<string, any> = {};
   export let modified = false;
   export let message = "";
-  export let onSave: (data: any) => Promise<void>;
+  export let onSave: ((data: any) => Promise<void>) | undefined = undefined;
+  export let noSubmit = false;
+
+  const dispatch = createEventDispatcher();
 
   let mod_data = {};
   $: _open_selects = {};
@@ -40,6 +44,8 @@
   const setValue = (name: string) => (val: any) => {
     mod_data = { ...mod_data, [name]: val };
     modified = true;
+
+    dispatch("modified", mod_data);
   };
 
   const newSlug = (field: string) => {
@@ -49,16 +55,14 @@
   };
 </script>
 
-<div class="h-full w-full bg-indigo-100 p-10 overflow-auto">
-  <div class="p-5  w-full card">
+<div class="h-full w-full p-4 overflow-auto">
+  <div class="p-5 w-full card">
     <h3 class="h3">{schema.name}</h3>
     <p class="text-red-500">{message || ""}</p>
 
     {#each schema.fields as field, idx}
       <div class="flex-col flex py-3">
-        <label for={`field-${idx}`} class="pb-2  label"
-          >{field.name}</label
-        >
+        <label for={`field-${idx}`} class="pb-2 label">{field.name}</label>
 
         {#if field.ftype === "TEXT"}
           <input
@@ -165,7 +169,7 @@
           <KvEditor
             data={data[field.key_name] || {}}
             onChange={(data) => {
-              setValue(field.key_name)(JSON.stringify(data))
+              setValue(field.key_name)(JSON.stringify(data));
             }}
           />
         {:else}
@@ -174,9 +178,14 @@
       </div>
     {/each}
 
-    {#if modified}
+    {#if modified && !noSubmit}
       <div class="flex justify-end py-3">
-        <Action name="Save" onClick={() => onSave(mod_data)} />
+        <Action
+          name="Save"
+          onClick={() => {
+            onSave && onSave(mod_data);
+          }}
+        />
       </div>
     {/if}
   </div>
