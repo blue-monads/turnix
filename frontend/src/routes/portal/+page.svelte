@@ -67,9 +67,14 @@
 			</section>
 
 			<footer class="card-footer flex justify-end gap-2">
-				<button on:click={() => {}} class="btn variant-filled">
+				<a
+					href="/z/pages/portal/ptypes/{proj['ptype']}?pid={proj[
+						'id'
+					]}"
+					class="btn variant-filled"
+				>
 					explore
-				</button>
+				</a>
 
 				<button
 					on:click={() => {
