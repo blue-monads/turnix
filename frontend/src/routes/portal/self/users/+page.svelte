@@ -36,7 +36,7 @@
                             {user.bio}
                         </dd></span
                     > 
-                    <div class=" flex gap-1">
+                    <div class="flex gap-0 sm:gap-1">
                         <button class="btn btn-sm variant-filled-primary">Login as </button>
                         <button class="btn btn-sm variant-filled-warning">Edit </button>
                         <button class="btn btn-sm variant-filled-error">Delete</button>
