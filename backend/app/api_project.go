@@ -34,6 +34,19 @@ func (a *App) ListProjectTypes(claim *signer.AccessClaim, ctx *gin.Context) (any
 	return pdefs, nil
 }
 
+func (a *App) GetProjectType(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	for _, pdef := range a.ptypeDefs {
+
+		if pdef.Slug == ctx.Param("ptype") {
+			return pdef.NewFormSchemaFields, nil
+		}
+
+	}
+
+	return nil, nil
+}
+
 func (a *App) listProjects(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	ptype := ctx.Query("ptype")

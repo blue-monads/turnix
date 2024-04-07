@@ -34,6 +34,11 @@ export class API {
     }
 
 
+    getProjectType = (ptype: string) => {
+        return this.client.get(`/project_types/${ptype}`)
+    }
+
+
     listProjects = (ptype?: string) => {
         return this.client.get(`/project?ptype=${ptype || ""}`)
     }
