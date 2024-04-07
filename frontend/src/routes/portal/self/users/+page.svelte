@@ -35,7 +35,13 @@
                         <dd class="text-sm opacity-50">
                             {user.bio}
                         </dd></span
-                    > <span>⋮</span>
+                    > 
+                    <div class=" flex gap-1">
+                        <button class="btn btn-sm variant-filled-primary">Login as </button>
+                        <button class="btn btn-sm variant-filled-warning">Edit </button>
+                        <button class="btn btn-sm variant-filled-error">Delete</button>
+                    </div>
+
                 </div>
             {/each}
         </dl>
