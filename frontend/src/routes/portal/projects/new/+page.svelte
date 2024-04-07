@@ -70,6 +70,8 @@
             <section class="mt-2">
                 <AutoForm
                     data={{}}
+                    noSubmit={true}
+
                     {message}
                     schema={{
                         fields: schemaFields,

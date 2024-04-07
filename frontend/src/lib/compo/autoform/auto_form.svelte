@@ -158,13 +158,15 @@
             class="p-2 shadow rounded-lg bg-gray-100 outline-none focus:bg-gray-200"
           />
         {:else if field.ftype === "BOOL"}
-          <input
-            type="checkbox"
-            id={`field-${idx}`}
-            value={get(field.key_name) || false}
-            on:change={setBool(field.key_name)}
-            class="p-2 input"
-          />
+          <div class="flex w-full justify-start">
+            <input
+              type="checkbox"
+              id={`field-${idx}`}
+              value={get(field.key_name) || false}
+              on:change={setBool(field.key_name)}
+              class="p-2"
+            />
+          </div>
         {:else if field.ftype === "KEY_VALUE_TEXT"}
           <KvEditor
             data={data[field.key_name] || {}}
