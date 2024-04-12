@@ -46,6 +46,7 @@ create table UserMessages(
   FOREIGN KEY (fromUser) REFERENCES Users(id), 
   FOREIGN KEY (fromProject) REFERENCES Projects(id)
 );
+
 CREATE TABLE IF NOT EXISTS Projects (
   id INTEGER PRIMARY KEY, 
   name TEXT NOT NULL DEFAULT '', 
@@ -55,7 +56,9 @@ CREATE TABLE IF NOT EXISTS Projects (
   extrameta JSON NOT NULL DEFAULT '{}', 
   isInitilized BOOLEAN NOT NULL DEFAULT FALSE, 
   FOREIGN KEY (owner) REFERENCES Users(id)
+  isPublic BOOLEAN NOT NULL DEFAULT FALSE,
 );
+
 CREATE TABLE IF NOT EXISTS ProjectUsers (
   id INTEGER PRIMARY KEY, 
   userId INTEGER NOT NULL, 
