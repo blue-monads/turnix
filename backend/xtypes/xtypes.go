@@ -14,5 +14,5 @@ type App interface {
 	Stop() error
 
 	AuthMiddleware(fn ApiHandler) gin.HandlerFunc
-	GetDatabase() *xdatabase.Database
+	GetDatabase() xdatabase.Database
 }
