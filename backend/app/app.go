@@ -1,14 +1,10 @@
 package app
 
 import (
-	"net/http"
-	"time"
-
 	"github.com/bornjre/trunis/backend/services/database"
 	"github.com/bornjre/trunis/backend/services/signer"
 	"github.com/bornjre/trunis/backend/xtypes/xproject"
 	"github.com/bwmarrin/snowflake"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -51,18 +47,6 @@ func New(opts Options) *App {
 func (a *App) Run() error {
 
 	r := gin.Default()
-
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete},
-		AllowHeaders:     []string{"Origin", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-		AllowOriginFunc: func(origin string) bool {
-			return true
-		},
-	}))
 
 	a.bindRoutes(r)
 
