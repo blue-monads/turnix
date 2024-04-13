@@ -1,14 +1,13 @@
 package xtypes
 
 import (
-	"github.com/bornjre/trunis/backend/services/signer"
 	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
 	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
 
 	"github.com/gin-gonic/gin"
 )
 
-type ApiHandler func(claim *signer.AccessClaim, ctx *gin.Context) (any, error)
+type ApiHandler func(ctx ContextPlus) (any, error)
 
 type App interface {
 	Start() error

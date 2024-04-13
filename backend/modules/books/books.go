@@ -1,6 +1,7 @@
 package books
 
 import (
+	"github.com/bornjre/trunis/backend/xtypes"
 	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
 	"github.com/bornjre/trunis/backend/xtypes/services/xfilestore"
 	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
@@ -8,6 +9,7 @@ import (
 )
 
 type BookModule struct {
+	app  xtypes.App
 	sess db.Session
 	db   xdatabase.Database
 }

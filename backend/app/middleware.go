@@ -13,7 +13,11 @@ func (a *App) AuthMiddleware(fn xtypes.ApiHandler) gin.HandlerFunc {
 			return
 		}
 
-		resp, err := fn(claim, ctx)
+		resp, err := fn(xtypes.ContextPlus{
+			Claim: claim,
+			Http:  ctx,
+		})
+
 		WriteJSON(ctx, resp, err)
 	}
 }

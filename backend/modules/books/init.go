@@ -27,5 +27,10 @@ func New(opt xproject.BuilderOption) (xproject.ProjectType, error) {
 		db:   db,
 	}
 
+	err := mod.register(opt.RouterGroup)
+	if err != nil {
+		return nil, err
+	}
+
 	return mod, nil
 }

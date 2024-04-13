@@ -9,7 +9,7 @@ import (
 
 // account
 
-func (b *BookModule) addAccount(pid, uid int64, data *Account) (int64, error) {
+func (b *BookModule) dbOpAddAccount(pid, uid int64, data *Account) (int64, error) {
 
 	err := b.userHasScope(pid, uid, "write")
 	if err != nil {
@@ -26,7 +26,7 @@ func (b *BookModule) addAccount(pid, uid int64, data *Account) (int64, error) {
 	return r.ID().(int64), nil
 }
 
-func (b *BookModule) updateAccount(pid, uid, id int64, data map[string]any) error {
+func (b *BookModule) dbOpUpdateAccount(pid, uid, id int64, data map[string]any) error {
 	err := b.userHasScope(pid, uid, "write")
 	if err != nil {
 		return err
@@ -36,7 +36,7 @@ func (b *BookModule) updateAccount(pid, uid, id int64, data map[string]any) erro
 	return b.accountsTable(pid).Find(db.Cond{"id": id}).Update(data)
 }
 
-func (b *BookModule) getAccount(pid, uid, aid int64) (*Account, error) {
+func (b *BookModule) dbOpGetAccount(pid, uid, aid int64) (*Account, error) {
 
 	err := b.userHasScope(pid, uid, "read")
 	if err != nil {
@@ -55,7 +55,7 @@ func (b *BookModule) getAccount(pid, uid, aid int64) (*Account, error) {
 
 }
 
-func (b *BookModule) listAccount(pid, uid int64) ([]Account, error) {
+func (b *BookModule) dbOpListAccount(pid, uid int64) ([]Account, error) {
 
 	err := b.userHasScope(pid, uid, "read")
 	if err != nil {
@@ -74,9 +74,28 @@ func (b *BookModule) listAccount(pid, uid int64) ([]Account, error) {
 
 }
 
+func (b *BookModule) dbOpDeleteAccount(pid, uid, aid int64) error {
+
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	table := b.accountsTable(pid)
+	err = table.Find(db.Cond{"id": aid}).Delete()
+	if err != nil {
+		return err
+	}
+
+	// fixme cleanup txns
+
+	return nil
+
+}
+
 // transactions
 
-func (b *BookModule) addTxn(pid, uid int64, data *Transaction) (int64, error) {
+func (b *BookModule) dbOpAddTxn(pid, uid int64, data *Transaction) (int64, error) {
 
 	err := b.userHasScope(pid, uid, "write")
 	if err != nil {
@@ -93,7 +112,7 @@ func (b *BookModule) addTxn(pid, uid int64, data *Transaction) (int64, error) {
 	return r.ID().(int64), nil
 }
 
-func (b *BookModule) updateTxn(pid, uid, id int64, data map[string]any) error {
+func (b *BookModule) dbOpUpdateTxn(pid, uid, id int64, data map[string]any) error {
 	err := b.userHasScope(pid, uid, "write")
 	if err != nil {
 		return err
@@ -103,7 +122,7 @@ func (b *BookModule) updateTxn(pid, uid, id int64, data map[string]any) error {
 	return b.txnTable(pid).Find(db.Cond{"id": id}).Update(data)
 }
 
-func (b *BookModule) getTxn(pid, uid, aid int64) (*Transaction, error) {
+func (b *BookModule) dbOpGetTxn(pid, uid, aid int64) (*Transaction, error) {
 
 	err := b.userHasScope(pid, uid, "read")
 	if err != nil {
@@ -122,7 +141,7 @@ func (b *BookModule) getTxn(pid, uid, aid int64) (*Transaction, error) {
 
 }
 
-func (b *BookModule) listTxn(pid, uid int64) ([]Transaction, error) {
+func (b *BookModule) dbOpListTxn(pid, uid int64) ([]Transaction, error) {
 
 	err := b.userHasScope(pid, uid, "read")
 	if err != nil {
