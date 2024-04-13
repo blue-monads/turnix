@@ -1,10 +1,11 @@
 package unloop
 
 import (
+	"github.com/bornjre/trunis/backend/registry"
 	"github.com/bornjre/trunis/backend/xtypes/xproject"
 )
 
-var Def = xproject.Defination{
+var def = &xproject.Defination{
 	Name: "On Loop",
 	Slug: "onloop",
 	Info: "Perform action with you on loop",
@@ -17,4 +18,8 @@ var Def = xproject.Defination{
 			IsRequired: false,
 		},
 	},
+}
+
+func init() {
+	registry.Register(def)
 }
