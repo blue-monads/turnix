@@ -3,6 +3,7 @@ package xtypes
 import (
 	"github.com/bornjre/trunis/backend/services/signer"
 	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
+	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,4 +16,5 @@ type App interface {
 
 	AuthMiddleware(fn ApiHandler) gin.HandlerFunc
 	GetDatabase() xdatabase.Database
+	GetSockd() xsockd.Sockd
 }
