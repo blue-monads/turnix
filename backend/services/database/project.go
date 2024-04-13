@@ -4,12 +4,13 @@ import (
 	"errors"
 	"log"
 
+	"github.com/bornjre/trunis/backend/xtypes/models"
 	"github.com/upper/db/v4"
 )
 
 var errNotFound = errors.New("no found")
 
-func (d *DB) AddProject(data *Project) (int64, error) {
+func (d *DB) AddProject(data *models.Project) (int64, error) {
 	r, err := d.projectTable().Insert(data)
 	if err != nil {
 		return 0, err
@@ -23,8 +24,8 @@ func (d *DB) RemoveProject(id int64, ownerId int64) error {
 	return d.projectTable().Find(db.Cond{"id": id, "owner": ownerId}).Delete()
 }
 
-func (d *DB) GetProject(id int64) (*Project, error) {
-	data := &Project{}
+func (d *DB) GetProject(id int64) (*models.Project, error) {
+	data := &models.Project{}
 
 	err := d.projectTable().Find(db.Cond{"id": id}).One(data)
 	if err != nil {
@@ -35,8 +36,8 @@ func (d *DB) GetProject(id int64) (*Project, error) {
 
 }
 
-func (d *DB) GetProjectByOwner(id int64, ownerId int64) (*Project, error) {
-	data := &Project{}
+func (d *DB) GetProjectByOwner(id int64, ownerId int64) (*models.Project, error) {
+	data := &models.Project{}
 
 	err := d.projectTable().Find(db.Cond{"id": id, "owner": ownerId}).One(data)
 	if err != nil {
@@ -51,8 +52,8 @@ func (d *DB) UpdateProject(id int64, ownerId int64, data map[string]any) error {
 	return d.projectTable().Find(db.Cond{"id": id, "owner": ownerId}).Update(data)
 }
 
-func (d *DB) ListOwnProjects(ownerId int64, ptype string) ([]Project, error) {
-	datas := make([]Project, 0)
+func (d *DB) ListOwnProjects(ownerId int64, ptype string) ([]models.Project, error) {
+	datas := make([]models.Project, 0)
 
 	cond := db.Cond{"owner": ownerId}
 
@@ -72,7 +73,7 @@ type TPProjects struct {
 	Project int64 `db:"projectId"`
 }
 
-func (d *DB) ListThirdPartyProjects(userid int64, ptype string) ([]Project, error) {
+func (d *DB) ListThirdPartyProjects(userid int64, ptype string) ([]models.Project, error) {
 
 	cond := db.Cond{
 		"userId": userid,
@@ -96,7 +97,7 @@ func (d *DB) ListThirdPartyProjects(userid int64, ptype string) ([]Project, erro
 		projIds = append(projIds, p.Project)
 	}
 
-	datas := make([]Project, 0, len(projs))
+	datas := make([]models.Project, 0, len(projs))
 
 	err = d.projectTable().Find(db.Cond{
 		"userId": userid,
@@ -116,7 +117,7 @@ func (d *DB) AddUserToProject(ownerid int64, userId int64, projectId int64) erro
 		return errNotFound
 	}
 
-	data := &ProjectUser{
+	data := &models.ProjectUser{
 		ProjectID: (projectId),
 		UserID:    (userId),
 	}

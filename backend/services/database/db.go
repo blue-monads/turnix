@@ -19,7 +19,7 @@ type DB struct {
 func NewDB() (*DB, error) {
 
 	var settings = sqlite.ConnectionURL{
-		Database: `foo.db`, // Path to database file
+		Database: `foo.db`,
 	}
 
 	sess, err := sqlite.Open(settings)

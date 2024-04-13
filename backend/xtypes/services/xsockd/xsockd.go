@@ -3,7 +3,7 @@ package xsockd
 import (
 	"errors"
 
-	"github.com/bornjre/trunis/backend/database"
+	"github.com/bornjre/trunis/backend/xtypes/models"
 )
 
 var (
@@ -19,7 +19,7 @@ type Message struct {
 }
 
 type ConnectOptions struct {
-	Project *database.Project
+	Project *models.Project
 	ConnId  int64
 	UserId  int64
 	Conn    Conn

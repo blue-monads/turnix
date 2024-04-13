@@ -1,4 +1,4 @@
-package xfiles
+package xfilestore
 
 import (
 	"context"

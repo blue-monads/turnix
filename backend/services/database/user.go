@@ -1,8 +1,11 @@
 package database
 
-import "github.com/upper/db/v4"
+import (
+	"github.com/bornjre/trunis/backend/xtypes/models"
+	"github.com/upper/db/v4"
+)
 
-func (d *DB) AddUser(data *User) (int64, error) {
+func (d *DB) AddUser(data *models.User) (int64, error) {
 	r, err := d.userTable().Insert(data)
 	if err != nil {
 		return 0, err
@@ -15,9 +18,9 @@ func (d *DB) UpdateUser(id int64, data map[string]any) error {
 	return d.userTable().Find(db.Cond{"id": id}).Update(data)
 }
 
-func (d *DB) GetUser(id int64) (*User, error) {
+func (d *DB) GetUser(id int64) (*models.User, error) {
 
-	data := &User{}
+	data := &models.User{}
 
 	err := d.userTable().Find(db.Cond{"id": id}).One(data)
 	if err != nil {
@@ -27,9 +30,9 @@ func (d *DB) GetUser(id int64) (*User, error) {
 	return data, nil
 }
 
-func (d *DB) GetUserByEmail(email string) (*User, error) {
+func (d *DB) GetUserByEmail(email string) (*models.User, error) {
 
-	data := &User{}
+	data := &models.User{}
 
 	err := d.userTable().Find(db.Cond{"email": email}).One(data)
 	if err != nil {
@@ -39,9 +42,9 @@ func (d *DB) GetUserByEmail(email string) (*User, error) {
 	return data, nil
 }
 
-func (d *DB) ListUser() ([]User, error) {
+func (d *DB) ListUser() ([]models.User, error) {
 
-	users := make([]User, 0)
+	users := make([]models.User, 0)
 
 	err := d.userTable().Find().All(&users)
 	if err != nil {
@@ -51,9 +54,9 @@ func (d *DB) ListUser() ([]User, error) {
 	return users, nil
 }
 
-func (d *DB) ListUserByOwner(owner int64) ([]User, error) {
+func (d *DB) ListUserByOwner(owner int64) ([]models.User, error) {
 
-	users := make([]User, 0)
+	users := make([]models.User, 0)
 
 	err := d.userTable().Find(db.Cond{"owner": owner}).All(&users)
 	if err != nil {

@@ -1,8 +1,12 @@
 package database
 
+import (
+	"github.com/bornjre/trunis/backend/xtypes/models"
+)
+
 func (db *DB) RunSeed() error {
 
-	userId, err := db.AddUser(&User{
+	userId, err := db.AddUser(&models.User{
 		Name:            "dev",
 		Utype:           "real",
 		Email:           "dev@example.com",
@@ -14,7 +18,7 @@ func (db *DB) RunSeed() error {
 		return err
 	}
 
-	_, err = db.AddUser(&User{
+	_, err = db.AddUser(&models.User{
 		Name:            "zesus",
 		Utype:           "device",
 		Email:           "zesus@example.com",
@@ -27,7 +31,7 @@ func (db *DB) RunSeed() error {
 		return err
 	}
 
-	_, err = db.AddProject(&Project{
+	_, err = db.AddProject(&models.Project{
 		Name:         "zesus",
 		Info:         "This is test proj",
 		Ptype:        "onloop",
