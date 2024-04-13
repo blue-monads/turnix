@@ -14,6 +14,7 @@ type ProjectUser struct {
 	ID          int64  `json:"id" db:"id,omitempty"`
 	UserID      int64  `json:"userId" db:"userId"`
 	ProjectID   int64  `json:"projectId" db:"projectId"`
+	Scope       int64  `json:"scope" db:"scope,omitempty"`
 	AccessToken string `json:"accessToken" db:"accessToken"`
 	ExtraMeta   string `json:"extrameta" db:"extrameta,omitempty"`
 }

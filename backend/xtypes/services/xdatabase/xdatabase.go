@@ -1,13 +1,24 @@
 package xdatabase
 
 import (
+	"errors"
+
 	"github.com/bornjre/trunis/backend/xtypes/models"
 	"github.com/upper/db/v4"
+)
+
+const (
+	ScopeOwner = "owner"
+)
+
+var (
+	ErrUserNoScope = errors.New("err: user doesnot have required scope")
 )
 
 type Database interface {
 	Init() error
 	GetSession() db.Session
+	Table(name string) db.Collection
 	Close() error
 	RunSeed() error
 
@@ -28,4 +39,6 @@ type Database interface {
 	ListUserByOwner(owner int64) ([]models.User, error)
 	RemoveProject(id int64, ownerId int64) error
 	UpdateProject(id int64, ownerId int64, data map[string]any) error
+
+	GetProjectUserScope(userId int64, projectId int64) (string, error)
 }

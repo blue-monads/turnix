@@ -73,5 +73,5 @@ func (d *DB) DeleteUser(id int64) error {
 // private
 
 func (d *DB) userTable() db.Collection {
-	return d.table("Users")
+	return d.Table("Users")
 }

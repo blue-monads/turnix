@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/bornjre/trunis/backend/xtypes/models"
+	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
 	"github.com/upper/db/v4"
 )
 
@@ -135,6 +136,24 @@ func (d *DB) RemoveUserFromPoject(ownerid int64, userId int64, projectId int64) 
 	return d.projectUserTable().Find(db.Cond{"projectId": projectId, "userId": userId}).Delete()
 }
 
+type ProjectUserScope struct {
+	Scope string `json:"scope" db:"scope,omitempty"`
+}
+
+func (d *DB) GetProjectUserScope(userId int64, projectId int64) (string, error) {
+	if d.isOwner(userId, projectId) {
+		return xdatabase.ScopeOwner, nil
+	}
+
+	data := &ProjectUserScope{}
+	err := d.projectUserTable().Find(db.Cond{"userId": userId, "projectId": projectId}).One(data)
+	if err != nil {
+		return "", err
+	}
+
+	return data.Scope, nil
+}
+
 // private
 
 func (d *DB) isOwner(ownerid int64, projId int64) bool {
@@ -149,21 +168,10 @@ func (d *DB) isOwner(ownerid int64, projId int64) bool {
 
 }
 
-func (d *DB) userHasAccess(userId int64, projId int64) bool {
-	exist, err := d.projectUserTable().Find(db.Cond{"userId": userId, "projectId": projId}).Exists()
-	if err != nil {
-		log.Println("owner check error", err)
-		return false
-	}
-
-	return exist
-
-}
-
 func (d *DB) projectTable() db.Collection {
-	return d.table("Projects")
+	return d.Table("Projects")
 }
 
 func (d *DB) projectUserTable() db.Collection {
-	return d.table("ProjectUsers")
+	return d.Table("ProjectUsers")
 }

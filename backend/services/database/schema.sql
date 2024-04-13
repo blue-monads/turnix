@@ -62,9 +62,10 @@ CREATE TABLE IF NOT EXISTS Projects (
 CREATE TABLE IF NOT EXISTS ProjectUsers (
   id INTEGER PRIMARY KEY, 
   userId INTEGER NOT NULL, 
-  extrameta JSON NOT NULL DEFAULT '{}', 
   projectId INTEGER NOT NULL, 
+  scope TEXT NOT NULL DEFAULT '', 
   accessToken TEXT NOT NULL DEFAULT '', 
+  extrameta JSON NOT NULL DEFAULT '{}', 
   FOREIGN KEY (projectId) REFERENCES Projects(id), 
   FOREIGN KEY (userId) REFERENCES Users(id), 
   unique(projectId, userId)
