@@ -1,9 +1,3 @@
-create table AccountType(
-    id INTEGER PRIMARY KEY,
-    slug TEXT NOT NULL DEFAULT '',
-    unique(slug)
-);
-
 create table Accounts(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
@@ -17,11 +11,7 @@ create table Accounts(
     is_deleted BOOLEAN NOT NULL FALSE
 );
 
-create table TransactionType(
-    id INTEGER PRIMARY KEY,
-    slug TEXT NOT NULL DEFAULT '',
-    unique(slug)
-);
+
 
 create table Transactions(
     id INTEGER PRIMARY KEY,

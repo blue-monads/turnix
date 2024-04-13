@@ -4,7 +4,7 @@ import (
 	"io/fs"
 
 	"github.com/bornjre/trunis/backend/xtypes"
-	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
+	"github.com/bornjre/trunis/backend/xtypes/services/xfilestore"
 	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
 
 	"github.com/gin-gonic/gin"
@@ -50,10 +50,8 @@ type ProjectType interface {
 
 	DeInit(pid int64) error
 
-	HttpHandle(group *gin.RouterGroup)
-
 	OnSockdMessage(msg *xsockd.Message) error
 	OnSockdConn(opts *xsockd.ConnectOptions) error
 
-	OnFileEvent(event *xdatabase.Database) error
+	OnFileEvent(event *xfilestore.Event) error
 }
