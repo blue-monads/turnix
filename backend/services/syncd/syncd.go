@@ -4,9 +4,10 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/bornjre/trunis/backend/database"
+	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
+	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
 	"github.com/bornjre/trunis/backend/xtypes/xproject"
-	"github.com/bornjre/trunis/backend/xtypes/xsockd"
+
 	"github.com/rs/zerolog"
 )
 
@@ -16,12 +17,12 @@ type Sockd struct {
 	connLock  sync.Mutex
 
 	projectTypes map[string]xproject.ProjectType
-	database     *database.DB
+	database     xdatabase.Database
 	logger       zerolog.Logger
 }
 
 type Options struct {
-	Database     *database.DB
+	Database     xdatabase.Database
 	ProjectTypes map[string]xproject.ProjectType
 	Logger       zerolog.Logger
 }

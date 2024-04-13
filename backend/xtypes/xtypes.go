@@ -1,8 +1,9 @@
 package xtypes
 
 import (
-	"github.com/bornjre/trunis/backend/database"
 	"github.com/bornjre/trunis/backend/services/signer"
+	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,5 +14,5 @@ type App interface {
 	Stop() error
 
 	AuthMiddleware(fn ApiHandler) gin.HandlerFunc
-	GetDatabase() *database.DB
+	GetDatabase() *xdatabase.Database
 }

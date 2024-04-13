@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
+	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
 	"github.com/bornjre/trunis/backend/xtypes/xproject"
-	"github.com/bornjre/trunis/backend/xtypes/xsockd"
 )
 
 type Connection struct {

@@ -4,10 +4,10 @@ import (
 	"io"
 	"os"
 
-	"github.com/bornjre/trunis/backend/xtypes/xfiles"
+	"github.com/bornjre/trunis/backend/xtypes/services/xfilestore"
 )
 
-var _ xfiles.FData = (*FileFdata)(nil)
+var _ xfilestore.FData = (*FileFdata)(nil)
 
 type FileFdata struct {
 	fpath         string

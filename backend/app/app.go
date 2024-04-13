@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bornjre/trunis/backend/database"
+	"github.com/bornjre/trunis/backend/services/database"
 	"github.com/bornjre/trunis/backend/services/signer"
 	"github.com/bornjre/trunis/backend/xtypes/xproject"
 	"github.com/bwmarrin/snowflake"

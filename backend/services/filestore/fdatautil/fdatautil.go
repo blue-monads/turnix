@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/bornjre/trunis/backend/xtypes/xfiles"
+	"github.com/bornjre/trunis/backend/xtypes/services/xfilestore"
 )
 
-func ReadAndClose(data xfiles.FData) ([]byte, error) {
+func ReadAndClose(data xfilestore.FData) ([]byte, error) {
 	defer data.Close()
 
 	out, err := data.AsBytes()
@@ -21,7 +21,7 @@ const (
 	CtypeCSS  = "text/css"
 )
 
-func WriteAndClose(rw http.ResponseWriter, file string, data xfiles.FData) {
+func WriteAndClose(rw http.ResponseWriter, file string, data xfilestore.FData) {
 	defer data.Close()
 
 	out, err := data.AsBytes()

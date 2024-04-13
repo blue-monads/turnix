@@ -2,7 +2,7 @@ package backend
 
 import (
 	"github.com/bornjre/trunis/backend/app"
-	"github.com/bornjre/trunis/backend/database"
+	"github.com/bornjre/trunis/backend/services/database"
 	"github.com/bornjre/trunis/backend/services/signer"
 	"github.com/bornjre/trunis/backend/xtypes/xproject"
 )

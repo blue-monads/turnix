@@ -4,8 +4,9 @@ import (
 	"io/fs"
 
 	"github.com/bornjre/trunis/backend/xtypes"
-	"github.com/bornjre/trunis/backend/xtypes/xfiles"
-	"github.com/bornjre/trunis/backend/xtypes/xsockd"
+	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
+	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
+
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -52,5 +53,5 @@ type ProjectType interface {
 	OnSockdMessage(msg *xsockd.Message) error
 	OnSockdConn(opts *xsockd.ConnectOptions) error
 
-	OnFileEvent(event *xfiles.Event) error
+	OnFileEvent(event *xdatabase.Database) error
 }

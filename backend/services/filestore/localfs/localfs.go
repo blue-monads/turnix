@@ -11,7 +11,7 @@ import (
 
 	"github.com/bornjre/trunis/backend/services/filestore/fdatautil"
 	"github.com/bornjre/trunis/backend/xtypes/libx/easyerr"
-	"github.com/bornjre/trunis/backend/xtypes/xfiles"
+	"github.com/bornjre/trunis/backend/xtypes/services/xfilestore"
 	"github.com/k0kubun/pp"
 )
 
@@ -28,14 +28,14 @@ func New(basepath string) *LocalFS {
 	}
 }
 
-func (l *LocalFS) ListFolder(ctx context.Context, fpath string) ([]*xfiles.BlobInfo, error) {
+func (l *LocalFS) ListFolder(ctx context.Context, fpath string) ([]*xfilestore.BlobInfo, error) {
 
 	files, err := os.ReadDir(l.folderPath(fpath))
 	if err != nil {
 		return nil, err
 	}
 
-	respblobs := make([]*xfiles.BlobInfo, 0, len(files))
+	respblobs := make([]*xfilestore.BlobInfo, 0, len(files))
 	for _, f := range files {
 
 		i, err := f.Info()
@@ -43,7 +43,7 @@ func (l *LocalFS) ListFolder(ctx context.Context, fpath string) ([]*xfiles.BlobI
 			continue
 		}
 
-		respblobs = append(respblobs, &xfiles.BlobInfo{
+		respblobs = append(respblobs, &xfilestore.BlobInfo{
 			Name:         f.Name(),
 			Size:         int(i.Size()),
 			IsDir:        f.IsDir(),
@@ -83,7 +83,7 @@ func (l *LocalFS) RenameFolder(ctx context.Context, fpath, newname string) error
 	return os.Rename(l.folderPath(fpath), path.Join(l.basePath, dir, newname))
 }
 
-func (l *LocalFS) CompressFolder(ctx context.Context, fpath string) (xfiles.FData, error) {
+func (l *LocalFS) CompressFolder(ctx context.Context, fpath string) (xfilestore.FData, error) {
 
 	folderToZip := l.folderPath(fpath)
 
@@ -125,16 +125,16 @@ func (l *LocalFS) CompressFolder(ctx context.Context, fpath string) (xfiles.FDat
 
 }
 
-func (l *LocalFS) TreeFolder(ctx context.Context, fpath string) ([]*xfiles.BlobInfo, error) {
+func (l *LocalFS) TreeFolder(ctx context.Context, fpath string) ([]*xfilestore.BlobInfo, error) {
 	folderToZip := l.folderPath(fpath)
-	respblobs := make([]*xfiles.BlobInfo, 0)
+	respblobs := make([]*xfilestore.BlobInfo, 0)
 
 	err := filepath.Walk(folderToZip, func(filePath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		respblobs = append(respblobs, &xfiles.BlobInfo{
+		respblobs = append(respblobs, &xfilestore.BlobInfo{
 			Name:         info.Name(),
 			Size:         int(info.Size()),
 			IsDir:        info.IsDir(),
@@ -151,7 +151,7 @@ func (l *LocalFS) TreeFolder(ctx context.Context, fpath string) ([]*xfiles.BlobI
 	return respblobs, nil
 }
 
-func (l *LocalFS) GetFile(ctx context.Context, fpath string) (xfiles.FData, error) {
+func (l *LocalFS) GetFile(ctx context.Context, fpath string) (xfilestore.FData, error) {
 
 	ffile := l.folderPath(fpath)
 	exist, err := l.fileExists(ffile)
@@ -233,11 +233,11 @@ func (l *LocalFS) MoveFile(ctx context.Context, fpath, newfpath string) error {
 	return os.Rename(ffile, l.folderPath(newfpath))
 }
 
-func (l *LocalFS) NewFile(ctx context.Context, fpath, name string, data xfiles.FData) error {
+func (l *LocalFS) NewFile(ctx context.Context, fpath, name string, data xfilestore.FData) error {
 	return l.writeFile(ctx, fpath, name, data)
 }
 
-func (l *LocalFS) UpdateFile(ctx context.Context, fpath, name string, data xfiles.FData) error {
+func (l *LocalFS) UpdateFile(ctx context.Context, fpath, name string, data xfilestore.FData) error {
 	return l.writeFile(ctx, fpath, name, data)
 }
 
@@ -245,7 +245,7 @@ func (l *LocalFS) DeleteFile(ctx context.Context, fpath, name string) error {
 	return os.Remove(l.filePath(fpath, name))
 }
 
-func (l *LocalFS) CompressFiles(ctx context.Context, fpath string, files []string) (xfiles.FData, error) {
+func (l *LocalFS) CompressFiles(ctx context.Context, fpath string, files []string) (xfilestore.FData, error) {
 
 	zfile, err := os.CreateTemp("", "*temphia_cab_folder.zip")
 	if err != nil {
@@ -294,7 +294,7 @@ func (l *LocalFS) CompressFiles(ctx context.Context, fpath string, files []strin
 
 // private
 
-func (l *LocalFS) writeFile(ctx context.Context, fpath, name string, data xfiles.FData) error {
+func (l *LocalFS) writeFile(ctx context.Context, fpath, name string, data xfilestore.FData) error {
 
 	pp.Println("@write_file")
 

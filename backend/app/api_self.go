@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/bornjre/trunis/backend/database"
 	"github.com/bornjre/trunis/backend/services/signer"
+	"github.com/bornjre/trunis/backend/xtypes/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -55,7 +55,7 @@ func (a *App) selfUsers(claim *signer.AccessClaim, ctx *gin.Context) (any, error
 
 func (a *App) selfAddUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
-	data := &database.User{}
+	data := &models.User{}
 
 	err := ctx.Bind(data)
 	if err != nil {
