@@ -17,16 +17,16 @@ type BuilderOption struct {
 	Logger zerolog.Logger
 }
 
-type TypeBuilder func(opt BuilderOption) (ProjectType, error)
+type Builder func(opt BuilderOption) (ProjectType, error)
 
-type TypeDefination struct {
+type Defination struct {
 	Name                string
 	Slug                string
 	Info                string
 	Icon                string
 	NewFormSchemaFields []PTypeField
 	Perminssions        []string
-	Builder             TypeBuilder
+	Builder             Builder
 	GlobalJS            []byte
 	AssetData           fs.FS
 	InterceptFileEvent  bool

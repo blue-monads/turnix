@@ -9,7 +9,7 @@ import (
 	"github.com/bornjre/trunis/backend/xtypes/xproject"
 )
 
-func buildGlobalJS(projTypes []*xproject.TypeDefination) ([]byte, error) {
+func buildGlobalJS(projTypes []*xproject.Defination) ([]byte, error) {
 	data := make([]models.Def, 0)
 	var buf bytes.Buffer
 

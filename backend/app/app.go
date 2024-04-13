@@ -13,14 +13,14 @@ type App struct {
 	signer    *signer.Signer
 	flakeNode *snowflake.Node
 	globalJS  []byte
-	ptypeDefs []*xproject.TypeDefination
+	ptypeDefs []*xproject.Defination
 }
 
 type Options struct {
 	DB     *database.DB
 	Signer *signer.Signer
 
-	ProjectTypes []*xproject.TypeDefination
+	ProjectTypes []*xproject.Defination
 }
 
 func New(opts Options) *App {
