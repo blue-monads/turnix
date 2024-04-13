@@ -28,6 +28,6 @@ func Run() error {
 		ProjectTypes: nil,
 	})
 
-	return as.Run()
+	return as.Start()
 
 }

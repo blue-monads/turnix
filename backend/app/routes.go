@@ -1,6 +1,8 @@
 package app
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -9,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/bornjre/trunis/backend/xtypes/libx/httpx"
+	"github.com/bornjre/trunis/backend/xtypes/xproject"
 	"github.com/bornjre/trunis/frontend"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
@@ -29,6 +32,24 @@ func (a *App) bindRoutes(e *gin.Engine) {
 
 		ctx.Data(http.StatusOK, httpx.CtypeJS, a.globalJS)
 	})
+
+	projectRoute := e.Group("/z/project")
+
+	for _, pdef := range a.ptypeDefs {
+		subLogger := a.rootLogger.With().Str("ptype", pdef.Slug).Logger()
+
+		proj, err := pdef.Builder(xproject.BuilderOption{
+			App:         a,
+			Logger:      subLogger,
+			RouterGroup: projectRoute.Group(fmt.Sprintf("/%s", pdef.Slug)),
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		a.projects[pdef.Slug] = proj
+
+	}
 
 	e.NoRoute(a.noRoute)
 

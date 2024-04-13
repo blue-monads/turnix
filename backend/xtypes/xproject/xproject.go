@@ -15,6 +15,8 @@ type BuilderOption struct {
 	App xtypes.App
 
 	Logger zerolog.Logger
+
+	RouterGroup *gin.RouterGroup
 }
 
 type Builder func(opt BuilderOption) (ProjectType, error)
