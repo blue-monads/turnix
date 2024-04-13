@@ -3,25 +3,17 @@ package app
 import (
 	"strconv"
 
-	"github.com/bornjre/trunis/backend/database"
 	"github.com/bornjre/trunis/backend/services/signer"
+	"github.com/bornjre/trunis/backend/xtypes/models"
 	"github.com/gin-gonic/gin"
 )
 
-type ProjectTypes struct {
-	Name       string `json:"name"`
-	Ptype      string `json:"ptype"`
-	Info       string `json:"info"`
-	Icon       string `json:"icon"`
-	IsExternal bool   `json:"is_external"`
-}
-
 func (a *App) ListProjectTypes(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
-	pdefs := make([]ProjectTypes, 0)
+	pdefs := make([]models.ProjectTypes, 0)
 
 	for _, pdef := range a.ptypeDefs {
-		pdefs = append(pdefs, ProjectTypes{
+		pdefs = append(pdefs, models.ProjectTypes{
 			Name:       pdef.Name,
 			Ptype:      pdef.Slug,
 			Icon:       pdef.Icon,
@@ -68,7 +60,7 @@ func (a *App) listProjects(claim *signer.AccessClaim, ctx *gin.Context) (any, er
 }
 
 func (a *App) addProject(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
-	data := database.Project{}
+	data := models.Project{}
 	err := ctx.Bind(&data)
 	if err != nil {
 		return nil, err

@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/bornjre/trunis/backend/database"
+	"github.com/bornjre/trunis/backend/xtypes/models"
 	_ "github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 
@@ -14,7 +14,7 @@ import (
 
 func (a *App) signUpDirect(ctx *gin.Context) {
 
-	data := &database.User{}
+	data := &models.User{}
 	err := ctx.BindJSON(data)
 	if err != nil {
 		WriteErr(ctx, err)

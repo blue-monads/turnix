@@ -63,22 +63,6 @@ func (a *App) apiRoutes(root *gin.RouterGroup) {
 
 	// project type
 
-	apiv1.GET("/pt/laction/template/:pid", a.accessMiddleware(a.listTemplates))
-	apiv1.POST("/pt/laction/template/:pid", a.accessMiddleware(a.addTemplate))
-	apiv1.POST("/pt/laction/template/:pid/:tid", a.accessMiddleware(a.updateTemplate))
-	apiv1.GET("/pt/laction/template/:pid/:tid", a.accessMiddleware(a.getTemplate))
-	apiv1.DELETE("/pt/laction/template/:pid/:tid", a.accessMiddleware(a.removeTemplate))
-
-	apiv1.POST("/pt/laction/template/:pid/:tid/push", a.accessMiddleware(a.pushQueueMessage))
-
-	apiv1.GET("/pt/laction/queue/:pid", a.accessMiddleware(a.listQueueMessages))
-	apiv1.POST("/pt/laction/queue/:pid", a.accessMiddleware(a.addQueueMessage))
-	apiv1.POST("/pt/laction/queue/:pid/:qid", a.accessMiddleware(a.updateQueueMessage))
-	apiv1.GET("/pt/laction/queue/:pid/:qid", a.accessMiddleware(a.getQueueMessage))
-	apiv1.DELETE("/pt/laction/queue/:pid/:qid", a.accessMiddleware(a.removeUpdateQueueMessage))
-
-	apiv1.POST("/pt/laction/query/:pid", a.accessMiddleware(a.queryQueueMessage))
-
 }
 
 func (a *App) noRoute(ctx *gin.Context) {

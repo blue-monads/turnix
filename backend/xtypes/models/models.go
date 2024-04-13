@@ -35,3 +35,11 @@ type ProjectUser struct {
 	AccessToken string `json:"accessToken" db:"accessToken"`
 	ExtraMeta   string `json:"extrameta" db:"extrameta,omitempty"`
 }
+
+type ProjectTypes struct {
+	Name       string `json:"name"`
+	Ptype      string `json:"ptype"`
+	Info       string `json:"info"`
+	Icon       string `json:"icon"`
+	IsExternal bool   `json:"is_external"`
+}
