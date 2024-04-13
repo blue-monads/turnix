@@ -2,6 +2,7 @@ package backend
 
 import (
 	"github.com/bornjre/trunis/backend/app"
+	"github.com/bornjre/trunis/backend/registry"
 	"github.com/bornjre/trunis/backend/services/database"
 	"github.com/bornjre/trunis/backend/services/signer"
 )
@@ -25,7 +26,7 @@ func Run() error {
 	as := app.New(app.Options{
 		DB:           db,
 		Signer:       signer,
-		ProjectTypes: nil,
+		ProjectTypes: registry.GetAll(),
 	})
 
 	return as.Start()
