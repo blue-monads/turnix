@@ -5,23 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/bornjre/trunis/backend/xtypes/models"
 	"github.com/bornjre/trunis/backend/xtypes/xproject"
 )
 
-type Def struct {
-	Name       string `json:"name"`
-	Slug       string `json:"slug"`
-	Icon       string `json:"icon,omitempty"`
-	Link       string `json:"link,omitempty"`
-	IsExternal bool   `json:"is_external"`
-}
-
 func buildGlobalJS(projTypes []*xproject.TypeDefination) ([]byte, error) {
-	data := make([]Def, 0)
+	data := make([]models.Def, 0)
 	var buf bytes.Buffer
 
 	for _, ptype := range projTypes {
-		data = append(data, Def{
+		data = append(data, models.Def{
 			Name:       ptype.Name,
 			Slug:       ptype.Slug,
 			Icon:       ptype.Icon,
