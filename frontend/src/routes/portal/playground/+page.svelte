@@ -1,9 +1,9 @@
 <script lang="ts">
-    import AddTxn from "./addTxn.svelte";
+
+    import TxnListing from "./TxnListing.svelte";
+    import Icon from "@krowten/svelte-heroicons/Icon.svelte";
+
 </script>
 
 
-<AddTxn />
-
-
-
+<TxnListing />
