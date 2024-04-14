@@ -14,7 +14,7 @@
         <section class="p-4 flex flex-col gap-4">
             <label class="label">
                 <span>Title</span>
-                <input class="input p-1" type="text" placeholder="title" />
+                <input class="input p-1" type="text" placeholder="Opening balance" />
             </label>
 
             <div class="label border p-2 flex flex-col">
