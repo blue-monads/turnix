@@ -16,4 +16,6 @@ type App interface {
 	AuthMiddleware(fn ApiHandler) gin.HandlerFunc
 	GetDatabase() xdatabase.Database
 	GetSockd() xsockd.Sockd
+
+	NewId() int64
 }

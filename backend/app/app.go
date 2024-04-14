@@ -73,3 +73,7 @@ func (a *App) GetDatabase() xdatabase.Database {
 func (a *App) GetSockd() xsockd.Sockd {
 	return nil
 }
+
+func (a *App) NewId() int64 {
+	return a.flakeNode.Generate().Int64()
+}
