@@ -25,6 +25,7 @@ func New(opt xproject.BuilderOption) (xproject.ProjectType, error) {
 	mod := &BookModule{
 		sess: db.GetSession(),
 		db:   db,
+		app:  opt.App,
 	}
 
 	err := mod.register(opt.RouterGroup)

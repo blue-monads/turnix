@@ -38,6 +38,10 @@ func (a *App) bindRoutes(e *gin.Engine) {
 	for _, pdef := range a.ptypeDefs {
 		subLogger := a.rootLogger.With().Str("ptype", pdef.Slug).Logger()
 
+		if pdef.Builder == nil {
+			continue
+		}
+
 		proj, err := pdef.Builder(xproject.BuilderOption{
 			App:         a,
 			Logger:      subLogger,
