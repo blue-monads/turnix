@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/bornjre/trunis/backend/xtypes/models"
+	"github.com/gobuffalo/fizz"
 	"github.com/upper/db/v4"
 )
 
@@ -14,6 +15,10 @@ const (
 var (
 	ErrUserNoScope = errors.New("err: user doesnot have required scope")
 )
+
+type DDLContext struct {
+	Tables []fizz.Table
+}
 
 type Database interface {
 	Init() error
@@ -41,4 +46,8 @@ type Database interface {
 	UpdateProject(id int64, ownerId int64, data map[string]any) error
 
 	GetProjectUserScope(userId int64, projectId int64) (string, error)
+
+	Vender() string
+
+	RunDDL(ctx DDLContext) error
 }

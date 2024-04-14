@@ -4,7 +4,11 @@ import (
 	"database/sql"
 	_ "embed"
 	"log"
+	"strings"
 
+	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
+	"github.com/gobuffalo/fizz"
+	"github.com/gobuffalo/fizz/translators"
 	"github.com/upper/db/v4"
 	"github.com/upper/db/v4/adapter/sqlite"
 )
@@ -56,6 +60,36 @@ func (db *DB) Init() error {
 
 func (db *DB) Close() error {
 	return db.sess.Close()
+}
+
+func (db *DB) Vender() string {
+	return "sqlite"
+}
+
+func (db *DB) RunDDL(ctx xdatabase.DDLContext) error {
+	var buf strings.Builder
+
+	t := translators.NewSQLite("")
+
+	for _, tbl := range ctx.Tables {
+
+		str, err := fizz.AString(tbl.String(), t)
+		if err != nil {
+			return err
+		}
+
+		buf.WriteString(str)
+	}
+
+	db.sess.Driver()
+	driver := db.sess.Driver().(*sql.DB)
+
+	_, err := driver.Exec(schema)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (db *DB) GetSession() db.Session {
