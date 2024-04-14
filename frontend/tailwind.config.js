@@ -17,7 +17,7 @@ export default {
     extend: {},
   },
   plugins: [skeleton({
-		themes: { preset: [ "skeleton" ] }
+		themes: { preset: [ "skeleton", "crimson", 'gold-nouveau', "hamlindigo", "modern", "rocket", "sahara", "seafoam", "skeleton" ] }
 	})],
 }
 
