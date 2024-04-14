@@ -71,20 +71,28 @@ func (db *DB) RunDDL(ctx xdatabase.DDLContext) error {
 
 	t := translators.NewSQLite("")
 
-	for _, tbl := range ctx.Tables {
-
-		str, err := fizz.AString(tbl.String(), t)
+	if ctx.DDL != "" {
+		str, err := fizz.AString(ctx.DDL, t)
 		if err != nil {
 			return err
 		}
 
 		buf.WriteString(str)
+
+	} else {
+		for _, tbl := range ctx.Tables {
+			str, err := fizz.AString(tbl.String(), t)
+			if err != nil {
+				return err
+			}
+			buf.WriteString(str)
+		}
 	}
 
 	db.sess.Driver()
 	driver := db.sess.Driver().(*sql.DB)
 
-	_, err := driver.Exec(schema)
+	_, err := driver.Exec(buf.String())
 	if err != nil {
 		return err
 	}

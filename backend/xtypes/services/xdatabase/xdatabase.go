@@ -18,6 +18,7 @@ var (
 
 type DDLContext struct {
 	Tables []fizz.Table
+	DDL    string
 }
 
 type Database interface {
