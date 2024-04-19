@@ -12,6 +12,7 @@
 	<svelte:fragment slot="trail">
         <a href="/z/pages/portal/self/users" class="btn variant-filled">Users</a>
         <a href="/z/pages/portal/self/devices" class="btn variant-filled">Devices</a>
+        <a href="/z/pages/portal/self/sessions" class="btn variant-filled">Switch Session</a>
     </svelte:fragment>
 </AppBar>
 
