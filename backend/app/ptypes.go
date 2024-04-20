@@ -18,7 +18,7 @@ func buildGlobalJS(projTypes []*xproject.Defination) ([]byte, error) {
 			Name:       ptype.Name,
 			Slug:       ptype.Slug,
 			Icon:       ptype.Icon,
-			Link:       fmt.Sprintf("/z/pages/portal/ptypes/%s", ptype.Slug),
+			Link:       fmt.Sprintf("/z/pages/portal/projects/%s", ptype.Slug),
 			IsExternal: ptype.AssetData != nil,
 		})
 	}
