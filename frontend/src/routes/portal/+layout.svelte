@@ -1,4 +1,5 @@
 <script lang="ts">
+	// @ts-ignore
 	import Icon from "@krowten/svelte-heroicons/Icon.svelte";
 	import {
 		AppBar,
@@ -21,21 +22,22 @@
 	import { storePopup } from "@skeletonlabs/skeleton";
 
 	import Logo from "../../lib/images/logo.png";
-	import { API } from "$lib/api/api";
+	import { RootAPI } from "$lib/api/api";
 	import ContextThis from "./contextThis.svelte";
 
 	let currentTile = "";
 	let showMobileModal = false;
 
-	let sibarItems: object[] = [];
+	let sibarItems: Record<string, any>[] = [];
 
-	let api: API;
+	let api: RootAPI;
 
 	const load = () => {
+		// @ts-ignore
 		const ptypes: object[] = window["__turnis_ptypes__"] || [];
 		sibarItems = ptypes;
 
-		api = new API();
+		api = new RootAPI();
 	};
 
 	const toggle = () => {
@@ -144,6 +146,7 @@
 				{#each sibarItems as item, index}
 				{@const popupHover = { event: "hover", target: `popupHover-${index}`,placement: "right",}}
 					<a
+					
 						use:popup={popupHover}
 						class="p-4 hover:bg-secondary-50 [&>*]:pointer-events-none"
 						href={item["link"]}
