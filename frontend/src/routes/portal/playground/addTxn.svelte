@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Icon from "@krowten/svelte-heroicons/Icon.svelte";
+  import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { FileDropzone } from "@skeletonlabs/skeleton";
 
     let files: FileList;
@@ -31,7 +31,7 @@
                     </label>
 
                     <button class="pt-4 cursor-pointer">
-                        <Icon name="arrow-up-right" class="w-5 h-5" />
+                        <SvgIcon name="arrow-up-right" className="w-5 h-5" />
                     </button>
 
                     <label class="label">
@@ -52,7 +52,7 @@
                     </label>
 
                     <button class="pt-4 cursor-pointer">
-                        <Icon name="arrow-up-right" class="w-5 h-5" />
+                        <SvgIcon name="arrow-up-right" className="w-5 h-5" />
                     </button>
 
                     <label class="label">
@@ -76,7 +76,7 @@
                 <span>Attachments</span>
                 <FileDropzone bind:files name="files">
                     <div slot="lead" class="flex justify-center">
-                        <Icon name="arrow-up-tray" class="w-6 h-6" />
+                        <SvgIcon name="arrow-up-tray" className="w-6 h-6" />
                     </div>
 
                     <svelte:fragment slot="message">

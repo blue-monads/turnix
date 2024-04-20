@@ -1,7 +1,6 @@
 <script lang="ts">
+  import SvgIcon from "../icons/SvgIcon.svelte";
   import Dropdown from "./_dropdown.svelte";
-
-  import Icon from "@krowten/svelte-heroicons/Icon.svelte";
 
   export let actions: {
     Action: Function;
@@ -81,7 +80,7 @@
                     'bg-blue-400'}"
                 >
                   {#if icon}
-                    <Icon name={icon} class="h-5 w-5" />
+                    <SvgIcon name={icon} className="h-5 w-5" />
                   {/if}
 
                   {action.Name}</button
@@ -98,7 +97,7 @@
                       class="flex justify-between rounded-sm px-4 py-2 text-sm capitalize text-gray-700 hover:bg-blue-500 hover:text-white"
                     >
                       {#if action["icon"]}
-                        <Icon name={action["icon"]} class="h-5 w-5" />
+                        <SvgIcon name={action["icon"]} className="h-5 w-5" />
                       {/if}
 
                       <span> {action.Name} </span>

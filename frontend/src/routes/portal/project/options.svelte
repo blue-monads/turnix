@@ -2,12 +2,12 @@
     import { gotoPorjects } from "$lib/nav";
     import { AutoForm, PageLayout, AutoTable } from "$lib/compo";
 
-    import type { API } from "$lib/api";
+    import type { RootAPI } from "$lib/api";
     import { getContext } from "svelte";
     import Loader from "$lib/compo/loader/loader.svelte";
 
     import { getModalStore } from "@skeletonlabs/skeleton";
-    import Icon from "@krowten/svelte-heroicons/Icon.svelte";
+  import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
     const modalStore = getModalStore();
 
@@ -15,7 +15,7 @@
     let loading = true;
 
     const load = async () => {
-        let api: API = $modalStore[0].meta["api"];
+        let api: RootAPI = $modalStore[0].meta["api"];
 
         const resp = await api.listProjectTypes();
         if (resp.status !== 200) {
@@ -50,9 +50,9 @@
                 on:click={() => {
                     modalStore.close();
                 }}
-                href="/z/pages/portal/ptypes/{$modalStore[0].meta["data"]["ptype"]}?pid={$modalStore[0].meta["data"]["id"]}"
+                href="/z/pages/portal/projects/{$modalStore[0].meta["data"]["ptype"]}?pid={$modalStore[0].meta["data"]["id"]}"
             >
-                <Icon name="document-text" class="w-6 h-6" />
+                <SvgIcon name="document-text" className="w-6 h-6" />
                 <span>Project Home</span>
             </a>
 
@@ -63,7 +63,7 @@
                 }}
                 href="/z/pages/portal/filestore"
             >
-                <Icon name="folder" class="w-6 h-6" />
+                <SvgIcon name="folder" className="w-6 h-6" />
                 <span>Project Files</span>
             </a>
 
@@ -74,7 +74,7 @@
             }}
             href="/z/pages/portal/projects"
         >
-            <Icon name="pencil-square" class="w-6 h-6" />
+            <SvgIcon name="pencil-square" className="w-6 h-6" />
             <span>Edit Project</span>
         </a>
         </div>

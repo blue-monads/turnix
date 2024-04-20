@@ -3,8 +3,9 @@
   import type { Schema } from "./form";
   import MultiText from "./_multi_text.svelte";
   import Action from "./_action.svelte";
-  import Icon from "@krowten/svelte-heroicons/Icon.svelte";
+
   import { createEventDispatcher } from "svelte";
+  import SvgIcon from "../icons/SvgIcon.svelte";
 
   export let schema: Schema;
   export let data: Record<string, any> = {};
@@ -117,9 +118,9 @@
                   _open_selects[idx] = !_open_selects[idx];
                   _open_selects = _open_selects;
                 }}
-                ><Icon
+                ><SvgIcon
                   name={_open_selects[idx] ? "lock-open" : "lock-closed"}
-                  class="w-6 h-6"
+                  className="w-6 h-6"
                 /></button
               >
             </div>
