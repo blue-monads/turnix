@@ -34,7 +34,7 @@ func (db *DB) RunSeed() error {
 	_, err = db.AddProject(&models.Project{
 		Name:         "zesus",
 		Info:         "This is test proj",
-		Ptype:        "onloop",
+		Ptype:        "unloop",
 		OwnerID:      userId,
 		IsInitilized: true,
 	})

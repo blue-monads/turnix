@@ -6,8 +6,8 @@ import (
 )
 
 var def = &xproject.Defination{
-	Name: "On Loop",
-	Slug: "onloop",
+	Name: "Un Loop",
+	Slug: "unloop",
 	Info: "Perform action with you on loop",
 	Icon: "arrow-path",
 	NewFormSchemaFields: []xproject.PTypeField{
