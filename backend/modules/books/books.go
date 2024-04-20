@@ -1,12 +1,17 @@
 package books
 
 import (
+	_ "embed"
+
 	"github.com/bornjre/trunis/backend/xtypes"
 	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
 	"github.com/bornjre/trunis/backend/xtypes/services/xfilestore"
 	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
 	"github.com/upper/db/v4"
 )
+
+//go:embed books.sql
+var Schema string
 
 type BookModule struct {
 	app  xtypes.App

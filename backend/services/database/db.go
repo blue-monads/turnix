@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/bornjre/trunis/backend/modules/books"
 	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
 	"github.com/gobuffalo/fizz"
 	"github.com/gobuffalo/fizz/translators"
@@ -23,7 +24,7 @@ type DB struct {
 func NewDB() (*DB, error) {
 
 	var settings = sqlite.ConnectionURL{
-		Database: `foo.db`,
+		Database: `data.db`,
 	}
 
 	sess, err := sqlite.Open(settings)
@@ -45,6 +46,13 @@ func NewDB() (*DB, error) {
 			sess.Close()
 			return nil, err
 		}
+
+		_, err = driver.Exec(books.Schema)
+		if err != nil {
+			sess.Close()
+			return nil, err
+		}
+
 	}
 
 	return &DB{
