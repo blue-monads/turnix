@@ -8,7 +8,7 @@ create table Accounts(
     contact_id INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    is_deleted BOOLEAN NOT NULL FALSE
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 create table Transactions(
     id INTEGER PRIMARY KEY,
@@ -18,23 +18,23 @@ create table Transactions(
     linked_invoice_id INTEGER NOT NULL DEFAULT 0,
     reference_id TEXT NOT NULL DEFAULT '',
     attachments TEXT NOT NULL DEFAULT '',
-    created_by INTEGER NULL NULL,
-    updated_by INTEGER NULL NULL,
+    created_by INTEGER NULL,
+    updated_by INTEGER NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    is_deleted BOOLEAN NOT NULL FALSE
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 create table TransactionLines(
     id INTEGER PRIMARY KEY,
     account_id INTEGER NOT NULL,
-    txn_id INTEGER NULL NULL,
+    txn_id INTEGER NULL,
     debit_amount INTEGER NOT NULL DEFAULT 0,
     credit_amount INTEGER NOT NULL DEFAULT 0,
-    created_by INTEGER NULL NULL,
-    updated_by INTEGER NULL NULL,
+    created_by INTEGER NULL,
+    updated_by INTEGER NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 create table ReportTemplates(
@@ -43,15 +43,15 @@ create table ReportTemplates(
     input_options JSON NOT NULL DEFAULT '{}',
     output_options JSON NOT NULL DEFAULT '{}',
     query_template TEXT NOT NULL DEFAULT '',
-    filter_script TEXT NULL NULL DEFAULT ''
+    filter_script TEXT NULL DEFAULT ''
 );
 create table Reports(
     id INTEGER PRIMARY KEY,
     template_id INTEGER NOT NULL DEFAULT 0,
     result JSON NOT NULL DEFAULT '{}',
-    created_by INTEGER NULL NULL,
-    updated_by INTEGER NULL NULL,
+    created_by INTEGER NULL,
+    updated_by INTEGER NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    is_deleted BOOLEAN NOT NULL FALSE
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );

@@ -32,11 +32,7 @@ func NewDB() (*DB, error) {
 		log.Fatalf("db.Open(): %q\n", err)
 	}
 
-	exists, err := sess.Collection("Users").Exists()
-	if err != nil {
-		log.Fatalf("checking if empty: %q\n", err)
-		return nil, err
-	}
+	exists, _ := sess.Collection("Users").Exists()
 
 	if !exists {
 		driver := sess.Driver().(*sql.DB)

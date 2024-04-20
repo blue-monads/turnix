@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS UserDevices (
 create table UserMessages(
   id INTEGER PRIMARY KEY, 
   title text not null default '', 
-  isRead boolean not null default false, 
+  isRead boolean not null default FALSE, 
   type text not null default "messsage", 
   contents text not null, 
   toUser text not null, 
