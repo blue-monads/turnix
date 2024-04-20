@@ -3,11 +3,11 @@
 
     import { getContext, onMount } from "svelte";
     import * as nav from "$lib/nav";
-    import type { API } from "$lib/api";
+    import type {  RootAPI } from "$lib/api";
     export let ptype = "";
     export let title = "projects";
 
-    const api = getContext("__api__") as API;
+    const api = getContext("__api__") as RootAPI;
 
     let datas: any[] = [];
 

@@ -5,7 +5,7 @@ import { BASE_URL } from "./common"
 
 
 
-export class API {
+export class RootAPI {
     client: AxiosInstance
 
     constructor() {
@@ -24,6 +24,10 @@ export class API {
                 "Authorization": access_token
             }
         })
+
+        if (window !== undefined) {
+            (window as any)["_turnis_api_"] = this
+        }
     }
 
 

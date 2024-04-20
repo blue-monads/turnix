@@ -2,12 +2,12 @@
     import { AutoForm, PageLayout, AutoTable } from "$lib/compo";
     import { getContext, onMount } from "svelte";
     import * as nav from "$lib/nav";
-    import type { API } from "$lib/api";
+    import type { RootAPI } from "$lib/api";
     import { params } from "$lib/params";
 
     let pid = $params["pid"];
 
-    const api = getContext("__api__") as API;
+    const api = getContext("__api__") as RootAPI;
 
     let datas: any[] = [];
 

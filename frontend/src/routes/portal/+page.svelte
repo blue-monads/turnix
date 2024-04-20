@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { API } from "$lib/api";
+	import { RootAPI } from "$lib/api";
 	import { getContext } from "svelte";
 	import {
 		AppBar,
@@ -9,7 +9,7 @@
 	import { FloatyButton } from "$lib/compo";
 	import Icon from "@krowten/svelte-heroicons/Icon.svelte";
 
-	const api = getContext("__api__") as API;
+	const api = getContext("__api__") as RootAPI;
 
 	let projects = [
 		{

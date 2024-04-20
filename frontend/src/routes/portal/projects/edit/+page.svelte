@@ -2,10 +2,10 @@
     import { gotoPorjects } from "$lib/nav";
     import { AutoForm, PageLayout, AutoTable, Loader } from "$lib/compo";
     import { params } from "$lib/params";
-    import type { API } from "$lib/api";
     import { getContext } from "svelte";
+    import type { RootAPI } from "$lib/api";
 
-    const api = getContext("__api__") as API;
+    const api = getContext("__api__") as RootAPI;
 
     let pid = $params["pid"];
 

@@ -1,12 +1,10 @@
 <script lang="ts">
     import { gotoPorjects } from "$lib/nav";
     import { AutoForm, PageLayout, AutoTable } from "$lib/compo";
-
-
-    import type { API } from "$lib/api";
+    import type {  RootAPI } from "$lib/api";
     import { getContext } from "svelte";
 
-    const api = getContext("__api__") as API;
+    const api = getContext("__api__") as RootAPI;
 
     let message = "";
 </script>

@@ -5,14 +5,14 @@
         gotoProjectOnloopTemplates,
     } from "$lib/nav";
     import { params } from "$lib/params";
-    import type { API } from "$lib/api";
+    import type { RootAPI } from "$lib/api";
     import { getContext } from "svelte";
     import { stringify } from "postcss";
 
     let pid = $params["pid"];
     let tid = $params["tid"];
 
-    const api = getContext("__api__") as API;
+    const api = getContext("__api__") as RootAPI;
 
     let message = "";
 </script>

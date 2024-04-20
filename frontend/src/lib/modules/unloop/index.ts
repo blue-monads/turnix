@@ -1,11 +1,22 @@
-export {}
+import type { RootAPI } from "$lib/api"
+import type { AxiosInstance } from "axios"
+
+export const NewUnloopAPI = (api: RootAPI) => {
+    return new UnloopAPI(api.client)
+}
 
 
 
-/*
+export class UnloopAPI {
+    client: AxiosInstance
+
+    constructor(client: AxiosInstance) {
+        this.client = client
+    }
 
 
     // templates
+
 
     listTemplates = (pid: string) => {
         return this.client.get(`/pt/laction/template/${pid}`)
@@ -58,4 +69,6 @@ export {}
         return this.client.post(`/pt/laction/queue/${pid}`)
     }
 
-*/
+}
+
+

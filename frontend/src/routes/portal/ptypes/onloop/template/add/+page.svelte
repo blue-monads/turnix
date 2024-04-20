@@ -2,12 +2,12 @@
     import { AutoForm, PageLayout, AutoTable } from "$lib/compo";
     import { gotoProjectOnloopTemplates } from "$lib/nav";
     import { params } from "$lib/params";
-    import type { API } from "$lib/api";
+    import type { RootAPI } from "$lib/api";
     import { getContext } from "svelte";
 
     let pid = $params["pid"];
 
-    const api = getContext("__api__") as API;
+    const api = getContext("__api__") as RootAPI;
 
     let message = "";
 </script>

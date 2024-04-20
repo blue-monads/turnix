@@ -2,7 +2,7 @@
     import { Loader, AutoForm } from "$lib/compo";
 
     import { params } from "$lib/params";
-    import type { API } from "$lib/api";
+    import type {  RootAPI } from "$lib/api";
     import { getContext } from "svelte";
 
     let pid = $params["pid"];
@@ -11,7 +11,7 @@
     let data = {};
     let loading = true;
 
-    const api = getContext("__api__") as API;
+    const api = getContext("__api__") as RootAPI;
 
     const load = async () => {
         const resp = await api.getQueueMessage(pid, mid);
