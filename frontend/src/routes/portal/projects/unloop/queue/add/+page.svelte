@@ -3,7 +3,7 @@
     import {
         gotoProjectOnloopQueues,
         gotoProjectOnloopTemplates,
-    } from "$lib/nav";
+    } from "$lib/modules/unloop/route";
     import { params } from "$lib/params";
     import type { RootAPI } from "$lib/api";
     import { getContext } from "svelte";

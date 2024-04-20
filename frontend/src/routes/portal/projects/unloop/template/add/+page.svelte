@@ -1,6 +1,6 @@
 <script lang="ts">
     import { AutoForm, PageLayout, AutoTable } from "$lib/compo";
-    import { gotoProjectOnloopTemplates } from "$lib/nav";
+    import { gotoProjectOnloopTemplates } from "$lib/modules/unloop/route";
     import { params } from "$lib/params";
     import type { RootAPI } from "$lib/api";
     import { getContext } from "svelte";
