@@ -3,47 +3,13 @@ import { goto } from '$app/navigation';
 
 
 export const gotoPorjects = () => {
-    goto("/z/pages/portal/projects")
+    goto("/z/pages/portal/project")
 }
 
 export const gotoAddProject = () => {
-    goto("/z/pages/portal/projects/add")
+    goto("/z/pages/portal/project/add")
 }
 
 export const gotoEditProject = (pid: string) => {
-    goto(`/z/pages/portal/projects/edit?pid=${pid}`)
+    goto(`/z/pages/portal/project/edit?pid=${pid}`)
 }
-
-
-// ptypes
-
-export const gotoProjectOnloopTemplates = (pid: string) => {
-    goto(`/z/pages/portal/ptypes/onloop/template?pid=${pid}`)
-}
-
-export const gotoProjectOnloopTemplateAdd = (pid: string) => {
-    goto(`/z/pages/portal/ptypes/onloop/template/add?pid=${pid}`)
-}
-
-export const gotoProjectOnloopTemplateEdit = (pid: string, tid: string) => {
-    goto(`/z/pages/portal/ptypes/onloop/template/edit?pid=${pid}&tid=${tid}`)
-}
-
-export const gotoProjectOnloopTemplateWatch = (pid: string, tid: string) => {
-    goto(`/z/pages/portal/ptypes/onloop/template/watch?pid=${pid}&tid=${tid}`)
-}
-
-
-export const gotoProjectOnloopQueues = (pid: string, tid: string) => {
-    goto(`/z/pages/portal/ptypes/onloop/queue?pid=${pid}&tid=${tid}`)
-}
-
-export const gotoProjectOnloopQueueAdd = (pid: string, tid: string) => {
-    goto(`/z/pages/portal/ptypes/onloop/queue/add?pid=${pid}&tid=${tid}`)
-}
-
-
-export const gotoProjectOnloopQueuePreview = (pid: string, tid: string, mid: string) => {
-    goto(`/z/pages/portal/ptypes/onloop/queue/preview?pid=${pid}&tid=${tid}&mid=${mid}`)
-}
-

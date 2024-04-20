@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Modal,getModalStore, type ModalComponent } from "@skeletonlabs/skeleton";
 	import { initializeStores } from "@skeletonlabs/skeleton";
-	import Picker from "./portal/projects/picker.svelte";
-    import Options from "./portal/projects/options.svelte";
+	import Picker from "./portal/project/picker.svelte";
+    import Options from "./portal/project/options.svelte";
 	import "./styles.css";
 
 	initializeStores();
