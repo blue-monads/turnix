@@ -31,12 +31,20 @@ func NewDB() (*DB, error) {
 		log.Fatalf("db.Open(): %q\n", err)
 	}
 
-	driver := sess.Driver().(*sql.DB)
-
-	_, err = driver.Exec(schema)
+	exists, err := sess.Collection("Users").Exists()
 	if err != nil {
-		sess.Close()
+		log.Fatalf("checking if empty: %q\n", err)
 		return nil, err
+	}
+
+	if !exists {
+		driver := sess.Driver().(*sql.DB)
+
+		_, err = driver.Exec(schema)
+		if err != nil {
+			sess.Close()
+			return nil, err
+		}
 	}
 
 	return &DB{
