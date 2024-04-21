@@ -79,7 +79,7 @@
             />
           </label>
 
-          <button class="pt-4 cursor-pointer" on:click={pickDebitAccount}>
+          <button class="pt-4 cursor-pointer" type="button" on:click={pickDebitAccount}>
             <SvgIcon name="arrow-up-right" className="w-5 h-5" />
           </button>
 
@@ -106,7 +106,7 @@
             />
           </label>
 
-          <button class="pt-4 cursor-pointer" on:click={pickCreditAccount}>
+          <button class="pt-4 cursor-pointer" type="button" on:click={pickCreditAccount}>
             <SvgIcon name="arrow-up-right" className="w-5 h-5" />
           </button>
 
@@ -152,7 +152,7 @@
       </label>
     </section>
     <footer class="card-footer flex justify-end">
-      <button class="btn variant-filled"> save </button>
+      <button type="submit" class="btn variant-filled"> save </button>
     </footer>
   </form>
 </div>

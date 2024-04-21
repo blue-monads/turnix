@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import type { RootAPI } from "$lib/api";
   import { Loader } from "$lib/compo";
@@ -16,7 +17,15 @@
   let accountsIndex: Record<number, string> = {};
   let accounts: never[] = [];
 
-  const onSubmit = (data: Record<string, any>) => {};
+  const onSubmit = async  (data: Record<string, any>) => {
+    const resp = await api.addTxn(pid, data)
+    if (resp.status !== 200) {
+      return
+    }
+
+    goto(location.pathname.replace("/new", ""))
+
+  };
 
   const load = async () => {
     loading = true;

@@ -203,7 +203,7 @@ func (b *BookModule) dbOpUpdateTxnLine(pid, uid, id int64, data map[string]any) 
 // utils
 
 func (b *BookModule) txnTable(pid int64) db.Collection {
-	return b.db.Table("Accounts")
+	return b.db.Table("Transactions")
 }
 
 func (b *BookModule) accountsTable(pid int64) db.Collection {
