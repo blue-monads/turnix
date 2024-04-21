@@ -62,9 +62,17 @@
   color={["acc_type"]}
   actions={[
     {
-      Name: "explore",
+      Name: "txns",
       Class: "bg-green-400",
-      Action: async (id, data) => {},
+      Action: async (id, data) => {
+        const next = `/txn?pid=${pid}&aid=${id}`;
+
+        if (location.pathname.endsWith("/account")) {
+          goto(location.pathname.replace("/account", next));
+        } else {
+          goto(location.pathname + next);
+        }
+      },
     },
 
     {
@@ -77,7 +85,5 @@
       Class: "bg-red-400",
       Action: async (id, data) => {},
     },
-
-
   ]}
 />
