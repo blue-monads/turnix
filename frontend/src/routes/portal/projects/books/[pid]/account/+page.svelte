@@ -54,7 +54,7 @@
     >
       <SvgIcon className="h-4 w-4" name="plus" />
 
-      transactions
+      transaction
     </a>
 
     <a
@@ -64,6 +64,15 @@
       <SvgIcon className="h-4 w-4" name="clipboard-document" />
 
       transactions
+    </a>
+
+    <a
+      href={`/z/pages/portal/projects/books/${pid}/report`}
+      class="btn variant-glass-tertiary btn-sm"
+    >
+      <SvgIcon className="h-4 w-4" name="document-chart-bar" />
+
+      reports
     </a>
   </svelte:fragment>
 </AppBar>
