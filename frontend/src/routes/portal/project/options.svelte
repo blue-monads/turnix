@@ -1,9 +1,5 @@
 <script lang="ts">
-  import { gotoPorjects } from "$lib/nav";
-  import { AutoForm, PageLayout, AutoTable } from "$lib/compo";
-
   import type { RootAPI } from "$lib/api";
-  import { getContext } from "svelte";
   import Loader from "$lib/compo/loader/loader.svelte";
 
   import { getModalStore } from "@skeletonlabs/skeleton";
