@@ -21,42 +21,42 @@ export class BooksAPI {
     // accounts
 
     listAccount = (pid: string) => {
-        return this.client.get(`/${pid}/account`)
+        return this.client.get(`books/${pid}/account`)
     }
 
     addAccount = (pid: string, data: any) => {
-        return this.client.post(`/${pid}/account`, data)
+        return this.client.post(`books/${pid}/account`, data)
     }
 
     getAccount = (pid: string, aid: string) => {
-        return this.client.get(`/${pid}/account/${aid}`)
+        return this.client.get(`books/${pid}/account/${aid}`)
     }
 
     updateAccount = (pid: string, aid: string, data: object) => {
-        return this.client.post(`/${pid}/account/${aid}`, data)
+        return this.client.post(`books/${pid}/account/${aid}`, data)
     }
 
     deleteAccount = (pid: string, aid: string) => {
-        return this.client.delete(`/${pid}/account/${aid}`)
+        return this.client.delete(`books/${pid}/account/${aid}`)
     }
 
 
     // transactions
 
     listTxn = (pid: string) => {
-        return this.client.get(`/${pid}/txn`)
+        return this.client.get(`books/${pid}/txn`)
     }
     addTxn = (pid: string, data: object) => {
-        return this.client.post(`/${pid}/txn`, data )
+        return this.client.post(`books/${pid}/txn`, data )
     }
     getTxn = (pid: string, tid: string) => {
-        return this.client.get(`/${pid}/txn/${tid}`)
+        return this.client.get(`books/${pid}/txn/${tid}`)
     }
     updateTxn = (pid: string, tid: string) => {
-        return this.client.post(`/${pid}/txn/${tid}`)
+        return this.client.post(`books/${pid}/txn/${tid}`)
     }
     deleteTxn = (pid: string, tid: string) => {
-        return this.client.delete(`/${pid}/txn/${tid}`)
+        return this.client.delete(`books/${pid}/txn/${tid}`)
     }
 
 }

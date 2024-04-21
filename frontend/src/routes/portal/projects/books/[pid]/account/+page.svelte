@@ -1,12 +1,11 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { FloatyButton } from "$lib/compo";
+  import { AutoTable, FloatyButton } from "$lib/compo";
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
   import { NewBookAPI } from "$lib/projects/books";
   import { getContext } from "svelte";
   import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
   import type { RootAPI } from "$lib/api";
-  import { params } from "$lib/params";
   import { page } from "$app/stores";
 
   const pid = $page.params["pid"];
@@ -14,9 +13,18 @@
   const store = getModalStore();
   const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-  let accounts = [];
+  let accounts: any[] = [];
 
-  const load = async () => {};
+  const load = async () => {
+    const resp = await api.listAccount(pid);
+    if (resp.status !== 200) {
+      return;
+    }
+
+    accounts = resp.data;
+  };
+
+  load();
 </script>
 
 <AppBar>
@@ -41,3 +49,35 @@
     </a>
   </svelte:fragment>
 </AppBar>
+
+<AutoTable
+  action_key={"id"}
+  key_names={[
+    ["id", "ID"],
+    ["name", "Name"],
+    ["info", "Info"],
+    ["acc_type", "Account type"],
+  ]}
+  datas={accounts}
+  color={["acc_type"]}
+  actions={[
+    {
+      Name: "explore",
+      Class: "bg-green-400",
+      Action: async (id, data) => {},
+    },
+
+    {
+      Name: "edit",
+      Action: async (id, data) => {},
+    },
+
+    {
+      Name: "delete",
+      Class: "bg-red-400",
+      Action: async (id, data) => {},
+    },
+
+
+  ]}
+/>

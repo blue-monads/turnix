@@ -19,14 +19,14 @@ export class RootAPI {
         }
 
         this.client = axios.create({
-            baseURL: `http://${location.hostname}/z/api/v1/`,
+            baseURL: `${location.origin}/z/api/v1/`,
             headers: {
                 "Authorization": access_token
             }
         })
 
         this.projectClient = axios.create({
-            baseURL: `http://${location.hostname}/z/project/`,
+            baseURL: `${location.origin}/z/project/`,
             headers: {
                 "Authorization": access_token
             }
