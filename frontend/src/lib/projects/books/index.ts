@@ -3,7 +3,7 @@ import type { AxiosInstance } from "axios";
 
 
 export const NewBookAPI = (api: RootAPI) => {
-    return new BooksAPI(api.client)
+    return new BooksAPI(api.projectClient)
 }
 
 
@@ -14,6 +14,8 @@ export class BooksAPI {
     constructor(client: AxiosInstance) {
         this.client = client
     }
+
+    // /z/api/v1/project/:pid
 
 
     // accounts

@@ -2,7 +2,7 @@ import type { RootAPI } from "$lib/api"
 import type { AxiosInstance } from "axios"
 
 export const NewUnloopAPI = (api: RootAPI) => {
-    return new UnloopAPI(api.client)
+    return new UnloopAPI(api.projectClient)
 }
 
 

@@ -1,12 +1,12 @@
 import axios from "axios"
 import { browser } from '$app/environment'
 import type { AxiosInstance } from "axios"
-import { BASE_URL } from "./common"
 
 
 
 export class RootAPI {
     client: AxiosInstance
+    projectClient: AxiosInstance
 
     constructor() {
         let access_token;
@@ -19,11 +19,19 @@ export class RootAPI {
         }
 
         this.client = axios.create({
-            baseURL: BASE_URL + "api/v1/",
+            baseURL: `http://${location.hostname}/z/api/v1/`,
             headers: {
                 "Authorization": access_token
             }
         })
+
+        this.projectClient = axios.create({
+            baseURL: `http://${location.hostname}/z/project/`,
+            headers: {
+                "Authorization": access_token
+            }
+        })
+
 
         if (window !== undefined) {
             (window as any)["_turnis_api_"] = this
