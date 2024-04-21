@@ -57,8 +57,8 @@
   ];
 </script>
 
-<div class="card m-2">
-  <table class="table p-0">
+<div class="card m-2 overflow-x-auto">
+  <table class="table p-0 ">
     <thead class="table-head">
       <tr>
         <th role="columnheader">#</th>
@@ -73,7 +73,7 @@
         <th role="columnheader">Actions</th>
       </tr>
     </thead>
-    <tbody class="table-body p-0">
+    <tbody class="table-body p-0 overflow-y-scroll w-full max-h-screen">
       {#each sourceData as txn}
         <tr>
           <td class="p-0" role="gridcell">{txn.id}</td>
