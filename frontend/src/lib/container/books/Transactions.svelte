@@ -2,14 +2,13 @@
   import type { TxnLine } from "./txntype";
 
   export let lineData: TxnLine[] = [];
+  export let accountsIndex: Record<number, string>
 
-  console.log("@lines", lineData)
-
-
+  console.log("@lines", lineData);
 </script>
 
 <div class="card m-2 overflow-x-auto">
-  <table class="table p-0 ">
+  <table class="table p-0 table-compact">
     <thead class="table-head">
       <tr>
         <th role="columnheader">#</th>
@@ -19,7 +18,7 @@
         <th role="columnheader">Account</th>
         <th role="columnheader">Debit</th>
         <th role="columnheader">Credit</th>
-       
+
         <th role="columnheader">Attachments</th>
         <th role="columnheader">Actions</th>
       </tr>
@@ -33,7 +32,7 @@
           <td class="p-0" role="gridcell"></td>
           <td class="p-0" role="gridcell"></td>
           <td class="p-0" role="gridcell"></td>
-         
+
           <td class="p-0" role="gridcell"></td>
           <td class="p-0" role="gridcell">
             <button class="underline">edit</button>
@@ -45,9 +44,17 @@
             <td class="p-0" role="gridcell"></td>
             <td class="p-0" role="gridcell"></td>
             <td class="p-0" role="gridcell"></td>
-            <td class="p-0" role="gridcell">{line.account_id}</td>
-            <td class="p-0" role="gridcell">{line.credit_amount}</td>
-            <td class="p-0" role="gridcell">{line.debit_amount}</td>
+            <td class="p-0" role="gridcell">{accountsIndex[line.account_id] || ""}</td>
+            <td class="p-0" role="gridcell">
+              {#if line.credit_amount}
+                {line.credit_amount}
+              {/if}
+            </td>
+            <td class="p-0" role="gridcell">
+              {#if line.debit_amount}
+                {line.debit_amount}
+              {/if}
+            </td>
             <td class="p-0" role="gridcell"></td>
             <td class="p-0" role="gridcell"></td>
           </tr>

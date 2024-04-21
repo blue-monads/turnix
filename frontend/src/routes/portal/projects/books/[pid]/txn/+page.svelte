@@ -17,8 +17,11 @@
 
   let loading = true;
   let data: TxnLine[] = [];
+  let accountsIndex: Record<number, string> = {};
 
   const load = async () => {
+    const rresp = await api.listAccount(pid);
+
     loading = true;
     const resp = await api.listTxnWithLines(pid);
     if (resp.status !== 200) {
@@ -30,18 +33,20 @@
     data = formatResponse(resp.data);
     console.log("@data_____", data);
 
-    data = data
+    const accounts = (await rresp).data as Record<string, any>[];
+
+    accounts.forEach((account) => {
+      const id = account["id"];
+      accountsIndex[id] = account["name"];
+    });
+
+    data = data;
 
     loading = false;
   };
   load();
 
-
-  $: {
-    console.log("@is_data", data)
-  }
 </script>
-
 
 <AppBar>
   <div slot="lead" class="flex gap-2">
@@ -56,11 +61,8 @@
         >
       </li>
 
-
       <li class="crumb-separator" aria-hidden>&rsaquo;</li>
-      <li class="crumb">
-        Transactions
-      </li>
+      <li class="crumb">Transactions</li>
     </ol>
   </div>
 
@@ -77,14 +79,10 @@
   </div>
 </AppBar>
 
-
-
 {#if loading}
   <Loader />
 {:else}
   {#key data}
-    <Transactions lineData={data} />
+    <Transactions {accountsIndex} lineData={data} />
   {/key}
 {/if}
-
-
