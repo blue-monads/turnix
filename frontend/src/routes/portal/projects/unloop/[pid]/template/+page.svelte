@@ -1,10 +1,10 @@
 <script lang="ts">
   import { PageLayout, AutoTable } from "$lib/compo";
   import { getContext, onMount } from "svelte";
-  import * as nav from "$lib/modules/unloop/route";
+  import * as nav from "$lib/projects/unloop/route";
 
   import { params } from "$lib/params";
-  import { NewUnloopAPI } from "$lib/modules/unloop";
+  import { NewUnloopAPI } from "$lib/projects/unloop";
   import type { RootAPI } from "$lib/api";
 
   let pid = $params["pid"];

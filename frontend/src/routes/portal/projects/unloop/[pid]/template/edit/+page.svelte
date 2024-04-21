@@ -1,11 +1,11 @@
 <script lang="ts">
   import { AutoForm, PageLayout, AutoTable, Loader } from "$lib/compo";
 
-  import { gotoProjectOnloopTemplates } from "$lib/modules/unloop/route";
+  import { gotoProjectOnloopTemplates } from "$lib/projects/unloop/route";
   import { params } from "$lib/params";
   import type { RootAPI } from "$lib/api";
   import { getContext } from "svelte";
-  import { NewUnloopAPI } from "$lib/modules/unloop";
+  import { NewUnloopAPI } from "$lib/projects/unloop";
 
   const api = NewUnloopAPI(getContext("__api__") as RootAPI);
 

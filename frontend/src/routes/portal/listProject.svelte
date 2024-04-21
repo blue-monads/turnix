@@ -57,7 +57,7 @@
 
       <footer class="card-footer flex justify-end gap-2">
         <a
-          href="/z/pages/portal/projects/{proj['ptype']}?pid={proj['id']}"
+          href="/z/pages/portal/projects/{proj['ptype']}/{proj['id']}"
           class="btn variant-filled"
         >
           explore

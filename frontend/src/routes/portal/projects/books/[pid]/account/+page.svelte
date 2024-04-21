@@ -2,7 +2,7 @@
   import { goto } from "$app/navigation";
   import { FloatyButton } from "$lib/compo";
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-  import { NewBookAPI } from "$lib/modules/books";
+  import { NewBookAPI } from "$lib/projects/books";
   import { getContext } from "svelte";
   import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
   import type { RootAPI } from "$lib/api";

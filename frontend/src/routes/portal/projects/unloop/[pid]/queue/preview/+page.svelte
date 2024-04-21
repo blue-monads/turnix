@@ -4,7 +4,7 @@
   import { params } from "$lib/params";
   import type { RootAPI } from "$lib/api";
   import { getContext } from "svelte";
-  import { NewUnloopAPI } from "$lib/modules/unloop";
+  import { NewUnloopAPI } from "$lib/projects/unloop";
 
   let pid = $params["pid"];
   let mid = $params["mid"];
