@@ -125,6 +125,7 @@
       <label class="label">
         <span>Notes</span>
         <textarea
+          bind:value={notes}
           class="textarea p-1"
           rows="4"
           placeholder={"Extra information about txn"}
