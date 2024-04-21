@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { TxnLine } from "./txntype";
 
-  export const lineData: TxnLine[] = [];
+  export let lineData: TxnLine[] = [];
 
   console.log("@lines", lineData)
 
@@ -48,7 +48,6 @@
             <td class="p-0" role="gridcell">{line.account_id}</td>
             <td class="p-0" role="gridcell">{line.credit_amount}</td>
             <td class="p-0" role="gridcell">{line.debit_amount}</td>
-            <td class="p-0" role="gridcell"></td>
             <td class="p-0" role="gridcell"></td>
             <td class="p-0" role="gridcell"></td>
           </tr>
