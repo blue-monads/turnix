@@ -24,7 +24,7 @@
   }
 
   const hashCode = (str: string) => {
-    let hash = 77;
+    let hash = 64;
     for (var i = 0; i < str.length; i++) {
       hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
