@@ -14,6 +14,9 @@
   export let color: any[] = [];
   export let show_drop = false;
 
+  export let hashSeed = 65
+
+
   let extern_actions: any[] = [];
   let drop_actions: any[] = [];
   if (!show_drop) {
@@ -24,7 +27,7 @@
   }
 
   const hashCode = (str: string) => {
-    let hash = 64;
+    let hash = hashSeed
     for (var i = 0; i < str.length; i++) {
       hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
