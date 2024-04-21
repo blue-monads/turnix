@@ -47,6 +47,24 @@
 
       account
     </a>
+
+    <a
+      href={`/z/pages/portal/projects/books/${pid}/txn/new`}
+      class="btn variant-filled-secondary btn-sm"
+    >
+      <SvgIcon className="h-4 w-4" name="plus" />
+
+      transactions
+    </a>
+
+    <a
+      href={`/z/pages/portal/projects/books/${pid}/txn`}
+      class="btn variant-glass-secondary btn-sm"
+    >
+      <SvgIcon className="h-4 w-4" name="clipboard-document" />
+
+      transactions
+    </a>
   </svelte:fragment>
 </AppBar>
 
@@ -63,6 +81,7 @@
   actions={[
     {
       Name: "explore txns",
+      Class: "variant-filled-primary",
 
       icon: "plus",
       Action: async (id) => {
@@ -77,24 +96,9 @@
     },
 
     {
-      Name: "add txn",
-      Class: "bg-green-400",
-      Action: async (id) => {
-        const next = `/txn/new?pid=${pid}&aid=${id}`;
-
-        if (location.pathname.endsWith("/account")) {
-          goto(location.pathname.replace("/account", next));
-        } else {
-          goto(location.pathname + next);
-        }
-      },
-    },
-
-    {
       Name: "edit",
-      Class: "bg-yellow-400",
+      Class: "variant-filled-secondary",
       Action: async (id) => {
-
         const next = `/account/edit?pid=${pid}&aid=${id}`;
 
         if (location.pathname.endsWith("/account")) {
