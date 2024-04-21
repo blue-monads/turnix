@@ -59,6 +59,18 @@ CREATE TABLE IF NOT EXISTS Projects (
   FOREIGN KEY (owner) REFERENCES Users(id)
 );
 
+CREATE TABLE IF NOT EXISTS ProjectHooks (
+  id INTEGER PRIMARY KEY, 
+  event TEXT NOT NULL DEFAULT,
+  hookType TEXT NOT NULL DEFAULT 'script', -- script, webhook
+  hookCode TEXT NOT NULL DEFAULT '',
+  envs JSON NOT NULL DEFAULT '{}',
+  projectId INTEGER NOT NULL, 
+  extrameta JSON NOT NULL DEFAULT '{}',
+  FOREIGN KEY (projectId) REFERENCES Projects(id)
+);
+
+
 CREATE TABLE IF NOT EXISTS ProjectUsers (
   id INTEGER PRIMARY KEY, 
   userId INTEGER NOT NULL, 
