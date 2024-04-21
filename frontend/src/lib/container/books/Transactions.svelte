@@ -1,8 +1,9 @@
 <script lang="ts">
+  import { formatCurrency } from "$lib/utils";
   import type { TxnLine } from "./txntype";
 
   export let lineData: TxnLine[] = [];
-  export let accountsIndex: Record<number, string>
+  export let accountsIndex: Record<number, string>;
 
   console.log("@lines", lineData);
 </script>
@@ -26,37 +27,45 @@
     <tbody class="table-body p-0 overflow-y-scroll w-full max-h-screen">
       {#each lineData as txn}
         <tr>
-          <td class="p-0" role="gridcell">{txn.txn.id}</td>
-          <td class="p-0" role="gridcell">{txn.txn.title}</td>
-          <td class="p-0" role="gridcell">{txn.txn.notes}</td>
-          <td class="p-0" role="gridcell"></td>
-          <td class="p-0" role="gridcell"></td>
-          <td class="p-0" role="gridcell"></td>
+          <td role="gridcell">{txn.txn.id}</td>
+          <td role="gridcell">{txn.txn.title}</td>
+          <td role="gridcell">{txn.txn.notes}</td>
+          <td role="gridcell"></td>
+          <td role="gridcell"></td>
+          <td role="gridcell"></td>
 
-          <td class="p-0" role="gridcell"></td>
-          <td class="p-0" role="gridcell">
+          <td role="gridcell"></td>
+          <td role="gridcell">
             <button class="underline">edit</button>
           </td>
         </tr>
 
         {#each txn.lines as line}
           <tr>
-            <td class="p-0" role="gridcell"></td>
-            <td class="p-0" role="gridcell"></td>
-            <td class="p-0" role="gridcell"></td>
-            <td class="p-0" role="gridcell">{accountsIndex[line.account_id] || ""}</td>
-            <td class="p-0" role="gridcell">
+            <td role="gridcell"></td>
+            <td role="gridcell"></td>
+            <td role="gridcell"></td>
+            <td role="gridcell">
+              <span class="chip variant-filled">
+                {accountsIndex[line.account_id] || ""}</span
+              >
+            </td>
+            <td role="gridcell">
               {#if line.credit_amount}
-                {line.credit_amount}
+                <span class="chip variant-ghost">
+                  {formatCurrency(line.credit_amount)}
+                </span>
               {/if}
             </td>
-            <td class="p-0" role="gridcell">
+            <td role="gridcell">
               {#if line.debit_amount}
-                {line.debit_amount}
+                <span class="chip variant-ghost">
+                  {formatCurrency(line.debit_amount)}
+                </span>
               {/if}
             </td>
-            <td class="p-0" role="gridcell"></td>
-            <td class="p-0" role="gridcell"></td>
+            <td role="gridcell"></td>
+            <td role="gridcell"></td>
           </tr>
         {/each}
       {/each}
