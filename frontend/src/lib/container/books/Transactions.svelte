@@ -1,60 +1,11 @@
 <script lang="ts">
-  const sourceData = [
-    {
-      id: 1,
-      title: "Open petty cash",
-      notes: "New petty cash account bashed on @johns suggestion",
-      links: "",
-      lines: [
-        {
-          account_id: 12,
-          debit_amount: 2000,
-          credit_amount: 0,
-        },
-        {
-          account_id: 19,
-          credit_amount: 2000,
-          debit_amount: 0,
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "Open petty cash",
-      notes: "New petty cash account bashed on @johns suggestion",
-      links: "",
-      lines: [
-        {
-          account_id: 12,
-          debit_amount: 2000,
-          credit_amount: 0,
-        },
-        {
-          account_id: 19,
-          credit_amount: 2000,
-          debit_amount: 0,
-        },
-      ],
-    },
-    {
-      id: 3,
-      title: "Open petty cash",
-      notes: "New petty cash account bashed on @johns suggestion",
-      links: "",
-      lines: [
-        {
-          account_id: 12,
-          debit_amount: 2000,
-          credit_amount: 0,
-        },
-        {
-          account_id: 19,
-          credit_amount: 2000,
-          debit_amount: 0,
-        },
-      ],
-    },
-  ];
+  import type { TxnLine } from "./txntype";
+
+  export const lineData: TxnLine[] = [];
+
+  console.log("@lines", lineData)
+
+
 </script>
 
 <div class="card m-2 overflow-x-auto">
@@ -68,21 +19,21 @@
         <th role="columnheader">Account</th>
         <th role="columnheader">Debit</th>
         <th role="columnheader">Credit</th>
-        <th role="columnheader">Links</th>
+       
         <th role="columnheader">Attachments</th>
         <th role="columnheader">Actions</th>
       </tr>
     </thead>
     <tbody class="table-body p-0 overflow-y-scroll w-full max-h-screen">
-      {#each sourceData as txn}
+      {#each lineData as txn}
         <tr>
-          <td class="p-0" role="gridcell">{txn.id}</td>
-          <td class="p-0" role="gridcell">{txn.title}</td>
-          <td class="p-0" role="gridcell">{txn.notes}</td>
+          <td class="p-0" role="gridcell">{txn.txn.id}</td>
+          <td class="p-0" role="gridcell">{txn.txn.title}</td>
+          <td class="p-0" role="gridcell">{txn.txn.notes}</td>
           <td class="p-0" role="gridcell"></td>
           <td class="p-0" role="gridcell"></td>
           <td class="p-0" role="gridcell"></td>
-          <td class="p-0" role="gridcell">{txn.links}</td>
+         
           <td class="p-0" role="gridcell"></td>
           <td class="p-0" role="gridcell">
             <button class="underline">edit</button>

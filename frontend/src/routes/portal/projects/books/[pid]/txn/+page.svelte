@@ -8,27 +8,40 @@
   import { NewBookAPI } from "$lib/projects/books";
   import { getContext } from "svelte";
   import type { RootAPI } from "$lib/api";
+  import { Loader } from "$lib/compo";
+  import type { TxnLine } from "$lib/container/books/txntype";
+  import { formatResponse } from "./format";
   const pid = $page.params["pid"];
   const api = NewBookAPI(getContext("__api__") as RootAPI);
   const store = getModalStore();
 
-  let loading = false;
-  let data = [];
+  let loading = true;
+  let data: TxnLine[] = [];
 
   const load = async () => {
+    loading = true;
     const resp = await api.listTxnWithLines(pid);
     if (resp.status !== 200) {
       return;
     }
 
-    console.log("@data", resp.data)
+    console.log("@data", resp.data);
 
-    data = resp.data;
+    data = formatResponse(resp.data);
+    console.log("@data_____", data);
+
+    data = data
+
+    loading = false;
   };
-  load()
+  load();
 
 
+  $: {
+    console.log("@is_data", data)
+  }
 </script>
+
 
 <AppBar>
   <div slot="lead" class="flex gap-2">
@@ -58,4 +71,14 @@
   </div>
 </AppBar>
 
-<Transactions />
+
+
+{#if loading}
+  <Loader />
+{:else}
+  {#key data}
+    <Transactions lineData={data} />
+  {/key}
+{/if}
+
+
