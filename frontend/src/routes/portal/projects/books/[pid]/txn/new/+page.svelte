@@ -5,10 +5,11 @@
   import { Loader } from "$lib/compo";
   import Transaction from "$lib/container/books/Transaction.svelte";
   import { NewBookAPI } from "$lib/projects/books";
-  import { getModalStore } from "@skeletonlabs/skeleton";
+  import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
   import { getContext } from "svelte";
 
   import { params } from "$lib/params";
+  import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
   const pid = $page.params["pid"];
   const api = NewBookAPI(getContext("__api__") as RootAPI);
   const store = getModalStore();
@@ -17,14 +18,13 @@
   let accountsIndex: Record<number, string> = {};
   let accounts: never[] = [];
 
-  const onSubmit = async  (data: Record<string, any>) => {
-    const resp = await api.addTxn(pid, data)
+  const onSubmit = async (data: Record<string, any>) => {
+    const resp = await api.addTxn(pid, data);
     if (resp.status !== 200) {
-      return
+      return;
     }
 
-    goto(location.pathname.replace("/new", ""))
-
+    goto(location.pathname.replace("/new", ""));
   };
 
   const load = async () => {
@@ -44,6 +44,20 @@
 
   load();
 </script>
+
+<AppBar>
+  <div slot="lead" class="flex gap-2">
+    <ol class="breadcrumb">
+      <li class="crumb">
+        <a class="anchor" href="/z/pages/portal/projects/books">Books</a>
+      </li>
+      <li class="crumb-separator" aria-hidden>&rsaquo;</li>
+      <li class="crumb">Add Transaction</li>
+    </ol>
+  </div>
+
+ 
+</AppBar>
 
 {#if loading}
   <Loader />

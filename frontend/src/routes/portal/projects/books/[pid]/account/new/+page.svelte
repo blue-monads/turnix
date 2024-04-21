@@ -7,6 +7,7 @@
   import { page } from "$app/stores";
   import { Loader } from "$lib/compo";
   import { goto } from "$app/navigation";
+  import { AppBar } from "@skeletonlabs/skeleton";
 
   const pid = $page.params["pid"];
 
@@ -14,17 +15,27 @@
 
   let loading = false;
   const onChange = async (data: Record<string, any>) => {
-    loading = true
+    loading = true;
 
-    await api.addAccount(pid, data)
+    await api.addAccount(pid, data);
 
-    goto(location.pathname.replace("/new", ""))
+    goto(location.pathname.replace("/new", ""));
 
-    loading = false
-
-
+    loading = false;
   };
 </script>
+
+<AppBar>
+  <div slot="lead" class="flex gap-2">
+    <ol class="breadcrumb">
+      <li class="crumb">
+        <a class="anchor" href="/z/pages/portal/projects/books">Books</a>
+      </li>
+      <li class="crumb-separator" aria-hidden>&rsaquo;</li>
+      <li class="crumb">Add Account</li>
+    </ol>
+  </div>
+</AppBar>
 
 {#if loading}
   <Loader />
