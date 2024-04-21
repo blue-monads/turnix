@@ -160,6 +160,44 @@ func (b *BookModule) dbOpListTxn(pid, uid int64) ([]Transaction, error) {
 
 }
 
+type TxnRecords struct {
+	Transactions []Transaction     `json:"transactions"`
+	Lines        []TransactionLine `json:"lines"`
+}
+
+func (b *BookModule) dbOpListTxnWithLines(pid, uid, offset int64) (*TxnRecords, error) {
+
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	record := &TxnRecords{
+		Transactions: make([]Transaction, 0),
+		Lines:        make([]TransactionLine, 0),
+	}
+
+	txtable := b.txnTable(pid)
+
+	err = txtable.Find(db.Cond{"id >": offset}).Limit(100).All(&record.Transactions)
+	if err != nil {
+		return nil, err
+	}
+
+	lineTable := b.txnLineTable(pid)
+
+	err = lineTable.Find(db.Cond{
+		"txn_id >": offset,
+		"txn_id <": offset + 101,
+	}).All(&record.Lines)
+	if err != nil {
+		return nil, err
+	}
+
+	return record, nil
+
+}
+
 func (b *BookModule) dbOpDeleteTxn(pid, uid, aid int64) error {
 
 	err := b.userHasScope(pid, uid, "write")

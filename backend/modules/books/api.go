@@ -1,6 +1,7 @@
 package books
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/bornjre/trunis/backend/xtypes"
@@ -22,6 +23,9 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	txnGrp := group.Group("/:pid/txn")
 
 	txnGrp.GET("/", x(b.listTxn))
+
+	txnGrp.GET("/line/list", x(b.listTxnWithLines))
+
 	txnGrp.POST("/", x(b.addTxn))
 	txnGrp.GET("/:id", x(b.getTxn))
 	txnGrp.POST("/:id", x(b.updateTxn))
@@ -97,6 +101,14 @@ func (b *BookModule) listTxn(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
 	return b.dbOpListTxn(pid, ctx.Claim.UserId)
+}
+
+func (b *BookModule) listTxnWithLines(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	offset, _ := strconv.ParseInt(ctx.Http.Param("offset"), 10, 64)
+
+	return b.dbOpListTxnWithLines(pid, ctx.Claim.UserId, offset)
 }
 
 func (b *BookModule) addTxn(ctx xtypes.ContextPlus) (any, error) {

@@ -11,6 +11,23 @@
   const pid = $page.params["pid"];
   const api = NewBookAPI(getContext("__api__") as RootAPI);
   const store = getModalStore();
+
+  let loading = false;
+  let data = [];
+
+  const load = async () => {
+    const resp = await api.listTxnWithLines(pid);
+    if (resp.status !== 200) {
+      return;
+    }
+
+    console.log("@data", resp.data)
+
+    data = resp.data;
+  };
+  load()
+
+
 </script>
 
 <AppBar>

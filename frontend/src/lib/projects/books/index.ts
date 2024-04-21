@@ -43,9 +43,16 @@ export class BooksAPI {
 
     // transactions
 
+
     listTxn = (pid: string) => {
         return this.client.get(`books/${pid}/txn`)
     }
+
+    listTxnWithLines = (pid: string, offset?: string) => {
+        return this.client.get(`books/${pid}/txn/line/list?offset=${offset || 0}`)
+    }
+
+
     addTxn = (pid: string, data: object) => {
         return this.client.post(`books/${pid}/txn`, data )
     }
