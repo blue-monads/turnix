@@ -52,6 +52,10 @@ export class BooksAPI {
         return this.client.get(`books/${pid}/txn/line/list?offset=${offset || 0}`)
     }
 
+    listAccTxnWithLines = (pid: string, aid: string, offset?: string) => {
+        return this.client.get(`books/${pid}/txn/line/${aid}/list?offset=${offset || 0}`)
+    }
+
 
     addTxn = (pid: string, data: object) => {
         return this.client.post(`books/${pid}/txn`, data )

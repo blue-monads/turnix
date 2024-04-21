@@ -198,6 +198,45 @@ func (b *BookModule) dbOpListTxnWithLines(pid, uid, offset int64) (*TxnRecords, 
 
 }
 
+func (b *BookModule) dbOpListAccountTxnWithLines(pid, uid, accId, offset int64) (*TxnRecords, error) {
+
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	record := &TxnRecords{
+		Transactions: make([]Transaction, 0),
+		Lines:        make([]TransactionLine, 0),
+	}
+
+	lineTable := b.txnLineTable(pid)
+
+	err = lineTable.Find(db.Cond{
+		"txn_id >":   offset,
+		"account_id": accId,
+	}).Limit(200).All(&record.Lines)
+	if err != nil {
+		return nil, err
+	}
+
+	ids := make([]int64, 0, len(record.Lines))
+
+	for _, line := range record.Lines {
+		ids = append(ids, line.TxnID)
+	}
+
+	txtable := b.txnTable(pid)
+
+	err = txtable.Find(db.Cond{"id IN": ids}).All(&record.Transactions)
+	if err != nil {
+		return nil, err
+	}
+
+	return record, nil
+
+}
+
 func (b *BookModule) dbOpDeleteTxn(pid, uid, aid int64) error {
 
 	err := b.userHasScope(pid, uid, "write")

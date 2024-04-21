@@ -25,6 +25,7 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	txnGrp.GET("/", x(b.listTxn))
 
 	txnGrp.GET("/line/list", x(b.listTxnWithLines))
+	txnGrp.GET("/line/:aid/list", x(b.listAccountTxnWithLines))
 
 	txnGrp.POST("/", x(b.addTxn))
 	txnGrp.GET("/:id", x(b.getTxn))
@@ -109,6 +110,15 @@ func (b *BookModule) listTxnWithLines(ctx xtypes.ContextPlus) (any, error) {
 	offset, _ := strconv.ParseInt(ctx.Http.Param("offset"), 10, 64)
 
 	return b.dbOpListTxnWithLines(pid, ctx.Claim.UserId, offset)
+}
+
+func (b *BookModule) listAccountTxnWithLines(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	offset, _ := strconv.ParseInt(ctx.Http.Query("offset"), 10, 64)
+	account, _ := strconv.ParseInt(ctx.Http.Param("aid"), 10, 64)
+
+	return b.dbOpListAccountTxnWithLines(pid, ctx.Claim.UserId, account, offset)
 }
 
 func (b *BookModule) addTxn(ctx xtypes.ContextPlus) (any, error) {

@@ -85,7 +85,7 @@
 
       icon: "plus",
       Action: async (id) => {
-        const next = `/txn?pid=${pid}&aid=${id}`;
+        const next = `/txn/account?pid=${pid}&aid=${id}`;
 
         if (location.pathname.endsWith("/account")) {
           goto(location.pathname.replace("/account", next));
