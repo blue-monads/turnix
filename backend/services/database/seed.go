@@ -32,9 +32,21 @@ func (db *DB) RunSeed() error {
 	}
 
 	_, err = db.AddProject(&models.Project{
-		Name:         "zesus",
-		Info:         "This is test proj",
+		Name:         "Automation Loop",
+		Info:         "Loop for my automation projects",
 		Ptype:        "unloop",
+		OwnerID:      userId,
+		IsInitilized: true,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	_, err = db.AddProject(&models.Project{
+		Name:         "My books",
+		Info:         "My accounts tracking",
+		Ptype:        "books",
 		OwnerID:      userId,
 		IsInitilized: true,
 	})
