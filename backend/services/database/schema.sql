@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS Projects (
 CREATE TABLE IF NOT EXISTS ProjectHooks (
   id INTEGER PRIMARY KEY, 
   event TEXT NOT NULL DEFAULT,
-  hookType TEXT NOT NULL DEFAULT 'script', -- script, webhook
+  hookType TEXT NOT NULL DEFAULT 'script', -- script, webhook, email
   hookCode TEXT NOT NULL DEFAULT '',
   envs JSON NOT NULL DEFAULT '{}',
   projectId INTEGER NOT NULL, 

@@ -72,10 +72,10 @@
       Find
     </button>
 
-    <button class="inline-flex gap-1">
+    <a href={`/z/pages/portal/projects/books/${pid}/txn/new`} class="inline-flex gap-1">
       <SvgIcon name="plus" className="w-5 h-5" />
       New
-    </button>
+    </a>
   </div>
 </AppBar>
 
