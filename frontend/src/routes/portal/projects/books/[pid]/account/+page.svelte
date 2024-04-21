@@ -62,9 +62,10 @@
   color={["acc_type"]}
   actions={[
     {
-      Name: "txns",
-      Class: "bg-green-400",
-      Action: async (id, data) => {
+      Name: "explore txns",
+
+      icon: "plus",
+      Action: async (id) => {
         const next = `/txn?pid=${pid}&aid=${id}`;
 
         if (location.pathname.endsWith("/account")) {
@@ -76,14 +77,32 @@
     },
 
     {
-      Name: "edit",
-      Action: async (id, data) => {},
+      Name: "add txn",
+      Class: "bg-green-400",
+      Action: async (id) => {
+        const next = `/txn/new?pid=${pid}&aid=${id}`;
+
+        if (location.pathname.endsWith("/account")) {
+          goto(location.pathname.replace("/account", next));
+        } else {
+          goto(location.pathname + next);
+        }
+      },
     },
 
     {
-      Name: "delete",
-      Class: "bg-red-400",
-      Action: async (id, data) => {},
+      Name: "edit",
+      Class: "bg-yellow-400",
+      Action: async (id) => {
+
+        const next = `/account/edit?pid=${pid}&aid=${id}`;
+
+        if (location.pathname.endsWith("/account")) {
+          goto(location.pathname.replace("/account", next));
+        } else {
+          goto(location.pathname + next);
+        }
+      },
     },
   ]}
 />
