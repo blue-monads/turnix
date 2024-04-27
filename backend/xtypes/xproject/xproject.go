@@ -4,7 +4,6 @@ import (
 	"io/fs"
 
 	"github.com/bornjre/trunis/backend/xtypes"
-	"github.com/bornjre/trunis/backend/xtypes/services/xfilestore"
 	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
 
 	"github.com/gin-gonic/gin"
@@ -53,5 +52,7 @@ type ProjectType interface {
 	OnSockdMessage(msg *xsockd.Message) error
 	OnSockdConn(opts *xsockd.ConnectOptions) error
 
-	OnFileEvent(event *xfilestore.Event) error
+	OnFileEvent(event *FileEvent) error
+
+	OnUserEvent(event *UserEvent) error
 }
