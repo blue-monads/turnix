@@ -4,7 +4,6 @@ import (
 	"io/fs"
 
 	"github.com/bornjre/trunis/backend/xtypes"
-	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -49,10 +48,9 @@ type ProjectType interface {
 
 	DeInit(pid int64) error
 
-	OnSockdMessage(msg *xsockd.Message) error
-	OnSockdConn(opts *xsockd.ConnectOptions) error
-
 	OnFileEvent(event *FileEvent) error
 
 	OnUserEvent(event *UserEvent) error
+
+	OnHookEvent(event *HookEvent) error
 }

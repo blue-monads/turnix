@@ -20,6 +20,15 @@ type ProjectUser struct {
 	ExtraMeta string `json:"extrameta" db:"extrameta,omitempty"`
 }
 
+type ProjectHook struct {
+	ID        int64  `json:"id" db:"id,omitempty"`
+	Event     string `json:"event" db:"userId"`
+	HookType  string `json:"hook_type" db:"projectId"`
+	HookCode  string `json:"hook_code" db:"scope,omitempty"`
+	ProjectId int64  `json:"project_id" db:"project_id,omitempty"`
+	ExtraMeta string `json:"extrameta" db:"extrameta,omitempty"`
+}
+
 type ProjectTypes struct {
 	Name       string `json:"name"`
 	Ptype      string `json:"ptype"`

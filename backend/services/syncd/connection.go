@@ -5,17 +5,14 @@ import (
 	"time"
 
 	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
-	"github.com/bornjre/trunis/backend/xtypes/xproject"
 )
 
 type Connection struct {
-	parent    *Sockd
-	id        int64
-	userId    int64
-	projectId int64
-	tags      []string
-	conn      xsockd.Conn
-	ptype     xproject.ProjectType
+	parent *Sockd
+	id     int64
+	userId int64
+	tags   []string
+	conn   xsockd.Conn
 
 	closed  bool
 	failed  bool
@@ -106,20 +103,11 @@ func (c *Connection) readLoop() {
 			return
 		}
 
-		err = c.ptype.OnSockdMessage(&xsockd.Message{
-			ConnId:    c.id,
-			ProjectId: c.projectId,
-			UserId:    c.userId,
-			Data:      msg,
-			Consumed:  false,
-		})
-
-		if err != nil {
-			c.parent.getLogger().Info().
-				Int64("conn_id", int64(c.conn.Id())).
-				Err(err).
-				Msg("logid.SockdReadErr")
-			return
+		if c.parent.onMessage != nil {
+			c.parent.onMessage(&MessageContext{
+				Cid:  c.id,
+				Data: msg,
+			})
 		}
 
 		if c.failed {

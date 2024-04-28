@@ -1,6 +1,10 @@
 package xproject
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/bornjre/trunis/backend/xtypes/models"
+	"github.com/dop251/goja"
+	"github.com/gin-gonic/gin"
+)
 
 type EventType = uint16
 
@@ -9,6 +13,7 @@ const (
 	EventTypeAddFile
 	EventTypeAddFolder
 	EventTypeUserLogin
+	EventTypeHook
 )
 
 type FileEvent struct {
@@ -29,4 +34,13 @@ type UserEvent struct {
 	Action      string
 	HttpContext *gin.Context
 	Consumed    bool
+}
+
+type HookEvent struct {
+	UserId    int64
+	ProjectId int64
+	Type      EventType
+	JsRuntime *goja.Runtime
+	Hook      *models.ProjectHook
+	Consumed  bool
 }

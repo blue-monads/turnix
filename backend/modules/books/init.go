@@ -33,5 +33,5 @@ func New(opt xproject.BuilderOption) (xproject.ProjectType, error) {
 		return nil, err
 	}
 
-	return mod, nil
+	return xproject.NewAdapter(mod), nil
 }

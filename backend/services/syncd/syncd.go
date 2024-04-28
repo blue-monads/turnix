@@ -1,12 +1,9 @@
 package syncd
 
 import (
-	"errors"
 	"sync"
 
-	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
 	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
-	"github.com/bornjre/trunis/backend/xtypes/xproject"
 
 	"github.com/rs/zerolog"
 )
@@ -15,70 +12,48 @@ type Sockd struct {
 	allConns  map[int64]*Connection
 	userConns map[int64]map[int64]*Connection
 	connLock  sync.Mutex
+	pid       int64
+	onMessage func(ctx *MessageContext)
 
-	projectTypes map[string]xproject.ProjectType
-	database     xdatabase.Database
-	logger       zerolog.Logger
+	logger zerolog.Logger
+}
+
+type MessageContext struct {
+	Cid       int64
+	Data      []byte
+	Broadcast bool
 }
 
 type Options struct {
-	Database     xdatabase.Database
-	ProjectTypes map[string]xproject.ProjectType
-	Logger       zerolog.Logger
+	Pid       int64
+	Logger    zerolog.Logger
+	OnMessage func(ctx *MessageContext)
 }
 
 func New(opts Options) *Sockd {
 
 	return &Sockd{
+		pid:       opts.Pid,
 		allConns:  make(map[int64]*Connection),
 		userConns: make(map[int64]map[int64]*Connection),
 		connLock:  sync.Mutex{},
-
-		projectTypes: opts.ProjectTypes,
-		database:     opts.Database,
-		logger:       opts.Logger,
+		logger:    opts.Logger,
 	}
 }
 
-func (s *Sockd) Connect(userId, pid int64, conn xsockd.Conn) error {
+func (s *Sockd) Connect(userId int64, conn xsockd.Conn) error {
 
 	connId := conn.Id()
 
-	proj, err := s.database.GetProject(pid)
-	if err != nil {
-		return err
-	}
-
-	ptype := s.projectTypes[proj.Ptype]
-	if ptype == nil {
-		return errors.New("err project type not found")
-	}
-
-	opts := &xsockd.ConnectOptions{
-		Project: proj,
-		ConnId:  connId,
-		UserId:  userId,
-		Conn:    conn,
-		Tags:    []string{},
-	}
-
-	err = ptype.OnSockdConn(opts)
-
-	if err != nil {
-		return err
-	}
-
 	connObj := &Connection{
-		parent:    s,
-		userId:    userId,
-		projectId: pid,
-		tags:      opts.Tags,
-		conn:      conn,
-		id:        connId,
-		ptype:     ptype,
-		closed:    false,
-		failed:    false,
-		writeCh:   make(chan []byte),
+		parent: s,
+		userId: userId,
+		conn:   conn,
+		id:     connId,
+
+		closed:  false,
+		failed:  false,
+		writeCh: make(chan []byte),
 	}
 
 	s.addConn(connObj)
@@ -90,10 +65,6 @@ func (s *Sockd) Connect(userId, pid int64, conn xsockd.Conn) error {
 func (s *Sockd) SendDirect(pid int64, connId int64, payload []byte) error {
 
 	conn := s.getConn(connId)
-
-	if conn.projectId != pid {
-		return errors.New("err not found")
-	}
 
 	conn.write(payload)
 
