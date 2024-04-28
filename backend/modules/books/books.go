@@ -5,8 +5,8 @@ import (
 
 	"github.com/bornjre/trunis/backend/xtypes"
 	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
-	"github.com/bornjre/trunis/backend/xtypes/services/xfilestore"
 	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
+	"github.com/bornjre/trunis/backend/xtypes/xproject"
 	"github.com/upper/db/v4"
 )
 
@@ -29,4 +29,6 @@ func (b *BookModule) OnSockdMessage(msg *xsockd.Message) error { return nil }
 
 func (b *BookModule) OnSockdConn(opts *xsockd.ConnectOptions) error { return nil }
 
-func (b *BookModule) OnFileEvent(event *xfilestore.Event) error { return nil }
+func (b *BookModule) OnFileEvent(event *xproject.FileEvent) error { return nil }
+
+func (b *BookModule) OnUserEvent(event *xproject.UserEvent) error { return nil }
