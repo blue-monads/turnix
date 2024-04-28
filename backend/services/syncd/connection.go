@@ -11,8 +11,8 @@ type Connection struct {
 	parent *Sockd
 	id     int64
 	userId int64
-	tags   []string
-	conn   xsockd.Conn
+	//tags   []string
+	conn xsockd.Conn
 
 	closed  bool
 	failed  bool
