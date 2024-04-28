@@ -12,11 +12,12 @@ type User struct {
 	Phone           string     `json:"phone" db:"phone,omitempty"`
 	Bio             string     `json:"bio" db:"bio"`
 	Password        string     `json:"password" db:"password,omitempty"`
-	IsEmailVerified bool       `json:"isEmailVerified" db:"isEmailVerified"`
+	IsEmailVerified bool       `json:"isEmailVerified" db:"email_verified"`
 	ExtraMeta       string     `json:"extrameta" db:"extrameta,omitempty"`
-	CreatedAt       *time.Time `json:"createdAt" db:"createdAt,omitempty"`
-	OwnedBy         int64      `json:"ownedBy" db:"ownedBy,omitempty"`
-	AccessToken     string     `json:"accessToken" db:"accessToken,omitempty"`
+	CreatedAt       *time.Time `json:"createdAt" db:"created_at,omitempty"`
+	OwnerUserId     int64      `json:"owner_user_id" db:"owner_user_id,omitempty"`
+	OwnerProjectId  int64      `json:"owner_project_id" db:"owner_project_id,omitempty"`
+	MessageReadHead int64      `json:"msg_read_head" db:"msg_read_head,omitempty"`
 	Disabled        bool       `json:"disabled" db:"disabled,omitempty"`
 }
 
@@ -25,11 +26,11 @@ type UserMessage struct {
 	Name          string     `json:"title" db:"title"`
 	Type          string     `json:"type" db:"type"`
 	Contents      string     `json:"contents" db:"contents"`
-	ToUser        int64      `json:"to_user" db:"toUser"`
-	FromUser      int64      `json:"from_user" db:"fromUser"`
-	FromProject   int64      `json:"from_project" db:"fromProject"`
-	IsRead        bool       `json:"is_read" db:"isRead,omitempty"`
-	CreatedAt     *time.Time `json:"createdAt" db:"createdAt,omitempty"`
-	CallbackToken string     `json:"callbackToken" db:"callbackToken,omitempty"`
+	ToUser        int64      `json:"to_user" db:"to_user"`
+	FromUser      int64      `json:"from_user" db:"from_user_id"`
+	FromProject   int64      `json:"from_project" db:"from_project_id"`
+	IsRead        bool       `json:"is_read" db:"is_read,omitempty"`
+	CreatedAt     *time.Time `json:"created_at" db:"created_at,omitempty"`
+	CallbackToken string     `json:"callback_token" db:"callback_token,omitempty"`
 	Disabled      bool       `json:"disabled" db:"disabled,omitempty"`
 }

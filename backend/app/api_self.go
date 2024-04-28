@@ -16,7 +16,6 @@ func (a *App) selfInfo(claim *signer.AccessClaim, _ *gin.Context) (any, error) {
 		return nil, err
 	}
 
-	usr.AccessToken = ""
 	usr.Password = ""
 
 	return usr, nil
@@ -62,8 +61,7 @@ func (a *App) selfAddUser(claim *signer.AccessClaim, ctx *gin.Context) (any, err
 		return nil, err
 	}
 
-	data.AccessToken = ""
-	data.OwnedBy = claim.UserId
+	data.OwnerUserId = claim.UserId
 
 	return a.db.AddUser(data)
 }
@@ -77,11 +75,10 @@ func (a *App) selfGetUser(claim *signer.AccessClaim, ctx *gin.Context) (any, err
 		return nil, err
 	}
 
-	if usr.OwnedBy != claim.UserId {
+	if usr.OwnerUserId != claim.UserId {
 		return nil, errNotAllowed
 	}
 
-	usr.AccessToken = ""
 	usr.Password = ""
 
 	return usr, nil
@@ -102,7 +99,7 @@ func (a *App) selfUpdateUser(claim *signer.AccessClaim, ctx *gin.Context) (any, 
 		return nil, err
 	}
 
-	if usr.OwnedBy == claim.UserId {
+	if usr.OwnerUserId == claim.UserId {
 		return nil, errNotAllowed
 	}
 
@@ -128,7 +125,7 @@ func (a *App) selfDeleteUser(claim *signer.AccessClaim, ctx *gin.Context) (any, 
 		return nil, err
 	}
 
-	if usr.OwnedBy == claim.UserId {
+	if usr.OwnerUserId == claim.UserId {
 		return nil, errNotAllowed
 	}
 

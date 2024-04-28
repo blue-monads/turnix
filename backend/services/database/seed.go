@@ -25,7 +25,7 @@ func (db *DB) RunSeed() error {
 		Bio:             "I am a zesus.",
 		Password:        "dev123",
 		IsEmailVerified: true,
-		OwnedBy:         userId,
+		OwnerUserId:     userId,
 	})
 	if err != nil {
 		return err
