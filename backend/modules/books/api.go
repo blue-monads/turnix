@@ -31,6 +31,8 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	txnGrp.POST("/", x(b.addTxn))
 	txnGrp.GET("/:id", x(b.getTxn))
 	txnGrp.POST("/:id", x(b.updateTxn))
+	txnGrp.PATCH("/:id", x(b.updateTxnWithLine))
+
 	txnGrp.DELETE("/:id", x(b.deleteTxn))
 
 	return nil
@@ -217,16 +219,49 @@ func (b *BookModule) updateTxn(ctx xtypes.ContextPlus) (any, error) {
 
 }
 
-func (b *BookModule) deleteTxn(ctx xtypes.ContextPlus) (any, error) {
+type UpdateTxnWithLineOptions struct {
+	TxnData        map[string]any `json:"txn_data"`
+	FirstLineId    int64          `json:"first_line_id"`
+	FirtLineData   map[string]any `json:"first_line_data"`
+	SecondLineId   int64          `json:"second_line_id"`
+	SecondLineData map[string]any `json:"second_line_data"`
+}
+
+func (b *BookModule) updateTxnWithLine(ctx xtypes.ContextPlus) (any, error) {
+
 	pid := ctx.ProjectId()
 
-	data := make(map[string]any)
+	data := &UpdateTxnWithLineOptions{}
 	err := ctx.Http.Bind(data)
 	if err != nil {
 		return nil, err
 	}
 
-	err = b.dbOpDeleteTxn(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	txnId := ctx.ParamInt64("id")
+
+	err = b.dbOpUpdateTxn(pid, ctx.Claim.UserId, txnId, data.TxnData)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.dbOpUpdateTxnLine(pid, ctx.Claim.UserId, txnId, data.FirstLineId, data.FirtLineData)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.dbOpUpdateTxnLine(pid, ctx.Claim.UserId, txnId, data.SecondLineId, data.SecondLineData)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+
+}
+
+func (b *BookModule) deleteTxn(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	err := b.dbOpDeleteTxn(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 	if err != nil {
 		return nil, err
 	}

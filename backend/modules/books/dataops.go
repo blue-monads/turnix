@@ -332,13 +332,13 @@ func (b *BookModule) dbOpAddTxnLine(pid, uid int64, data *TransactionLine) (int6
 	return r.ID().(int64), nil
 }
 
-func (b *BookModule) dbOpUpdateTxnLine(pid, uid, id int64, data map[string]any) error {
+func (b *BookModule) dbOpUpdateTxnLine(pid, uid, txnId, id int64, data map[string]any) error {
 	err := b.userHasScope(pid, uid, "write")
 	if err != nil {
 		return err
 	}
 
-	return b.txnLineTable(pid).Find(db.Cond{"id": id}).Update(data)
+	return b.txnLineTable(pid).Find(db.Cond{"id": id, "txn_id": txnId}).Update(data)
 }
 
 // utils
