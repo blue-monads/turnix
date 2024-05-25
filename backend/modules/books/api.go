@@ -65,7 +65,7 @@ func (b *BookModule) updateAccount(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
 	data := make(map[string]any)
-	err := ctx.Http.Bind(data)
+	err := ctx.Http.Bind(&data)
 	if err != nil {
 		return nil, err
 	}
