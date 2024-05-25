@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
+	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )
 
@@ -122,17 +123,21 @@ func (b *BookModule) dbOpUpdateTxn(pid, uid, id int64, data map[string]any) erro
 	return b.txnTable(pid).Find(db.Cond{"id": id}).Update(data)
 }
 
-func (b *BookModule) dbOpGetTxn(pid, uid, aid int64) (*Transaction, error) {
+func (b *BookModule) dbOpGetTxn(pid, uid, tid int64) (*Transaction, error) {
+
+	pp.Println("@dbOpGetTxn", pid, uid, tid)
 
 	err := b.userHasScope(pid, uid, "read")
 	if err != nil {
+		pp.Println("@userHasScope", pid, uid, tid)
+
 		return nil, err
 	}
 
 	data := &Transaction{}
 	table := b.txnTable(pid)
 
-	err = table.Find(db.Cond{"id": aid}).One(data)
+	err = table.Find(db.Cond{"id": tid}).One(data)
 	if err != nil {
 		return nil, err
 	}
@@ -211,6 +216,11 @@ func (b *BookModule) dbOpListAccountTxnWithLines(pid, uid, accId, offset int64) 
 	}
 
 	lineTable := b.txnLineTable(pid)
+	txtable := b.txnTable(pid)
+
+	// lineTable.Session().SQL().
+	// 	Select("*").
+	// 	From(lineTable.Name()).Join(fmt.Sprintf("%s.txn_id = %s.txn_id",lineTable.Name(), txtable.Name() ))
 
 	err = lineTable.Find(db.Cond{
 		"txn_id >":   offset,
@@ -225,8 +235,6 @@ func (b *BookModule) dbOpListAccountTxnWithLines(pid, uid, accId, offset int64) 
 	for _, line := range record.Lines {
 		ids = append(ids, line.TxnID)
 	}
-
-	txtable := b.txnTable(pid)
 
 	err = txtable.Find(db.Cond{"id IN": ids}).All(&record.Transactions)
 	if err != nil {
@@ -257,6 +265,10 @@ func (b *BookModule) dbOpDeleteTxn(pid, uid, aid int64) error {
 // txn line
 
 func (b *BookModule) dbOpAddTxnLine(pid, uid int64, data *TransactionLine) (int64, error) {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return 0, err
+	}
 
 	table := b.txnLineTable(pid)
 
@@ -303,3 +315,11 @@ func (b *BookModule) userHasScope(pid, uid int64, scope string) error {
 
 	return nil
 }
+
+/*
+
+SELECT *
+FROM TransactionLines t1, TransactionLines t2
+WHERE t1.account_id = 2 and t1.txn_id = t2.txn_id and t2.account_id <> 2;
+
+*/
