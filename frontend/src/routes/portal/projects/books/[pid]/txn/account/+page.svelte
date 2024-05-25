@@ -87,6 +87,6 @@
   <Loader />
 {:else}
   {#key data}
-    <Transactions {accountsIndex} lineData={data} />
+    <Transactions {accountsIndex} lineData={data} pid={pid} />
   {/key}
 {/if}
