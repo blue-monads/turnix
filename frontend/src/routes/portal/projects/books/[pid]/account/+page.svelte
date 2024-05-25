@@ -6,9 +6,9 @@
   import { getContext } from "svelte";
   import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
   import type { RootAPI } from "$lib/api";
-  import { page } from "$app/stores";
+  import { params } from "$lib/params";
 
-  const pid = $page.params["pid"];
+  const pid = $params["pid"];
 
   const store = getModalStore();
   const api = NewBookAPI(getContext("__api__") as RootAPI);

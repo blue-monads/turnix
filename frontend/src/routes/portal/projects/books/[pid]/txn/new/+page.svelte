@@ -1,25 +1,25 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
+
   import type { RootAPI } from "$lib/api";
   import { Loader } from "$lib/compo";
   import Transaction from "$lib/container/books/Transaction.svelte";
-  import { NewBookAPI } from "$lib/projects/books";
+  import { NewBookAPI, type Account } from "$lib/projects/books";
   import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
   import { getContext } from "svelte";
-
   import { params } from "$lib/params";
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-  const pid = $page.params["pid"];
+
+  const pid = $params["pid"];
   const api = NewBookAPI(getContext("__api__") as RootAPI);
   const store = getModalStore();
 
   let loading = true;
   let accountsIndex: Record<number, string> = {};
-  let accounts: never[] = [];
+  let accounts: Account[] = [];
 
   const onSubmit = async (data: Record<string, any>) => {
-    const resp = await api.addTxn(pid, data);
+    const resp = await api.addTxn(pid, data as any);
     if (resp.status !== 200) {
       return;
     }

@@ -4,14 +4,13 @@
   import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
 
   import { params } from "$lib/params";
-  import { page } from "$app/stores";
   import { NewBookAPI } from "$lib/projects/books";
   import { getContext } from "svelte";
   import type { RootAPI } from "$lib/api";
   import { Loader } from "$lib/compo";
   import type { TxnLine } from "$lib/container/books/txntype";
   import { formatResponse } from "../format";
-  const pid = $page.params["pid"];
+  const pid = $params["pid"];
   const aid = $params["aid"]
   const api = NewBookAPI(getContext("__api__") as RootAPI);
   const store = getModalStore();

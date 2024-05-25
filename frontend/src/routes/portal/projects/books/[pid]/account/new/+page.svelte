@@ -3,13 +3,12 @@
   import Account from "$lib/container/books/Account.svelte";
   import { NewBookAPI } from "$lib/projects/books";
   import { getContext } from "svelte";
-
-  import { page } from "$app/stores";
+  import { params } from "$lib/params";
   import { Loader } from "$lib/compo";
   import { goto } from "$app/navigation";
   import { AppBar } from "@skeletonlabs/skeleton";
 
-  const pid = $page.params["pid"];
+  const pid = $params["pid"];
 
   const api = NewBookAPI(getContext("__api__") as RootAPI);
 

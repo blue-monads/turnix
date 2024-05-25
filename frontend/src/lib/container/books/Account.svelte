@@ -2,6 +2,7 @@
   export let name = "";
   export let acc_type = "revenue";
   export let info = "";
+  export let edit = false;
 
   export let onChange: Function;
 
@@ -26,7 +27,13 @@
 >
   <div class="card">
     <header class="card-header">
-      <h4 class="h4">Add Account</h4>
+      <h4 class="h4">
+        {#if edit}
+          Edit Account
+        {:else}
+          Add Account
+        {/if}
+      </h4>
     </header>
 
     <section class="p-4 flex flex-col gap-4">
