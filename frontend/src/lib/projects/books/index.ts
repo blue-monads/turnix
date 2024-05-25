@@ -137,13 +137,13 @@ export class BooksAPI {
     }
 
     getTxnWithLines = (pid: string, tid: string) => {
-        return this.client.get<Transaction>(`books/${pid}/txn/${tid}/line`)
+        return this.client.get<TransactionWithLine>(`books/${pid}/txn/${tid}/line`)
     }
 
     updateTxn = (pid: string, tid: string, data: Partial<Transaction>) => {
         return this.client.post(`books/${pid}/txn/${tid}`, data)
     }
-    updateTxnWithLine = (pid: string, tid: string, data: TransactionWithLine) => {
+    updateTxnWithLine = (pid: string, tid: string, data: TxnUpdateWithLineOptions) => {
         return this.client.post(`books/${pid}/txn/${tid}/line`, data)
     }
 

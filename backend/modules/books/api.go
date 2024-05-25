@@ -229,7 +229,7 @@ func (b *BookModule) updateTxn(ctx xtypes.ContextPlus) (any, error) {
 type UpdateTxnWithLineOptions struct {
 	TxnData        map[string]any `json:"txn_data"`
 	FirstLineId    int64          `json:"first_line_id"`
-	FirtLineData   map[string]any `json:"first_line_data"`
+	FirstLineData  map[string]any `json:"first_line_data"`
 	SecondLineId   int64          `json:"second_line_id"`
 	SecondLineData map[string]any `json:"second_line_data"`
 }
@@ -244,21 +244,30 @@ func (b *BookModule) updateTxnWithLine(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
+	pp.Println("@data", data)
+
 	txnId := ctx.ParamInt64("id")
 
-	err = b.dbOpUpdateTxn(pid, ctx.Claim.UserId, txnId, data.TxnData)
-	if err != nil {
-		return nil, err
+	if len(data.TxnData) != 0 {
+		err = b.dbOpUpdateTxn(pid, ctx.Claim.UserId, txnId, data.TxnData)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	err = b.dbOpUpdateTxnLine(pid, ctx.Claim.UserId, txnId, data.FirstLineId, data.FirtLineData)
-	if err != nil {
-		return nil, err
+	if len(data.FirstLineData) != 0 {
+		err = b.dbOpUpdateTxnLine(pid, ctx.Claim.UserId, txnId, data.FirstLineId, data.FirstLineData)
+		if err != nil {
+			return nil, err
+		}
+
 	}
 
-	err = b.dbOpUpdateTxnLine(pid, ctx.Claim.UserId, txnId, data.SecondLineId, data.SecondLineData)
-	if err != nil {
-		return nil, err
+	if len(data.SecondLineData) != 0 {
+		err = b.dbOpUpdateTxnLine(pid, ctx.Claim.UserId, txnId, data.SecondLineId, data.SecondLineData)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return nil, nil

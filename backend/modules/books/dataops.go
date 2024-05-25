@@ -122,6 +122,8 @@ func (b *BookModule) dbOpUpdateTxn(pid, uid, id int64, data map[string]any) erro
 
 	}
 
+	pp.Println("@dbOpUpdateTxn", data)
+
 	return b.txnTable(pid).Find(db.Cond{"id": id}).Update(data)
 }
 
@@ -368,6 +370,8 @@ func (b *BookModule) dbOpUpdateTxnLine(pid, uid, txnId, id int64, data map[strin
 	if err != nil {
 		return err
 	}
+
+	pp.Println("@dbOpUpdateTxnLine", pid, uid, txnId, id, data)
 
 	return b.txnLineTable(pid).Find(db.Cond{"id": id, "txn_id": txnId}).Update(data)
 }
