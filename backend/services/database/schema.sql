@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS UserDevices (
   FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 
-create table UserMessages(
+CREATE TABLE IF NOT EXISTS UserMessages(
   id INTEGER PRIMARY KEY, 
   title text not null default '', 
   is_read boolean not null default FALSE, 
