@@ -5,8 +5,9 @@
   import type { RootAPI } from "$lib/api";
   import { params } from "$lib/params";
   import { NewUnloopAPI } from "$lib/projects/unloop";
+  import { page } from "$app/stores";
 
-  let pid = $params["pid"];
+  let pid = $page.params["pid"];
 
   const api = NewUnloopAPI(getContext("__api__") as RootAPI);
 

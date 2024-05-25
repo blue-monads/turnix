@@ -8,8 +8,9 @@
     import { AppBar } from "@skeletonlabs/skeleton";
     import AccountPage from "$lib/container/books/Account.svelte";
     import { params } from "$lib/params";
-    
-    const pid = $params["pid"];
+    import { page } from "$app/stores";
+   
+    const pid = $page.params["pid"];
     const aid = $params["aid"];
   
     const api = NewBookAPI(getContext("__api__") as RootAPI);

@@ -7,8 +7,9 @@
   import { Loader } from "$lib/compo";
   import { goto } from "$app/navigation";
   import { AppBar } from "@skeletonlabs/skeleton";
+  import { page } from "$app/stores";
 
-  const pid = $params["pid"];
+  const pid = $page.params["pid"];
 
   const api = NewBookAPI(getContext("__api__") as RootAPI);
 

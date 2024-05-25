@@ -9,10 +9,12 @@
   import { getContext } from "svelte";
   import { params } from "$lib/params";
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+  import { page } from "$app/stores";
 
-  const pid = $params["pid"];
+  const pid = $page.params["pid"];
   const api = NewBookAPI(getContext("__api__") as RootAPI);
   const store = getModalStore();
+
 
   let loading = true;
   let accountsIndex: Record<number, string> = {};

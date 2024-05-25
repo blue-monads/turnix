@@ -4,8 +4,10 @@
     import { params } from "$lib/params";
     import type { RootAPI } from "$lib/api";
     import { getContext } from "svelte";
+    import { page } from "$app/stores";
 
-    let pid = $params["pid"];
+    let pid = $page.params["pid"];
+
 
     const api = getContext("__api__") as RootAPI;
 
