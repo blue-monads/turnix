@@ -9,6 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/gobuffalo/fizz v1.14.4
 	github.com/hako/branca v0.0.0-20200807062402-6052ac720505
+	github.com/jmoiron/sqlx v1.4.0
 	github.com/k0kubun/pp v3.0.1+incompatible
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646

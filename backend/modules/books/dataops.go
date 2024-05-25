@@ -1,9 +1,11 @@
 package books
 
 import (
+	"database/sql"
 	"strings"
 
 	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
+	"github.com/jmoiron/sqlx"
 	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )
@@ -215,30 +217,80 @@ func (b *BookModule) dbOpListAccountTxnWithLines(pid, uid, accId, offset int64) 
 		Lines:        make([]TransactionLine, 0),
 	}
 
-	lineTable := b.txnLineTable(pid)
-	txtable := b.txnTable(pid)
+	driver := b.db.GetSession().Driver().(*sql.DB)
 
-	// lineTable.Session().SQL().
-	// 	Select("*").
-	// 	From(lineTable.Name()).Join(fmt.Sprintf("%s.txn_id = %s.txn_id",lineTable.Name(), txtable.Name() ))
+	rows, err := driver.Query(`	
+SELECT
+    t1.id AS first_id, t1.account_id AS first_account_id,
+    t1.debit_amount AS first_debit_amount, t1.credit_amount AS first_credit_amount,
+    t1.created_by AS first_created_by, t1.updated_by AS first_updated_by,
+    t1.created_at AS first_created_at, t1.updated_at AS first_updated_at,
+    t2.id AS second_id, t2.account_id AS second_account_id,
+    t2.debit_amount AS second_debit_amount, t2.credit_amount AS second_credit_amount,
+    t2.created_by AS second_created_by, t2.updated_by AS second_updated_by,
+    t2.created_at AS second_created_at, t2.updated_at AS second_updated_at,
+    t.id AS id, t.title, t.notes, t.linked_sales_id, t.linked_invoice_id,
+    t.reference_id, t.attachments, t.created_by AS txn_created_by,
+    t.updated_by AS txn_updated_by, t.created_at AS txn_created_at,
+    t.updated_at AS txn_updated_at, t.is_deleted
+FROM
+    TransactionLines t1, TransactionLines t2
+INNER JOIN
+    Transactions t ON t.id = t1.txn_id
+WHERE
+    t1.account_id = ? AND t1.txn_id = t2.txn_id AND t2.account_id <> ? and t.is_deleted = FALSE and t.id > ? ORDER BY t.id LIMIT 100;
+	`, accId, accId, offset)
 
-	err = lineTable.Find(db.Cond{
-		"txn_id >":   offset,
-		"account_id": accId,
-	}).Limit(200).All(&record.Lines)
 	if err != nil {
 		return nil, err
 	}
 
-	ids := make([]int64, 0, len(record.Lines))
-
-	for _, line := range record.Lines {
-		ids = append(ids, line.TxnID)
-	}
-
-	err = txtable.Find(db.Cond{"id IN": ids}).All(&record.Transactions)
+	results := []TransactionResult{}
+	err = sqlx.StructScan(rows, &results)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, result := range results {
+		record.Transactions = append(record.Transactions, Transaction{
+			ID:              result.Id,
+			Title:           result.Title,
+			Notes:           result.Notes,
+			LinkedSalesID:   int64(result.LinkedSalesID),
+			LinkedInvoiceID: int64(result.LinkedSalesID),
+			ReferenceID:     result.ReferenceID,
+			Attachments:     result.Attachments,
+			CreatedBy:       int64(result.TxnCreatedBy),
+			UpdatedBy:       int64(result.TxnUpdatedBy),
+			CreatedAt:       result.TxnCreatedAt,
+			UpdatedAt:       result.TxnUpdatedAt,
+			IsDeleted:       false,
+		})
+
+		record.Lines = append(record.Lines, TransactionLine{
+			ID:           int64(result.FirstID),
+			AccountID:    int64(result.FirstAccountID),
+			TxnID:        int64(result.Id),
+			DebitAmount:  result.FirstDebitAmount,
+			CreditAmount: result.FirstCreditAmount,
+			CreatedBy:    int64(result.FirstCreatedBy),
+			UpdatedBy:    int64(result.FirstUpdatedBy),
+			CreatedAt:    result.FirstCreatedAt,
+			UpdatedAt:    result.SecondUpdatedAt,
+		})
+
+		record.Lines = append(record.Lines, TransactionLine{
+			ID:           int64(result.SecondID),
+			AccountID:    int64(result.SecondAccountID),
+			TxnID:        int64(result.Id),
+			DebitAmount:  result.SecondDebitAmount,
+			CreditAmount: result.SecondCreditAmount,
+			CreatedBy:    int64(result.SecondCreatedBy),
+			UpdatedBy:    int64(result.SecondUpdatedBy),
+			CreatedAt:    result.SecondCreatedAt,
+			UpdatedAt:    result.SecondUpdatedAt,
+		})
+
 	}
 
 	return record, nil

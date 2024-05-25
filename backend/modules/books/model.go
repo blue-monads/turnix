@@ -119,7 +119,7 @@ type TransactionResult struct {
 	Notes           string     `db:"notes" json:"notes"`
 	LinkedSalesID   int        `db:"linked_sales_id" json:"linked_sales_id"`
 	LinkedInvoiceID int        `db:"linked_invoice_id" json:"linked_invoice_id"`
-	ReferenceID     int        `db:"reference_id" json:"reference_id"`
+	ReferenceID     string     `db:"reference_id" json:"reference_id"`
 	Attachments     string     `db:"attachments" json:"attachments"`
 	TxnCreatedBy    int        `db:"txn_created_by" json:"txn_created_by"`
 	TxnUpdatedBy    int        `db:"txn_updated_by" json:"txn_updated_by"`
