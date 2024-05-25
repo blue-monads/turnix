@@ -8,8 +8,12 @@
     import { getContext } from "svelte";
     import { page } from "$app/stores";
     import TxnForm from "../TxnForm.svelte";
+    import { params } from "$lib/params";
 
     const pid = $page.params["pid"];
+    const tid = $params["tid"]
+
+
     const api = NewBookAPI(getContext("__api__") as RootAPI);
     const store = getModalStore();
 
@@ -19,6 +23,10 @@
 
     const load = async () => {
         loading = false
+
+        const resp = await api.getTxn(pid, tid)
+
+
     };
 
     load();
