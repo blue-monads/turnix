@@ -4,6 +4,8 @@
 
   let files: FileList;
 
+  export let edit = false;
+
   export let title = "";
   export let notes = "";
   export let debit_account_id = 0;
@@ -50,7 +52,13 @@
     }}
   >
     <header class="card-header">
-      <h4 class="h4">Add Transaction</h4>
+      <h4 class="h4">
+        {#if edit}
+          Edit Transaction
+        {:else}
+          Add Transaction
+        {/if}
+      </h4>
     </header>
 
     <section class="p-4 flex flex-col gap-4">
@@ -79,7 +87,11 @@
             />
           </label>
 
-          <button class="pt-4 cursor-pointer" type="button" on:click={pickDebitAccount}>
+          <button
+            class="pt-4 cursor-pointer"
+            type="button"
+            on:click={pickDebitAccount}
+          >
             <SvgIcon name="arrow-up-right" className="w-5 h-5" />
           </button>
 
@@ -106,7 +118,11 @@
             />
           </label>
 
-          <button class="pt-4 cursor-pointer" type="button" on:click={pickCreditAccount}>
+          <button
+            class="pt-4 cursor-pointer"
+            type="button"
+            on:click={pickCreditAccount}
+          >
             <SvgIcon name="arrow-up-right" className="w-5 h-5" />
           </button>
 

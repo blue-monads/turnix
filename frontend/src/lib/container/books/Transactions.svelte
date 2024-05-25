@@ -4,6 +4,7 @@
 
   export let lineData: TxnLine[] = [];
   export let accountsIndex: Record<number, string>;
+  export let pid: string;
 
   console.log("@lines", lineData);
 </script>
@@ -36,7 +37,12 @@
 
           <td role="gridcell"></td>
           <td role="gridcell">
-            <button class="underline">edit</button>
+            <a
+              class="underline"
+              href={`/z/pages/portal/projects/books/${pid}/txn/edit?tid=${txn.txn.id}`}
+            >
+              edit
+            </a>
           </td>
         </tr>
 

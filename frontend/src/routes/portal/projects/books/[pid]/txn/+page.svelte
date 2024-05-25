@@ -2,7 +2,6 @@
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
   import Transactions from "$lib/container/books/Transactions.svelte";
   import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
-  import { params } from "$lib/params";
   import { NewBookAPI } from "$lib/projects/books";
   import { getContext } from "svelte";
   import type { RootAPI } from "$lib/api";
@@ -45,7 +44,6 @@
     loading = false;
   };
   load();
-
 </script>
 
 <AppBar>
@@ -72,7 +70,10 @@
       Find
     </button>
 
-    <a href={`/z/pages/portal/projects/books/${pid}/txn/new`} class="inline-flex gap-1">
+    <a
+      href={`/z/pages/portal/projects/books/${pid}/txn/new`}
+      class="inline-flex gap-1"
+    >
       <SvgIcon name="plus" className="w-5 h-5" />
       New
     </a>
@@ -83,6 +84,6 @@
   <Loader />
 {:else}
   {#key data}
-    <Transactions {accountsIndex} lineData={data} />
+    <Transactions {accountsIndex} lineData={data} {pid} />
   {/key}
 {/if}
