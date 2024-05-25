@@ -148,6 +148,37 @@ func (b *BookModule) dbOpGetTxn(pid, uid, tid int64) (*Transaction, error) {
 
 }
 
+func (b *BookModule) dbOpGetTxnWithLine(pid, uid, tid int64) (*TransactionWithLine, error) {
+
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	txnTable := b.txnTable(pid)
+	lineTable := b.txnLineTable(pid)
+
+	data := &TransactionWithLine{}
+
+	lines := []TransactionLine{}
+
+	err = txnTable.Find(db.Cond{"id": tid}).One(&data.Txn)
+	if err != nil {
+		return nil, err
+	}
+
+	err = lineTable.Find(db.Cond{"txn_id": tid}).All(&lines)
+	if err != nil {
+		return nil, err
+	}
+
+	data.FirstLine = &lines[0]
+	data.SecondLine = &lines[1]
+
+	return data, nil
+
+}
+
 func (b *BookModule) dbOpListTxn(pid, uid int64) ([]Transaction, error) {
 
 	err := b.userHasScope(pid, uid, "read")

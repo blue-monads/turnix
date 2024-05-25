@@ -24,7 +24,7 @@
     const load = async () => {
         loading = false
 
-        const resp = await api.getTxn(pid, tid)
+        const resp = await api.getTxnWithLines(pid, tid)
 
 
     };

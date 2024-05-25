@@ -113,6 +113,12 @@ WHERE
 
 */
 
+type TransactionWithLine struct {
+	Txn        Transaction      `db:"txn" json:"txn"`
+	FirstLine  *TransactionLine `json:"first_line"`
+	SecondLine *TransactionLine `json:"second_line"`
+}
+
 type TransactionResult struct {
 	Id              int        `db:"id" json:"id"`
 	Title           string     `db:"title" json:"title"`

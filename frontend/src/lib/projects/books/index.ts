@@ -18,9 +18,9 @@ export interface Account {
 export interface TxnLines {
     transactions: Transaction[]
     lines: Line[]
-  }
-  
-  export interface Transaction {
+}
+
+export interface Transaction {
     id: number
     title: string
     notes: string
@@ -33,9 +33,9 @@ export interface TxnLines {
     created_at: string
     updated_at: string
     is_deleted: boolean
-  }
-  
-  export interface Line {
+}
+
+export interface Line {
     id: number
     account_id: number
     txn_id: number
@@ -45,10 +45,10 @@ export interface TxnLines {
     updated_by: number
     created_at: string
     updated_at: string
-  }
+}
 
-  
-  export interface TxnData {
+
+export interface TxnData {
     title: string
     notes: string
     debit_account_id: number
@@ -57,9 +57,22 @@ export interface TxnLines {
     credit_amount: number
     reference_id?: string
     attachments?: any
-  }
-  
+}
 
+
+export interface TxnUpdateWithLineOptions {
+    txn_data: Record<string, any>;
+    first_line_id: number;
+    first_line_data: Record<string, any>;
+    second_line_id: number;
+    second_line_data: Record<string, any>;
+}
+
+export interface TransactionWithLine {
+    txn: Transaction;
+    first_line: Line | null;
+    second_line: Line | null;
+}
 
 export const NewBookAPI = (api: RootAPI) => {
     return new BooksAPI(api.projectClient)
@@ -122,10 +135,18 @@ export class BooksAPI {
     getTxn = (pid: string, tid: string) => {
         return this.client.get<Transaction>(`books/${pid}/txn/${tid}`)
     }
+
+    getTxnWithLines = (pid: string, tid: string) => {
+        return this.client.get<Transaction>(`books/${pid}/txn/${tid}/line`)
+    }
+
     updateTxn = (pid: string, tid: string, data: Partial<Transaction>) => {
         return this.client.post(`books/${pid}/txn/${tid}`, data)
     }
-    
+    updateTxnWithLine = (pid: string, tid: string, data: TransactionWithLine) => {
+        return this.client.post(`books/${pid}/txn/${tid}/line`, data)
+    }
+
     deleteTxn = (pid: string, tid: string) => {
         return this.client.delete(`books/${pid}/txn/${tid}`)
     }

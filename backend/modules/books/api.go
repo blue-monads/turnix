@@ -30,8 +30,9 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 
 	txnGrp.POST("/", x(b.addTxn))
 	txnGrp.GET("/:id", x(b.getTxn))
+	txnGrp.GET("/:id/line", x(b.getTxnWithLine))
 	txnGrp.POST("/:id", x(b.updateTxn))
-	txnGrp.PATCH("/:id", x(b.updateTxnWithLine))
+	txnGrp.POST("/:id/line", x(b.updateTxnWithLine))
 
 	txnGrp.DELETE("/:id", x(b.deleteTxn))
 
@@ -198,6 +199,12 @@ func (b *BookModule) getTxn(ctx xtypes.ContextPlus) (any, error) {
 	pp.Println("ctx.Http.Request.URL.Path()", ctx.Http.Request.URL.Path)
 
 	return b.dbOpGetTxn(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+}
+
+func (b *BookModule) getTxnWithLine(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	return b.dbOpGetTxnWithLine(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 }
 
 func (b *BookModule) updateTxn(ctx xtypes.ContextPlus) (any, error) {
