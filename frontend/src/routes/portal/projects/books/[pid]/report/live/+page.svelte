@@ -104,7 +104,7 @@
         >
           <SvgIcon className="h-4 w-4" name="bolt" />
 
-          Genrate
+          Generate
         </button>
       </div>
     </section>
