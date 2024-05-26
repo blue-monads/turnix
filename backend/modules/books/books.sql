@@ -15,6 +15,7 @@ create table Transactions(
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
+    txn_type TEXT NOT NULL DEFAULT 'normal',
     linked_sales_id INTEGER NOT NULL DEFAULT 0,
     linked_invoice_id INTEGER NOT NULL DEFAULT 0,
     reference_id TEXT NOT NULL DEFAULT '',
