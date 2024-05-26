@@ -50,11 +50,6 @@
 
     $: grouped = format(data);
 
-    $: {
-        console.log("@data/m", data);
-        grouped = format(data);
-        console.log("@grouped", grouped);
-    }
 </script>
 
 <div class="table-container h-[calc(100vh-14rem)] overflow-y-auto">
