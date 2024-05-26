@@ -3,6 +3,7 @@ create table Accounts(
     name TEXT NOT NULL DEFAULT '',
     info TEXT NOT NULL DEFAULT '',
     acc_type TEXT NOT NULL DEFAULT '',
+    parent_id INTEGER NOT NULL DEFAULT 0,
     total_debit INTEGER NOT NULL DEFAULT 0,
     total_credit INTEGER NOT NULL DEFAULT 0,
     contact_id INTEGER NOT NULL DEFAULT 0,
