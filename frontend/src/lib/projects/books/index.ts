@@ -151,6 +151,10 @@ export class BooksAPI {
         return this.client.delete(`books/${pid}/txn/${tid}`)
     }
 
+    generateLiveTxn = (pid: string, opts: Record<string, any>) => {
+        return this.client.post(`books/${pid}/report/live`, opts)
+    }
+
 }
 
 
