@@ -57,8 +57,8 @@
     }
 </script>
 
-<div class="table-container">
-    <table class="table table-hover">
+<div class="table-container h-[calc(100vh-14rem)] overflow-y-auto">
+    <table class="table table-hover h-fit">
         <thead>
             <tr>
                 <th>Txn</th>
