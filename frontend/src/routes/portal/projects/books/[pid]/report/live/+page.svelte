@@ -5,6 +5,8 @@
   import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
   import type { RootAPI } from "$lib/api";
   import { page } from "$app/stores";
+  import LongLedger from "./LongLedger.svelte";
+  import ShortLedger from "./ShortLedger.svelte";
 
   const pid = $page.params["pid"];
 
@@ -15,32 +17,38 @@
   let template_id = 0;
   let report_type = "short_ledger";
 
+  let current_report_type = report_type;
+  let data: any;
+
   const load = async () => {};
 
   load();
 
   const onGenerate = async () => {
-    generating = true
+    generating = true;
+
+    current_report_type = report_type;
     const resp = await api.generateLiveTxn(pid, {
       report_type,
       template_id,
     });
 
-    
     if (resp.status !== 200) {
-      generating = false
+      generating = false;
 
       return;
     }
 
-    generating = false
-
-
-
-    console.log(resp.data);
+    data = resp.data;
+    console.log("@data", data);
+    generating = false;
   };
 
   $: report_type_invalid = report_type === "custom" && template_id === 0;
+
+  $: {
+    console.log("@data/2", data);
+  }
 </script>
 
 <AppBar>
@@ -57,7 +65,7 @@
   </svelte:fragment>
 </AppBar>
 
-<div class="p-2">
+<div class="flex flex-col p-2 gap-2">
   <div class="card p-2">
     <header class="card-header">
       <h4 class="h4">Live Reports</h4>
@@ -102,7 +110,17 @@
     </section>
   </div>
 
-  <div class="card">
-
+  <div class="p-2 card">
+    {#if data}
+      {#if current_report_type === "long_ledger"}
+        {#key data}
+          <LongLedger {data} />
+        {/key}
+      {:else if current_report_type === "short_ledger"}
+        {#key data}
+          <ShortLedger {data} />
+        {/key}
+      {/if}
+    {/if}
   </div>
 </div>
