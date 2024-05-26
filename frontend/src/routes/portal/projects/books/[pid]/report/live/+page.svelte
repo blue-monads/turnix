@@ -1,47 +1,108 @@
 <script lang="ts">
-    import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-    import { NewBookAPI } from "$lib/projects/books";
-    import { getContext } from "svelte";
-    import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
-    import type { RootAPI } from "$lib/api";
-    import { page } from "$app/stores";
-  
-    const pid = $page.params["pid"];
-  
-    const store = getModalStore();
-    const api = NewBookAPI(getContext("__api__") as RootAPI);
-  
-  
-    const load = async () => {
+  import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+  import { NewBookAPI } from "$lib/projects/books";
+  import { getContext } from "svelte";
+  import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
+  import type { RootAPI } from "$lib/api";
+  import { page } from "$app/stores";
 
-        const resp = await api.generateLiveTxn(pid, {
-            report_type: "long_ledger"
-        })
+  const pid = $page.params["pid"];
 
-        if (resp.status !== 200) {
-            return
-        }
+  const store = getModalStore();
+  const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-        console.log(resp.data)
+  let generating = false;
+  let template_id = 0;
+  let report_type = "short_ledger";
 
-    };
-  
-    load();
-  </script>
-  
-  <AppBar>
-    <svelte:fragment slot="lead">
-      <ol class="breadcrumb">
-        <li class="crumb">
-          <a class="anchor" href="/z/pages/portal/projects/books">Books</a>
-        </li>
-        <li class="crumb-separator" aria-hidden>&rsaquo;</li>
-        <li>Reports</li>
-        <li class="crumb-separator" aria-hidden>&rsaquo;</li>
-        <li>Live</li>
-      </ol>
-    </svelte:fragment>
+  const load = async () => {};
 
-  </AppBar>
+  load();
+
+  const onGenerate = async () => {
+    generating = true
+    const resp = await api.generateLiveTxn(pid, {
+      report_type,
+      template_id,
+    });
+
+    
+    if (resp.status !== 200) {
+      generating = false
+
+      return;
+    }
+
+    generating = false
 
 
+
+    console.log(resp.data);
+  };
+
+  $: report_type_invalid = report_type === "custom" && template_id === 0;
+</script>
+
+<AppBar>
+  <svelte:fragment slot="lead">
+    <ol class="breadcrumb">
+      <li class="crumb">
+        <a class="anchor" href="/z/pages/portal/projects/books">Books</a>
+      </li>
+      <li class="crumb-separator" aria-hidden>&rsaquo;</li>
+      <li>Reports</li>
+      <li class="crumb-separator" aria-hidden>&rsaquo;</li>
+      <li>Live</li>
+    </ol>
+  </svelte:fragment>
+</AppBar>
+
+<div class="p-2">
+  <div class="card p-2">
+    <header class="card-header">
+      <h4 class="h4">Live Reports</h4>
+    </header>
+
+    <section
+      class="pl-4 py-2 flex justify-between items-center flex-wrap gap-2"
+    >
+      <div class="flex gap-2 items-center">
+        <label class="label">
+          <span>Report Type</span>
+
+          <select bind:value={report_type} class="select">
+            <option value="short_ledger">Ledger short</option>
+            <option value="long_ledger">Ledger long</option>
+            <option value="custom">Custom</option>
+          </select>
+        </label>
+
+        <label class="label">
+          <span>From Date</span>
+          <input class="input" type="datetime-local" />
+        </label>
+
+        <label class="label">
+          <span>To Date</span>
+          <input class="input" type="datetime-local" />
+        </label>
+      </div>
+
+      <div>
+        <button
+          disabled={generating || report_type_invalid}
+          on:click={onGenerate}
+          class="btn btn-sm variant-filled disabled:variant-ghost disabled:text-slate-800"
+        >
+          <SvgIcon className="h-4 w-4" name="bolt" />
+
+          Genrate
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <div class="card">
+
+  </div>
+</div>
