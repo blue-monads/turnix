@@ -66,7 +66,7 @@
     <section
       class="pl-4 py-2 flex justify-between items-center flex-wrap gap-2"
     >
-      <div class="flex gap-2 items-center">
+      <div class="flex gap-2 items-center flex-wrap">
         <label class="label">
           <span>Report Type</span>
 
