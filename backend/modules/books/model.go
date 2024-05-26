@@ -120,10 +120,17 @@ type TransactionResult struct {
 	SecondUpdatedAt    *time.Time `db:"second_updated_at" json:"second_updated_at"`
 }
 
-type ReportTypeLedger struct {
+const (
+	ReportTypeLongLedger  = "long_ledger"
+	ReportTypeShortLedger = "short_ledger"
+	ReportTypeCustom      = "custom"
+)
+
+type LongLedgerRecord struct {
+	TxnId        int64  `json:"txn_id" db:"txn_id"`
 	Title        string `json:"title" db:"title"`
 	AccountName  string `json:"account_name" db:"account_name"`
-	AccType      string `json:"acc_type" db:"acc_type"`
+	AccountType  string `json:"acc_type" db:"acc_type"`
 	DebitAmount  int64  `json:"debit_amount" db:"debit_amount"`
 	CreditAmount int64  `json:"credit_amount" db:"credit_amount"`
 	TotalDebit   int64  `json:"total_debit" db:"total_debit"`
@@ -131,34 +138,10 @@ type ReportTypeLedger struct {
 	AccountID    int64  `json:"account_id" db:"account_id"`
 }
 
-/*
-
-SELECT *
-FROM TransactionLines t1, TransactionLines t2
-INNER JOIN Transactions t on t.id = t1.txn_id
-WHERE t1.account_id = 2 and t1.txn_id = t2.txn_id and t2.account_id <> 2;
-
-
-
-SELECT
-    t1.id AS first_id, t1.account_id AS first_account_id,
-    t1.debit_amount AS first_debit_amount, t1.credit_amount AS first_credit_amount,
-    t1.created_by AS first_created_by, t1.updated_by AS first_updated_by,
-    t1.created_at AS first_created_at, t1.updated_at AS first_updated_at,
-    t2.id AS second_id, t2.account_id AS second_account_id,
-    t2.debit_amount AS second_debit_amount, t2.credit_amount AS second_credit_amount,
-    t2.created_by AS second_created_by, t2.updated_by AS second_updated_by,
-    t2.created_at AS second_created_at, t2.updated_at AS second_updated_at,
-    t.id AS id, t.title, t.notes, t.linked_sales_id, t.linked_invoice_id,
-    t.reference_id, t.attachments, t.created_by AS txn_created_by,
-    t.updated_by AS txn_updated_by, t.created_at AS txn_created_at,
-    t.updated_at AS txn_updated_at, t.is_deleted
-FROM
-    TransactionLines t1, TransactionLines t2
-INNER JOIN
-    Transactions t ON t.id = t1.txn_id
-WHERE
-    t1.account_id = 2 AND t1.txn_id = t2.txn_id AND t2.account_id <> 2 and t.is_deleted = FALSE;
-
-
-*/
+type ShortLedgerRecord struct {
+	AccountID   int64  `json:"account_id" db:"account_id"`
+	AccountName string `json:"account_name" db:"account_name"`
+	TotalDebit  int64  `json:"total_debit" db:"total_debit"`
+	TotalCredit int64  `json:"total_credit" db:"total_credit"`
+	AccountType string `json:"acc_type" db:"acc_type"`
+}

@@ -51,6 +51,7 @@ create table ReportTemplates(
 create table Reports(
     id INTEGER PRIMARY KEY,
     template_id INTEGER NOT NULL DEFAULT 0,
+    report_type TEXT NOT NULL DEFAULT 'custom',
     result JSON NOT NULL DEFAULT '{}',
     created_by INTEGER NULL,
     updated_by INTEGER NULL,

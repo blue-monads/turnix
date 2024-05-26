@@ -1,8 +1,10 @@
 package books
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/bornjre/trunis/backend/xtypes"
 	"github.com/gin-gonic/gin"
@@ -35,6 +37,10 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	txnGrp.POST("/:id/line", x(b.updateTxnWithLine))
 
 	txnGrp.DELETE("/:id", x(b.deleteTxn))
+
+	report := group.Group("/:pid/report")
+
+	report.POST("/live", x(b.reportLiveGenerate))
 
 	return nil
 }
@@ -283,4 +289,34 @@ func (b *BookModule) deleteTxn(ctx xtypes.ContextPlus) (any, error) {
 	}
 
 	return nil, nil
+}
+
+type ReportOptions struct {
+	ReportType string     `json:"report_type"`
+	TemplateId int64      `json:"template_id"`
+	FromDate   *time.Time `json:"from_date"`
+	ToDate     *time.Time `json:"to_date"`
+}
+
+func (b *BookModule) reportLiveGenerate(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	opts := ReportOptions{}
+	err := ctx.Http.Bind(&opts)
+	if err != nil {
+		return nil, err
+	}
+
+	switch opts.ReportType {
+	case ReportTypeLongLedger:
+		return b.dbOptsGenerateReportLongLedger(pid, ctx.Claim.UserId, opts)
+	case ReportTypeShortLedger:
+		return b.dbOptsGenerateReportShortLedger(pid, ctx.Claim.UserId, opts)
+	case ReportTypeCustom:
+		fallthrough
+
+	default:
+		panic(fmt.Sprintf("Report type %s not implemented", opts.ReportType))
+	}
+
 }

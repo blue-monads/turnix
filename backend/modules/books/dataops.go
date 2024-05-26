@@ -383,6 +383,77 @@ func (b *BookModule) dbOpUpdateTxnLine(pid, uid, txnId, id int64, data map[strin
 	return b.txnLineTable(pid).Find(db.Cond{"id": id, "txn_id": txnId}).Update(data)
 }
 
+// report
+
+func (b *BookModule) dbOptsGenerateReportLongLedger(pid, uid int64, opts ReportOptions) ([]LongLedgerRecord, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	records := []LongLedgerRecord{}
+
+	rows, err := b.db.GetSession().SQL().Query(`
+SELECT tx.title, tx.id as txn_id, a.name as account_name, a.acc_type,  tl.debit_amount, tl.credit_amount, SUM( tl.debit_amount) OVER (PARTITION BY tl.account_id) as total_debit, SUM(tl.credit_amount) OVER (PARTITION BY tl.account_id) as total_credit, tl.account_id
+FROM Accounts a
+	JOIN TransactionLines tl ON tl.account_id = a.id  
+	JOIN Transactions tx on tl.txn_id = tx.id
+WHERE
+	a.is_deleted = FALSE AND
+	tx.is_deleted = FALSE		
+ORDER BY tl.account_id;
+
+`)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = sqlx.StructScan(rows, &records)
+	if err != nil {
+		return nil, err
+	}
+
+	return records, nil
+}
+
+func (b *BookModule) dbOptsGenerateReportShortLedger(pid, uid int64, opts ReportOptions) ([]ShortLedgerRecord, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	records := []ShortLedgerRecord{}
+
+	rows, err := b.db.GetSession().SQL().Query(`
+SELECT
+	a.id as account_id,
+	a.name as account_name,
+	a.acc_type,
+	SUM( tl.debit_amount) as  total_debit,
+	SUM(tl.credit_amount) as total_credit
+FROM TransactionLines tl
+INNER JOIN Accounts a ON tl.account_id = a.id
+INNER JOIN Transactions t ON tl.txn_id = t.id
+WHERE 
+	t.is_deleted = FALSE AND
+	a.is_deleted = FALSE 
+GROUP BY tl.account_id;
+
+`)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = sqlx.StructScan(rows, &records)
+	if err != nil {
+		return nil, err
+	}
+
+	return records, nil
+}
+
 // utils
 
 func (b *BookModule) txnTable(pid int64) db.Collection {
@@ -409,11 +480,3 @@ func (b *BookModule) userHasScope(pid, uid int64, scope string) error {
 
 	return nil
 }
-
-/*
-
-SELECT *
-FROM TransactionLines t1, TransactionLines t2
-WHERE t1.account_id = 2 and t1.txn_id = t2.txn_id and t2.account_id <> 2;
-
-*/
