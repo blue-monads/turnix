@@ -169,9 +169,11 @@
     </AppRail>
   </div>
 
-  <ContextThis {api}>
-    <svelte:fragment>
-      <slot />
-    </svelte:fragment>
-  </ContextThis>
+  <div class="h-[calc(100vh-4rem)] md:h-screen">
+    <ContextThis {api}>
+      <svelte:fragment>
+        <slot />
+      </svelte:fragment>
+    </ContextThis>
+  </div>
 </AppShell>
