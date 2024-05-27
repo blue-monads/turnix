@@ -4,6 +4,18 @@ import type { AxiosInstance } from "axios"
 
 
 
+export interface ProjectDef {
+    name: string
+    ptype: string
+    slug: string
+    info: string
+    icon: string
+    is_external: boolean
+    event_types: string[]
+  }
+  
+
+
 export class RootAPI {
     client: AxiosInstance
     projectClient: AxiosInstance
@@ -51,7 +63,7 @@ export class RootAPI {
     }
 
     getProjectType = (ptype: string) => {
-        return this.client.get(`/project_types/${ptype}`)
+        return this.client.get<ProjectDef>(`/project_types/${ptype}`)
     }
 
 
