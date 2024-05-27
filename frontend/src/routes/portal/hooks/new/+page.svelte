@@ -120,8 +120,6 @@
                         <option value="script">Script</option>
                         <option value="native_function">Native Function</option>
                         <option value="webhook">Webhook</option>
-                        <option value="webhook">Webhook</option>
-                        <option value="webhook">Webhook</option>
                     </select>
                 </label>
 
