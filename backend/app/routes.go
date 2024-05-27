@@ -84,6 +84,7 @@ func (a *App) apiRoutes(root *gin.RouterGroup) {
 	apiv1.DELETE("/project/:pid/user", a.accessMiddleware(a.removeUserFromPoject)) // remove from project
 
 	apiv1.GET("/project_types", a.accessMiddleware(a.ListProjectTypes))
+	apiv1.GET("/project_types/:ptype/form", a.accessMiddleware(a.GetProjectTypeForm))
 	apiv1.GET("/project_types/:ptype", a.accessMiddleware(a.GetProjectType))
 
 	// project type

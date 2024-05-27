@@ -49,7 +49,7 @@
           on:click={() => {
             modalStore.close();
           }}
-          href="/z/pages/portal/projects/new?ptype={data['ptype']}"
+          href="/z/pages/portal/project/new?ptype={data['ptype']}"
         >
           {#if icon}
             <SvgIcon name={icon} className="w-6 h-6" />

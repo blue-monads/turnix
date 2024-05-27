@@ -10,14 +10,16 @@ import (
 )
 
 func buildGlobalJS(projTypes []*xproject.Defination) ([]byte, error) {
-	data := make([]models.Def, 0)
+	data := make([]models.ProjectTypes, 0)
 	var buf bytes.Buffer
 
 	for _, ptype := range projTypes {
-		data = append(data, models.Def{
+		data = append(data, models.ProjectTypes{
 			Name:       ptype.Name,
 			Slug:       ptype.Slug,
 			Icon:       ptype.Icon,
+			Ptype:      ptype.Slug,
+			Info:       ptype.Info,
 			Link:       fmt.Sprintf("/z/pages/portal/projects/%s", ptype.Slug),
 			IsExternal: ptype.AssetData != nil,
 		})

@@ -30,17 +30,12 @@ type ProjectHook struct {
 }
 
 type ProjectTypes struct {
-	Name       string `json:"name"`
-	Ptype      string `json:"ptype"`
-	Info       string `json:"info"`
-	Icon       string `json:"icon"`
-	IsExternal bool   `json:"is_external"`
-}
-
-type Def struct {
-	Name       string `json:"name"`
-	Slug       string `json:"slug"`
-	Icon       string `json:"icon,omitempty"`
-	Link       string `json:"link,omitempty"`
-	IsExternal bool   `json:"is_external"`
+	Name       string   `json:"name"`
+	Ptype      string   `json:"ptype"`
+	Slug       string   `json:"slug"`
+	Info       string   `json:"info"`
+	Icon       string   `json:"icon"`
+	IsExternal bool     `json:"is_external"`
+	Link       string   `json:"link,omitempty"`
+	EventTypes []string `json:"event_types,omitempty"`
 }

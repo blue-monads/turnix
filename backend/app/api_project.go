@@ -18,7 +18,8 @@ func (a *App) ListProjectTypes(claim *signer.AccessClaim, ctx *gin.Context) (any
 			Ptype:      pdef.Slug,
 			Icon:       pdef.Icon,
 			Info:       pdef.Info,
-			IsExternal: false,
+			IsExternal: pdef.AssetData != nil,
+			EventTypes: pdef.EventTypes,
 		})
 
 	}
@@ -27,6 +28,27 @@ func (a *App) ListProjectTypes(claim *signer.AccessClaim, ctx *gin.Context) (any
 }
 
 func (a *App) GetProjectType(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	for _, pdef := range a.ptypeDefs {
+
+		if pdef.Slug == ctx.Param("ptype") {
+			return &models.ProjectTypes{
+				Name:       pdef.Name,
+				Ptype:      pdef.Slug,
+				Slug:       pdef.Slug,
+				Info:       pdef.Info,
+				Icon:       pdef.Icon,
+				IsExternal: pdef.AssetData != nil,
+				EventTypes: pdef.EventTypes,
+			}, nil
+		}
+
+	}
+
+	return nil, nil
+}
+
+func (a *App) GetProjectTypeForm(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	for _, pdef := range a.ptypeDefs {
 

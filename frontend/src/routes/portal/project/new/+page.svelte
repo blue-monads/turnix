@@ -14,7 +14,7 @@
 
   let schemaFields: Field[] = [];
   const load = async () => {
-    const resp = await api.getProjectType($params["ptype"]);
+    const resp = await api.getProjectTypeForm($params["ptype"]);
     if (resp.status !== 200) {
       return;
     }
@@ -74,7 +74,7 @@
       </section>
 
       <footer class="flex justify-end p-2 gap-2">
-        <button class="btn variant-filled" disabled> Update </button>
+        <button class="btn variant-filled" > Update </button>
       </footer>
     </div>
   </div>
