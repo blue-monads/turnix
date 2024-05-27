@@ -26,6 +26,7 @@ type Defination struct {
 	Icon                string
 	NewFormSchemaFields []PTypeField
 	Perminssions        []string
+	EventTypes          []string
 	Builder             Builder
 	GlobalJS            []byte
 	AssetData           fs.FS

@@ -11,7 +11,22 @@ var defs = &xproject.Defination{
 	Info:                "Accounting made simpler",
 	Icon:                "book-open",
 	NewFormSchemaFields: []xproject.PTypeField{},
-	Builder:             New,
+	Perminssions:        []string{"read", "write", "read/write"},
+	EventTypes: []string{
+		"after_txn_add",
+		"after_txn_edit",
+		"after_txn_remove",
+		"before_txn_remove",
+		"before_txn_add",
+		"before_txn_edit",
+		"after_account_add",
+		"after_account_edit",
+		"after_account_remove",
+		"before_account_remove",
+		"before_account_add",
+		"before_account_edit",
+	},
+	Builder: New,
 }
 
 func init() {

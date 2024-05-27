@@ -70,7 +70,7 @@
         on:click={() => {
           modalStore.close();
         }}
-        href="/z/pages/portal/hooks"
+        href={`/z/pages/portal/hooks?ptype=${$modalStore[0].meta['data']['ptype']}&pid=${$modalStore[0].meta['data']['id']}`}
       >
         <SvgIcon name="code-bracket-square" className="w-6 h-6" />
         <span>Project Hooks</span>

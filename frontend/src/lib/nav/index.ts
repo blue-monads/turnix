@@ -10,6 +10,12 @@ export const gotoAddProject = () => {
     goto("/z/pages/portal/project/add")
 }
 
+
 export const gotoEditProject = (pid: string) => {
     goto(`/z/pages/portal/project/edit?pid=${pid}`)
+}
+
+
+export const gotoAddProjectHooks = (ptype: string, pid: string) => {
+    goto(`/z/pages/portal/hooks/new?ptype=${ptype}&pid=${pid}`)
 }
