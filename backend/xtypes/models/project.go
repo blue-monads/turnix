@@ -21,12 +21,15 @@ type ProjectUser struct {
 }
 
 type ProjectHook struct {
-	ID        int64  `json:"id" db:"id,omitempty"`
-	Event     string `json:"event" db:"userId"`
-	HookType  string `json:"hook_type" db:"projectId"`
-	HookCode  string `json:"hook_code" db:"scope,omitempty"`
-	ProjectId int64  `json:"project_id" db:"project_id,omitempty"`
-	ExtraMeta string `json:"extrameta" db:"extrameta,omitempty"`
+	ID          int64  `json:"id" db:"id"`
+	Event       string `json:"event" db:"event"`
+	OrderID     int64  `json:"order_id" db:"order_id"`
+	RunasUserID int64  `json:"runas_user_id" db:"runas_user_id"`
+	HookType    string `json:"hook_type" db:"hook_type"`
+	HookCode    string `json:"hook_code" db:"hook_code"`
+	Envs        string `json:"envs" db:"envs"`
+	ProjectID   int64  `json:"project_id" db:"project_id"`
+	Extrameta   string `json:"extrameta" db:"extrameta"`
 }
 
 type ProjectTypes struct {
