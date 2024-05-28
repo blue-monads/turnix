@@ -74,6 +74,17 @@
 
       reports
     </a>
+
+    <a
+    href={`/z/pages/portal/projects/books/${pid}/inventory`}
+    class="btn variant-glass-primary btn-sm"
+  >
+    <SvgIcon className="h-4 w-4" name="archive-box" />
+
+    inventory
+
+  </a>
+
   </svelte:fragment>
 </AppBar>
 
