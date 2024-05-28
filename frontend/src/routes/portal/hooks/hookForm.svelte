@@ -16,7 +16,7 @@
     export let event = "";
     export let name = ""
 
-    export const onSave = async (data: Record<string, any>) => {};
+    export let onSave = async (data: Record<string, any>) => {};
 
     const ptype = $params["ptype"];
 
