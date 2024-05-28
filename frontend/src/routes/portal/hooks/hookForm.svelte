@@ -148,7 +148,7 @@
                     <!-- svelte-ignore a11y-label-has-associated-control -->
                     <label class="label">
                         <span>Script Code</span>
-                        <div class="p-1 rounded border bg-white">
+                        <div class="p-1 rounded border bg-white max-h-screen">
                             <CodeMirror
                                 extensions={[
                                     autocompletion({
