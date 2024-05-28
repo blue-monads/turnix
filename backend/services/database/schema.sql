@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS ProjectHooks (
   runas_user_id INTEGER NOT NULL DEFAULT 0,
   hook_type TEXT NOT NULL DEFAULT 'script', -- script, webhook, email
   hook_code TEXT NOT NULL DEFAULT '',
+  target TEXT NOT NULL DEFAULT '',
   envs JSON NOT NULL DEFAULT '{}',
   project_id INTEGER NOT NULL, 
   extrameta JSON NOT NULL DEFAULT '{}',
