@@ -154,13 +154,13 @@
                 <!-- svelte-ignore a11y-label-has-associated-control -->
                 <div class="label">
                     <span>Extrameta</span>
-                    <KvEditor data={JSON.parse(extrameta)} onChange={handleExtrametaChange} />
+                    <KvEditor data={ extrameta ? JSON.parse(extrameta) : {}} onChange={handleExtrametaChange} />
                 </div>
 
                 <!-- svelte-ignore a11y-label-has-associated-control -->
                 <div class="label">
                     <span>Env Vars</span>
-                    <KvEditor data={JSON.parse(envs)} onChange={handleEnvVarChange} />
+                    <KvEditor sensitive={true} data={envs ? JSON.parse(envs): {}} onChange={handleEnvVarChange} />
                 </div>
             </section>
 
