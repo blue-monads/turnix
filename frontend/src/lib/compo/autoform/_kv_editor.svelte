@@ -1,9 +1,10 @@
 <script lang="ts">
   export let modified = false;
   export let data = {};
-  export let onChange: Function | undefined =  undefined;
+  export let onChange: Function | undefined = undefined;
+  export let sensitive = false;
 
-  $: _data = { ...(typeof data === "string" ? JSON.parse(data) : data )  };
+  $: _data = { ...(typeof data === "string" ? JSON.parse(data) : data) };
 
   export const getData = () => ({ ..._data });
 
@@ -18,7 +19,6 @@
     _data = { ..._data, [key]: newvalue };
   };
 
-  
   $: if (modified && onChange && !run) {
     onChange(_data);
     run = true;
@@ -57,16 +57,26 @@
                   on:change={(ev) => value_set(key, ev.target["value"])}
                 />
               {:else}
-                <div
-                  on:click={() => {
-                    current_active_key = key;
-                  }}
-                >
-                  {val}
-                </div>
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+
+                <input
+                  value={val}
+                  type={sensitive ? "password" : "text"}
+                  disabled={true}
+                />
               {/if}
             </td>
             <td class="px-6 py-4 text-right">
+              {#if current_active_key !== key}
+                <button
+                  on:click={() => {
+                    current_active_key = key;
+                  }}
+                  class="font-medium text-blue-600 hover:underline"
+                  >edit
+                </button>
+              {/if}
               <button
                 class="font-medium text-blue-600 hover:underline"
                 on:click={() => {
