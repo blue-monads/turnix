@@ -4,14 +4,10 @@
     import { AppBar } from "@skeletonlabs/skeleton";
     import { getContext } from "svelte";
     import HookForm from "../hookForm.svelte";
-    import { gotoPorjects } from "$lib/nav";
 
     const pid = $params["pid"];
 
     const api = getContext("__api__") as RootAPI;
-
-
-
 </script>
 
 <AppBar>
@@ -30,13 +26,13 @@
     </svelte:fragment>
 </AppBar>
 
-<HookForm onSave={ async (data) => {
+<HookForm
+    onSave={async (data) => {
+        const resp = await api.addProjectHook(pid, data);
+        if (resp.status !== 200) {
+            return;
+        }
 
-    const resp = await api.addProjectHook(pid, data)
-    if (resp.status !== 200) {
-        return
-    }
-
-    gotoPorjects()
-
-}}  />
+        location.pathname.replace("/new", "");
+    }}
+/>

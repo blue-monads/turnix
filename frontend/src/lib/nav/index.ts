@@ -16,6 +16,14 @@ export const gotoEditProject = (pid: string) => {
 }
 
 
-export const gotoAddProjectHooks = (ptype: string, pid: string) => {
+export const gotoAddProjectHook = (ptype: string, pid: string) => {
     goto(`/z/pages/portal/hooks/new?ptype=${ptype}&pid=${pid}`)
+}
+
+export const gotoEditProjectHook = (ptype: string, pid: string, hid: string) => {
+    goto(`/z/pages/portal/hooks/edit?ptype=${ptype}&pid=${pid}&hid=${hid}`)
+}
+
+export const gotoProjectHooks = (ptype: string, pid: string) => {
+    goto(`/z/pages/portal/hooks?ptype=${ptype}&pid=${pid}`)
 }

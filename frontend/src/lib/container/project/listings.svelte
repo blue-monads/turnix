@@ -47,6 +47,14 @@
           nav.gotoEditProject(id);
         },
       },
+
+      {
+        Name: "hooks",
+        Class: "bg-yellow-400",
+        Action: async (id, data) => {
+          nav.gotoProjectHooks( data["ptype"],   id, );
+        },
+      },
       {
         Name: "delete",
         Class: "bg-red-400",

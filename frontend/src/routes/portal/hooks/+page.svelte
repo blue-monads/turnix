@@ -26,17 +26,19 @@
 
 <PageLayout
     title={"Project Hooks"}
-    actions={[{ name: "add", actionFn: () => nav.gotoAddProjectHooks(ptype, pid) }]}
+    actions={[{ name: "add", actionFn: () => nav.gotoAddProjectHook(ptype, pid) }]}
 >
     <AutoTable
         action_key={"id"}
         key_names={[
             ["id", "ID"],
             ["name", "Name"],
+            ["hook_type", "Hook Type"],
+            ["event", "Event"]
 
         ]}
         {datas}
-        color={["ptype"]}
+        color={["hook_type"]}
         actions={[
             {
                 Name: "explore",
@@ -46,15 +48,22 @@
 
             {
                 Name: "edit",
-                Action: async (id) => {
-                    nav.gotoEditProject(id);
+                Action: async (id, data) => {
+
+                    const resp = await api.getProject(pid)
+
+                    nav.gotoEditProjectHook(resp.data["ptype"], pid, id)
+
                 },
             },
             {
                 Name: "delete",
                 Class: "bg-red-400",
                 Action: async (id) => {
-                    await api.removeProject(id);
+
+
+                    await api.removeProjectHook(pid, id)
+
 
                     load();
                 },
