@@ -83,11 +83,19 @@ func (a *App) apiRoutes(root *gin.RouterGroup) {
 	apiv1.POST("/project/:pid/user", a.accessMiddleware(a.inviteUserToPoject))     // invite
 	apiv1.DELETE("/project/:pid/user", a.accessMiddleware(a.removeUserFromPoject)) // remove from project
 
+	// project type
+
 	apiv1.GET("/project_types", a.accessMiddleware(a.ListProjectTypes))
 	apiv1.GET("/project_types/:ptype/form", a.accessMiddleware(a.GetProjectTypeForm))
 	apiv1.GET("/project_types/:ptype", a.accessMiddleware(a.GetProjectType))
 
-	// project type
+	// project hook
+
+	apiv1.GET("/project/:pid/hook", a.accessMiddleware(a.listProjectHooks))
+	apiv1.POST("/project/:pid/hook", a.accessMiddleware(a.addProjectHook))
+	apiv1.GET("/project/:pid/hook/:id", a.accessMiddleware(a.getProjectHook))
+	apiv1.POST("/project/:pid/hook/:id", a.accessMiddleware(a.updateProjectHook))
+	apiv1.DELETE("/project/:pid/hook/:id", a.accessMiddleware(a.removeProjectHook))
 
 }
 

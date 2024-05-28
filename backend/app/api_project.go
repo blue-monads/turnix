@@ -140,3 +140,60 @@ func (a *App) inviteUserToPoject(claim *signer.AccessClaim, ctx *gin.Context) (a
 func (a *App) removeUserFromPoject(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 	return nil, nil
 }
+
+// hooks
+
+func (a *App) listProjectHooks(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+
+	return a.db.ListProjectHooks(claim.UserId, pid)
+}
+
+func (a *App) addProjectHook(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+
+	data := &models.ProjectHook{}
+	err := ctx.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	return a.db.AddProjectHook(claim.UserId, pid, data)
+}
+
+func (a *App) removeProjectHook(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	err := a.db.RemoveProjectHook(claim.UserId, pid, id)
+	return nil, err
+
+}
+
+func (a *App) updateProjectHook(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	data := make(map[string]any)
+	err := ctx.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	err = a.db.UpdateProjectHook(claim.UserId, pid, id, data)
+
+	return nil, err
+
+}
+
+func (a *App) getProjectHook(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	return a.db.GetProjectHook(claim.UserId, pid, id)
+
+}

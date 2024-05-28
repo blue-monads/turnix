@@ -12,8 +12,21 @@ export interface ProjectDef {
     icon: string
     is_external: boolean
     event_types: string[]
-  }
-  
+}
+
+
+export interface ProjectHook {
+    id: number;
+    event: string;
+    order_id: number;
+    runas_user_id: number;
+    hook_type: string;
+    hook_code: string;
+    envs: string;
+    project_id: number;
+    extrameta?: string;
+}
+
 
 
 export class RootAPI {
@@ -94,6 +107,30 @@ export class RootAPI {
     removeUserFromPoject = (pid: string) => {
         return this.client.delete(`/project/${pid}/user`)
     }
+
+
+    listProjectHooks = (pid: string) => {
+        return this.client.get<ProjectHook[]>(`/project/${pid}/hook`)
+    }
+
+    addProjectHook = (pid: string, data: object) => {
+        return this.client.post<Partial<ProjectHook>>(`/project/${pid}/hook`, data)
+    }
+
+
+    getProjectHook = (pid: string, id: string) => {
+        return this.client.get<ProjectHook>(`/project/${pid}/hook/${id}`)
+    }
+
+
+    updateProjectHook = (pid: string, id: string, data: object) => {
+        return this.client.post<Partial<ProjectHook>>(`/project/${pid}/hook/${id}`, data)
+    }
+
+    removeProjectHook = (pid: string, id: string) => {
+        return this.client.delete(`/project/${pid}/hook/${id}`)
+    }
+
 
 }
 

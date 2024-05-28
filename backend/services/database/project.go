@@ -154,6 +154,87 @@ func (d *DB) GetProjectUserScope(userId int64, projectId int64) (string, error) 
 	return data.Scope, nil
 }
 
+func (d *DB) ListProjectHooks(uid int64, pid int64) ([]models.ProjectHook, error) {
+
+	table := d.projectHooksTable()
+
+	hooks := []models.ProjectHook{}
+
+	err := table.Find(db.Cond{"project_id": pid}).Select(
+		"id",
+		"event",
+		"order_id",
+		"runas_user_id",
+		"hook_type",
+		"hook_code",
+	).All(&hooks)
+	if err != nil {
+		return nil, err
+	}
+
+	return hooks, nil
+
+}
+
+func (d *DB) AddProjectHook(uid, pid int64, data *models.ProjectHook) (int64, error) {
+
+	if !d.isOwner(uid, pid) {
+		return 0, errNotFound
+	}
+
+	data.ProjectID = pid
+
+	table := d.projectHooksTable()
+
+	res, err := table.Insert(data)
+	if err != nil {
+		return 0, err
+	}
+
+	return res.ID().(int64), nil
+
+}
+
+func (d *DB) RemoveProjectHook(uid, pid int64, hid int64) error {
+	if !d.isOwner(uid, pid) {
+		return errNotFound
+	}
+
+	table := d.projectHooksTable()
+
+	return table.Find(db.Cond{"project_id": pid, "id": hid}).Delete()
+
+}
+
+func (d *DB) UpdateProjectHook(uid, pid, hid int64, data map[string]any) error {
+
+	if !d.isOwner(uid, pid) {
+		return errNotFound
+	}
+
+	table := d.projectHooksTable()
+
+	return table.Find(db.Cond{"project_id": pid, "id": hid}).Update(&data)
+}
+
+func (d *DB) GetProjectHook(uid, pid, hid int64) (*models.ProjectHook, error) {
+
+	if !d.isOwner(uid, pid) {
+		return nil, errNotFound
+	}
+
+	table := d.projectHooksTable()
+
+	hook := &models.ProjectHook{}
+
+	err := table.Find(db.Cond{"project_id": pid, "id": hid}).One(hook)
+	if err != nil {
+		return nil, err
+	}
+
+	return hook, nil
+}
+
 // private
 
 func (d *DB) isOwner(ownerid int64, projId int64) bool {
@@ -166,6 +247,10 @@ func (d *DB) isOwner(ownerid int64, projId int64) bool {
 
 	return exist
 
+}
+
+func (d *DB) projectHooksTable() db.Collection {
+	return d.Table("ProjectHooks")
 }
 
 func (d *DB) projectTable() db.Collection {
