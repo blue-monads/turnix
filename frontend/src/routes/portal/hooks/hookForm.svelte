@@ -14,6 +14,9 @@
     export let envs = "{}";
     export let extrameta = "{}";
     export let event = "";
+    export let name = ""
+
+    export const onSave = async (data: Record<string, any>) => {};
 
     const ptype = $params["ptype"];
 
@@ -39,16 +42,14 @@
     load();
 
     const handleExtrametaChange = (data: object) => {
-
-
-
-    }
+        console.log("handleExtrametaChange", data);
+        extrameta = JSON.stringify(data);
+    };
 
     const handleEnvVarChange = (data: object) => {
-
-    }
-
-
+        console.log("handleEnvVarChange", data);
+        envs = JSON.stringify(data);
+    };
 </script>
 
 {#if loading}
@@ -69,7 +70,7 @@
             <section class="p-4 flex flex-col gap-4">
                 <label class="label">
                     <span>Name</span>
-                    <input class="input" type="text" placeholder="Input" />
+                    <input bind:value={name} class="input p-0.5" type="text" placeholder="name" />
                 </label>
 
                 <label class="label">
@@ -143,7 +144,7 @@
                     <label class="label">
                         <span>Endpoint</span>
                         <input
-                            class="input"
+                            class="input p-0.5"
                             type="url"
                             bind:value={hook_code}
                             placeholder="http://example.com/receive"
@@ -154,18 +155,45 @@
                 <!-- svelte-ignore a11y-label-has-associated-control -->
                 <div class="label">
                     <span>Extrameta</span>
-                    <KvEditor data={ extrameta ? JSON.parse(extrameta) : {}} onChange={handleExtrametaChange} />
+                    <KvEditor
+                        data={extrameta ? JSON.parse(extrameta) : {}}
+                        onChange={handleExtrametaChange}
+                    />
                 </div>
 
                 <!-- svelte-ignore a11y-label-has-associated-control -->
                 <div class="label">
                     <span>Env Vars</span>
-                    <KvEditor sensitive={true} data={envs ? JSON.parse(envs): {}} onChange={handleEnvVarChange} />
+                    <KvEditor
+                        sensitive={true}
+                        data={envs ? JSON.parse(envs) : {}}
+                        onChange={handleEnvVarChange}
+                    />
                 </div>
             </section>
 
             <footer class="card-footer flex justify-end">
-                <button class="btn btn-sm variant-filled"> save </button>
+                <button
+                    class="btn btn-sm variant-filled"
+                    on:click={async () => {
+                        loading = true;
+
+                        await onSave({
+                            id,
+                            name,
+                            hook_code,
+                            runas_user_id,
+                            hook_type,
+                            envs,
+                            extrameta,
+                            event,
+                        });
+
+                        loading = false;
+                    }}
+                >
+                    save
+                </button>
             </footer>
         </div>
     </div>

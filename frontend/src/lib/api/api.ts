@@ -113,8 +113,8 @@ export class RootAPI {
         return this.client.get<ProjectHook[]>(`/project/${pid}/hook`)
     }
 
-    addProjectHook = (pid: string, data: object) => {
-        return this.client.post<Partial<ProjectHook>>(`/project/${pid}/hook`, data)
+    addProjectHook = (pid: string, data: Partial<ProjectHook>) => {
+        return this.client.post(`/project/${pid}/hook`, data)
     }
 
 
@@ -123,8 +123,8 @@ export class RootAPI {
     }
 
 
-    updateProjectHook = (pid: string, id: string, data: object) => {
-        return this.client.post<Partial<ProjectHook>>(`/project/${pid}/hook/${id}`, data)
+    updateProjectHook = (pid: string, id: string, data: Partial<ProjectHook>) => {
+        return this.client.post(`/project/${pid}/hook/${id}`, data)
     }
 
     removeProjectHook = (pid: string, id: string) => {

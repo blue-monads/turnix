@@ -1,7 +1,7 @@
 <script lang="ts">
     import { AutoTable, PageLayout } from "$lib/compo";
 
-    import { getContext, onMount } from "svelte";
+    import { getContext } from "svelte";
     import * as nav from "$lib/nav";
     import type { RootAPI } from "$lib/api";
     import { params } from "$lib/params";
