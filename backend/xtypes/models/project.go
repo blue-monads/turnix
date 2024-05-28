@@ -29,6 +29,7 @@ type ProjectHook struct {
 	HookType    string `json:"hook_type" db:"hook_type"`
 	HookCode    string `json:"hook_code" db:"hook_code"`
 	Envs        string `json:"envs" db:"envs"`
+	Target      string `json:"target" db:"target,omitempty"`
 	ProjectID   int64  `json:"project_id" db:"project_id"`
 	Extrameta   string `json:"extrameta" db:"extrameta,omitempty"`
 }
