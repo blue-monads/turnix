@@ -7,12 +7,19 @@
     import { getContext } from "svelte";
 
     import CodeMirror from "svelte-codemirror-editor";
-    import { javascript } from "@codemirror/lang-javascript";
+    import {
+        javascript,
+        localCompletionSource,
+        scopeCompletionSource,
+    } from "@codemirror/lang-javascript";
+    import { autocompletion } from "@codemirror/autocomplete";
+    import { code, completionObject } from "./code";
 
     export let id = 0;
-    export let hook_code = `const handle = (ctx) => {}`;
+    export let hook_code = code;
     export let runas_user_id = 0;
     export let hook_type = "webhook";
+    export let target = "";
 
     export let envs = "{}";
     export let extrameta = "{}";
@@ -143,6 +150,17 @@
                         <span>Script Code</span>
                         <div class="p-1 rounded border bg-white">
                             <CodeMirror
+                                extensions={[
+                                    autocompletion({
+                                        activateOnTyping: true,
+                                        override: [
+                                            localCompletionSource,
+                                            scopeCompletionSource(
+                                                completionObject,
+                                            ),
+                                        ],
+                                    }),
+                                ]}
                                 bind:value={hook_code}
                                 lang={javascript()}
                             />
@@ -156,8 +174,20 @@
                         <input
                             class="input p-0.5"
                             type="url"
-                            bind:value={hook_code}
+                            bind:value={target}
                             placeholder="http://example.com/receive"
+                        />
+                    </label>
+                {/if}
+
+                {#if hook_type === "native_function"}
+                    <label class="label">
+                        <span>Handler</span>
+                        <input
+                            class="input p-0.5"
+                            type="url"
+                            bind:value={target}
+                            placeholder="handleXyz"
                         />
                     </label>
                 {/if}
@@ -196,6 +226,7 @@
                             hook_type,
                             envs,
                             extrameta,
+                            target,
                             event,
                         });
 
