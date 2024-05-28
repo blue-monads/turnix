@@ -6,6 +6,9 @@
 
     import { getContext } from "svelte";
 
+    import CodeMirror from "svelte-codemirror-editor";
+    import { javascript } from "@codemirror/lang-javascript";
+
     export let id = 0;
     export let hook_code = `const handle = (ctx) => {}`;
     export let runas_user_id = 0;
@@ -14,7 +17,7 @@
     export let envs = "{}";
     export let extrameta = "{}";
     export let event = "";
-    export let name = ""
+    export let name = "";
 
     export let onSave = async (data: Record<string, any>) => {};
 
@@ -70,7 +73,12 @@
             <section class="p-4 flex flex-col gap-4">
                 <label class="label">
                     <span>Name</span>
-                    <input bind:value={name} class="input p-0.5" type="text" placeholder="name" />
+                    <input
+                        bind:value={name}
+                        class="input p-0.5"
+                        type="text"
+                        placeholder="name"
+                    />
                 </label>
 
                 <label class="label">
@@ -130,13 +138,15 @@
                 </label>
 
                 {#if hook_type === "script"}
+                    <!-- svelte-ignore a11y-label-has-associated-control -->
                     <label class="label">
                         <span>Script Code</span>
-                        <textarea
-                            bind:value={hook_code}
-                            class="textarea"
-                            rows="10"
-                        />
+                        <div class="p-1 rounded border bg-white">
+                            <CodeMirror
+                                bind:value={hook_code}
+                                lang={javascript()}
+                            />
+                        </div>
                     </label>
                 {/if}
 

@@ -28,8 +28,10 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@codemirror/lang-javascript": "^6.2.2",
 		"@floating-ui/dom": "^1.6.3",
 		"@krowten/svelte-heroicons": "^0.1.0",
-		"axios": "^1.6.8"
+		"axios": "^1.6.8",
+		"svelte-codemirror-editor": "^1.4.0"
 	}
 }
