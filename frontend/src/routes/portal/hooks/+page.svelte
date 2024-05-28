@@ -14,7 +14,7 @@
     let datas: any[] = [];
 
     const load = async () => {
-        const resp = await api.listProjectTypes();
+        const resp = await api.listProjectHooks(pid);
         if (resp.status !== 200) {
             return;
         }
@@ -33,8 +33,7 @@
         key_names={[
             ["id", "ID"],
             ["name", "Name"],
-            ["ptype", "Project type"],
-            ["owner", "Owner"],
+
         ]}
         {datas}
         color={["ptype"]}
