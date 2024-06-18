@@ -39,12 +39,7 @@ func (h *HookEngine) Invalidate(pid int64) error {
 }
 
 func (h *HookEngine) Emit(e xtypes.HookEvent) xtypes.HookResult {
-
-	return xtypes.HookResult{
-		NoOfHooksRan: 0,
-		Mutated:      false,
-		Error:        nil,
-	}
+	return h.emit(e)
 }
 
 func (h *HookEngine) Stop(force bool) error {

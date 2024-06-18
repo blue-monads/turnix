@@ -22,16 +22,8 @@ func (h *HookEngine) emit(evt xtypes.HookEvent) xtypes.HookResult {
 		}
 	}
 
-	err := runner.execute(evt)
-	if err != nil {
-		panic(err)
-	}
+	return runner.execute(evt)
 
-	return xtypes.HookResult{
-		NoOfHooksRan: 0,
-		Mutated:      false,
-		Error:        nil,
-	}
 }
 
 func (h *HookEngine) getRunner(pid int64) *hookRunner {

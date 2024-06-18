@@ -30,9 +30,10 @@ type HookEvent struct {
 }
 
 type HookResult struct {
-	NoOfHooksRan int16
-	Mutated      bool
-	Error        error
+	NoOfHooksRan  int16
+	Mutated       bool
+	Error         error
+	PreventAction bool
 }
 
 type HookEngine interface {

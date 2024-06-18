@@ -10,7 +10,6 @@ import (
 	"github.com/bornjre/trunis/backend/xtypes"
 	"github.com/bornjre/trunis/backend/xtypes/models"
 	"github.com/dop251/goja"
-	"github.com/k0kubun/pp"
 )
 
 var regex = regexp.MustCompile(`const handle = \((.*?)\) => {`)
@@ -83,50 +82,71 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) *hookRu
 
 }
 
-func (r *hookRunner) execute(evt xtypes.HookEvent) error {
+func (r *hookRunner) execute(evt xtypes.HookEvent) (result xtypes.HookResult) {
 
 	gojah := r.parent.gojaPool.Get(evt.ProjectId, false)
 	if gojah == nil {
-		return nil
+		result.Error = fmt.Errorf("could not accure JS runtime")
+		return
 	}
 
 	if gojah.lastPid != evt.ProjectId {
 
 		_, err := gojah.js.RunProgram(r.jsCodeCache)
 		if err != nil {
-			return err
+			result.Error = err
+			return
 		}
 
 	}
 
 	for _, ph := range r.parsedHooks {
 
-		if ph.hookType != "script" {
-			continue
+		switch ph.hookType {
+		case "script":
+			result.NoOfHooksRan = result.NoOfHooksRan + 1
+			return r.executeJS(evt, ph, gojah)
+		case "webhook":
+			result.NoOfHooksRan = result.NoOfHooksRan + 1
+			return r.executeWebhook(evt, ph)
+		default:
+			log.Println("unknown_hookType", ph.hookType)
 		}
-
-		funcName := fmt.Sprintf("_handle_%d", ph.id)
-
-		var entry func(ctx *goja.Object)
-		eval := gojah.js.Get(funcName)
-		if eval == nil {
-			return fmt.Errorf("%s function not found in script", funcName)
-		}
-
-		err := gojah.js.ExportTo(eval, &entry)
-		if err != nil {
-			return err
-		}
-
-		obj := buildEventObject(evt, gojah.js)
-
-		entry(obj)
-
-		pp.Println("EXECUTING", funcName)
 
 	}
 
-	return nil
+	return
+}
+
+func (r *hookRunner) executeWebhook(evt xtypes.HookEvent, hook parsedHook) (result xtypes.HookResult) {
+
+	return
+
+}
+
+func (r *hookRunner) executeJS(evt xtypes.HookEvent, hook parsedHook, jhandle *gojaHandle) (result xtypes.HookResult) {
+
+	funcName := fmt.Sprintf("_handle_%d", hook.id)
+
+	var entry func(ctx *goja.Object)
+	eval := jhandle.js.Get(funcName)
+	if eval == nil {
+		result.Error = fmt.Errorf("%s function not found in script", funcName)
+		return
+	}
+
+	err := jhandle.js.ExportTo(eval, &entry)
+	if err != nil {
+		result.Error = err
+
+	}
+
+	obj := buildEventObject(evt, jhandle.js)
+
+	entry(obj)
+
+	return
+
 }
 
 func buildEventObject(evt xtypes.HookEvent, r *goja.Runtime) *goja.Object {
