@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS ProjectHooks (
   envs JSON NOT NULL DEFAULT '{}',
   project_id INTEGER NOT NULL, 
   extrameta JSON NOT NULL DEFAULT '{}',
+  priority INTEGER NOT NULL DEFAULT 5,
   FOREIGN KEY (project_id) REFERENCES Projects(id)
 );
 

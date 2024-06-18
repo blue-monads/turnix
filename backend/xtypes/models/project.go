@@ -32,6 +32,7 @@ type ProjectHook struct {
 	Target      string `json:"target" db:"target,omitempty"`
 	ProjectID   int64  `json:"project_id" db:"project_id"`
 	Extrameta   string `json:"extrameta" db:"extrameta,omitempty"`
+	Priority    int64  `json:"priority" db:"priority,omitempty"`
 }
 
 type ProjectTypes struct {
