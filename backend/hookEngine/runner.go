@@ -19,6 +19,7 @@ type parsedHook struct {
 	hookType    string
 	runasUserID int64
 	envs        map[string]string
+	target      string
 }
 
 type hookRunner struct {
@@ -69,6 +70,7 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) *hookRu
 			hookType:    hook.HookType,
 			runasUserID: hook.RunasUserID,
 			envs:        envs,
+			target:      hook.Target,
 		})
 
 	}
@@ -100,15 +102,24 @@ func (r *hookRunner) execute(evt xtypes.HookEvent) (result xtypes.HookResult) {
 
 	}
 
+	execCtx := Executor{
+		runner:        r,
+		evt:           evt,
+		jrt:           gojah.js,
+		preventAction: false,
+	}
+
 	for _, ph := range r.parsedHooks {
 
 		switch ph.hookType {
 		case "script":
 			result.NoOfHooksRan = result.NoOfHooksRan + 1
-			return r.executeJS(evt, ph, gojah)
+
+			execCtx.executeJS(ph)
 		case "webhook":
 			result.NoOfHooksRan = result.NoOfHooksRan + 1
-			return r.executeWebhook(evt, ph)
+			execCtx.executeWebhook(ph)
+
 		default:
 			log.Println("unknown_hookType", ph.hookType)
 		}
@@ -116,49 +127,4 @@ func (r *hookRunner) execute(evt xtypes.HookEvent) (result xtypes.HookResult) {
 	}
 
 	return
-}
-
-func (r *hookRunner) executeWebhook(evt xtypes.HookEvent, hook parsedHook) (result xtypes.HookResult) {
-
-	return
-
-}
-
-func (r *hookRunner) executeJS(evt xtypes.HookEvent, hook parsedHook, jhandle *gojaHandle) (result xtypes.HookResult) {
-
-	funcName := fmt.Sprintf("_handle_%d", hook.id)
-
-	var entry func(ctx *goja.Object)
-	eval := jhandle.js.Get(funcName)
-	if eval == nil {
-		result.Error = fmt.Errorf("%s function not found in script", funcName)
-		return
-	}
-
-	err := jhandle.js.ExportTo(eval, &entry)
-	if err != nil {
-		result.Error = err
-
-	}
-
-	obj := buildEventObject(evt, jhandle.js)
-
-	entry(obj)
-
-	return
-
-}
-
-func buildEventObject(evt xtypes.HookEvent, r *goja.Runtime) *goja.Object {
-	obj := r.NewObject()
-
-	obj.Set("dataAsObject", func() any {
-
-		return evt.Data
-	})
-
-	obj.Set("name", evt.Name)
-
-	return obj
-
 }
