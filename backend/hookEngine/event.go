@@ -12,7 +12,7 @@ func (h *HookEngine) emit(evt xtypes.HookEvent) xtypes.HookResult {
 
 	if runner == nil {
 		return xtypes.HookResult{
-			Error: errors.New("Runner not found"),
+			Error: errors.New("runner not found"),
 		}
 	}
 
@@ -22,7 +22,14 @@ func (h *HookEngine) emit(evt xtypes.HookEvent) xtypes.HookResult {
 		}
 	}
 
-	runner.execute()
+	err := runner.execute(EventContext{
+		UserId:    evt.UserId,
+		ProjectId: evt.ProjectId,
+		EventId:   10,
+	})
+	if err != nil {
+		panic(err)
+	}
 
 	return xtypes.HookResult{
 		NoOfHooksRan: 0,
@@ -48,7 +55,7 @@ func (h *HookEngine) getRunner(pid int64) *hookRunner {
 		return nil
 	}
 
-	runner = h.newHookRunner(pid, hooks)
+	runner = newHookRunner(h, pid, hooks)
 
 	// race condition is fine
 

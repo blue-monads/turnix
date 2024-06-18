@@ -4,12 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 
 	"github.com/bornjre/trunis/backend/xtypes/models"
 	"github.com/dop251/goja"
 	"github.com/k0kubun/pp"
 )
+
+var regex = regexp.MustCompile(`const handle = \((.*?)\) => {`)
 
 type parsedHook struct {
 	id          int64
@@ -29,7 +32,7 @@ type hookRunner struct {
 	message      string
 }
 
-func (h *HookEngine) newHookRunner(pid int64, hooks []models.ProjectHook) *hookRunner {
+func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) *hookRunner {
 
 	var codeBuf strings.Builder
 
@@ -38,7 +41,8 @@ func (h *HookEngine) newHookRunner(pid int64, hooks []models.ProjectHook) *hookR
 			continue
 		}
 
-		codeBuf.WriteString(hook.HookCode)
+		updatedCode := regex.ReplaceAllString(hook.HookCode, fmt.Sprintf("const _handle_%d = ($1) => {", hook.ID))
+		codeBuf.WriteString(updatedCode)
 	}
 
 	program, err := goja.Compile(fmt.Sprintf("project_hook_%d", pid), codeBuf.String(), true)
@@ -70,20 +74,27 @@ func (h *HookEngine) newHookRunner(pid int64, hooks []models.ProjectHook) *hookR
 	}
 
 	return &hookRunner{
-		parent:       h,
-		pid:          pid,
-		jsCodeCache:  program,
-		compileError: false,
-		message:      "",
-		parsedHooks:  parsedHooks,
+		parent:      h,
+		pid:         pid,
+		jsCodeCache: program,
+		parsedHooks: parsedHooks,
 	}
 
 }
 
-func (r *hookRunner) execute() error {
+type EventContext struct {
+	UserId    int64
+	ProjectId int64
+	EventId   int64
+}
+
+func (r *hookRunner) execute(evt EventContext) error {
 
 	for _, ph := range r.parsedHooks {
-		pp.Println(ph)
+
+		funcName := fmt.Sprintf("_handle_%d", ph.id)
+
+		pp.Println("EXECUTING", funcName)
 
 	}
 
