@@ -48,7 +48,8 @@ type Database interface {
 
 	GetProjectUserScope(userId int64, projectId int64) (string, error)
 
-	ListProjectHooks(uid int64, pid int64) ([]models.ProjectHook, error)
+	ListProjectHooksByUser(uid int64, pid int64) ([]models.ProjectHook, error)
+	ListProjectHooks(pid int64) ([]models.ProjectHook, error)
 	AddProjectHook(uid, pid int64, data *models.ProjectHook) (int64, error)
 	RemoveProjectHook(uid, pid int64, hid int64) error
 	UpdateProjectHook(uid, pid, hid int64, data map[string]any) error

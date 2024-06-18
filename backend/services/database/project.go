@@ -154,7 +154,11 @@ func (d *DB) GetProjectUserScope(userId int64, projectId int64) (string, error) 
 	return data.Scope, nil
 }
 
-func (d *DB) ListProjectHooks(uid int64, pid int64) ([]models.ProjectHook, error) {
+func (d *DB) ListProjectHooksByUser(uid int64, pid int64) ([]models.ProjectHook, error) {
+
+	if !d.isOwner(uid, pid) {
+		return nil, errNotFound
+	}
 
 	table := d.projectHooksTable()
 
@@ -174,6 +178,20 @@ func (d *DB) ListProjectHooks(uid int64, pid int64) ([]models.ProjectHook, error
 
 	return hooks, nil
 
+}
+
+func (d *DB) ListProjectHooks(pid int64) ([]models.ProjectHook, error) {
+
+	table := d.projectHooksTable()
+
+	hooks := []models.ProjectHook{}
+
+	err := table.Find(db.Cond{"project_id": pid}).All(&hooks)
+	if err != nil {
+		return nil, err
+	}
+
+	return hooks, nil
 }
 
 func (d *DB) AddProjectHook(uid, pid int64, data *models.ProjectHook) (int64, error) {

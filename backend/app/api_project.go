@@ -147,7 +147,7 @@ func (a *App) listProjectHooks(claim *signer.AccessClaim, ctx *gin.Context) (any
 
 	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 
-	return a.db.ListProjectHooks(claim.UserId, pid)
+	return a.db.ListProjectHooksByUser(claim.UserId, pid)
 }
 
 func (a *App) addProjectHook(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
