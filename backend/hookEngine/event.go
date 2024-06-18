@@ -22,11 +22,7 @@ func (h *HookEngine) emit(evt xtypes.HookEvent) xtypes.HookResult {
 		}
 	}
 
-	err := runner.execute(EventContext{
-		UserId:    evt.UserId,
-		ProjectId: evt.ProjectId,
-		EventId:   10,
-	})
+	err := runner.execute(evt)
 	if err != nil {
 		panic(err)
 	}

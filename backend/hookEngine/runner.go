@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/bornjre/trunis/backend/xtypes"
 	"github.com/bornjre/trunis/backend/xtypes/models"
 	"github.com/dop251/goja"
 	"github.com/k0kubun/pp"
@@ -82,21 +83,62 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) *hookRu
 
 }
 
-type EventContext struct {
-	UserId    int64
-	ProjectId int64
-	EventId   int64
-}
+func (r *hookRunner) execute(evt xtypes.HookEvent) error {
 
-func (r *hookRunner) execute(evt EventContext) error {
+	gojah := r.parent.gojaPool.Get(evt.ProjectId, false)
+	if gojah == nil {
+		return nil
+	}
+
+	if gojah.lastPid != evt.ProjectId {
+
+		_, err := gojah.js.RunProgram(r.jsCodeCache)
+		if err != nil {
+			return err
+		}
+
+	}
 
 	for _, ph := range r.parsedHooks {
 
+		if ph.hookType != "script" {
+			continue
+		}
+
 		funcName := fmt.Sprintf("_handle_%d", ph.id)
+
+		var entry func(ctx *goja.Object)
+		eval := gojah.js.Get(funcName)
+		if eval == nil {
+			return fmt.Errorf("%s function not found in script", funcName)
+		}
+
+		err := gojah.js.ExportTo(eval, &entry)
+		if err != nil {
+			return err
+		}
+
+		obj := buildEventObject(evt, gojah.js)
+
+		entry(obj)
 
 		pp.Println("EXECUTING", funcName)
 
 	}
 
 	return nil
+}
+
+func buildEventObject(evt xtypes.HookEvent, r *goja.Runtime) *goja.Object {
+	obj := r.NewObject()
+
+	obj.Set("dataAsObject", func() any {
+
+		return evt.Data
+	})
+
+	obj.Set("name", evt.Name)
+
+	return obj
+
 }
