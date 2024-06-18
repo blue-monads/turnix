@@ -10,7 +10,7 @@ func (h *HookEngine) emit(evt xtypes.HookEvent) xtypes.HookResult {
 
 	runner := h.getRunner(evt.ProjectId)
 
-	if runner != nil {
+	if runner == nil {
 		return xtypes.HookResult{
 			Error: errors.New("Runner not found"),
 		}

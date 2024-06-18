@@ -29,6 +29,12 @@ func (h *HookEngine) Init() error {
 }
 
 func (h *HookEngine) Invalidate(pid int64) error {
+
+	h.hrLock.Lock()
+	defer h.hrLock.Unlock()
+
+	delete(h.hookRunners, pid)
+
 	return nil
 }
 
