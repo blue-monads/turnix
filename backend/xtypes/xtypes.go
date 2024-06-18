@@ -17,5 +17,27 @@ type App interface {
 	GetDatabase() xdatabase.Database
 	GetSockd() xsockd.Sockd
 
+	GetHookEngine() HookEngine
+
 	NewId() int64
+}
+
+type HookEvent struct {
+	Name      string
+	UserId    int64
+	ProjectId int64
+	Data      map[string]any
+}
+
+type HookResult struct {
+	NoOfHooksRan int16
+	Mutated      bool
+	Error        error
+}
+
+type HookEngine interface {
+	Init() error
+	Invalidate(pid int64) error
+	Emit(e HookEvent) HookResult
+	Stop(force bool) error
 }

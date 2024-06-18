@@ -30,10 +30,6 @@ func (a *Adapter) OnUserEvent(event *UserEvent) error {
 	return nil
 }
 
-func (a *Adapter) OnHookEvent(event *HookEvent) error {
-	return nil
-}
-
 type Core interface {
 	Init(pid int64) error
 	DeInit(pid int64) error

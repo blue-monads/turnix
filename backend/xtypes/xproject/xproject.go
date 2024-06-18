@@ -52,6 +52,4 @@ type ProjectType interface {
 	OnFileEvent(event *FileEvent) error
 
 	OnUserEvent(event *UserEvent) error
-
-	OnHookEvent(event *HookEvent) error
 }
