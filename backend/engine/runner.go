@@ -103,12 +103,15 @@ func (r *hookRunner) execute(evt xtypes.HookEvent) (*xtypes.HookResult, error) {
 	}
 
 	if gojah.lastPid != evt.ProjectId {
-
+		gojah.lastPid = 0
 		_, err := gojah.js.RunProgram(r.jsCodeCache)
 		if err != nil {
 			return nil, err
-
 		}
+
+		gojah.bind()
+
+		gojah.lastPid = evt.ProjectId
 
 	}
 
