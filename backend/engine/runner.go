@@ -2,6 +2,7 @@ package hookengine
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"regexp"
@@ -14,12 +15,19 @@ import (
 
 var regex = regexp.MustCompile(`const handle = \((.*?)\) => {`)
 
+var (
+	ErrMustRun = errors.New("COULD NOT RUN")
+)
+
 type parsedHook struct {
 	id          int64
+	name        string
 	hookType    string
 	runasUserID int64
 	envs        map[string]string
 	target      string
+	mustRun     bool
+	mustNoError bool
 }
 
 type hookRunner struct {
@@ -72,6 +80,8 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) *hookRu
 			runasUserID: hook.RunasUserID,
 			envs:        envs,
 			target:      hook.Target,
+			mustRun:     false,
+			mustNoError: false,
 		})
 
 	}
@@ -109,17 +119,45 @@ func (r *hookRunner) execute(evt xtypes.HookEvent) (*xtypes.HookResult, error) {
 		preventAction: false,
 	}
 
+	result := &xtypes.HookResult{
+		NoOfHooksRan:  0,
+		Mutated:       false,
+		PreventAction: false,
+		Errors:        map[string]string{},
+	}
+
 	for _, ph := range r.parsedHooks {
+		var err error
+		var ran = true
 
 		switch ph.hookType {
 		case "script":
-			execCtx.executeJS(ph)
+			err = execCtx.executeJS(ph)
 		case "webhook":
-
-			execCtx.executeWebhook(ph)
-
+			err = execCtx.executeWebhook(ph)
 		default:
+			ran = false
 			log.Println("unknown_hookType", ph.hookType)
+		}
+
+		if ph.mustRun && !ran {
+			return nil, ErrMustRun
+		}
+
+		if ran {
+			result.NoOfHooksRan = result.NoOfHooksRan + 1
+		}
+
+		if err != nil {
+			if ph.mustNoError {
+				return nil, err
+			}
+
+			result.Errors[ph.name] = err.Error()
+		}
+
+		if execCtx.preventAction {
+			return result, nil
 		}
 
 	}

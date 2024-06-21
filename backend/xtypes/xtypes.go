@@ -33,6 +33,7 @@ type HookResult struct {
 	NoOfHooksRan  int16
 	Mutated       bool
 	PreventAction bool
+	Errors        map[string]string
 }
 
 type HookEngine interface {
