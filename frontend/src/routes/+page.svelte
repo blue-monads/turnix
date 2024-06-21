@@ -9,7 +9,7 @@
 
 <div class="w-full h-full">
 	<AppBar>
-		<svelte:fragment slot="lead">Turnis</svelte:fragment>
+		<svelte:fragment slot="lead">Turnix</svelte:fragment>
 		
 		<svelte:fragment slot="trail">
 			<a class="hover:underline" href="/z/pages/portal">Portal</a>

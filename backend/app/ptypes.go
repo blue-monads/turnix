@@ -30,7 +30,7 @@ func buildGlobalJS(projTypes []*xproject.Defination) ([]byte, error) {
 		return nil, err
 	}
 
-	buf.Write([]byte(`window["__turnis_ptypes__"] = `))
+	buf.Write([]byte(`window["__turnix_ptypes__"] = `))
 	buf.Write(out)
 	buf.WriteByte('\n')
 

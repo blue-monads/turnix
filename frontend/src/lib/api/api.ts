@@ -59,7 +59,7 @@ export class RootAPI {
 
 
         if (window !== undefined) {
-            (window as any)["_turnis_api_"] = this
+            (window as any)["_turnix_api_"] = this
         }
     }
 
