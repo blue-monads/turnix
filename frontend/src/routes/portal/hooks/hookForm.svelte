@@ -91,7 +91,7 @@
                 <label class="label">
                     <span>Event Type</span>
                     <select bind:value={event} class="select">
-                        {#each data.event_types as evt}
+                        {#each (data.event_types || []) as evt}
                             <option value={evt}>{evt}</option>
                         {/each}
                     </select>
