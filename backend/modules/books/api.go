@@ -98,17 +98,18 @@ func (b *BookModule) deleteAccount(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
-	// he := b.app.GetHookEngine()
-	// result := he.Emit(xtypes.HookEvent{
-	// 	Name:      "new_txn",
-	// 	UserId:    ctx.Claim.UserId,
-	// 	ProjectId: pid,
-	// 	Data:      data,
-	// })
+	he := b.app.GetHookEngine()
+	result, err := he.Emit(xtypes.HookEvent{
+		Name:      "new_txn",
+		UserId:    ctx.Claim.UserId,
+		ProjectId: pid,
+		Data:      data,
+	})
 
-	// if result.Error != nil {
-	// 	return nil, err
-	// }
+	if err != nil {
+		pp.Println("@result", result)
+		return nil, err
+	}
 
 	err = b.dbOpDeleteAccount(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 	if err != nil {

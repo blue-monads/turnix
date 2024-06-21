@@ -1,25 +1,19 @@
 package hookengine
 
 import (
-	"errors"
-
 	"github.com/bornjre/turnix/backend/xtypes"
 )
 
-func (h *HookEngine) emit(evt xtypes.HookEvent) xtypes.HookResult {
+func (h *HookEngine) emit(evt xtypes.HookEvent) (*xtypes.HookResult, error) {
 
 	runner := h.getRunner(evt.ProjectId)
 
 	if runner == nil {
-		return xtypes.HookResult{
-			Error: errors.New("runner not found"),
-		}
+		return nil, nil
 	}
 
 	if runner.compileError {
-		return xtypes.HookResult{
-			Error: errors.New(runner.message),
-		}
+		return nil, nil
 	}
 
 	return runner.execute(evt)

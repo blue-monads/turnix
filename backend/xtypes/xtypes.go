@@ -32,13 +32,12 @@ type HookEvent struct {
 type HookResult struct {
 	NoOfHooksRan  int16
 	Mutated       bool
-	Error         error
 	PreventAction bool
 }
 
 type HookEngine interface {
 	Init() error
 	Invalidate(pid int64) error
-	Emit(e HookEvent) HookResult
+	Emit(e HookEvent) (*HookResult, error)
 	Stop(force bool) error
 }

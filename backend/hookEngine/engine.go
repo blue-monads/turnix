@@ -38,7 +38,7 @@ func (h *HookEngine) Invalidate(pid int64) error {
 	return nil
 }
 
-func (h *HookEngine) Emit(e xtypes.HookEvent) xtypes.HookResult {
+func (h *HookEngine) Emit(e xtypes.HookEvent) (*xtypes.HookResult, error) {
 	return h.emit(e)
 }
 

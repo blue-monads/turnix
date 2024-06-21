@@ -85,20 +85,19 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) *hookRu
 
 }
 
-func (r *hookRunner) execute(evt xtypes.HookEvent) (result xtypes.HookResult) {
+func (r *hookRunner) execute(evt xtypes.HookEvent) (*xtypes.HookResult, error) {
 
 	gojah := r.parent.gojaPool.Get(evt.ProjectId, false)
 	if gojah == nil {
-		result.Error = fmt.Errorf("could not accure JS runtime")
-		return
+		return nil, fmt.Errorf("could not accure JS runtime")
 	}
 
 	if gojah.lastPid != evt.ProjectId {
 
 		_, err := gojah.js.RunProgram(r.jsCodeCache)
 		if err != nil {
-			result.Error = err
-			return
+			return nil, err
+
 		}
 
 	}
@@ -114,11 +113,9 @@ func (r *hookRunner) execute(evt xtypes.HookEvent) (result xtypes.HookResult) {
 
 		switch ph.hookType {
 		case "script":
-			result.NoOfHooksRan = result.NoOfHooksRan + 1
-
 			execCtx.executeJS(ph)
 		case "webhook":
-			result.NoOfHooksRan = result.NoOfHooksRan + 1
+
 			execCtx.executeWebhook(ph)
 
 		default:
@@ -127,5 +124,5 @@ func (r *hookRunner) execute(evt xtypes.HookEvent) (result xtypes.HookResult) {
 
 	}
 
-	return
+	return nil, nil
 }
