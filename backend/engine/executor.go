@@ -11,8 +11,8 @@ import (
 )
 
 type Executor struct {
-	runner        *hookRunner
 	evt           xtypes.HookEvent
+	runner        *hookRunner
 	jrt           *goja.Runtime
 	preventAction bool
 }

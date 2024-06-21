@@ -63,8 +63,3 @@ func (g *GojaPool) Set(pid int64, gh *gojaHandle) {
 
 	g.pool.Put(gh)
 }
-
-type gojaHandle struct {
-	js      *goja.Runtime
-	lastPid int64
-}
