@@ -3,7 +3,7 @@ package hookengine
 import (
 	"errors"
 
-	"github.com/bornjre/trunis/backend/xtypes"
+	"github.com/bornjre/turnix/backend/xtypes"
 )
 
 func (h *HookEngine) emit(evt xtypes.HookEvent) xtypes.HookResult {

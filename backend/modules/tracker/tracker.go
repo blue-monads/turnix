@@ -1,8 +1,8 @@
 package tracker
 
 import (
-	"github.com/bornjre/trunis/backend/registry"
-	"github.com/bornjre/trunis/backend/xtypes/xproject"
+	"github.com/bornjre/turnix/backend/registry"
+	"github.com/bornjre/turnix/backend/xtypes/xproject"
 )
 
 var defs = &xproject.Defination{

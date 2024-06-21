@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/bornjre/trunis/backend/xtypes/models"
+	"github.com/bornjre/turnix/backend/xtypes/models"
 	_ "github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 
-	"github.com/bornjre/trunis/backend/services/signer"
+	"github.com/bornjre/turnix/backend/services/signer"
 )
 
 func (a *App) signUpDirect(ctx *gin.Context) {

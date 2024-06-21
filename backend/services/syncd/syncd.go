@@ -3,7 +3,7 @@ package syncd
 import (
 	"sync"
 
-	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
+	"github.com/bornjre/turnix/backend/xtypes/services/xsockd"
 
 	"github.com/rs/zerolog"
 )

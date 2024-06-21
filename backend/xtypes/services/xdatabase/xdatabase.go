@@ -3,7 +3,7 @@ package xdatabase
 import (
 	"errors"
 
-	"github.com/bornjre/trunis/backend/xtypes/models"
+	"github.com/bornjre/turnix/backend/xtypes/models"
 	"github.com/gobuffalo/fizz"
 	"github.com/upper/db/v4"
 )

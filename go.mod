@@ -1,4 +1,4 @@
-module github.com/bornjre/trunis
+module github.com/bornjre/turnix
 
 go 1.21.7
 

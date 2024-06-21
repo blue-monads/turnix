@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/bornjre/trunis/backend/xtypes/services/xfilestore"
+	"github.com/bornjre/turnix/backend/xtypes/services/xfilestore"
 )
 
 func ReadAndClose(data xfilestore.FData) ([]byte, error) {

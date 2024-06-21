@@ -9,9 +9,9 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/bornjre/trunis/backend/services/filestore/fdatautil"
-	"github.com/bornjre/trunis/backend/xtypes/libx/easyerr"
-	"github.com/bornjre/trunis/backend/xtypes/services/xfilestore"
+	"github.com/bornjre/turnix/backend/services/filestore/fdatautil"
+	"github.com/bornjre/turnix/backend/xtypes/libx/easyerr"
+	"github.com/bornjre/turnix/backend/xtypes/services/xfilestore"
 	"github.com/k0kubun/pp"
 )
 

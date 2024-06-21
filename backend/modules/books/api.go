@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bornjre/trunis/backend/xtypes"
+	"github.com/bornjre/turnix/backend/xtypes"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 )

@@ -6,8 +6,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/bornjre/trunis/backend/modules/books"
-	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
+	"github.com/bornjre/turnix/backend/modules/books"
+	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
 	"github.com/gobuffalo/fizz"
 	"github.com/gobuffalo/fizz/translators"
 	"github.com/upper/db/v4"

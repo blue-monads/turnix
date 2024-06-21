@@ -3,8 +3,8 @@ package files
 import (
 	"fmt"
 
-	"github.com/bornjre/trunis/backend/services/filestore/localfs"
-	"github.com/bornjre/trunis/backend/xtypes/services/xfilestore"
+	"github.com/bornjre/turnix/backend/services/filestore/localfs"
+	"github.com/bornjre/turnix/backend/xtypes/services/xfilestore"
 )
 
 type FilesService struct {

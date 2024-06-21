@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/bornjre/trunis/backend/services/signer"
-	"github.com/bornjre/trunis/backend/xtypes/models"
+	"github.com/bornjre/turnix/backend/services/signer"
+	"github.com/bornjre/turnix/backend/xtypes/models"
 	"github.com/gin-gonic/gin"
 )
 

@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"strings"
 
-	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
+	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
 	"github.com/jmoiron/sqlx"
 	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"

@@ -1,10 +1,10 @@
 package backend
 
 import (
-	"github.com/bornjre/trunis/backend/app"
-	"github.com/bornjre/trunis/backend/registry"
-	"github.com/bornjre/trunis/backend/services/database"
-	"github.com/bornjre/trunis/backend/services/signer"
+	"github.com/bornjre/turnix/backend/app"
+	"github.com/bornjre/turnix/backend/registry"
+	"github.com/bornjre/turnix/backend/services/database"
+	"github.com/bornjre/turnix/backend/services/signer"
 )
 
 func Run() error {

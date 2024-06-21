@@ -1,6 +1,6 @@
 package runtime
 
-import "github.com/bornjre/trunis/backend/xtypes/models"
+import "github.com/bornjre/turnix/backend/xtypes/models"
 
 type Runtime struct {
 	hooksCache map[int64][]models.ProjectHook

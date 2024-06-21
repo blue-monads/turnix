@@ -4,8 +4,8 @@ import (
 	"errors"
 	"log"
 
-	"github.com/bornjre/trunis/backend/xtypes/models"
-	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
+	"github.com/bornjre/turnix/backend/xtypes/models"
+	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
 	"github.com/upper/db/v4"
 )
 

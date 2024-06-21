@@ -3,8 +3,8 @@ package hookengine
 import (
 	"sync"
 
-	"github.com/bornjre/trunis/backend/services/database"
-	"github.com/bornjre/trunis/backend/xtypes"
+	"github.com/bornjre/turnix/backend/services/database"
+	"github.com/bornjre/turnix/backend/xtypes"
 )
 
 type HookEngine struct {

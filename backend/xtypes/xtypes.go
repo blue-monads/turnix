@@ -1,8 +1,8 @@
 package xtypes
 
 import (
-	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
-	"github.com/bornjre/trunis/backend/xtypes/services/xsockd"
+	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
+	"github.com/bornjre/turnix/backend/xtypes/services/xsockd"
 
 	"github.com/gin-gonic/gin"
 )

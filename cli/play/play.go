@@ -3,19 +3,19 @@ package main
 import (
 	"time"
 
-	"github.com/bornjre/trunis/backend/app"
-	"github.com/bornjre/trunis/backend/registry"
-	"github.com/bornjre/trunis/backend/services/database"
-	"github.com/bornjre/trunis/backend/services/signer"
+	"github.com/bornjre/turnix/backend/app"
+	"github.com/bornjre/turnix/backend/registry"
+	"github.com/bornjre/turnix/backend/services/database"
+	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/k0kubun/pp"
 
 	_ "github.com/mattn/go-sqlite3"
 
 	// modules
 
-	_ "github.com/bornjre/trunis/backend/modules/books"
-	_ "github.com/bornjre/trunis/backend/modules/tracker"
-	_ "github.com/bornjre/trunis/backend/modules/unloop"
+	_ "github.com/bornjre/turnix/backend/modules/books"
+	_ "github.com/bornjre/turnix/backend/modules/tracker"
+	_ "github.com/bornjre/turnix/backend/modules/unloop"
 )
 
 func Run() error {

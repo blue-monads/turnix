@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/bornjre/trunis/backend/xtypes"
+	"github.com/bornjre/turnix/backend/xtypes"
 	"github.com/gin-gonic/gin"
 )
 

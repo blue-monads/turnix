@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/bornjre/trunis/backend/xtypes"
+	"github.com/bornjre/turnix/backend/xtypes"
 	"github.com/dop251/goja"
 )
 

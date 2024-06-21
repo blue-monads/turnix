@@ -10,9 +10,9 @@ import (
 	"path"
 	"strings"
 
-	"github.com/bornjre/trunis/backend/xtypes/libx/httpx"
-	"github.com/bornjre/trunis/backend/xtypes/xproject"
-	"github.com/bornjre/trunis/frontend"
+	"github.com/bornjre/turnix/backend/xtypes/libx/httpx"
+	"github.com/bornjre/turnix/backend/xtypes/xproject"
+	"github.com/bornjre/turnix/frontend"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 )

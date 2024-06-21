@@ -3,8 +3,8 @@ package books
 import (
 	_ "embed"
 
-	"github.com/bornjre/trunis/backend/xtypes"
-	"github.com/bornjre/trunis/backend/xtypes/services/xdatabase"
+	"github.com/bornjre/turnix/backend/xtypes"
+	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
 	"github.com/upper/db/v4"
 )
 

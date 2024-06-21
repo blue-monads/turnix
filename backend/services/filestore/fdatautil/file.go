@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/bornjre/trunis/backend/xtypes/services/xfilestore"
+	"github.com/bornjre/turnix/backend/xtypes/services/xfilestore"
 )
 
 var _ xfilestore.FData = (*FileFdata)(nil)
