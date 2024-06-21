@@ -1,7 +1,14 @@
 package hookengine
 
 import (
+	"errors"
+
 	"github.com/bornjre/turnix/backend/xtypes"
+)
+
+var (
+	ErrRuntimeErr       = errors.New("RUNTIME ERROR")
+	ErrScriptCompileErr = errors.New("SCRIPT COMPILE ERROR")
 )
 
 func (h *HookEngine) emit(evt xtypes.HookEvent) (*xtypes.HookResult, error) {
@@ -9,15 +16,14 @@ func (h *HookEngine) emit(evt xtypes.HookEvent) (*xtypes.HookResult, error) {
 	runner := h.getRunner(evt.ProjectId)
 
 	if runner == nil {
-		return nil, nil
+		return nil, ErrRuntimeErr
 	}
 
 	if runner.compileError {
-		return nil, nil
+		return nil, ErrScriptCompileErr
 	}
 
 	return runner.execute(evt)
-
 }
 
 func (h *HookEngine) getRunner(pid int64) *hookRunner {
