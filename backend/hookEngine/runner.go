@@ -23,8 +23,9 @@ type parsedHook struct {
 }
 
 type hookRunner struct {
-	parent      *HookEngine
-	pid         int64
+	parent *HookEngine
+	pid    int64
+
 	jsCodeCache *goja.Program
 
 	parsedHooks []parsedHook
