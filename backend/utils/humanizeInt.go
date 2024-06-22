@@ -1,4 +1,4 @@
-package main
+package xutils
 
 import (
 	"fmt"
@@ -62,7 +62,7 @@ func DecodeReadable(encoded string) (int64, error) {
 	return result, nil
 }
 
-func main() {
+func Main() {
 	encoded := ReadableInt64(95672368)
 	fmt.Println("Encoded:", encoded)
 
