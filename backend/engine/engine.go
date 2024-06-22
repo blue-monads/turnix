@@ -4,7 +4,7 @@ import (
 	"sync"
 
 	"github.com/bornjre/turnix/backend/services/database"
-	"github.com/bornjre/turnix/backend/xtypes"
+	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 )
 
 type HookEngine struct {
@@ -38,7 +38,7 @@ func (h *HookEngine) Invalidate(pid int64) error {
 	return nil
 }
 
-func (h *HookEngine) Emit(e xtypes.HookEvent) (*xtypes.HookResult, error) {
+func (h *HookEngine) Emit(e xhook.Event) (*xhook.Result, error) {
 	return h.emit(e)
 }
 

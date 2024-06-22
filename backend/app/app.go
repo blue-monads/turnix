@@ -6,8 +6,8 @@ import (
 	hookengine "github.com/bornjre/turnix/backend/engine"
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
-	"github.com/bornjre/turnix/backend/xtypes"
 	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
+	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 	"github.com/bornjre/turnix/backend/xtypes/services/xsockd"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
 	"github.com/bwmarrin/snowflake"
@@ -79,7 +79,7 @@ func (a *App) GetDatabase() xdatabase.Database {
 	return a.db
 }
 
-func (a *App) GetHookEngine() xtypes.HookEngine {
+func (a *App) GetHookEngine() xhook.Engine {
 	return a.hookEngine
 }
 

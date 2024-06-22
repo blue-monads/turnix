@@ -10,7 +10,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/bornjre/turnix/backend/xtypes/libx/httpx"
+	"github.com/bornjre/turnix/backend/utils/libx/httpx"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
 	"github.com/bornjre/turnix/frontend"
 	"github.com/gin-gonic/gin"

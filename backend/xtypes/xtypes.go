@@ -2,6 +2,7 @@ package xtypes
 
 import (
 	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
+	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 	"github.com/bornjre/turnix/backend/xtypes/services/xsockd"
 
 	"github.com/gin-gonic/gin"
@@ -17,28 +18,7 @@ type App interface {
 	GetDatabase() xdatabase.Database
 	GetSockd() xsockd.Sockd
 
-	GetHookEngine() HookEngine
+	GetHookEngine() xhook.Engine
 
 	NewId() int64
-}
-
-type HookEvent struct {
-	Name      string
-	UserId    int64
-	ProjectId int64
-	Data      map[string]any
-}
-
-type HookResult struct {
-	NoOfHooksRan  int16
-	Mutated       bool
-	PreventAction bool
-	Errors        map[string]string
-}
-
-type HookEngine interface {
-	Init() error
-	Invalidate(pid int64) error
-	Emit(e HookEvent) (*HookResult, error)
-	Stop(force bool) error
 }

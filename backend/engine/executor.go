@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/bornjre/turnix/backend/xtypes"
+	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 	"github.com/dop251/goja"
 )
 
 type Executor struct {
-	evt           xtypes.HookEvent
+	evt           xhook.Event
 	runner        *hookRunner
 	jrt           *goja.Runtime
 	preventAction bool
@@ -43,7 +43,7 @@ func (e *Executor) executeJS(hook parsedHook) error {
 
 }
 
-func buildEventObject(evt xtypes.HookEvent, r *goja.Runtime) *goja.Object {
+func buildEventObject(evt xhook.Event, r *goja.Runtime) *goja.Object {
 	obj := r.NewObject()
 
 	obj.Set("dataAsObject", func() any {

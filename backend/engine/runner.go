@@ -8,8 +8,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/bornjre/turnix/backend/xtypes"
 	"github.com/bornjre/turnix/backend/xtypes/models"
+	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 	"github.com/dop251/goja"
 )
 
@@ -95,7 +95,7 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) *hookRu
 
 }
 
-func (r *hookRunner) execute(evt xtypes.HookEvent) (*xtypes.HookResult, error) {
+func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 
 	gojah := r.parent.gojaPool.Get(evt.ProjectId, false)
 	if gojah == nil {
@@ -122,7 +122,7 @@ func (r *hookRunner) execute(evt xtypes.HookEvent) (*xtypes.HookResult, error) {
 		preventAction: false,
 	}
 
-	result := &xtypes.HookResult{
+	result := &xhook.Result{
 		NoOfHooksRan:  0,
 		Mutated:       false,
 		PreventAction: false,
