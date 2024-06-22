@@ -18,7 +18,19 @@ func main() {
 		panic(err)
 	}
 
-	err = app.RunSeed()
+	mig, err := app.NeedsMigrate()
+	if err != nil {
+		panic(err)
+	}
+
+	if mig {
+		err = app.RunNormalSeed()
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	err = app.Run()
 	if err != nil {
 		panic(err)
 	}

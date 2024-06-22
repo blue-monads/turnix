@@ -34,3 +34,20 @@ func NewApp() (*DistroApp, error) {
 	}, nil
 
 }
+
+func (d *DistroApp) Run() error {
+	return d.App.Start()
+}
+
+func (d *DistroApp) NeedsMigrate() (bool, error) {
+
+	db := d.App.GetDatabase()
+
+	usrs, err := db.ListUser()
+	if err != nil {
+		return false, err
+	}
+
+	return len(usrs) == 0, nil
+
+}

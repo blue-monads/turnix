@@ -2,7 +2,7 @@ package distro
 
 import "github.com/bornjre/turnix/backend/xtypes/models"
 
-func (d *DistroApp) RunSeed() error {
+func (d *DistroApp) RunNormalSeed() error {
 	db := d.App.GetDatabase()
 
 	userId, err := db.AddUser(&models.User{
