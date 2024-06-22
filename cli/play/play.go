@@ -27,11 +27,6 @@ func Run() error {
 
 	defer db.Close()
 
-	err = db.Init()
-	if err != nil {
-		return err
-	}
-
 	signer := signer.New([]byte("A_long_HARD_Token"))
 
 	as := app.New(app.Options{

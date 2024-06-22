@@ -1,13 +1,10 @@
 package main
 
 import (
-	"time"
-
 	"github.com/bornjre/turnix/backend/app"
 	"github.com/bornjre/turnix/backend/registry"
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
-	"github.com/k0kubun/pp"
 
 	_ "github.com/mattn/go-sqlite3"
 
@@ -27,11 +24,6 @@ func Run() error {
 
 	defer db.Close()
 
-	err = db.Init()
-	if err != nil {
-		return err
-	}
-
 	signer := signer.New([]byte("A_long_HARD_Token"))
 
 	as := app.New(app.Options{
@@ -40,16 +32,6 @@ func Run() error {
 		ProjectTypes: registry.GetAll(),
 	})
 
-	go play(as)
-
 	return as.Start()
-
-}
-
-func play(app *app.App) {
-	time.Sleep(time.Second * 10)
-	pp.Println("@play_start")
-
-	// session := app.GetDatabase().GetSession()
 
 }

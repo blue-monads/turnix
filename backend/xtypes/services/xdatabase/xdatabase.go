@@ -26,7 +26,6 @@ type Database interface {
 	GetSession() db.Session
 	Table(name string) db.Collection
 	Close() error
-	RunSeed() error
 
 	AddUser(data *models.User) (int64, error)
 	GetUser(id int64) (*models.User, error)

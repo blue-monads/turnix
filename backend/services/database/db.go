@@ -58,16 +58,7 @@ func NewDB() (*DB, error) {
 
 func (db *DB) Init() error {
 
-	users, err := db.ListUser()
-	if err != nil {
-		return err
-	}
-
-	if len(users) != 0 {
-		return nil
-	}
-
-	return db.RunSeed()
+	return nil
 }
 
 func (db *DB) Close() error {
