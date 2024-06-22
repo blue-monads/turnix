@@ -1,15 +1,11 @@
 package main
 
 import (
-	"log"
-
-	"github.com/bornjre/turnix/backend"
-
-	"github.com/k0kubun/pp"
 	_ "github.com/mattn/go-sqlite3"
 
 	// modules
 
+	"github.com/bornjre/turnix/backend/distro"
 	_ "github.com/bornjre/turnix/backend/modules/books"
 	_ "github.com/bornjre/turnix/backend/modules/tracker"
 	_ "github.com/bornjre/turnix/backend/modules/unloop"
@@ -17,13 +13,14 @@ import (
 
 func main() {
 
-	// migration.Migrate()
-
-	pp.Println("@start")
-
-	err := backend.Run()
+	app, err := distro.NewApp()
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
+	}
+
+	err = app.RunSeed()
+	if err != nil {
+		panic(err)
 	}
 
 }
