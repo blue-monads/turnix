@@ -18,6 +18,8 @@ func main() {
 		panic(err)
 	}
 
+	defer app.Stop()
+
 	mig, err := app.NeedsMigrate()
 	if err != nil {
 		panic(err)
@@ -30,7 +32,7 @@ func main() {
 		}
 	}
 
-	err = app.Run()
+	err = app.Start()
 	if err != nil {
 		panic(err)
 	}

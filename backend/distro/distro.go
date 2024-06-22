@@ -34,8 +34,6 @@ func NewAppWithOptions(opts Options) (*DistroApp, error) {
 		return nil, err
 	}
 
-	defer db.Close()
-
 	signer := signer.New([]byte(opts.MasterSecret))
 
 	as := app.New(app.Options{
@@ -51,7 +49,12 @@ func NewAppWithOptions(opts Options) (*DistroApp, error) {
 
 }
 
-func (d *DistroApp) Run() error {
+func (d *DistroApp) Stop() error {
+
+	return d.App.Stop()
+}
+
+func (d *DistroApp) Start() error {
 	return d.App.Start(d.Options.HttpPort)
 }
 

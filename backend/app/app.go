@@ -72,7 +72,7 @@ func (a *App) Start(port string) error {
 }
 
 func (a *App) Stop() error {
-	return nil
+	return a.db.Close()
 }
 
 func (a *App) GetDatabase() xdatabase.Database {
