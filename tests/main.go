@@ -27,26 +27,26 @@ func init() {
 
 }
 
-func Run() error {
+func main() {
 
 	app, err := distro.NewApp()
-	if err != nil {
-		panic(err)
-	}
+	handle(err)
 
 	mig, err := app.NeedsMigrate()
-	if err != nil {
-		return err
-	}
+	handle(err)
 
 	if mig {
 		err = app.RunTestSeed()
-		if err != nil {
-			return err
-		}
-
+		handle(err)
 	}
 
-	return app.Run()
+	err = app.Run()
+	handle(err)
 
+}
+
+func handle(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
