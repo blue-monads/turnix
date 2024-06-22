@@ -57,7 +57,7 @@ func New(opts Options) *App {
 	}
 }
 
-func (a *App) Start() error {
+func (a *App) Start(port string) error {
 
 	r := gin.Default()
 
@@ -68,7 +68,7 @@ func (a *App) Start() error {
 		return err
 	}
 
-	return r.Run(":7777")
+	return r.Run(port)
 }
 
 func (a *App) Stop() error {

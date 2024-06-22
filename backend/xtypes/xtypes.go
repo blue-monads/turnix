@@ -11,7 +11,7 @@ import (
 type ApiHandler func(ctx ContextPlus) (any, error)
 
 type App interface {
-	Start() error
+	Start(string) error
 	Stop() error
 
 	AuthMiddleware(fn ApiHandler) gin.HandlerFunc
