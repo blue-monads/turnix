@@ -1,10 +1,9 @@
 package main
 
 import (
-	"github.com/bornjre/turnix/backend/app"
+	"github.com/bornjre/turnix/backend/distro"
 	"github.com/bornjre/turnix/backend/registry"
-	"github.com/bornjre/turnix/backend/services/database"
-	"github.com/bornjre/turnix/backend/services/signer"
+	"github.com/bornjre/turnix/backend/xtypes/xproject"
 
 	_ "github.com/mattn/go-sqlite3"
 
@@ -15,23 +14,39 @@ import (
 	_ "github.com/bornjre/turnix/backend/modules/unloop"
 )
 
+func init() {
+	registry.Register(&xproject.Defination{
+		Name:                "test",
+		Slug:                "test",
+		Info:                "this is test type project",
+		NewFormSchemaFields: []xproject.PTypeField{},
+		Perminssions:        []string{},
+		EventTypes:          []string{"sky_dropped"},
+		Builder:             nil,
+	})
+
+}
+
 func Run() error {
 
-	db, err := database.NewDB()
+	app, err := distro.NewApp()
+	if err != nil {
+		panic(err)
+	}
+
+	mig, err := app.NeedsMigrate()
 	if err != nil {
 		return err
 	}
 
-	defer db.Close()
+	if mig {
+		err = app.RunTestSeed()
+		if err != nil {
+			return err
+		}
 
-	signer := signer.New([]byte("A_long_HARD_Token"))
+	}
 
-	as := app.New(app.Options{
-		DB:           db,
-		Signer:       signer,
-		ProjectTypes: registry.GetAll(),
-	})
-
-	return as.Start()
+	return app.Run()
 
 }

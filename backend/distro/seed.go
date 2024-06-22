@@ -53,3 +53,33 @@ func (d *DistroApp) RunNormalSeed() error {
 	return err
 
 }
+
+func (d *DistroApp) RunTestSeed() error {
+
+	db := d.App.GetDatabase()
+
+	userId, err := db.AddUser(&models.User{
+		Name:            "dev",
+		Utype:           "real",
+		Email:           "dev@example.com",
+		Bio:             "I am a dev.",
+		Password:        "dev123",
+		IsEmailVerified: true,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	db.AddProject(&models.Project{
+		Name:         "test1",
+		Info:         "this is a test project",
+		Ptype:        "test",
+		OwnerID:      userId,
+		IsInitilized: true,
+		IsPublic:     true,
+	})
+
+	return nil
+
+}
