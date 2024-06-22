@@ -20,6 +20,8 @@ func main() {
 	})
 	handle(err)
 
+	defer app.Stop()
+
 	mig, err := app.NeedsMigrate()
 	handle(err)
 
@@ -30,7 +32,7 @@ func main() {
 
 	go runTest(app)
 
-	err = app.Run()
+	err = app.Start()
 	handle(err)
 
 }

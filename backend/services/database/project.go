@@ -6,6 +6,7 @@ import (
 
 	"github.com/bornjre/turnix/backend/xtypes/models"
 	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
+	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )
 
@@ -197,6 +198,7 @@ func (d *DB) ListProjectHooks(pid int64) ([]models.ProjectHook, error) {
 func (d *DB) AddProjectHook(uid, pid int64, data *models.ProjectHook) (int64, error) {
 
 	if !d.isOwner(uid, pid) {
+		pp.Println("@not_isOwner/", uid, pid)
 		return 0, errNotFound
 	}
 
@@ -256,7 +258,7 @@ func (d *DB) GetProjectHook(uid, pid, hid int64) (*models.ProjectHook, error) {
 // private
 
 func (d *DB) isOwner(ownerid int64, projId int64) bool {
-	exist, err := d.projectTable().Find(db.Cond{"owner": ownerid, "id": projId}).Exists()
+	exist, err := d.projectTable().Find(db.Cond{"owned_by": ownerid, "id": projId}).Exists()
 
 	if err != nil {
 		log.Println("owner check error", err)
