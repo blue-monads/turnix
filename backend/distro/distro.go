@@ -1,15 +1,16 @@
 package distro
 
-import "github.com/bornjre/turnix/backend/xtypes"
+import (
+	"github.com/bornjre/turnix/backend/xtypes"
+	"github.com/bornjre/turnix/backend/xtypes/models"
+)
 
 type DistorApp struct {
 	App xtypes.App
 }
 
-/*
-
-
-func (db *DB) RunSeed() error {
+func (d *DistorApp) RunSeed() error {
+	db := d.App.GetDatabase()
 
 	userId, err := db.AddUser(&models.User{
 		Name:            "dev",
@@ -59,7 +60,3 @@ func (db *DB) RunSeed() error {
 	return err
 
 }
-
-
-
-*/
