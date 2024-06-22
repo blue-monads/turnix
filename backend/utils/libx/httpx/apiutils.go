@@ -33,6 +33,10 @@ func WriteFinal(c *gin.Context, err error) {
 	WriteOk(c)
 }
 
+func WriteAuthErr(c *gin.Context, err error) {
+	c.JSON(http.StatusUnauthorized, gin.H{"message": (err.Error())})
+}
+
 func WriteErr(c *gin.Context, err error) {
 	c.JSON(http.StatusBadRequest, gin.H{"message": (err.Error())})
 }

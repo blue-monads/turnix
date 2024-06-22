@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/bornjre/turnix/backend/services/signer"
+	"github.com/bornjre/turnix/backend/utils/libx/httpx"
 	"github.com/bornjre/turnix/backend/xtypes/models"
 	"github.com/gin-gonic/gin"
 )
@@ -45,7 +46,7 @@ func (a *App) selfChangePassword(claim *signer.AccessClaim, ctx *gin.Context) (a
 		return nil, errIncorrectOldPassword
 	}
 
-	return MessageOk, nil
+	return httpx.MessageOk, nil
 }
 
 func (a *App) selfUsers(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
@@ -110,7 +111,7 @@ func (a *App) selfUpdateUser(claim *signer.AccessClaim, ctx *gin.Context) (any, 
 		return nil, err
 	}
 
-	return MessageOk, nil
+	return httpx.MessageOk, nil
 }
 
 func (a *App) selfDeleteUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
@@ -134,5 +135,5 @@ func (a *App) selfDeleteUser(claim *signer.AccessClaim, ctx *gin.Context) (any, 
 		return nil, err
 	}
 
-	return MessageOk, nil
+	return httpx.MessageOk, nil
 }

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/bornjre/turnix/backend/utils/libx/httpx"
 	"github.com/bornjre/turnix/backend/xtypes/models"
 	_ "github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
@@ -17,7 +18,7 @@ func (a *App) signUpDirect(ctx *gin.Context) {
 	data := &models.User{}
 	err := ctx.BindJSON(data)
 	if err != nil {
-		WriteErr(ctx, err)
+		httpx.WriteErr(ctx, err)
 		return
 	}
 
@@ -29,7 +30,7 @@ func (a *App) signUpDirect(ctx *gin.Context) {
 
 	id, err := a.db.AddUser(data)
 	if err != nil {
-		WriteErr(ctx, err)
+		httpx.WriteErr(ctx, err)
 		return
 	}
 
@@ -41,7 +42,7 @@ func (a *App) signUpDirect(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		WriteErr(ctx, err)
+		httpx.WriteErr(ctx, err)
 		return
 	}
 
@@ -71,19 +72,19 @@ func (a *App) login(ctx *gin.Context) {
 	data := &loginDetails{}
 	err := ctx.Bind(data)
 	if err != nil {
-		WriteAuthErr(ctx, err)
+		httpx.WriteAuthErr(ctx, err)
 		return
 	}
 
 	user, err := a.db.GetUserByEmail(data.Email)
 	if err != nil {
-		WriteAuthErr(ctx, err)
+		httpx.WriteAuthErr(ctx, err)
 		return
 	}
 
 	// fixme => hash it
 	if user.Password != data.Password {
-		WriteAuthErr(ctx, err)
+		httpx.WriteAuthErr(ctx, err)
 		return
 	}
 
@@ -93,7 +94,7 @@ func (a *App) login(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		WriteErr(ctx, err)
+		httpx.WriteErr(ctx, err)
 		return
 	}
 
@@ -112,7 +113,7 @@ func (a *App) accessMiddleware(fn func(claim *signer.AccessClaim, ctx *gin.Conte
 		}
 
 		resp, err := fn(claim, ctx)
-		WriteJSON(ctx, resp, err)
+		httpx.WriteJSON(ctx, resp, err)
 	}
 
 }
@@ -122,7 +123,7 @@ func (a *App) withAccess(ctx *gin.Context) (*signer.AccessClaim, error) {
 	tok := ctx.GetHeader("Authorization")
 	claim, err := a.signer.ParseAccess(tok)
 	if err != nil {
-		WriteAuthErr(ctx, err)
+		httpx.WriteAuthErr(ctx, err)
 		return nil, err
 	}
 

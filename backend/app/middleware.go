@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/bornjre/turnix/backend/utils/libx/httpx"
 	"github.com/bornjre/turnix/backend/xtypes"
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +19,6 @@ func (a *App) AuthMiddleware(fn xtypes.ApiHandler) gin.HandlerFunc {
 			Http:  ctx,
 		})
 
-		WriteJSON(ctx, resp, err)
+		httpx.WriteJSON(ctx, resp, err)
 	}
 }
