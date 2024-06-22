@@ -1,10 +1,14 @@
 package main
 
 import (
+	"encoding/json"
+	"io"
+	"net/http"
 	"time"
 
 	"github.com/bornjre/turnix/backend/distro"
 	"github.com/bornjre/turnix/backend/xtypes/models"
+	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 )
 
@@ -51,6 +55,21 @@ func runTest(app *distro.DistroApp) {
 
 	pp.Println("@AddProjectHook")
 
+	handle(err)
+
+	resp, err := http.Get("http://localhost:8777/z/project/test/xyz")
+	handle(err)
+
+	if resp.StatusCode != 200 {
+		pp.Println(resp.Status)
+		panic("server error")
+	}
+
+	out, err := io.ReadAll(resp.Body)
+	handle(err)
+
+	data := gin.H{}
+	err = json.Unmarshal(out, &data)
 	handle(err)
 
 }

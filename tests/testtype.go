@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/bornjre/turnix/backend/registry"
-	"github.com/bornjre/turnix/backend/xtypes"
 	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
+	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 )
 
@@ -20,7 +20,7 @@ func init() {
 		NewFormSchemaFields: []xproject.PTypeField{},
 		Perminssions:        []string{},
 		EventTypes:          []string{EventSkyDropped},
-		Builder:             nil,
+		Builder:             New,
 	})
 
 }
@@ -32,25 +32,21 @@ func New(opt xproject.BuilderOption) (xproject.ProjectType, error) {
 
 	t := &TestType{}
 
-	opt.RouterGroup.GET("testxyz", opt.App.AuthMiddleware(func(ctx xtypes.ContextPlus) (any, error) {
-
+	opt.RouterGroup.GET("xyz", func(ctx *gin.Context) {
 		engine := opt.App.GetHookEngine()
 
 		result, err := engine.Emit(xhook.Event{
 			Name:      EventSkyDropped,
-			UserId:    ctx.Claim.UserId,
-			ProjectId: ctx.ParamInt64("pid"),
+			UserId:    1,
+			ProjectId: 1,
 			Data:      map[string]any{},
 		})
+		handle(err)
 
-		if err != nil {
-			return nil, err
-		}
+		pp.Println(result)
 
-		pp.Println("@result", result)
-
-		return nil, nil
-	}))
+		ctx.Data(200, "application/json", []byte(`{ "hey": 123 }`))
+	})
 
 	return t, nil
 }

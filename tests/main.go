@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/bornjre/turnix/backend/distro"
+	"github.com/k0kubun/pp"
 
 	_ "github.com/mattn/go-sqlite3"
 
@@ -39,6 +40,7 @@ func main() {
 
 func handle(err error) {
 	if err != nil {
+		pp.Println(err.Error())
 		panic(err)
 	}
 }
