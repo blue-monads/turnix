@@ -14,7 +14,10 @@ import (
 
 func main() {
 
-	app, err := distro.NewApp()
+	app, err := distro.NewAppWithOptions(distro.Options{
+		MasterSecret: "ftdfwyguhytcyuagiuhs",
+		HttpPort:     ":8777",
+	})
 	handle(err)
 
 	mig, err := app.NeedsMigrate()
@@ -24,6 +27,8 @@ func main() {
 		err = app.RunTestSeed()
 		handle(err)
 	}
+
+	go runTest(app)
 
 	err = app.Run()
 	handle(err)
