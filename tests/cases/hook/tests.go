@@ -8,18 +8,19 @@ import (
 
 	"github.com/bornjre/turnix/backend/distro"
 	"github.com/bornjre/turnix/backend/xtypes/models"
+	"github.com/bornjre/turnix/tests/must"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 )
 
-func HookTest(app *distro.DistroApp, wg *sync.WaitGroup) {
+func Run(app *distro.DistroApp, wg *sync.WaitGroup) {
 
 	defer wg.Done()
 
 	db := app.App.GetDatabase()
 
 	users, err := db.ListUser()
-	handle(err)
+	must.Handle(err)
 
 	pp.Println(users)
 
@@ -34,7 +35,7 @@ func HookTest(app *distro.DistroApp, wg *sync.WaitGroup) {
 
 	pp.Println("@AddProject")
 
-	handle(err)
+	must.Handle(err)
 
 	_, err = db.AddProjectHook(1, pid, &models.ProjectHook{
 		Name:     "sky_isfalling",
@@ -52,10 +53,10 @@ func HookTest(app *distro.DistroApp, wg *sync.WaitGroup) {
 
 	pp.Println("@AddProjectHook")
 
-	handle(err)
+	must.Handle(err)
 
 	resp, err := http.Get("http://localhost:8777/z/project/test/xyz")
-	handle(err)
+	must.Handle(err)
 
 	if resp.StatusCode != 200 {
 		pp.Println(resp.Status)
@@ -63,11 +64,11 @@ func HookTest(app *distro.DistroApp, wg *sync.WaitGroup) {
 	}
 
 	out, err := io.ReadAll(resp.Body)
-	handle(err)
+	must.Handle(err)
 
 	data := gin.H{}
 	err = json.Unmarshal(out, &data)
-	handle(err)
+	must.Handle(err)
 
 }
 
@@ -79,10 +80,3 @@ func HookTest(app *distro.DistroApp, wg *sync.WaitGroup) {
 
 
 */
-
-func handle(err error) {
-	if err != nil {
-		pp.Println(err.Error())
-		panic(err)
-	}
-}

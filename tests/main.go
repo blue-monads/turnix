@@ -6,7 +6,9 @@ import (
 	"time"
 
 	"github.com/bornjre/turnix/backend/distro"
+	"github.com/bornjre/turnix/tests/cases/assetserve"
 	hooktest "github.com/bornjre/turnix/tests/cases/hook"
+	"github.com/bornjre/turnix/tests/must"
 	"github.com/k0kubun/pp"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -24,22 +26,22 @@ func main() {
 		MasterSecret: "ftdfwyguhytcyuagiuhs",
 		HttpPort:     ":8777",
 	})
-	handle(err)
+	must.Handle(err)
 
 	defer app.Stop()
 
 	mig, err := app.NeedsMigrate()
-	handle(err)
+	must.Handle(err)
 
 	if mig {
 		err = app.RunTestSeed()
-		handle(err)
+		must.Handle(err)
 	}
 
 	go runTest(app)
 
 	err = app.Start()
-	handle(err)
+	must.Handle(err)
 
 }
 
@@ -54,17 +56,13 @@ func runTest(app *distro.DistroApp) {
 	wg := &sync.WaitGroup{}
 
 	wg.Add(1)
-	go hooktest.HookTest(app, wg)
+	go hooktest.Run(app, wg)
+
+	wg.Add(1)
+	go assetserve.Run(app, wg)
 
 	wg.Wait()
 
 	os.Exit(0)
 
-}
-
-func handle(err error) {
-	if err != nil {
-		pp.Println(err.Error())
-		panic(err)
-	}
 }

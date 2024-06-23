@@ -4,6 +4,7 @@ import (
 	"github.com/bornjre/turnix/backend/registry"
 	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
+	"github.com/bornjre/turnix/tests/must"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 )
@@ -41,7 +42,7 @@ func New(opt xproject.BuilderOption) (xproject.ProjectType, error) {
 			ProjectId: 1,
 			Data:      map[string]any{},
 		})
-		handle(err)
+		must.Handle(err)
 
 		itime := result.Data["invade_cuba_time"]
 		pp.Println(result)
