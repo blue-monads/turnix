@@ -45,7 +45,7 @@ func (g *GojaPool) Get(pid int64, cacheOnly bool) *gojaHandle {
 		return maybeGh.(*gojaHandle)
 	}
 
-	if g.maxRuntimeCount >= g.currentRuntimeCount {
+	if g.maxRuntimeCount <= g.currentRuntimeCount {
 		return nil
 	}
 
