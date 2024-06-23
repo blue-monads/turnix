@@ -23,6 +23,11 @@
     loading = false;
   };
 
+  let name = "";
+  let ptype = $params["ptype"];
+  let info = "";
+  let extrameta = {};
+
   load();
 </script>
 
@@ -40,12 +45,17 @@
       <section class="flex flex-col gap-4">
         <label class="label">
           <span>Name</span>
-          <input class="input p-1" type="text" placeholder="TestProject1" />
+          <input
+            bind:value={name}
+            class="input p-1"
+            type="text"
+            placeholder="TestProject1"
+          />
         </label>
 
         <label class="label">
           <span>Project Type</span>
-          <select class="select" disabled>
+          <select bind:value={ptype} class="select" disabled>
             <option value={$params["ptype"]}>{$params["ptype"]}</option>
           </select>
         </label>
@@ -53,6 +63,7 @@
         <label class="label">
           <span>Info</span>
           <textarea
+            bind:value={info}
             class="textarea"
             rows="4"
             placeholder="This is a project description"
@@ -65,6 +76,9 @@
           data={{}}
           noSubmit={true}
           {message}
+          on:save={(ev) => {
+            extrameta = ev.detail || {};
+          }}
           schema={{
             fields: schemaFields,
             name: "",
@@ -74,7 +88,27 @@
       </section>
 
       <footer class="flex justify-end p-2 gap-2">
-        <button class="btn variant-filled" > Update </button>
+        <button
+          class="btn variant-filled"
+          on:click={async () => {
+            loading = true;
+            const resp = await api.addProject({
+              name,
+              ptype,
+              info,
+              extrameta: JSON.stringify(extrameta),
+            });
+
+            if (resp.status !== 200) {
+              loading = false;
+              message = resp.data;
+              return;
+            }
+            gotoPorjects()
+          }}
+        >
+          Save
+        </button>
       </footer>
     </div>
   </div>

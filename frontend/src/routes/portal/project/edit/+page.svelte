@@ -42,7 +42,7 @@
                     options: ["onloop"],
                 },
             ],
-            name: "Add Project",
+            name: "Edit Project",
             required_fields: ["name"],
         }}
         onSave={async (newdata) => {
