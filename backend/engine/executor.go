@@ -51,6 +51,16 @@ func (e *Executor) buildEventObject() *goja.Object {
 		return e.Event.Data
 	})
 
+	obj.Set("dataAsJsonString", func() any {
+
+		out, err := json.Marshal(e.Event.Data)
+		if err != nil {
+			return nil
+		}
+
+		return string(out)
+	})
+
 	obj.Set("setPreventDefault", func() {
 		e.PreventAction = true
 	})
