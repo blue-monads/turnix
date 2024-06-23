@@ -13,7 +13,7 @@ type Engine interface {
 
 type Event struct {
 	Id        int64 // caller doesnot give it, its internal to runtime
-	Name      string
+	Type      string
 	UserId    int64
 	ProjectId int64
 	Data      any

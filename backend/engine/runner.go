@@ -11,6 +11,7 @@ import (
 	"github.com/bornjre/turnix/backend/xtypes/models"
 	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 	"github.com/dop251/goja"
+	"github.com/k0kubun/pp"
 )
 
 var regex = regexp.MustCompile(`const handle = \((.*?)\) => {`)
@@ -22,6 +23,7 @@ var (
 type parsedHook struct {
 	id          int64
 	name        string
+	eventType   string
 	hookType    string
 	runasUserID int64
 	envs        map[string]string
@@ -72,11 +74,13 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) (*hookR
 		envs := make(map[string]string)
 		err = json.Unmarshal([]byte(hook.Envs), &envs)
 		if err != nil {
-			log.Println("decoding_env_error", err)
+			h.logger.Warn().Str("env", hook.Envs).Msg("newHookRunner/decoding_env_error")
 		}
 
 		parsedHooks = append(parsedHooks, parsedHook{
 			id:          hook.ID,
+			name:        hook.Name,
+			eventType:   hook.Event,
 			hookType:    hook.HookType,
 			runasUserID: hook.RunasUserID,
 			envs:        envs,
@@ -136,7 +140,12 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 	}()
 
 	for _, ph := range r.parsedHooks {
-		if ph.name != evt.Name {
+
+		pp.Println("@ph", ph)
+
+		r.parent.logger.Info().Any("parsed_hook", ph).Msg("execute")
+
+		if ph.eventType != evt.Type {
 			continue
 		}
 
@@ -145,6 +154,7 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 
 		switch ph.hookType {
 		case "script":
+			pp.Println("@@@@@")
 			err = execCtx.executeJS(ph)
 		case "webhook":
 			err = execCtx.executeWebhook(ph)

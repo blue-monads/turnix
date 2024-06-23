@@ -36,9 +36,9 @@ func New(opt xproject.BuilderOption) (xproject.ProjectType, error) {
 		engine := opt.App.GetHookEngine()
 
 		result, err := engine.Emit(xhook.Event{
-			Name:      EventSkyDropped,
+			Type:      EventSkyDropped,
 			UserId:    1,
-			ProjectId: 1,
+			ProjectId: 2,
 			Data:      map[string]any{},
 		})
 		handle(err)

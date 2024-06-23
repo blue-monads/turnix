@@ -8,6 +8,7 @@ import (
 
 	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 	"github.com/dop251/goja"
+	"github.com/k0kubun/pp"
 )
 
 type Executor struct {
@@ -20,6 +21,7 @@ type Executor struct {
 // GOJA RUNTIME
 
 func (e *Executor) executeJS(hook parsedHook) error {
+	pp.Println("@executeJS")
 
 	funcName := fmt.Sprintf("_handle_%d", hook.id)
 
@@ -36,6 +38,8 @@ func (e *Executor) executeJS(hook parsedHook) error {
 	}
 
 	obj := e.buildEventObject()
+
+	pp.Println("@executeJS/entry")
 
 	entry(obj)
 
@@ -65,7 +69,7 @@ func (e *Executor) buildEventObject() *goja.Object {
 		e.PreventAction = true
 	})
 
-	obj.Set("event_name", e.Event.Name)
+	obj.Set("event_type", e.Event.Type)
 	obj.Set("event_id", e.Event.Id)
 	obj.Set("project_id", e.Event.ProjectId)
 
@@ -104,7 +108,7 @@ func (e *Executor) executeWebhook(hook parsedHook) error {
 	data := EventWebhookBody{
 		Id:        e.Event.Id,
 		Payload:   e.Event.Data,
-		EventType: e.Event.Name,
+		EventType: e.Event.Type,
 		ProjectId: e.Event.ProjectId,
 	}
 
