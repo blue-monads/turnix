@@ -129,6 +129,10 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 	}
 
 	for _, ph := range r.parsedHooks {
+		if ph.name != evt.Name {
+			continue
+		}
+
 		var err error
 		var ran = true
 
