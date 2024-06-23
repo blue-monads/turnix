@@ -1,0 +1,129 @@
+{
+    "Pharmacy_Ledger": {
+      "Assets": [
+        {
+          "account_name": "Cash",
+          "transactions": [
+            {"date": "2024-06-01", "description": "Daily cash sales", "amount": 1500.00},
+            {"date": "2024-06-02", "description": "ATM withdrawal", "amount": -500.00},
+            {"date": "2024-06-03", "description": "Cash payment from customer", "amount": 250.00},
+            {"date": "2024-06-04", "description": "Petty cash replenishment", "amount": -200.00},
+            {"date": "2024-06-05", "description": "Cash refund to customer", "amount": -50.00}
+          ]
+        },
+        {
+          "account_name": "Inventory",
+          "transactions": [
+            {"date": "2024-06-01", "description": "Purchase of antibiotics", "amount": 2000.00},
+            {"date": "2024-06-02", "description": "Purchase of painkillers", "amount": 1500.00},
+            {"date": "2024-06-03", "description": "Purchase of vitamins", "amount": 1000.00},
+            {"date": "2024-06-04", "description": "Purchase of first aid supplies", "amount": 500.00},
+            {"date": "2024-06-05", "description": "Purchase of skincare products", "amount": 1200.00}
+          ]
+        },
+        {
+          "account_name": "Equipment",
+          "transactions": [
+            {"date": "2024-06-01", "description": "Purchase of new refrigerator", "amount": 3000.00},
+            {"date": "2024-06-02", "description": "Purchase of blood pressure monitor", "amount": 200.00},
+            {"date": "2024-06-03", "description": "Purchase of digital scales", "amount": 150.00},
+            {"date": "2024-06-04", "description": "Purchase of computer", "amount": 1000.00},
+            {"date": "2024-06-05", "description": "Purchase of security cameras", "amount": 500.00}
+          ]
+        }
+      ],
+      "Liabilities": [
+        {
+          "account_name": "Accounts Payable",
+          "transactions": [
+            {"date": "2024-06-01", "description": "Invoice from drug supplier", "amount": 5000.00},
+            {"date": "2024-06-02", "description": "Payment to drug supplier", "amount": -3000.00},
+            {"date": "2024-06-03", "description": "Invoice from equipment vendor", "amount": 2000.00},
+            {"date": "2024-06-04", "description": "Payment to equipment vendor", "amount": -1500.00},
+            {"date": "2024-06-05", "description": "Invoice from cleaning service", "amount": 300.00}
+          ]
+        },
+        {
+          "account_name": "Loans Payable",
+          "transactions": [
+            {"date": "2024-06-01", "description": "Monthly loan payment", "amount": -1000.00},
+            {"date": "2024-06-02", "description": "Interest on loan", "amount": 200.00},
+            {"date": "2024-06-03", "description": "New equipment loan", "amount": 5000.00},
+            {"date": "2024-06-04", "description": "Early loan payment", "amount": -500.00},
+            {"date": "2024-06-05", "description": "Loan processing fee", "amount": 50.00}
+          ]
+        }
+      ],
+      "Equity": [
+        {
+          "account_name": "Owner's Capital",
+          "transactions": [
+            {"date": "2024-06-01", "description": "Owner's investment", "amount": 10000.00},
+            {"date": "2024-06-02", "description": "Owner's withdrawal", "amount": -1000.00},
+            {"date": "2024-06-03", "description": "Additional owner's investment", "amount": 5000.00},
+            {"date": "2024-06-04", "description": "Dividend payment", "amount": -2000.00},
+            {"date": "2024-06-05", "description": "Retained earnings transfer", "amount": 3000.00}
+          ]
+        }
+      ],
+      "Revenue": [
+        {
+          "account_name": "Sales",
+          "transactions": [
+            {"date": "2024-06-01", "description": "Prescription medication sales", "amount": 2500.00},
+            {"date": "2024-06-01", "description": "Over-the-counter medication sales", "amount": 1500.00},
+            {"date": "2024-06-02", "description": "Vitamins and supplements sales", "amount": 800.00},
+            {"date": "2024-06-02", "description": "Personal care products sales", "amount": 600.00},
+            {"date": "2024-06-03", "description": "Prescription medication sales", "amount": 3000.00},
+            {"date": "2024-06-03", "description": "First aid supplies sales", "amount": 400.00},
+            {"date": "2024-06-04", "description": "Over-the-counter medication sales", "amount": 1200.00},
+            {"date": "2024-06-04", "description": "Medical equipment sales", "amount": 1000.00},
+            {"date": "2024-06-05", "description": "Prescription medication sales", "amount": 2800.00},
+            {"date": "2024-06-05", "description": "Skincare products sales", "amount": 700.00},
+            {"date": "2024-06-06", "description": "Vitamins and supplements sales", "amount": 900.00},
+            {"date": "2024-06-06", "description": "Personal care products sales", "amount": 550.00},
+            {"date": "2024-06-07", "description": "Prescription medication sales", "amount": 3200.00},
+            {"date": "2024-06-07", "description": "Over-the-counter medication sales", "amount": 1300.00},
+            {"date": "2024-06-08", "description": "First aid supplies sales", "amount": 350.00},
+            {"date": "2024-06-08", "description": "Medical equipment sales", "amount": 1100.00},
+            {"date": "2024-06-09", "description": "Prescription medication sales", "amount": 2700.00},
+            {"date": "2024-06-09", "description": "Skincare products sales", "amount": 650.00},
+            {"date": "2024-06-10", "description": "Over-the-counter medication sales", "amount": 1400.00},
+            {"date": "2024-06-10", "description": "Vitamins and supplements sales", "amount": 750.00}
+          ]
+        }
+      ],
+      "Expenses": [
+        {
+          "account_name": "Salaries",
+          "transactions": [
+            {"date": "2024-06-01", "description": "Pharmacist salary", "amount": 5000.00},
+            {"date": "2024-06-02", "description": "Pharmacy technician salary", "amount": 2500.00},
+            {"date": "2024-06-03", "description": "Cashier salary", "amount": 1800.00},
+            {"date": "2024-06-04", "description": "Manager salary", "amount": 4000.00},
+            {"date": "2024-06-05", "description": "Overtime pay", "amount": 500.00}
+          ]
+        },
+        {
+          "account_name": "Rent",
+          "transactions": [
+            {"date": "2024-06-01", "description": "Monthly rent payment", "amount": 3000.00},
+            {"date": "2024-06-02", "description": "Security deposit refund", "amount": -500.00},
+            {"date": "2024-06-03", "description": "Late fee", "amount": 50.00},
+            {"date": "2024-06-04", "description": "Parking space rent", "amount": 200.00},
+            {"date": "2024-06-05", "description": "Rent prepayment for next month", "amount": 3000.00}
+          ]
+        },
+        {
+          "account_name": "Utilities",
+          "transactions": [
+            {"date": "2024-06-01", "description": "Electricity bill", "amount": 500.00},
+            {"date": "2024-06-02", "description": "Water bill", "amount": 150.00},
+            {"date": "2024-06-03", "description": "Internet and phone bill", "amount": 200.00},
+            {"date": "2024-06-04", "description": "Gas bill", "amount": 100.00},
+            {"date": "2024-06-05", "description": "Waste management fee", "amount": 75.00}
+          ]
+        }
+      ]
+    }
+  }
