@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 	"github.com/dop251/goja"
 	"github.com/k0kubun/pp"
@@ -24,6 +25,8 @@ type ParsedHook struct {
 }
 
 type Executor struct {
+	engine *HookEngine
+
 	Event         xhook.Event
 	JsRuntime     *goja.Runtime
 	ResultData    map[string]any
@@ -46,10 +49,9 @@ func (e *Executor) executeJS(hook ParsedHook) error {
 	err := e.JsRuntime.ExportTo(eval, &entry)
 	if err != nil {
 		return err
-
 	}
 
-	obj := e.buildEventObject()
+	obj := e.buildEventObject(hook)
 
 	pp.Println("@executeJS/entry")
 
@@ -59,7 +61,7 @@ func (e *Executor) executeJS(hook ParsedHook) error {
 
 }
 
-func (e *Executor) buildEventObject() *goja.Object {
+func (e *Executor) buildEventObject(hook ParsedHook) *goja.Object {
 	obj := e.JsRuntime.NewObject()
 
 	obj.Set("dataAsObject", func() any {
@@ -97,12 +99,37 @@ func (e *Executor) buildEventObject() *goja.Object {
 		e.ResultData[field] = data
 	})
 
-	obj.Set("setResultDataField", func(field string, data any) {
-		if e.ResultData == nil {
-			e.ResultData = map[string]any{}
+	obj.Set("getEnv", func(field string) string {
+		return hook.Envs[field]
+	})
+
+	obj.Set("getCtxUserToken", func() any {
+
+		if hook.RunasUserID == -1 {
+			return nil
 		}
 
-		e.ResultData[field] = data
+		userId := e.Event.UserId
+		if hook.RunasUserID != 0 {
+			userId = hook.RunasUserID
+		}
+
+		token, err := e.engine.signer.SignAccess(&signer.AccessClaim{
+			XID:    e.engine.snowflake.Generate().Int64(),
+			Typeid: signer.TokenTypeAccess,
+			UserId: userId,
+			Extrameta: map[string]any{
+				"engine_pid":      e.Event.ProjectId,
+				"engine_event_id": e.Event.Id,
+			},
+		})
+		if err != nil {
+			pp.Println("@couldnot/generateusertoken", err)
+			return nil
+		}
+
+		return token
+
 	})
 
 	return obj

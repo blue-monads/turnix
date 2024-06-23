@@ -110,6 +110,7 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 	}
 
 	execCtx := Executor{
+		engine:        r.parent,
 		Event:         evt,
 		JsRuntime:     gojah.js,
 		PreventAction: false,
