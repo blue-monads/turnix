@@ -124,7 +124,6 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 
 	result := &xhook.Result{
 		NoOfHooksRan:  0,
-		Mutated:       false,
 		PreventAction: false,
 		Errors:        map[string]string{},
 	}

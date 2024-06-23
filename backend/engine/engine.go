@@ -5,6 +5,7 @@ import (
 
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
+	"github.com/bwmarrin/snowflake"
 	"github.com/rs/zerolog"
 )
 
@@ -14,15 +15,22 @@ type HookEngine struct {
 	hrLock      sync.RWMutex
 	gojaPool    GojaPool
 	logger      zerolog.Logger
+	snowflake   *snowflake.Node
 }
 
 func New(db *database.DB, logger zerolog.Logger) *HookEngine {
+	snode, err := snowflake.NewNode(1)
+	if err != nil {
+		panic(err)
+	}
+
 	return &HookEngine{
 		db:          db,
 		hookRunners: make(map[int64]*hookRunner),
 		gojaPool:    newGojaPool(),
 		hrLock:      sync.RWMutex{},
 		logger:      logger,
+		snowflake:   snode,
 	}
 }
 
@@ -51,9 +59,13 @@ func (h *HookEngine) Emit(e xhook.Event) (*xhook.Result, error) {
 		Int64("uid", e.UserId).
 		Msg("Emit")
 
+	h.logger.Debug().Any("event", e).Msg("Emit/debug")
+
 	return h.emit(e)
 }
 
 func (h *HookEngine) Stop(force bool) error {
+	h.logger.Info().Bool("force", force).Msg("Stop")
+
 	return nil
 }
