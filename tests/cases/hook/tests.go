@@ -1,10 +1,10 @@
-package main
+package hooktest
 
 import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"time"
+	"sync"
 
 	"github.com/bornjre/turnix/backend/distro"
 	"github.com/bornjre/turnix/backend/xtypes/models"
@@ -12,13 +12,9 @@ import (
 	"github.com/k0kubun/pp"
 )
 
-func runTest(app *distro.DistroApp) {
+func HookTest(app *distro.DistroApp, wg *sync.WaitGroup) {
 
-	pp.Println("@runTest/sleeping/before")
-
-	time.Sleep(time.Second * 3)
-
-	pp.Println("@runTest/sleeping/end")
+	defer wg.Done()
 
 	db := app.App.GetDatabase()
 
@@ -48,6 +44,7 @@ func runTest(app *distro.DistroApp) {
 		
 		const handle = (ctx) => {
 			runtime.logInfo("I am calling from inside the hook js runtime :D", {})
+			ctx.setResultDataField("invade_cuba_time", "11:30pm")
 		}`,
 		ProjectID: pid,
 		Envs:      "{}",
@@ -82,3 +79,10 @@ func runTest(app *distro.DistroApp) {
 
 
 */
+
+func handle(err error) {
+	if err != nil {
+		pp.Println(err.Error())
+		panic(err)
+	}
+}

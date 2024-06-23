@@ -1,4 +1,4 @@
-package main
+package hooktest
 
 import (
 	"github.com/bornjre/turnix/backend/registry"
@@ -38,12 +38,17 @@ func New(opt xproject.BuilderOption) (xproject.ProjectType, error) {
 		result, err := engine.Emit(xhook.Event{
 			Type:      EventSkyDropped,
 			UserId:    1,
-			ProjectId: 2,
+			ProjectId: 1,
 			Data:      map[string]any{},
 		})
 		handle(err)
 
+		itime := result.Data["invade_cuba_time"]
 		pp.Println(result)
+
+		if itime.(string) != "11:30pm" {
+			panic("TEST FAILED")
+		}
 
 		ctx.Data(200, "application/json", []byte(`{ "hey": 123 }`))
 	})

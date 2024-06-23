@@ -1,7 +1,12 @@
 package main
 
 import (
+	"os"
+	"sync"
+	"time"
+
 	"github.com/bornjre/turnix/backend/distro"
+	hooktest "github.com/bornjre/turnix/tests/cases/hook"
 	"github.com/k0kubun/pp"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -35,6 +40,25 @@ func main() {
 
 	err = app.Start()
 	handle(err)
+
+}
+
+func runTest(app *distro.DistroApp) {
+
+	pp.Println("@runTest/sleeping/before")
+
+	time.Sleep(time.Second * 3)
+
+	pp.Println("@runTest/sleeping/end")
+
+	wg := &sync.WaitGroup{}
+
+	wg.Add(1)
+	go hooktest.HookTest(app, wg)
+
+	wg.Wait()
+
+	os.Exit(0)
 
 }
 
