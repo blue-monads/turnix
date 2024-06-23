@@ -41,10 +41,13 @@ type hookRunner struct {
 
 func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) (*hookRunner, error) {
 
+	h.logger.Debug().Int64("pid", pid).Any("hooks", hooks).Msg("newHookRunner")
+
 	var codeBuf strings.Builder
 
 	for _, hook := range hooks {
 		if hook.HookType != "script" {
+			h.logger.Info().Int64("hook_id", hook.ID).Msg("newHookRunner/skipping_not_script")
 			continue
 		}
 
@@ -52,8 +55,13 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) (*hookR
 		codeBuf.WriteString(updatedCode)
 	}
 
-	program, err := goja.Compile(fmt.Sprintf("project_hook_%d", pid), codeBuf.String(), true)
+	code := codeBuf.String()
+
+	h.logger.Debug().Str("code", code).Msg("newHookRunner/finalCode")
+
+	program, err := goja.Compile(fmt.Sprintf("project_hook_%d", pid), code, true)
 	if err != nil {
+		h.logger.Warn().Str("code", code).Msg("newHookRunner/goja_compile_error")
 		return nil, err
 	}
 
@@ -113,13 +121,19 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 		Event:         evt,
 		JsRuntime:     gojah.js,
 		PreventAction: false,
+		ResultData:    map[string]any{},
 	}
 
 	result := &xhook.Result{
 		NoOfHooksRan:  0,
 		PreventAction: false,
 		Errors:        map[string]string{},
+		Data:          nil,
 	}
+
+	defer func() {
+		result.Data = execCtx.ResultData
+	}()
 
 	for _, ph := range r.parsedHooks {
 		if ph.name != evt.Name {
@@ -161,5 +175,5 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 
 	}
 
-	return nil, nil
+	return result, nil
 }
