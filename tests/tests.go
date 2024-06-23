@@ -73,3 +73,12 @@ func runTest(app *distro.DistroApp) {
 	handle(err)
 
 }
+
+/*
+
+- test hook
+- test dynamic asset serving
+-
+
+
+*/

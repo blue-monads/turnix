@@ -2,6 +2,7 @@ package hookengine
 
 import (
 	"errors"
+	"log"
 
 	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 )
@@ -39,7 +40,7 @@ func (h *HookEngine) getRunner(pid int64) *hookRunner {
 
 	hooks, err := h.db.ListProjectHooks(pid)
 	if err != nil {
-
+		log.Println(err.Error())
 		return nil
 	}
 

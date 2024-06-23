@@ -45,6 +45,8 @@ func New(opts Options) *App {
 		panic(err)
 	}
 
+	rootLogger := zerolog.New(os.Stdout)
+
 	return &App{
 		db:         opts.DB,
 		signer:     opts.Signer,
@@ -52,8 +54,8 @@ func New(opts Options) *App {
 		globalJS:   out,
 		ptypeDefs:  opts.ProjectTypes,
 		projects:   make(map[string]xproject.ProjectType),
-		rootLogger: zerolog.New(os.Stdout),
-		hookEngine: hookengine.New(opts.DB),
+		rootLogger: rootLogger,
+		hookEngine: hookengine.New(opts.DB, rootLogger.With().Str("service", "engine").Logger()),
 	}
 }
 
