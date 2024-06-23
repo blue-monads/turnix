@@ -37,12 +37,9 @@ type hookRunner struct {
 	jsCodeCache *goja.Program
 
 	parsedHooks []parsedHook
-
-	compileError bool
-	message      string
 }
 
-func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) *hookRunner {
+func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) (*hookRunner, error) {
 
 	var codeBuf strings.Builder
 
@@ -57,11 +54,7 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) *hookRu
 
 	program, err := goja.Compile(fmt.Sprintf("project_hook_%d", pid), codeBuf.String(), true)
 	if err != nil {
-		return &hookRunner{
-			compileError: true,
-			message:      err.Error(),
-		}
-
+		return nil, err
 	}
 
 	parsedHooks := make([]parsedHook, 0, len(hooks))
@@ -91,7 +84,7 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) *hookRu
 		pid:         pid,
 		jsCodeCache: program,
 		parsedHooks: parsedHooks,
-	}
+	}, nil
 
 }
 

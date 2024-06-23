@@ -2,7 +2,6 @@ package hookengine
 
 import (
 	"errors"
-	"log"
 
 	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 )
@@ -14,37 +13,34 @@ var (
 
 func (h *HookEngine) emit(evt xhook.Event) (*xhook.Result, error) {
 
-	runner := h.getRunner(evt.ProjectId)
-
-	if runner == nil {
-		return nil, ErrRuntimeErr
-	}
-
-	if runner.compileError {
-		return nil, ErrScriptCompileErr
+	runner, err := h.getRunner(evt.ProjectId)
+	if err != nil {
+		return nil, err
 	}
 
 	return runner.execute(evt)
 }
 
-func (h *HookEngine) getRunner(pid int64) *hookRunner {
+func (h *HookEngine) getRunner(pid int64) (*hookRunner, error) {
 
 	h.hrLock.RLock()
 	runner := h.hookRunners[pid]
 	if runner != nil {
 		h.hrLock.RUnlock()
-		return runner
+		return runner, nil
 	}
 
 	h.hrLock.RUnlock()
 
 	hooks, err := h.db.ListProjectHooks(pid)
 	if err != nil {
-		log.Println(err.Error())
-		return nil
+		return nil, err
 	}
 
-	runner = newHookRunner(h, pid, hooks)
+	runner, err = newHookRunner(h, pid, hooks)
+	if err != nil {
+		return nil, err
+	}
 
 	// race condition is fine
 
@@ -53,11 +49,11 @@ func (h *HookEngine) getRunner(pid int64) *hookRunner {
 
 	racedrunner := h.hookRunners[pid]
 	if runner != nil {
-		return racedrunner
+		return racedrunner, nil
 	}
 
 	h.hookRunners[pid] = runner
 
-	return runner
+	return runner, nil
 
 }
