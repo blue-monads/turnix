@@ -13,6 +13,7 @@ import (
 type Executor struct {
 	Event         xhook.Event
 	JsRuntime     *goja.Runtime
+	ResultData    map[string]any
 	PreventAction bool
 }
 
@@ -66,8 +67,8 @@ type EventWebhookBody struct {
 }
 
 type EventWebhookResponse struct {
-	PreventAction bool `json:"prevent_action"`
-	NewPayload    any  `json:"new_payload"`
+	PreventAction bool           `json:"prevent_action"`
+	ResultData    map[string]any `json:"result_data"`
 }
 
 func (e *Executor) executeWebhook(hook parsedHook) error {
@@ -84,9 +85,21 @@ func (e *Executor) executeWebhook(hook parsedHook) error {
 		return err
 	}
 
-	_, err = http.Post(hook.target, "application/json", bytes.NewReader(out))
+	rawResp, err := http.Post(hook.target, "application/json", bytes.NewReader(out))
 	if err != nil {
 		return err
+	}
+
+	resp := &EventWebhookResponse{}
+
+	err = json.NewDecoder(rawResp.Body).Decode(resp)
+	if err != nil {
+		return err
+	}
+
+	e.PreventAction = resp.PreventAction
+	for key, val := range resp.ResultData {
+		resp.ResultData[key] = val
 	}
 
 	return nil
