@@ -103,6 +103,7 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 		}
 
 		gojah.bind()
+		gojah.js.SetFieldNameMapper(goja.TagFieldNameMapper("json", true))
 
 		gojah.lastPid = evt.ProjectId
 
@@ -111,7 +112,7 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 	execCtx := Executor{
 		runner:        r,
 		evt:           evt,
-		jrt:           gojah.js,
+		jsrt:          gojah.js,
 		preventAction: false,
 	}
 

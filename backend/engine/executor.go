@@ -13,7 +13,7 @@ import (
 type Executor struct {
 	evt           xhook.Event
 	runner        *hookRunner
-	jrt           *goja.Runtime
+	jsrt          *goja.Runtime
 	preventAction bool
 }
 
@@ -24,18 +24,18 @@ func (e *Executor) executeJS(hook parsedHook) error {
 	funcName := fmt.Sprintf("_handle_%d", hook.id)
 
 	var entry func(ctx *goja.Object)
-	eval := e.jrt.Get(funcName)
+	eval := e.jsrt.Get(funcName)
 	if eval == nil {
 		return fmt.Errorf("%s function not found in script", funcName)
 	}
 
-	err := e.jrt.ExportTo(eval, &entry)
+	err := e.jsrt.ExportTo(eval, &entry)
 	if err != nil {
 		return err
 
 	}
 
-	obj := buildEventObject(e.evt, e.jrt)
+	obj := buildEventObject(e.evt, e.jsrt)
 
 	entry(obj)
 
