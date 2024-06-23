@@ -47,7 +47,7 @@ func runTest(app *distro.DistroApp) {
 		HookCode: `
 		
 		const handle = (ctx) => {
-			runtime.logInfo("This is test", {})
+			runtime.logInfo("I am calling from inside the hook js runtime :D", {})
 		}`,
 		ProjectID: pid,
 		Envs:      "{}",
