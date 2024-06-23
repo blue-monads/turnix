@@ -16,7 +16,7 @@ type Event struct {
 	Name      string
 	UserId    int64
 	ProjectId int64
-	Data      map[string]any
+	Data      any
 }
 
 type Result struct {

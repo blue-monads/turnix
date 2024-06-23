@@ -35,7 +35,7 @@ func (e *Executor) executeJS(hook parsedHook) error {
 
 	}
 
-	obj := buildEventObject(e.Event, e.JsRuntime)
+	obj := e.buildEventObject()
 
 	entry(obj)
 
@@ -43,15 +43,33 @@ func (e *Executor) executeJS(hook parsedHook) error {
 
 }
 
-func buildEventObject(evt xhook.Event, r *goja.Runtime) *goja.Object {
-	obj := r.NewObject()
+func (e *Executor) buildEventObject() *goja.Object {
+	obj := e.JsRuntime.NewObject()
 
 	obj.Set("dataAsObject", func() any {
 
-		return evt.Data
+		return e.Event.Data
 	})
 
-	obj.Set("name", evt.Name)
+	obj.Set("setPreventDefault", func() {
+		e.PreventAction = true
+	})
+
+	obj.Set("event_name", e.Event.Name)
+	obj.Set("event_id", e.Event.Id)
+	obj.Set("project_id", e.Event.ProjectId)
+
+	obj.Set("setResultData", func(data map[string]any) {
+		e.ResultData = data
+	})
+
+	obj.Set("setResultDataField", func(field string, data any) {
+		if e.ResultData == nil {
+			e.ResultData = map[string]any{}
+		}
+
+		e.ResultData[field] = data
+	})
 
 	return obj
 
