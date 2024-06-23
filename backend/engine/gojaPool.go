@@ -64,13 +64,13 @@ func (g *GojaPool) Get(pid, eid int64, cacheOnly bool) *gojaHandle {
 	}
 }
 
-func (g *GojaPool) Set(pid int64, gh *gojaHandle) {
+func (g *GojaPool) Set(gh *gojaHandle) {
 	g.idexMLock.Lock()
 	defer g.idexMLock.Unlock()
 
-	existing := g.pidCacheIndex[pid]
+	existing := g.pidCacheIndex[gh.lastPid]
 	if existing == nil {
-		g.pidCacheIndex[pid] = gh
+		g.pidCacheIndex[gh.lastPid] = gh
 		return
 	}
 

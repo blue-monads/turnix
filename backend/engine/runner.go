@@ -136,6 +136,8 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 	}
 
 	defer func() {
+		r.parent.gojaPool.Set(gojah)
+
 		result.Data = execCtx.ResultData
 	}()
 
