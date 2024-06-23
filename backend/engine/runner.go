@@ -20,25 +20,13 @@ var (
 	ErrMustRun = errors.New("COULD NOT RUN")
 )
 
-type parsedHook struct {
-	id          int64
-	name        string
-	eventType   string
-	hookType    string
-	runasUserID int64
-	envs        map[string]string
-	target      string
-	mustRun     bool
-	mustNoError bool
-}
-
 type hookRunner struct {
 	parent *HookEngine
 	pid    int64
 
 	jsCodeCache *goja.Program
 
-	parsedHooks []parsedHook
+	parsedHooks []ParsedHook
 }
 
 func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) (*hookRunner, error) {
@@ -67,7 +55,7 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) (*hookR
 		return nil, err
 	}
 
-	parsedHooks := make([]parsedHook, 0, len(hooks))
+	parsedHooks := make([]ParsedHook, 0, len(hooks))
 
 	for _, hook := range hooks {
 
@@ -77,16 +65,16 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) (*hookR
 			h.logger.Warn().Str("env", hook.Envs).Msg("newHookRunner/decoding_env_error")
 		}
 
-		parsedHooks = append(parsedHooks, parsedHook{
-			id:          hook.ID,
-			name:        hook.Name,
-			eventType:   hook.Event,
-			hookType:    hook.HookType,
-			runasUserID: hook.RunasUserID,
-			envs:        envs,
-			target:      hook.Target,
-			mustRun:     false,
-			mustNoError: false,
+		parsedHooks = append(parsedHooks, ParsedHook{
+			Id:          hook.ID,
+			Name:        hook.Name,
+			EventType:   hook.Event,
+			HookType:    hook.HookType,
+			RunasUserID: hook.RunasUserID,
+			Envs:        envs,
+			Target:      hook.Target,
+			MustRun:     false,
+			MustNoError: false,
 		})
 
 	}
@@ -147,14 +135,14 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 
 		r.parent.logger.Info().Any("parsed_hook", ph).Msg("execute")
 
-		if ph.eventType != evt.Type {
+		if ph.EventType != evt.Type {
 			continue
 		}
 
 		var err error
 		var ran = true
 
-		switch ph.hookType {
+		switch ph.HookType {
 		case "script":
 			pp.Println("@@@@@")
 			err = execCtx.executeJS(ph)
@@ -162,10 +150,10 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 			err = execCtx.executeWebhook(ph)
 		default:
 			ran = false
-			log.Println("unknown_hookType", ph.hookType)
+			log.Println("unknown_hookType", ph)
 		}
 
-		if ph.mustRun && !ran {
+		if ph.MustRun && !ran {
 			return nil, ErrMustRun
 		}
 
@@ -174,11 +162,11 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 		}
 
 		if err != nil {
-			if ph.mustNoError {
+			if ph.MustNoError {
 				return nil, err
 			}
 
-			result.Errors[ph.name] = err.Error()
+			result.Errors[ph.Name] = err.Error()
 		}
 
 		if execCtx.PreventAction {

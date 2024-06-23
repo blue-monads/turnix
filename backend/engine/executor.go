@@ -11,6 +11,18 @@ import (
 	"github.com/k0kubun/pp"
 )
 
+type ParsedHook struct {
+	Id          int64
+	Name        string
+	EventType   string
+	HookType    string
+	RunasUserID int64
+	Envs        map[string]string
+	Target      string
+	MustRun     bool
+	MustNoError bool
+}
+
 type Executor struct {
 	Event         xhook.Event
 	JsRuntime     *goja.Runtime
@@ -20,10 +32,10 @@ type Executor struct {
 
 // GOJA RUNTIME
 
-func (e *Executor) executeJS(hook parsedHook) error {
+func (e *Executor) executeJS(hook ParsedHook) error {
 	pp.Println("@executeJS")
 
-	funcName := fmt.Sprintf("_handle_%d", hook.id)
+	funcName := fmt.Sprintf("_handle_%d", hook.Id)
 
 	var entry func(ctx *goja.Object)
 	eval := e.JsRuntime.Get(funcName)
@@ -85,6 +97,14 @@ func (e *Executor) buildEventObject() *goja.Object {
 		e.ResultData[field] = data
 	})
 
+	obj.Set("setResultDataField", func(field string, data any) {
+		if e.ResultData == nil {
+			e.ResultData = map[string]any{}
+		}
+
+		e.ResultData[field] = data
+	})
+
 	return obj
 
 }
@@ -103,7 +123,7 @@ type EventWebhookResponse struct {
 	ResultData    map[string]any `json:"result_data"`
 }
 
-func (e *Executor) executeWebhook(hook parsedHook) error {
+func (e *Executor) executeWebhook(hook ParsedHook) error {
 
 	data := EventWebhookBody{
 		Id:        e.Event.Id,
@@ -117,7 +137,7 @@ func (e *Executor) executeWebhook(hook parsedHook) error {
 		return err
 	}
 
-	rawResp, err := http.Post(hook.target, "application/json", bytes.NewReader(out))
+	rawResp, err := http.Post(hook.Target, "application/json", bytes.NewReader(out))
 	if err != nil {
 		return err
 	}
