@@ -7,6 +7,8 @@ import (
 )
 
 type GojaPool struct {
+	engine *HookEngine
+
 	pool sync.Pool
 
 	pidCacheIndex       map[int64]*gojaHandle
@@ -18,8 +20,12 @@ type GojaPool struct {
 func newGojaPool() GojaPool {
 
 	return GojaPool{
-		pool:          sync.Pool{},
-		pidCacheIndex: map[int64]*gojaHandle{},
+		pool:                sync.Pool{},
+		pidCacheIndex:       map[int64]*gojaHandle{},
+		engine:              nil,
+		currentRuntimeCount: 0,
+		maxRuntimeCount:     10,
+		idexMLock:           sync.Mutex{},
 	}
 }
 

@@ -24,7 +24,7 @@ func New(db *database.DB, logger zerolog.Logger) *HookEngine {
 		panic(err)
 	}
 
-	return &HookEngine{
+	hook := &HookEngine{
 		db:          db,
 		hookRunners: make(map[int64]*hookRunner),
 		gojaPool:    newGojaPool(),
@@ -32,6 +32,10 @@ func New(db *database.DB, logger zerolog.Logger) *HookEngine {
 		logger:      logger,
 		snowflake:   snode,
 	}
+
+	hook.gojaPool.engine = hook
+
+	return hook
 }
 
 func (h *HookEngine) Init() error {

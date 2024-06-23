@@ -23,22 +23,29 @@ func (h *HookEngine) emit(evt xhook.Event) (*xhook.Result, error) {
 
 func (h *HookEngine) getRunner(pid int64) (*hookRunner, error) {
 
+	h.logger.Debug().Msg("getRunner/existing")
+
 	h.hrLock.RLock()
 	runner := h.hookRunners[pid]
 	if runner != nil {
+		h.logger.Debug().Msg("getRunner/existing")
 		h.hrLock.RUnlock()
 		return runner, nil
 	}
 
 	h.hrLock.RUnlock()
 
+	h.logger.Debug().Msg("getRunner/notfound")
+
 	hooks, err := h.db.ListProjectHooks(pid)
 	if err != nil {
+		h.logger.Warn().Err(err).Msg("getRunner/ListProjectHooks/err")
 		return nil, err
 	}
 
 	runner, err = newHookRunner(h, pid, hooks)
 	if err != nil {
+		h.logger.Warn().Err(err).Msg("getRunner/newHookRunner/err")
 		return nil, err
 	}
 
@@ -48,7 +55,8 @@ func (h *HookEngine) getRunner(pid int64) (*hookRunner, error) {
 	defer h.hrLock.Unlock()
 
 	racedrunner := h.hookRunners[pid]
-	if runner != nil {
+	if racedrunner != nil {
+		h.logger.Info().Msg("getRunner/raced")
 		return racedrunner, nil
 	}
 
