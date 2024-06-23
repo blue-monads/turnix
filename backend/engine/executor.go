@@ -11,10 +11,9 @@ import (
 )
 
 type Executor struct {
-	evt           xhook.Event
-	runner        *hookRunner
-	jsrt          *goja.Runtime
-	preventAction bool
+	Event         xhook.Event
+	JsRuntime     *goja.Runtime
+	PreventAction bool
 }
 
 // GOJA RUNTIME
@@ -24,18 +23,18 @@ func (e *Executor) executeJS(hook parsedHook) error {
 	funcName := fmt.Sprintf("_handle_%d", hook.id)
 
 	var entry func(ctx *goja.Object)
-	eval := e.jsrt.Get(funcName)
+	eval := e.JsRuntime.Get(funcName)
 	if eval == nil {
 		return fmt.Errorf("%s function not found in script", funcName)
 	}
 
-	err := e.jsrt.ExportTo(eval, &entry)
+	err := e.JsRuntime.ExportTo(eval, &entry)
 	if err != nil {
 		return err
 
 	}
 
-	obj := buildEventObject(e.evt, e.jsrt)
+	obj := buildEventObject(e.Event, e.JsRuntime)
 
 	entry(obj)
 
@@ -74,10 +73,10 @@ type EventWebhookResponse struct {
 func (e *Executor) executeWebhook(hook parsedHook) error {
 
 	data := EventWebhookBody{
-		Id:        1,
-		Payload:   e.evt.Data,
-		EventType: e.evt.Name,
-		ProjectId: e.evt.ProjectId,
+		Id:        e.Event.Id,
+		Payload:   e.Event.Data,
+		EventType: e.Event.Name,
+		ProjectId: e.Event.ProjectId,
 	}
 
 	out, err := json.Marshal(&data)

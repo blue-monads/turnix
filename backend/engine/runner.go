@@ -110,10 +110,9 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 	}
 
 	execCtx := Executor{
-		runner:        r,
-		evt:           evt,
-		jsrt:          gojah.js,
-		preventAction: false,
+		Event:         evt,
+		JsRuntime:     gojah.js,
+		PreventAction: false,
 	}
 
 	result := &xhook.Result{
@@ -156,7 +155,7 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 			result.Errors[ph.name] = err.Error()
 		}
 
-		if execCtx.preventAction {
+		if execCtx.PreventAction {
 			return result, nil
 		}
 
