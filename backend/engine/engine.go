@@ -54,6 +54,9 @@ func (h *HookEngine) Invalidate(pid int64) error {
 }
 
 func (h *HookEngine) Emit(e xhook.Event) (*xhook.Result, error) {
+
+	e.Id = h.snowflake.Generate().Int64()
+
 	h.logger.Info().
 		Int64("pid", e.ProjectId).
 		Int64("uid", e.UserId).
