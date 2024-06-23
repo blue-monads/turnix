@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS ProjectHooks (
   name TEXT NOT NULL DEFAULT '', 
   event TEXT NOT NULL,
   order_id INTEGER NOT NULL DEFAULT 0,
-  runas_user_id INTEGER NOT NULL DEFAULT 0,
+  runas_user_id INTEGER NOT NULL DEFAULT -1,
   hook_type TEXT NOT NULL DEFAULT 'script', -- script, webhook, email
   hook_code TEXT NOT NULL DEFAULT '',
   target TEXT NOT NULL DEFAULT '',

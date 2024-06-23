@@ -17,7 +17,7 @@
 
     export let id = 0;
     export let hook_code = code;
-    export let runas_user_id = 0;
+    export let runas_user_id = -1;
     export let hook_type = "webhook";
     export let target = "";
 
@@ -26,13 +26,18 @@
     export let event = "";
     export let name = "";
 
+    let run_as_type: "specific_user" | "context_user" | "no_user" =
+        runas_user_id === -1
+            ? "no_user"
+            : runas_user_id === 0
+              ? "context_user"
+              : "specific_user";
+
     export let onSave = async (data: Record<string, any>) => {};
 
     const ptype = $params["ptype"];
 
     const api = getContext("__api__") as RootAPI;
-
-    let runas_specific_user = false;
 
     let data: ProjectDef;
     let loading = true;
@@ -91,41 +96,30 @@
                 <label class="label">
                     <span>Event Type</span>
                     <select bind:value={event} class="select">
-                        {#each (data.event_types || []) as evt}
+                        {#each data.event_types || [] as evt}
                             <option value={evt}>{evt}</option>
                         {/each}
                     </select>
                 </label>
 
                 <label class="flex items-center space-x-2">
-                    <input
-                        class="checkbox"
-                        type="checkbox"
-                        checked={runas_specific_user}
-                        on:change={(ev) => {
-                            if (runas_specific_user) {
-                                runas_user_id = 0;
-                                runas_specific_user = false;
-                            } else {
-                                runas_specific_user = true;
-                            }
-                        }}
-                    />
-                    <p>Run as Specific User</p>
+                    <p>Run as</p>
+                    <select bind:value={run_as_type} class="select w-44">
+                        <option value="specific_user">Specific User</option>
+                        <option value="context_user">Context User</option>
+                        <option value="no_user">No User</option>
+                    </select>
                 </label>
 
-                {#if runas_specific_user || runas_user_id}
+                {#if run_as_type === "specific_user"}
                     <div class="flex gap-2 items-center">
-                        <label class="label">
-                            <span>Run as User</span>
-                            <input
-                                class="input p-1"
-                                value={usersIndex[runas_user_id] || ""}
-                                type="text"
-                                disabled
-                                placeholder="John"
-                            />
-                        </label>
+                        <input
+                            class="input p-1 w-44"
+                            value={usersIndex[runas_user_id] || ""}
+                            type="text"
+                            disabled
+                            placeholder="John"
+                        />
 
                         <div class="pt-4 inline-flex justify-self-center">
                             <button class="variant-filled btn btn-sm"
@@ -217,6 +211,11 @@
                     class="btn btn-sm variant-filled"
                     on:click={async () => {
                         loading = true;
+                        if (run_as_type === "context_user") {
+                            runas_user_id = 0;
+                        } else if (run_as_type === "no_user") {
+                            runas_user_id = -1
+                        }
 
                         await onSave({
                             id,
