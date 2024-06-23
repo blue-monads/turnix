@@ -5,7 +5,7 @@ type Project struct {
 	Name         string `json:"name" db:"name"`
 	Info         string `json:"info" db:"info"`
 	Ptype        string `json:"ptype" db:"ptype,omitempty"`
-	OwnerID      int64  `json:"owner" db:"owned_by"`
+	OwnerID      int64  `json:"owned_by" db:"owned_by"`
 	ExtraMeta    string `json:"extrameta" db:"extrameta,omitempty"`
 	IsInitilized bool   `json:"is_initilized" db:"is_initilized,omitempty"`
 	IsPublic     bool   `json:"is_public" db:"is_public,omitempty"`

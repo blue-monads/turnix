@@ -6,6 +6,7 @@ import (
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/models"
 	"github.com/gin-gonic/gin"
+	"github.com/k0kubun/pp"
 )
 
 func (a *App) ListProjectTypes(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
@@ -70,10 +71,13 @@ func (a *App) listProjects(claim *signer.AccessClaim, ctx *gin.Context) (any, er
 		return nil, err
 	}
 
+	pp.Println("@own_projects", ownpjs)
+
 	tprojs, err := a.db.ListThirdPartyProjects(claim.UserId, ptype)
 	if err != nil {
 		return nil, err
 	}
+	pp.Println("@thirdparty_projects", tprojs)
 
 	tprojs = append(tprojs, ownpjs...)
 

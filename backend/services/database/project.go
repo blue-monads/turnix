@@ -23,7 +23,7 @@ func (d *DB) AddProject(data *models.Project) (int64, error) {
 }
 
 func (d *DB) RemoveProject(id int64, ownerId int64) error {
-	return d.projectTable().Find(db.Cond{"id": id, "owner": ownerId}).Delete()
+	return d.projectTable().Find(db.Cond{"id": id, "owned_by": ownerId}).Delete()
 }
 
 func (d *DB) GetProject(id int64) (*models.Project, error) {
@@ -41,7 +41,7 @@ func (d *DB) GetProject(id int64) (*models.Project, error) {
 func (d *DB) GetProjectByOwner(id int64, ownerId int64) (*models.Project, error) {
 	data := &models.Project{}
 
-	err := d.projectTable().Find(db.Cond{"id": id, "owner": ownerId}).One(data)
+	err := d.projectTable().Find(db.Cond{"id": id, "owned_by": ownerId}).One(data)
 	if err != nil {
 		return nil, err
 	}
@@ -51,13 +51,13 @@ func (d *DB) GetProjectByOwner(id int64, ownerId int64) (*models.Project, error)
 }
 
 func (d *DB) UpdateProject(id int64, ownerId int64, data map[string]any) error {
-	return d.projectTable().Find(db.Cond{"id": id, "owner": ownerId}).Update(data)
+	return d.projectTable().Find(db.Cond{"id": id, "owned_by": ownerId}).Update(data)
 }
 
 func (d *DB) ListOwnProjects(ownerId int64, ptype string) ([]models.Project, error) {
 	datas := make([]models.Project, 0)
 
-	cond := db.Cond{"owner": ownerId}
+	cond := db.Cond{"owned_by": ownerId}
 
 	if ptype != "" {
 		cond["ptype"] = ptype

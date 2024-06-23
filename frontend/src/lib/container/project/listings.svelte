@@ -29,7 +29,7 @@
       ["id", "ID"],
       ["name", "Name"],
       ["ptype", "Project type"],
-      ["owner", "Owner"],
+      ["owned_by", "Owner"],
     ]}
     {datas}
     color={["ptype"]}
