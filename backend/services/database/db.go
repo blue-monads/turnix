@@ -92,7 +92,6 @@ func (db *DB) RunDDL(ctx xdatabase.DDLContext) error {
 		}
 	}
 
-	db.sess.Driver()
 	driver := db.sess.Driver().(*sql.DB)
 
 	_, err := driver.Exec(buf.String())
