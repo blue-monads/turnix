@@ -24,6 +24,7 @@ type Defination struct {
 	Slug                string
 	Info                string
 	Icon                string
+	Version             string
 	NewFormSchemaFields []PTypeField
 	Perminssions        []string
 	EventTypes          []string
@@ -49,7 +50,20 @@ type ProjectType interface {
 
 	DeInit(pid int64) error
 
+	Export(pid int64) (any, error)
+
+	Restore(pid int64, data any) error
+
 	OnFileEvent(event *FileEvent) error
 
 	OnUserEvent(event *UserEvent) error
+}
+
+type ExportTemplate struct {
+	Name      string            `json:"name"`
+	Pid       int64             `json:"pid"`
+	Ptype     string            `json:"ptype"`
+	Version   string            `json:"version"`
+	ExtraMeta map[string]string `json:"extrameta"`
+	Data      any               `json:"data"`
 }

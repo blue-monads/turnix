@@ -30,6 +30,14 @@ func (a *Adapter) OnUserEvent(event *UserEvent) error {
 	return nil
 }
 
+func (a *Adapter) Export(pid int64) (any, error) {
+	return nil, nil
+}
+
+func (a *Adapter) Restore(pid int64, data any) error {
+	return nil
+}
+
 type Core interface {
 	Init(pid int64) error
 	DeInit(pid int64) error

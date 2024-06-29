@@ -78,3 +78,11 @@ func (t *TestType) OnFileEvent(event *xproject.FileEvent) error {
 func (t *TestType) OnUserEvent(event *xproject.UserEvent) error {
 	return nil
 }
+
+func (t *TestType) Export(pid int64) (any, error) {
+	return nil, nil
+}
+
+func (t *TestType) Restore(pid int64, data any) error {
+	return nil
+}
