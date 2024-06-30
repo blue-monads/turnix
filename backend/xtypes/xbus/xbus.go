@@ -64,7 +64,7 @@ type EventBus interface {
 	Invalidate(pid int64) error
 	Emit(e EventNew) (*EventResult, error)
 
-	OnEvent(name string, handler EventHandler)
+	OnEvent(name string, handler EventHandler, priority int16)
 
 	Stop(force bool) error
 }
