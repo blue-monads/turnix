@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/bornjre/turnix/backend/xtypes/models"
-	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
+	"github.com/bornjre/turnix/backend/xtypes/xbus"
 	"github.com/dop251/goja"
 	"github.com/k0kubun/pp"
 )
@@ -88,14 +88,14 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) (*hookR
 
 }
 
-func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
+func (r *hookRunner) execute(evt xbus.EventContext) (*xbus.EventResult, error) {
 
-	gojah := r.parent.gojaPool.Get(evt.ProjectId, evt.Id, false)
+	gojah := r.parent.gojaPool.Get(evt.Event.Project, evt.EventId, false)
 	if gojah == nil {
 		return nil, fmt.Errorf("could not accure JS runtime")
 	}
 
-	if gojah.lastPid != evt.ProjectId {
+	if gojah.lastPid != evt.Event.Project {
 		gojah.lastPid = 0
 		_, err := gojah.js.RunProgram(r.jsCodeCache)
 		if err != nil {
@@ -105,7 +105,7 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 		gojah.bind()
 		gojah.js.SetFieldNameMapper(goja.TagFieldNameMapper("json", true))
 
-		gojah.lastPid = evt.ProjectId
+		gojah.lastPid = evt.Event.Project
 
 	}
 
@@ -117,12 +117,13 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 		ResultData:    map[string]any{},
 	}
 
-	result := &xhook.Result{
-		NoOfHooksRan:  0,
+	result := &xbus.EventResult{
 		PreventAction: false,
 		Errors:        map[string]string{},
 		Data:          nil,
 	}
+
+	noHook := 0
 
 	defer func() {
 		r.parent.gojaPool.Set(gojah)
@@ -136,7 +137,7 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 
 		r.parent.logger.Info().Any("parsed_hook", ph).Msg("execute")
 
-		if ph.EventType != evt.Type {
+		if ph.EventType != evt.Event.Type {
 			continue
 		}
 
@@ -159,7 +160,7 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 		}
 
 		if ran {
-			result.NoOfHooksRan = result.NoOfHooksRan + 1
+			noHook = noHook + 1
 		}
 
 		if err != nil {
@@ -175,6 +176,8 @@ func (r *hookRunner) execute(evt xhook.Event) (*xhook.Result, error) {
 		}
 
 	}
+
+	pp.Println("@ran", noHook)
 
 	return result, nil
 }

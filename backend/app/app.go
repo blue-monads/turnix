@@ -3,12 +3,11 @@ package app
 import (
 	"os"
 
-	hookengine "github.com/bornjre/turnix/backend/engine"
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
-	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 	"github.com/bornjre/turnix/backend/xtypes/services/xsockd"
+	"github.com/bornjre/turnix/backend/xtypes/xbus"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
 	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
@@ -23,7 +22,6 @@ type App struct {
 	ptypeDefs  []*xproject.Defination
 	projects   map[string]xproject.ProjectType
 	rootLogger zerolog.Logger
-	hookEngine *hookengine.HookEngine
 }
 
 type Options struct {
@@ -55,7 +53,7 @@ func New(opts Options) *App {
 		ptypeDefs:  opts.ProjectTypes,
 		projects:   make(map[string]xproject.ProjectType),
 		rootLogger: rootLogger,
-		hookEngine: hookengine.New(opts.DB, opts.Signer, rootLogger.With().Str("service", "engine").Logger()),
+		// 		hookEngine: hookengine.New(opts.DB, opts.Signer, rootLogger.With().Str("service", "engine").Logger()),
 	}
 }
 
@@ -65,10 +63,10 @@ func (a *App) Start(port string) error {
 
 	a.bindRoutes(r)
 
-	err := a.hookEngine.Init()
-	if err != nil {
-		return err
-	}
+	// err := a.hookEngine.Init()
+	// if err != nil {
+	// 	return err
+	// }
 
 	return r.Run(port)
 }
@@ -81,8 +79,8 @@ func (a *App) GetDatabase() xdatabase.Database {
 	return a.db
 }
 
-func (a *App) GetHookEngine() xhook.Engine {
-	return a.hookEngine
+func (a *App) GetEventBus() xbus.EventBus {
+	return nil
 }
 
 func (a *App) GetSockd() xsockd.Sockd {

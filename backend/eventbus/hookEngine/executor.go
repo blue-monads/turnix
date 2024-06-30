@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/bornjre/turnix/backend/services/signer"
-	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
+	"github.com/bornjre/turnix/backend/xtypes/xbus"
 	"github.com/dop251/goja"
 	"github.com/k0kubun/pp"
 )
@@ -27,7 +27,7 @@ type ParsedHook struct {
 type Executor struct {
 	engine *HookEngine
 
-	Event         xhook.Event
+	Event         xbus.EventContext
 	JsRuntime     *goja.Runtime
 	ResultData    map[string]any
 	PreventAction bool
@@ -83,9 +83,9 @@ func (e *Executor) buildEventObject(hook ParsedHook) *goja.Object {
 		e.PreventAction = true
 	})
 
-	obj.Set("event_type", e.Event.Type)
-	obj.Set("event_id", e.Event.Id)
-	obj.Set("project_id", e.Event.ProjectId)
+	obj.Set("event_type", e.Event.Event.Type)
+	obj.Set("event_id", e.Event.EventId)
+	obj.Set("project_id", e.Event.Event.Project)
 
 	obj.Set("setResultData", func(data map[string]any) {
 		e.ResultData = data
@@ -109,7 +109,7 @@ func (e *Executor) buildEventObject(hook ParsedHook) *goja.Object {
 			return nil
 		}
 
-		userId := e.Event.UserId
+		userId := e.Event.Event.UserId
 		if hook.RunasUserID != 0 {
 			userId = hook.RunasUserID
 		}
@@ -119,8 +119,8 @@ func (e *Executor) buildEventObject(hook ParsedHook) *goja.Object {
 			Typeid: signer.TokenTypeAccess,
 			UserId: userId,
 			Extrameta: map[string]any{
-				"engine_pid":      e.Event.ProjectId,
-				"engine_event_id": e.Event.Id,
+				"engine_pid":      e.Event.Event.Project,
+				"engine_event_id": e.Event.EventId,
 			},
 		})
 		if err != nil {
@@ -153,10 +153,10 @@ type EventWebhookResponse struct {
 func (e *Executor) executeWebhook(hook ParsedHook) error {
 
 	data := EventWebhookBody{
-		Id:        e.Event.Id,
+		Id:        e.Event.EventId,
 		Payload:   e.Event.Data,
-		EventType: e.Event.Type,
-		ProjectId: e.Event.ProjectId,
+		EventType: e.Event.Event.Type,
+		ProjectId: e.Event.Event.Project,
 	}
 
 	out, err := json.Marshal(&data)

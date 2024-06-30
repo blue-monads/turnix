@@ -53,10 +53,6 @@ type ProjectType interface {
 	Export(pid int64) (any, error)
 
 	Restore(pid int64, data any) error
-
-	OnFileEvent(event *FileEvent) error
-
-	OnUserEvent(event *UserEvent) error
 }
 
 type ExportTemplate struct {

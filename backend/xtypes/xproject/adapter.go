@@ -22,14 +22,6 @@ func (a *Adapter) DeInit(pid int64) error {
 	return a.core.DeInit(pid)
 }
 
-func (a *Adapter) OnFileEvent(event *FileEvent) error {
-	return nil
-}
-
-func (a *Adapter) OnUserEvent(event *UserEvent) error {
-	return nil
-}
-
 func (a *Adapter) Export(pid int64) (any, error) {
 	return nil, nil
 }

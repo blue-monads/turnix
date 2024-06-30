@@ -5,7 +5,8 @@ import (
 
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
-	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
+	"github.com/bornjre/turnix/backend/xtypes/xbus"
+
 	"github.com/bwmarrin/snowflake"
 	"github.com/rs/zerolog"
 )
@@ -60,13 +61,11 @@ func (h *HookEngine) Invalidate(pid int64) error {
 	return nil
 }
 
-func (h *HookEngine) Emit(e xhook.Event) (*xhook.Result, error) {
-
-	e.Id = h.snowflake.Generate().Int64()
+func (h *HookEngine) Emit(e xbus.EventContext) (*xbus.EventResult, error) {
 
 	h.logger.Info().
-		Int64("pid", e.ProjectId).
-		Int64("uid", e.UserId).
+		Int64("pid", e.Event.Project).
+		Int64("uid", e.Event.UserId).
 		Msg("Emit")
 
 	h.logger.Debug().Any("event", e).Msg("Emit/debug")

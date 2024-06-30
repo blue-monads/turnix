@@ -2,8 +2,8 @@ package xtypes
 
 import (
 	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
-	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
 	"github.com/bornjre/turnix/backend/xtypes/services/xsockd"
+	"github.com/bornjre/turnix/backend/xtypes/xbus"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +18,7 @@ type App interface {
 	GetDatabase() xdatabase.Database
 	GetSockd() xsockd.Sockd
 
-	GetHookEngine() xhook.Engine
+	GetEventBus() xbus.EventBus
 
 	NewId() int64
 }

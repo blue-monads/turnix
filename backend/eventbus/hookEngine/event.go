@@ -3,7 +3,7 @@ package hookengine
 import (
 	"errors"
 
-	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
+	"github.com/bornjre/turnix/backend/xtypes/xbus"
 )
 
 var (
@@ -11,9 +11,9 @@ var (
 	ErrScriptCompileErr = errors.New("SCRIPT COMPILE ERROR")
 )
 
-func (h *HookEngine) emit(evt xhook.Event) (*xhook.Result, error) {
+func (h *HookEngine) emit(evt xbus.EventContext) (*xbus.EventResult, error) {
 
-	runner, err := h.getRunner(evt.ProjectId)
+	runner, err := h.getRunner(evt.Event.Project)
 	if err != nil {
 		return nil, err
 	}

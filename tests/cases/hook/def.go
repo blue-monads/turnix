@@ -2,7 +2,7 @@ package hooktest
 
 import (
 	"github.com/bornjre/turnix/backend/registry"
-	"github.com/bornjre/turnix/backend/xtypes/services/xhook"
+	"github.com/bornjre/turnix/backend/xtypes/xbus"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
 	"github.com/bornjre/turnix/tests/must"
 	"github.com/gin-gonic/gin"
@@ -34,13 +34,13 @@ func New(opt xproject.BuilderOption) (xproject.ProjectType, error) {
 	t := &TestType{}
 
 	opt.RouterGroup.GET("xyz", func(ctx *gin.Context) {
-		engine := opt.App.GetHookEngine()
+		engine := opt.App.GetEventBus()
 
-		result, err := engine.Emit(xhook.Event{
-			Type:      EventSkyDropped,
-			UserId:    1,
-			ProjectId: 1,
-			Data:      map[string]any{},
+		result, err := engine.Emit(xbus.EventNew{
+			Type:    EventSkyDropped,
+			UserId:  1,
+			Project: 1,
+			Data:    map[string]any{},
 		})
 		must.Handle(err)
 
@@ -68,14 +68,6 @@ func (t *TestType) IsInitilized(pid int64) (bool, error) {
 }
 
 func (t *TestType) DeInit(pid int64) error {
-	return nil
-}
-
-func (t *TestType) OnFileEvent(event *xproject.FileEvent) error {
-	return nil
-}
-
-func (t *TestType) OnUserEvent(event *xproject.UserEvent) error {
 	return nil
 }
 
