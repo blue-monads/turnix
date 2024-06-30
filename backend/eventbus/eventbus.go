@@ -68,7 +68,7 @@ func (e *EventBus) Emit(ev xbus.EventNew) (*xbus.EventResult, error) {
 		}
 	}
 
-	if ev.Project == 0 {
+	if ev.Project == 0 || !ev.AllowHook {
 		return &xbus.EventResult{
 			PreventAction: ctx.PreventAction,
 			Errors:        map[string]string{},
