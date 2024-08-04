@@ -38,7 +38,7 @@
     </ol>
   </svelte:fragment>
 
-  <svelte:fragment slot="trail">
+  <div class="flex flex-wrap justify-end gap-2">
     <a
       href={`/z/pages/portal/projects/books/${pid}/account/new`}
       class="btn variant-filled btn-sm"
@@ -85,7 +85,7 @@
 
   </a>
 
-  </svelte:fragment>
+</div>
 </AppBar>
 
 <AutoTable
