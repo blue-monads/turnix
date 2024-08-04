@@ -53,7 +53,10 @@ func (a *App) bindRoutes(e *gin.Engine) {
 			log.Fatal(err)
 		}
 
-		a.projects[pdef.Slug] = proj
+		a.projects[pdef.Slug] = ProjectInstance{
+			Project: proj,
+			Def:     pdef,
+		}
 
 	}
 

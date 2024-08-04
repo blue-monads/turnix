@@ -49,17 +49,4 @@ type ProjectType interface {
 	IsInitilized(pid int64) (bool, error)
 
 	DeInit(pid int64) error
-
-	Export(pid int64) (any, error)
-
-	Restore(pid int64, data any) error
-}
-
-type ExportTemplate struct {
-	Name      string            `json:"name"`
-	Pid       int64             `json:"pid"`
-	Ptype     string            `json:"ptype"`
-	Version   string            `json:"version"`
-	ExtraMeta map[string]string `json:"extrameta"`
-	Data      any               `json:"data"`
 }

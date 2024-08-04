@@ -20,8 +20,13 @@ type App struct {
 	flakeNode  *snowflake.Node
 	globalJS   []byte
 	ptypeDefs  []*xproject.Defination
-	projects   map[string]xproject.ProjectType
+	projects   map[string]ProjectInstance
 	rootLogger zerolog.Logger
+}
+
+type ProjectInstance struct {
+	Project xproject.ProjectType
+	Def     *xproject.Defination
 }
 
 type Options struct {
@@ -51,7 +56,6 @@ func New(opts Options) *App {
 		flakeNode:  node,
 		globalJS:   out,
 		ptypeDefs:  opts.ProjectTypes,
-		projects:   make(map[string]xproject.ProjectType),
 		rootLogger: rootLogger,
 		// 		hookEngine: hookengine.New(opts.DB, opts.Signer, rootLogger.With().Str("service", "engine").Logger()),
 	}
