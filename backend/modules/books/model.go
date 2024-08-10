@@ -25,6 +25,7 @@ type Transaction struct {
 	Attachments     string     `json:"attachments" db:"attachments,omitempty"`
 	CreatedBy       int64      `json:"created_by" db:"created_by"`
 	UpdatedBy       int64      `json:"updated_by" db:"updated_by"`
+	TxnDate         *time.Time `json:"txn_date" db:"txn_date,omitempty"`
 	CreatedAt       *time.Time `json:"created_at" db:"created_at,omitempty"`
 	UpdatedAt       *time.Time `json:"updated_at" db:"updated_at,omitempty"`
 	IsDeleted       bool       `json:"is_deleted" db:"is_deleted,omitempty"`
