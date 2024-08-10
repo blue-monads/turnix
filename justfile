@@ -8,3 +8,7 @@ run_tests:
 
 play:
 	FRONTEND_DEV_SERVER="http://localhost:5173" go run cli/play/play.go
+
+build:
+	cd frontend && npm run build
+	go build -v -o tmp/turnix ./main.go
