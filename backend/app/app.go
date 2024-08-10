@@ -57,6 +57,7 @@ func New(opts Options) *App {
 		globalJS:   out,
 		ptypeDefs:  opts.ProjectTypes,
 		rootLogger: rootLogger,
+		projects:   make(map[string]ProjectInstance),
 		// 		hookEngine: hookengine.New(opts.DB, opts.Signer, rootLogger.With().Str("service", "engine").Logger()),
 	}
 }
