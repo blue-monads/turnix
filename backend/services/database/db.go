@@ -4,12 +4,9 @@ import (
 	"database/sql"
 	_ "embed"
 	"log"
-	"strings"
 
 	"github.com/bornjre/turnix/backend/modules/books"
 	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
-	"github.com/gobuffalo/fizz"
-	"github.com/gobuffalo/fizz/translators"
 	"github.com/upper/db/v4"
 	"github.com/upper/db/v4/adapter/sqlite"
 )
@@ -70,31 +67,31 @@ func (db *DB) Vender() string {
 }
 
 func (db *DB) RunDDL(ctx xdatabase.DDLContext) error {
-	var buf strings.Builder
+	// var buf strings.Builder
 
-	t := translators.NewSQLite("")
+	// t := translators.NewSQLite("")
 
-	if ctx.DDL != "" {
-		str, err := fizz.AString(ctx.DDL, t)
-		if err != nil {
-			return err
-		}
+	// if ctx.DDL != "" {
+	// 	str, err := fizz.AString(ctx.DDL, t)
+	// 	if err != nil {
+	// 		return err
+	// 	}
 
-		buf.WriteString(str)
+	// 	buf.WriteString(str)
 
-	} else {
-		for _, tbl := range ctx.Tables {
-			str, err := fizz.AString(tbl.String(), t)
-			if err != nil {
-				return err
-			}
-			buf.WriteString(str)
-		}
-	}
+	// } else {
+	// 	for _, tbl := range ctx.Tables {
+	// 		str, err := fizz.AString(tbl.String(), t)
+	// 		if err != nil {
+	// 			return err
+	// 		}
+	// 		buf.WriteString(str)
+	// 	}
+	// }
 
 	driver := db.sess.Driver().(*sql.DB)
 
-	_, err := driver.Exec(buf.String())
+	_, err := driver.Exec(ctx.DDL)
 	if err != nil {
 		return err
 	}

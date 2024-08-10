@@ -2,6 +2,7 @@ package books
 
 import (
 	"database/sql"
+	"fmt"
 	"strings"
 	"time"
 
@@ -603,15 +604,15 @@ func (b *BookModule) dbOpsImport(pid, uid int64, opts ImportOptions) (err error)
 }
 
 func (b *BookModule) txnTable(pid int64) db.Collection {
-	return b.db.Table("Transactions")
+	return b.db.Table(fmt.Sprintf("Transactions_%d_", pid))
 }
 
 func (b *BookModule) accountsTable(pid int64) db.Collection {
-	return b.db.Table("Accounts")
+	return b.db.Table(fmt.Sprintf("Accounts_%d_", pid))
 }
 
 func (b *BookModule) txnLineTable(pid int64) db.Collection {
-	return b.db.Table("TransactionLines")
+	return b.db.Table(fmt.Sprintf("TransactionLines_%d_", pid))
 }
 
 func (b *BookModule) userHasScope(pid, uid int64, scope string) error {

@@ -94,7 +94,19 @@ func (a *App) addProject(claim *signer.AccessClaim, ctx *gin.Context) (any, erro
 
 	data.OwnerID = (claim.UserId)
 
-	return a.db.AddProject(&data)
+	id, err := a.db.AddProject(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	ptype := a.projects[data.Ptype]
+
+	err = ptype.Project.Init(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return id, nil
 }
 
 func (a *App) removeProject(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
