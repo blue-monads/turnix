@@ -32,9 +32,9 @@ type Defination struct {
 	GlobalJS            []byte
 	AssetData           fs.FS
 
-	OnPageRequest    func(ctx *gin.Context) (bool, error)
-	OnProjectRequest func(ctx *gin.Context) (bool, error)
-	OnFileRequest    func(ctx *gin.Context) (bool, error)
+	OnPageRequest    func(ctx *gin.Context)
+	OnProjectRequest func(ctx *gin.Context)
+	OnFileRequest    func(ctx *gin.Context)
 }
 
 type PTypeField struct {
