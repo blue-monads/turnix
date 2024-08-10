@@ -1,9 +1,14 @@
 package distro
 
-import "github.com/bornjre/turnix/backend/xtypes/models"
+import (
+	"github.com/bornjre/turnix/backend/app"
+	"github.com/bornjre/turnix/backend/xtypes/models"
+)
 
 func (d *DistroApp) RunNormalSeed() error {
 	db := d.App.GetDatabase()
+
+	innerApp := d.App.(*app.App)
 
 	userId, err := db.AddUser(&models.User{
 		Name:            "dev",
@@ -30,7 +35,7 @@ func (d *DistroApp) RunNormalSeed() error {
 		return err
 	}
 
-	_, err = db.AddProject(&models.Project{
+	_, err = innerApp.Addproject(&models.Project{
 		Name:         "Automation Loop",
 		Info:         "Loop for my automation projects",
 		Ptype:        "unloop",
@@ -42,7 +47,7 @@ func (d *DistroApp) RunNormalSeed() error {
 		return err
 	}
 
-	_, err = db.AddProject(&models.Project{
+	_, err = innerApp.Addproject(&models.Project{
 		Name:         "My books",
 		Info:         "My accounts tracking",
 		Ptype:        "books",

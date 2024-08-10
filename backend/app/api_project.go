@@ -94,7 +94,12 @@ func (a *App) addProject(claim *signer.AccessClaim, ctx *gin.Context) (any, erro
 
 	data.OwnerID = (claim.UserId)
 
-	id, err := a.db.AddProject(&data)
+	return a.Addproject(&data)
+}
+
+func (a *App) Addproject(data *models.Project) (any, error) {
+
+	id, err := a.db.AddProject(data)
 	if err != nil {
 		return nil, err
 	}
