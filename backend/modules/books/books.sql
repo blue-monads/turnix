@@ -1,4 +1,4 @@
-create table Accounts(
+create table Accounts__project__(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
     info TEXT NOT NULL DEFAULT '',
@@ -12,7 +12,8 @@ create table Accounts(
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
-create table Transactions(
+
+create table Transactions__project__(
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
@@ -28,7 +29,7 @@ create table Transactions(
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-create table TransactionLines(
+create table TransactionLines__project__(
     id INTEGER PRIMARY KEY,
     account_id INTEGER NOT NULL,
     txn_id INTEGER NULL,
@@ -40,7 +41,7 @@ create table TransactionLines(
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-create table ReportTemplates(
+create table ReportTemplates__project__(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
     input_options JSON NOT NULL DEFAULT '{}',
@@ -48,7 +49,7 @@ create table ReportTemplates(
     query_template TEXT NOT NULL DEFAULT '',
     filter_script TEXT NULL DEFAULT ''
 );
-create table Reports(
+create table Reports__project__(
     id INTEGER PRIMARY KEY,
     template_id INTEGER NOT NULL DEFAULT 0,
     report_type TEXT NOT NULL DEFAULT 'custom',
