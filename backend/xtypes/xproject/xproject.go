@@ -31,7 +31,9 @@ type Defination struct {
 	Builder             Builder
 	GlobalJS            []byte
 	AssetData           fs.FS
-	InterceptFileEvent  bool
+
+	OnPageRequest func(ctx *gin.Context) (bool, error)
+	OnFileRequest func(ctx *gin.Context) (bool, error)
 }
 
 type PTypeField struct {

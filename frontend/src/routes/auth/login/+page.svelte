@@ -1,8 +1,8 @@
 <script>
     import { login } from "$lib/api/auth";
 
-    let email = "";
-    let password = "";
+    let email = "dev@example.com";
+    let password = "dev123";
 
     const loginHandle = async () => {
         const resp = await login({
