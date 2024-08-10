@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ListProject from "../../listProject.svelte";
+  import ListProject from "../../../../lib/container/project/listProject.svelte";
 </script>
 
 <ListProject ptype="books" />
