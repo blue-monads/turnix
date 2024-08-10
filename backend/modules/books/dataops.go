@@ -397,7 +397,7 @@ func (b *BookModule) dbOptsGenerateReportLongLedger(pid, uid int64, opts ReportO
 
 	rows, err := b.db.GetSession().SQL().Query(fmt.Sprintf(`
 SELECT tx.title, tx.id as txn_id, a.name as account_name, a.acc_type,  tl.debit_amount, tl.credit_amount, SUM( tl.debit_amount) OVER (PARTITION BY tl.account_id) as total_debit, SUM(tl.credit_amount) OVER (PARTITION BY tl.account_id) as total_credit, tl.account_id
-FROM Accounts a
+FROM Accounts_%d_ a
 	JOIN TransactionLines_%d_ tl ON tl.account_id = a.id
 	JOIN Transactions_%d_ tx on tl.txn_id = tx.id
 WHERE
@@ -405,7 +405,7 @@ WHERE
 	tx.is_deleted = FALSE		
 ORDER BY tl.account_id;
 
-`, pid, pid))
+`, pid, pid, pid))
 
 	if err != nil {
 		return nil, err
