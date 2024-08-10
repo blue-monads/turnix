@@ -76,16 +76,24 @@
     </a>
 
     <a
-    href={`/z/pages/portal/projects/books/${pid}/inventory`}
-    class="btn variant-glass-primary btn-sm"
-  >
-    <SvgIcon className="h-4 w-4" name="archive-box" />
+      href={`/z/pages/portal/projects/books/${pid}/inventory`}
+      class="btn variant-glass-primary btn-sm"
+    >
+      <SvgIcon className="h-4 w-4" name="archive-box" />
 
-    inventory
+      inventory
+    </a>
 
-  </a>
+    <a
+      href={`/z/pages/portal/projects/books/${pid}/actions`}
+      class="btn variant-glass-success btn-sm"
+    >
+      <SvgIcon className="h-4 w-4" name="squares-2x2" />
 
-</div>
+      actions
+    </a>
+
+  </div>
 </AppBar>
 
 <AutoTable
