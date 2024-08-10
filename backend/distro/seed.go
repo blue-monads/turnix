@@ -1,14 +1,13 @@
 package distro
 
 import (
-	"github.com/bornjre/turnix/backend/app"
 	"github.com/bornjre/turnix/backend/xtypes/models"
 )
 
 func (d *DistroApp) RunNormalSeed() error {
 	db := d.App.GetDatabase()
 
-	innerApp := d.App.(*app.App)
+	//	innerApp := d.App.(*app.App)
 
 	userId, err := db.AddUser(&models.User{
 		Name:            "dev",
@@ -35,25 +34,25 @@ func (d *DistroApp) RunNormalSeed() error {
 		return err
 	}
 
-	_, err = innerApp.Addproject(&models.Project{
-		Name:         "Automation Loop",
-		Info:         "Loop for my automation projects",
-		Ptype:        "unloop",
-		OwnerID:      userId,
-		IsInitilized: true,
-	})
+	// _, err = innerApp.Addproject(&models.Project{
+	// 	Name:         "Automation Loop",
+	// 	Info:         "Loop for my automation projects",
+	// 	Ptype:        "unloop",
+	// 	OwnerID:      userId,
+	// 	IsInitilized: true,
+	// })
 
-	if err != nil {
-		return err
-	}
+	// if err != nil {
+	// 	return err
+	// }
 
-	_, err = innerApp.Addproject(&models.Project{
-		Name:         "My books",
-		Info:         "My accounts tracking",
-		Ptype:        "books",
-		OwnerID:      userId,
-		IsInitilized: true,
-	})
+	// _, err = innerApp.Addproject(&models.Project{
+	// 	Name:         "My books",
+	// 	Info:         "My accounts tracking",
+	// 	Ptype:        "books",
+	// 	OwnerID:      userId,
+	// 	IsInitilized: true,
+	// })
 
 	return err
 
