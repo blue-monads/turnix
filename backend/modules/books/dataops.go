@@ -506,30 +506,44 @@ func (b *BookModule) dbOpsExport(pid, uid int64) (*ExportData, error) {
 
 func (b *BookModule) dbOpsImport(pid, uid int64, opts ImportOptions) (err error) {
 
+	pp.Println("@dbOpsImport/1")
+
 	err = b.userHasScope(pid, uid, "write")
 	if err != nil {
 		return err
 	}
 
+	pp.Println("@dbOpsImport/2")
+
 	accTable := b.accountsTable(pid)
 	txnTable := b.txnTable(pid)
 	txnLineTable := b.txnLineTable(pid)
 
+	pp.Println("@dbOpsImport/3")
+
 	for _, acc := range opts.Data.Accounts {
 
-		oldAcc, err := b.dbOpGetAccount(pid, uid, acc.ID)
-		if err != nil {
-			return err
-		}
+		pp.Println("@dbOpsImport/4", acc.Name)
+
+		oldAcc, _ := b.dbOpGetAccount(pid, uid, acc.ID)
+		pp.Println("@dbOpsImport/5")
 
 		if oldAcc != nil {
+			pp.Println("@dbOpsImport/6/accSkipp")
+
 			continue
 		}
 
+		pp.Println("@dbOpsImport/7")
+
 		r, err := accTable.Insert(acc)
 		if err != nil {
+			pp.Println("@dbOpsImport/8")
+
 			return err
 		}
+
+		pp.Println("@dbOpsImport/9")
 
 		acc.ID = r.ID().(int64)
 	}
@@ -538,9 +552,12 @@ func (b *BookModule) dbOpsImport(pid, uid int64, opts ImportOptions) (err error)
 	txnLines := make([]int64, 0)
 
 	defer func() {
+		pp.Println("@defer")
 		if err == nil {
 			return
 		}
+
+		pp.Println("@defer")
 
 		// cleanup just insered data
 		keys := make([]int64, 0, len(inverseMap))
@@ -551,9 +568,15 @@ func (b *BookModule) dbOpsImport(pid, uid int64, opts ImportOptions) (err error)
 		accTable.Find(db.Cond{"id in ?": keys}).Delete()
 		txnLineTable.Find(db.Cond{"id in ?": txnLines}).Delete()
 
+		pp.Println("@defer/end")
+
 	}()
 
+	pp.Println("@dbOpsImport/10")
+
 	for _, txn := range opts.Data.Transactions {
+		pp.Println("@dbOpsImport/11", txn.ID, txn.Title)
+
 		t := time.Now()
 		txn.CreatedAt = &t
 		txn.UpdatedAt = &t
@@ -565,18 +588,9 @@ func (b *BookModule) dbOpsImport(pid, uid int64, opts ImportOptions) (err error)
 			txn.ID = 0
 		}
 
-		oldTxn, err := b.dbOpGetTxn(pid, uid, txn.ID)
-		if err != nil {
-			return err
-		}
-
-		if oldTxn != nil {
-			continue
-		}
-
 		r, err := txnTable.Insert(txn)
 		if err != nil {
-			return err
+			continue
 		}
 
 		newTxnId := r.ID().(int64)
@@ -584,9 +598,18 @@ func (b *BookModule) dbOpsImport(pid, uid int64, opts ImportOptions) (err error)
 
 	}
 
+	pp.Println("@dbOpsImport/12")
+
 	for _, line := range opts.Data.TransactionLines {
+		txnId, ok := inverseMap[line.TxnID]
+		if !ok {
+			pp.Println("@dbOpsImport/13/skipping", txnId, line.ID)
+			continue
+		}
+
+		pp.Println("@dbOpsImport/13", line.ID)
 		t := time.Now()
-		line.TxnID = inverseMap[line.TxnID]
+		line.TxnID = txnId
 		line.CreatedAt = &t
 		line.UpdatedAt = &t
 		line.CreatedBy = uid
@@ -597,8 +620,12 @@ func (b *BookModule) dbOpsImport(pid, uid int64, opts ImportOptions) (err error)
 			return err
 		}
 
+		pp.Println("@dbOpsImport/14")
+
 		txnLines = append(txnLines, r.ID().(int64))
 	}
+
+	pp.Println("@dbOpsImport/15")
 
 	return nil
 }
