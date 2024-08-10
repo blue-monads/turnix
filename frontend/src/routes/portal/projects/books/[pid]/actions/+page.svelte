@@ -70,7 +70,7 @@
                 </a>
 
                 <a
-                    href="/z/pages/portal/projects/books/{pid}/actions/import"
+                    href="/z/pages/portal/projects/books/{pid}/actions/export"
                     class="btn variant-filled-primary btn-sm"
                 >
                     <SvgIcon className="h-4 w-4" name="arrow-down-tray" />

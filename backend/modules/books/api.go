@@ -42,6 +42,9 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 
 	report.POST("/live", x(b.reportLiveGenerate))
 
+	txnGrp.POST("/export", x(b.exportData))
+	txnGrp.POST("/import", x(b.importData))
+
 	return nil
 }
 
@@ -319,4 +322,37 @@ func (b *BookModule) reportLiveGenerate(ctx xtypes.ContextPlus) (any, error) {
 		panic(fmt.Sprintf("Report type %s not implemented", opts.ReportType))
 	}
 
+}
+
+type ExportData struct {
+	Accounts         []Account         `json:"accounts"`
+	Transactions     []Transaction     `json:"transactions"`
+	TransactionLines []TransactionLine `json:"transaction_lines"`
+}
+
+type ImportOptions struct {
+	Data     ExportData `json:"data"`
+	AsNewTxn bool       `json:"as_new_txn"`
+}
+
+func (b *BookModule) importData(ctx xtypes.ContextPlus) (any, error) {
+
+	pp.Println("@importData")
+
+	opts := ImportOptions{}
+	err := ctx.Http.Bind(&opts)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.dbOpsImport(ctx.ProjectId(), ctx.Claim.UserId, opts)
+
+	return nil, err
+
+}
+
+func (b *BookModule) exportData(ctx xtypes.ContextPlus) (any, error) {
+	pp.Println("@exportData")
+
+	return b.dbOpsExport(ctx.ProjectId(), ctx.Claim.UserId)
 }

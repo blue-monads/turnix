@@ -155,6 +155,14 @@ export class BooksAPI {
         return this.client.post(`books/${pid}/report/live`, opts)
     }
 
+    exportData = (pid: string) => {
+        return this.client.post(`books/${pid}/txn/export`)
+    }
+
+    importData = (pid: string, data: Record<string, any>) => {
+        return this.client.post(`books/${pid}/txn/import`, data)
+    }
+
 }
 
 

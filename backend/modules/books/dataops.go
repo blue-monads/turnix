@@ -3,6 +3,7 @@ package books
 import (
 	"database/sql"
 	"strings"
+	"time"
 
 	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
 	"github.com/jmoiron/sqlx"
@@ -455,6 +456,151 @@ GROUP BY tl.account_id;
 }
 
 // utils
+
+func (b *BookModule) dbOpsExport(pid, uid int64) (*ExportData, error) {
+
+	pp.Println("@dbOpsExport/1")
+
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	pp.Println("@dbOpsExport/2")
+
+	data := ExportData{
+		Accounts:         make([]Account, 0),
+		Transactions:     make([]Transaction, 0),
+		TransactionLines: make([]TransactionLine, 0),
+	}
+
+	accTable := b.accountsTable(pid)
+	txnTable := b.txnTable(pid)
+	txnLineTable := b.txnLineTable(pid)
+
+	pp.Println("@dbOpsExport/3")
+
+	err = accTable.Find().All(&data.Accounts)
+	if err != nil {
+		return nil, err
+	}
+
+	pp.Println("@dbOpsExport/4")
+
+	err = txnTable.Find().All(&data.Transactions)
+	if err != nil {
+		return nil, err
+	}
+
+	pp.Println("@dbOpsExport/5")
+
+	err = txnLineTable.Find().All(&data.TransactionLines)
+	if err != nil {
+		return nil, err
+	}
+	pp.Println("@dbOpsExport/6")
+
+	return &data, nil
+}
+
+func (b *BookModule) dbOpsImport(pid, uid int64, opts ImportOptions) (err error) {
+
+	err = b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	accTable := b.accountsTable(pid)
+	txnTable := b.txnTable(pid)
+	txnLineTable := b.txnLineTable(pid)
+
+	for _, acc := range opts.Data.Accounts {
+
+		oldAcc, err := b.dbOpGetAccount(pid, uid, acc.ID)
+		if err != nil {
+			return err
+		}
+
+		if oldAcc != nil {
+			continue
+		}
+
+		r, err := accTable.Insert(acc)
+		if err != nil {
+			return err
+		}
+
+		acc.ID = r.ID().(int64)
+	}
+
+	inverseMap := make(map[int64]int64)
+	txnLines := make([]int64, 0)
+
+	defer func() {
+		if err == nil {
+			return
+		}
+
+		// cleanup just insered data
+		keys := make([]int64, 0, len(inverseMap))
+		for k := range inverseMap {
+			keys = append(keys, k)
+		}
+
+		accTable.Find(db.Cond{"id in ?": keys}).Delete()
+		txnLineTable.Find(db.Cond{"id in ?": txnLines}).Delete()
+
+	}()
+
+	for _, txn := range opts.Data.Transactions {
+		t := time.Now()
+		txn.CreatedAt = &t
+		txn.UpdatedAt = &t
+		txn.CreatedBy = uid
+		txn.UpdatedBy = uid
+
+		odlTxnId := txn.ID
+		if opts.AsNewTxn {
+			txn.ID = 0
+		}
+
+		oldTxn, err := b.dbOpGetTxn(pid, uid, txn.ID)
+		if err != nil {
+			return err
+		}
+
+		if oldTxn != nil {
+			continue
+		}
+
+		r, err := txnTable.Insert(txn)
+		if err != nil {
+			return err
+		}
+
+		newTxnId := r.ID().(int64)
+		inverseMap[odlTxnId] = newTxnId
+
+	}
+
+	for _, line := range opts.Data.TransactionLines {
+		t := time.Now()
+		line.TxnID = inverseMap[line.TxnID]
+		line.CreatedAt = &t
+		line.UpdatedAt = &t
+		line.CreatedBy = uid
+		line.UpdatedBy = uid
+
+		r, err := txnLineTable.Insert(line)
+		if err != nil {
+			return err
+		}
+
+		txnLines = append(txnLines, r.ID().(int64))
+	}
+
+	return nil
+}
 
 func (b *BookModule) txnTable(pid int64) db.Collection {
 	return b.db.Table("Transactions")
