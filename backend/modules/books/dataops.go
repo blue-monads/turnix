@@ -254,7 +254,7 @@ func (b *BookModule) dbOpListAccountTxnWithLines(pid, uid, accId, offset int64) 
 
 	driver := b.db.GetSession().Driver().(*sql.DB)
 
-	stmt, err := driver.Prepare(`	
+	stmt, err := driver.Prepare(fmt.Sprintf(`	
 	SELECT
 		t1.id AS first_id, t1.account_id AS first_account_id,
 		t1.debit_amount AS first_debit_amount, t1.credit_amount AS first_credit_amount,
@@ -269,12 +269,12 @@ func (b *BookModule) dbOpListAccountTxnWithLines(pid, uid, accId, offset int64) 
 		t.updated_by AS txn_updated_by, t.created_at AS txn_created_at,
 		t.updated_at AS txn_updated_at, t.is_deleted
 	FROM
-		TransactionLines t1, TransactionLines t2
+		TransactionLines_%d_ t1, TransactionLines_%d_ t2
 	INNER JOIN
-		Transactions t ON t.id = t1.txn_id
+		Transactions_%d_ t ON t.id = t1.txn_id
 	WHERE
 		t1.account_id = ? AND t1.txn_id = t2.txn_id AND t2.account_id <> ? and t.is_deleted = FALSE and t.id > ? ORDER BY t.id LIMIT 100;
-		`)
+		`, pid, pid, pid))
 
 	if err != nil {
 		return nil, err
@@ -395,17 +395,17 @@ func (b *BookModule) dbOptsGenerateReportLongLedger(pid, uid int64, opts ReportO
 
 	records := []LongLedgerRecord{}
 
-	rows, err := b.db.GetSession().SQL().Query(`
+	rows, err := b.db.GetSession().SQL().Query(fmt.Sprintf(`
 SELECT tx.title, tx.id as txn_id, a.name as account_name, a.acc_type,  tl.debit_amount, tl.credit_amount, SUM( tl.debit_amount) OVER (PARTITION BY tl.account_id) as total_debit, SUM(tl.credit_amount) OVER (PARTITION BY tl.account_id) as total_credit, tl.account_id
 FROM Accounts a
-	JOIN TransactionLines tl ON tl.account_id = a.id  
-	JOIN Transactions tx on tl.txn_id = tx.id
+	JOIN TransactionLines_%d_ tl ON tl.account_id = a.id
+	JOIN Transactions_%d_ tx on tl.txn_id = tx.id
 WHERE
 	a.is_deleted = FALSE AND
 	tx.is_deleted = FALSE		
 ORDER BY tl.account_id;
 
-`)
+`, pid, pid))
 
 	if err != nil {
 		return nil, err
@@ -427,22 +427,22 @@ func (b *BookModule) dbOptsGenerateReportShortLedger(pid, uid int64, opts Report
 
 	records := []ShortLedgerRecord{}
 
-	rows, err := b.db.GetSession().SQL().Query(`
+	rows, err := b.db.GetSession().SQL().Query(fmt.Sprintf(`
 SELECT
 	a.id as account_id,
 	a.name as account_name,
 	a.acc_type,
 	SUM( tl.debit_amount) as  total_debit,
 	SUM(tl.credit_amount) as total_credit
-FROM TransactionLines tl
-INNER JOIN Accounts a ON tl.account_id = a.id
-INNER JOIN Transactions t ON tl.txn_id = t.id
+FROM TransactionLines_%d_ tl
+INNER JOIN Accounts_%d_ a ON tl.account_id = a.id
+INNER JOIN Transactions_%d_ t ON tl.txn_id = t.id
 WHERE 
 	t.is_deleted = FALSE AND
 	a.is_deleted = FALSE 
 GROUP BY tl.account_id;
 
-`)
+`, pid, pid, pid))
 
 	if err != nil {
 		return nil, err
