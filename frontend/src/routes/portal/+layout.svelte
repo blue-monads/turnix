@@ -31,13 +31,24 @@
     {
       name: "Home",
       link: "/z/pages/portal",
-      icon: "home"    
+      icon: "home",
     },
     {
       name: "Projects",
       link: "/z/pages/portal/project",
-      icon: "queue-list"
-    }
+      icon: "queue-list",
+    },
+    {
+      name: "Profile",
+      link: "/z/pages/portal/self",
+      icon: "user-circle",
+    },
+   
+    {
+      name: "Users",
+      link: "/z/pages/portal/self/users",
+      icon: "users",
+    },
   ];
 
   let api: RootAPI;
@@ -82,8 +93,6 @@
         </div>
 
         <ul class="space-y-4 pt-10">
-          
-
           {#each sibarItems as item, index}
             <li class="border rounded">
               <a
@@ -116,9 +125,9 @@
     <div class="flex gap-4 p-1">
       <a
         class="flex flex-col justify-center items-center rounded-full bg-secondary-100 hover:bg-secondary-200 p-2"
-        href={"/z/pages/portal/self"}
+        href={"/z/pages/portal/self/notifications"}
       >
-        <SvgIcon name="user" className="w-6 h-6" />
+        <SvgIcon name="bell" className="w-6 h-6" />
       </a>
     </div>
   </div>
@@ -163,9 +172,9 @@
       <div slot="trail" class="mb-4">
         <a
           class="flex flex-col justify-center items-center rounded-full bg-secondary-100 hover:bg-secondary-200 p-2"
-          href={"/z/pages/portal/self"}
+          href={"/z/pages/portal/self/notifications"}
         >
-          <SvgIcon name="user" className="w-6 h-6" />
+          <SvgIcon name="bell" className="w-6 h-6" />
         </a>
       </div>
     </AppRail>
