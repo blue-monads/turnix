@@ -59,21 +59,6 @@
       {/each}
     </div>
 
-    <div class="p-4 flex justify-end">
-
-      <a 
-      
-      on:click={() => {
-        modalStore.close();
-      }}
-      
-      href="/z/pages/portal/project/import" class="p-2 btn btn-sm variant-filled-secondary">
-        <SvgIcon name="arrow-up-tray" className="w-4 h-4" />        
-        Import
-      </a>
-
-    </div>
-
 
     
   </div>

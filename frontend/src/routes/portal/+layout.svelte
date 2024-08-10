@@ -27,14 +27,25 @@
   let currentTile = "";
   let showMobileModal = false;
 
-  let sibarItems: Record<string, any>[] = [];
+  let sibarItems: Record<string, any>[] = [
+    {
+      name: "Home",
+      link: "/z/pages/portal",
+      icon: "home"    
+    },
+    {
+      name: "Projects",
+      link: "/z/pages/portal/project",
+      icon: "queue-list"
+    }
+  ];
 
   let api: RootAPI;
 
   const load = () => {
     // @ts-ignore
-    const ptypes: object[] = window["__turnix_ptypes__"] || [];
-    sibarItems = ptypes;
+    // const ptypes: object[] = window["__turnix_ptypes__"] || [];
+    // sibarItems = ptypes;
 
     api = new RootAPI();
   };
