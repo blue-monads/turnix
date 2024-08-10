@@ -8,16 +8,6 @@
     import type { RootAPI } from "$lib/api";
     import { page } from "$app/stores";
 
-    const saveAsJsonFile = (data: any, filename: string) => {
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = filename;
-        link.click();
-        URL.revokeObjectURL(url);
-    }
-
     const pid = $page.params["pid"];
 
     const store = getModalStore();
@@ -72,8 +62,6 @@
                         if (resp.status !== 200) {
                             return;
                         }
-
-                        saveAsJsonFile(resp.data, `books_export_${new Date().toISOString()}.json`);
 
                         loading = false;
                         goto(`/z/pages/portal/projects/books/${pid}`);

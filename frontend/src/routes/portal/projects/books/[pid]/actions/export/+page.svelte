@@ -15,6 +15,18 @@
     const api = NewBookAPI(rootApi);
 
     let loading = false;
+
+    const saveAsJsonFile = (data: any, filename: string) => {
+        const blob = new Blob([JSON.stringify(data, null, 2)], {
+            type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(url);
+    };
 </script>
 
 <div class="p-2">
@@ -43,9 +55,12 @@
 
                     console.log(resp.data);
 
+                    saveAsJsonFile(
+                        resp.data,
+                        `books_export_${new Date().toISOString()}.json`,
+                    );
 
                     loading = false;
-
                 }}>Start</button
             >
         </footer>
