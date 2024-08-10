@@ -57,41 +57,6 @@
       transaction
     </a>
 
-    <a
-      href={`/z/pages/portal/projects/books/${pid}/txn`}
-      class="btn variant-glass-secondary btn-sm"
-    >
-      <SvgIcon className="h-4 w-4" name="clipboard-document" />
-
-      transactions
-    </a>
-
-    <a
-      href={`/z/pages/portal/projects/books/${pid}/report`}
-      class="btn variant-glass-tertiary btn-sm"
-    >
-      <SvgIcon className="h-4 w-4" name="document-chart-bar" />
-
-      reports
-    </a>
-
-    <a
-      href={`/z/pages/portal/projects/books/${pid}/inventory`}
-      class="btn variant-glass-primary btn-sm"
-    >
-      <SvgIcon className="h-4 w-4" name="archive-box" />
-
-      inventory
-    </a>
-
-    <a
-      href={`/z/pages/portal/projects/books/${pid}/actions`}
-      class="btn variant-glass-success btn-sm"
-    >
-      <SvgIcon className="h-4 w-4" name="squares-2x2" />
-
-      actions
-    </a>
 
   </div>
 </AppBar>
