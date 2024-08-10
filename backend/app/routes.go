@@ -62,6 +62,18 @@ func (a *App) bindRoutes(e *gin.Engine) {
 
 	e.NoRoute(a.noRoute)
 
+	root.Any("/projects/:ptype", func(ctx *gin.Context) {
+		instance := a.projects[ctx.Param("ptype")]
+
+		if instance.Def == nil || instance.Def.OnProjectRequest == nil {
+			ctx.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
+		instance.Def.OnProjectRequest(ctx)
+
+	})
+
 	e.GET("/ping", a.ping)
 
 }
