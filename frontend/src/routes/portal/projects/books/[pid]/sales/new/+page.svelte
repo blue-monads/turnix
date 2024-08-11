@@ -137,7 +137,7 @@
                                     class="px-4 py-2 text-right border tabular-nums slashed-zero"
                                 >
                                     <button
-                                        class="hover:underline text-warning-800"
+                                        class="hover:underline text-warning-800 text-xs"
                                         >remove</button
                                     >
                                 </td>
