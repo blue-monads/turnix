@@ -73,7 +73,7 @@
         {#each sideBarList as item}
             <a
                 href={item.link}
-                class="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 hover:text-gray-700 {sidebarKey ===
+                class="flex items-center px-2 py-2 w-full text-gray-600 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 hover:text-gray-700 {sidebarKey ===
                 item.key
                     ? 'bg-gray-100 text-gray-700'
                     : ''}"
