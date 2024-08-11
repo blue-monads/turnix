@@ -60,6 +60,7 @@
                     ["name", "Name"],
                     ["info", "Info"],
                     ["price", "Price"],
+                    ["variant_id", "Variant"],
                 ]}
                 datas={data}
                 color={[]}
