@@ -74,6 +74,33 @@ export interface TransactionWithLine {
     second_line: Line | null;
 }
 
+export interface Catagory {
+    id: number
+    name: string
+    info: string
+    parent_id: number
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+    is_deleted: boolean
+}
+
+export interface Product {
+    id: number
+    name: string
+    info: string
+    variant_id: string
+    price: number
+    parent_id: number
+    images: string
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+    is_deleted: boolean
+}
+
 export const NewBookAPI = (api: RootAPI) => {
     return new BooksAPI(api.projectClient)
 }
@@ -162,6 +189,50 @@ export class BooksAPI {
     importData = (pid: string, data: Record<string, any>) => {
         return this.client.post(`books/${pid}/txn/import`, data)
     }
+
+
+    listCatagories = (pid: string) => {
+        return this.client.get<Catagory[]>(`books/${pid}/inventory/catagories`)
+    }
+
+    addCatagory = (pid: string, data: Partial<Catagory>) => {
+        return this.client.post(`books/${pid}/inventory/catagories`, data)
+    }
+
+    getCatagory = (pid: string, id: string) => {
+        return this.client.get<Catagory>(`books/${pid}/inventory/catagories/${id}`)
+    }
+
+    updateCatagory = (pid: string, id: string, data: Partial<Catagory>) => {
+        return this.client.post(`books/${pid}/inventory/catagories/${id}`, data)
+    }
+
+    deleteCatagory = (pid: string, id: string) => {
+        return this.client.delete(`books/${pid}/inventory/catagories/${id}`)
+    }
+
+    // products
+
+    listProducts = (pid: string) => {
+        return this.client.get<Product[]>(`books/${pid}/inventory/products`)
+    }
+
+    addProduct = (pid: string, data: Partial<Product>) => {
+        return this.client.post(`books/${pid}/inventory/products`, data)
+    }
+
+    getProduct = (pid: string, id: string) => {
+        return this.client.get<Product>(`books/${pid}/inventory/products/${id}`)
+    }
+
+    updateProduct = (pid: string, id: string, data: Partial<Product>) => {
+        return this.client.post(`books/${pid}/inventory/products/${id}`, data)
+    }
+
+    deleteProduct = (pid: string, id: string) => {
+        return this.client.delete(`books/${pid}/inventory/products/${id}`)
+    }
+
 
 }
 

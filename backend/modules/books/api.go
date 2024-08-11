@@ -40,6 +40,23 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 
 	report := group.Group("/:pid/report")
 
+	inventry := group.Group("/:pid/inventory")
+
+	// catagories
+
+	inventry.GET("/catagories", x(b.listCatagories))
+	inventry.POST("/catagories", x(b.addCatagory))
+	inventry.GET("/catagories/:id", x(b.getCatagory))
+	inventry.POST("/catagories/:id", x(b.updateCatagory))
+	inventry.DELETE("/catagories/:id", x(b.deleteCatagory))
+
+	// products
+	inventry.GET("/products", x(b.listProducts))
+	inventry.POST("/products", x(b.addProduct))
+	inventry.GET("/products/:id", x(b.getProduct))
+	inventry.POST("/products/:id", x(b.updateProduct))
+	inventry.DELETE("/products/:id", x(b.deleteProduct))
+
 	report.POST("/live", x(b.reportLiveGenerate))
 
 	txnGrp.POST("/export", x(b.exportData))
@@ -355,4 +372,112 @@ func (b *BookModule) exportData(ctx xtypes.ContextPlus) (any, error) {
 	pp.Println("@exportData")
 
 	return b.dbOpsExport(ctx.ProjectId(), ctx.Claim.UserId)
+}
+
+func (b *BookModule) listCatagories(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	return b.dbOpsCatagoryList(pid, ctx.Claim.UserId)
+}
+
+func (b *BookModule) addCatagory(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	data := &Catagory{}
+	err := ctx.Http.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.dbOpsCatagoryAdd(pid, ctx.Claim.UserId, data)
+}
+
+func (b *BookModule) getCatagory(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	return b.dbOpsCatagoryGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+}
+
+func (b *BookModule) updateCatagory(ctx xtypes.ContextPlus) (any, error) {
+
+	pid := ctx.ProjectId()
+
+	data := make(map[string]any)
+	err := ctx.Http.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.dbOpsCatagoryUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+
+}
+
+func (b *BookModule) deleteCatagory(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	err := b.dbOpsCatagoryDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+// products
+
+func (b *BookModule) listProducts(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	return b.dbOpsProductList(pid, ctx.Claim.UserId)
+}
+
+func (b *BookModule) addProduct(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	data := &Product{}
+	err := ctx.Http.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.dbOpsProductAdd(pid, ctx.Claim.UserId, data)
+}
+
+func (b *BookModule) getProduct(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	return b.dbOpsProductGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+}
+
+func (b *BookModule) updateProduct(ctx xtypes.ContextPlus) (any, error) {
+
+	pid := ctx.ProjectId()
+
+	data := make(map[string]any)
+	err := ctx.Http.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.dbOpsProductUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+
+}
+
+func (b *BookModule) deleteProduct(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	err := b.dbOpsProductDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
 }
