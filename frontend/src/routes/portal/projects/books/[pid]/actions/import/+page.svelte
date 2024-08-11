@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { AutoTable, FloatyButton } from "$lib/compo";
+    import { AutoTable, FloatyButton, Loader } from "$lib/compo";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { NewBookAPI } from "$lib/projects/books";
     import { getContext } from "svelte";
@@ -21,7 +21,7 @@
 </script>
 
 {#if loading}
-    <div class="p-2">Loading..</div>
+    <Loader />
 {:else}
     <div class="p-2">
         <div class="card p-2">

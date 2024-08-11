@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { AutoTable } from "$lib/compo";
+    import { AutoTable, Loader } from "$lib/compo";
     import type { BooksAPI } from "$lib/projects/books";
     import type { SaleLine } from "./sales";
 
@@ -73,18 +73,17 @@
                         Action: async (id, data) => {
                             product_id = id;
                             amount = data["price"] || 0;
-                            info = (data["name"] || "") + "  " + (data["variant_id"] || "");
+                            info =
+                                (data["name"] || "") +
+                                "  " +
+                                (data["variant_id"] || "");
                             mode = "set_quantity";
                         },
                     },
                 ]}
             />
         {:else if mode === "loading"}
-            <div class="flex justify-center items-center">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
+            <Loader />
         {:else}
             <section class="p-4 flex flex-col gap-4">
                 <label class="label">
