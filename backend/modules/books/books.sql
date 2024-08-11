@@ -202,6 +202,7 @@ create table Sales__project__(
     notes TEXT NOT NULL DEFAULT '',
     attachments TEXT NOT NULL DEFAULT '',
     tax_id INTEGER NOT NULL DEFAULT 0,
+    tax_amount INTEGER NOT NULL DEFAULT 0,
     sub_total INTEGER NOT NULL DEFAULT 0,
     total INTEGER NOT NULL DEFAULT 0,
     txn_link_id INTEGER NOT NULL DEFAULT 0,
