@@ -16,31 +16,30 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	x := b.app.AuthMiddleware
 
 	accGrp := group.Group("/:pid/account")
+	report := group.Group("/:pid/report")
+	inventry := group.Group("/:pid/inventory")
+	txnGrp := group.Group("/:pid/txn")
+	contactGrp := group.Group("/:pid/contacts")
 
+	// accounts
 	accGrp.GET("/", x(b.listAccount))
 	accGrp.POST("/", x(b.addAccount))
 	accGrp.GET("/:id", x(b.getAccount))
 	accGrp.POST("/:id", x(b.updateAccount))
 	accGrp.DELETE("/:id", x(b.deleteAccount))
 
-	txnGrp := group.Group("/:pid/txn")
-
+	// transactions
 	txnGrp.GET("/", x(b.listTxn))
-
 	txnGrp.GET("/line/list", x(b.listTxnWithLines))
 	txnGrp.GET("/line/:aid/list", x(b.listAccountTxnWithLines))
-
 	txnGrp.POST("/", x(b.addTxn))
 	txnGrp.GET("/:id", x(b.getTxn))
 	txnGrp.GET("/:id/line", x(b.getTxnWithLine))
 	txnGrp.POST("/:id", x(b.updateTxn))
 	txnGrp.POST("/:id/line", x(b.updateTxnWithLine))
-
 	txnGrp.DELETE("/:id", x(b.deleteTxn))
-
-	report := group.Group("/:pid/report")
-
-	inventry := group.Group("/:pid/inventory")
+	txnGrp.POST("/export", x(b.exportData))
+	txnGrp.POST("/import", x(b.importData))
 
 	// catagories
 
@@ -57,10 +56,14 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	inventry.POST("/products/:id", x(b.updateProduct))
 	inventry.DELETE("/products/:id", x(b.deleteProduct))
 
-	report.POST("/live", x(b.reportLiveGenerate))
+	// contacts
+	contactGrp.GET("/", x(b.listContacts))
+	contactGrp.POST("/", x(b.addContact))
+	contactGrp.GET("/:id", x(b.getContact))
+	contactGrp.POST("/:id", x(b.updateContact))
+	contactGrp.DELETE("/:id", x(b.deleteContact))
 
-	txnGrp.POST("/export", x(b.exportData))
-	txnGrp.POST("/import", x(b.importData))
+	report.POST("/live", x(b.reportLiveGenerate))
 
 	return nil
 }
@@ -475,6 +478,61 @@ func (b *BookModule) deleteProduct(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
 	err := b.dbOpsProductDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+// contacts
+
+func (b *BookModule) listContacts(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	return b.dbOpsContactList(pid, ctx.Claim.UserId)
+}
+
+func (b *BookModule) addContact(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	data := &Contact{}
+	err := ctx.Http.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.dbOpsContactAdd(pid, ctx.Claim.UserId, data)
+}
+
+func (b *BookModule) getContact(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	return b.dbOpsContactGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+}
+
+func (b *BookModule) updateContact(ctx xtypes.ContextPlus) (any, error) {
+
+	pid := ctx.ProjectId()
+
+	data := make(map[string]any)
+	err := ctx.Http.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.dbOpsContactUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+
+}
+
+func (b *BookModule) deleteContact(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	err := b.dbOpsContactDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 	if err != nil {
 		return nil, err
 	}

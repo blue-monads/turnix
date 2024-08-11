@@ -81,6 +81,16 @@
               <option value={opt}>{opt}</option>
             {/each}
           </datalist>
+        {:else if field.ftype === "EMAIL"}
+          <input
+            id="field-{idx}"
+            type="email"
+            list="field-{idx}-datalist"
+            value={get(field.key_name)}
+            on:change={set(field.key_name)}
+            disabled={field.disabled}
+            class="p-2 input"
+          />
         {:else if field.ftype === "SELECT"}
           <div class="flex justify-between w-full">
             {#if _open_selects[idx]}
@@ -147,7 +157,7 @@
             value={get(field.key_name)}
             on:change={set(field.key_name)}
             disabled={field.disabled}
-            class="p-2 input"
+            class="p-2 textarea"
           />
         {:else if field.ftype === "INT"}
           <input

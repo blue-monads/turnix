@@ -104,6 +104,26 @@ export interface Product {
     is_deleted: boolean
 }
 
+export interface Contact {
+    id: number
+    name: string
+    ctype: string
+    info: string
+    email: string
+    phone: string
+    phone2: string
+    phone3: string
+    address: string
+    address2: string
+    address3: string
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+    is_deleted: boolean
+}
+
+
 export const NewBookAPI = (api: RootAPI) => {
     return new BooksAPI(api.projectClient)
 }
@@ -234,6 +254,28 @@ export class BooksAPI {
 
     deleteProduct = (pid: string, id: string) => {
         return this.client.delete(`books/${pid}/inventory/products/${id}`)
+    }
+
+    // contacts
+
+    listContacts = (pid: string) => {
+        return this.client.get<Contact[]>(`books/${pid}/contacts`)
+    }
+
+    addContact = (pid: string, data: Partial<Contact>) => {
+        return this.client.post(`books/${pid}/contacts`, data)
+    }
+
+    getContact = (pid: string, id: string) => {
+        return this.client.get<Contact>(`books/${pid}/contacts/${id}`)
+    }
+
+    updateContact = (pid: string, id: string, data: Partial<Contact>) => {
+        return this.client.post(`books/${pid}/contacts/${id}`, data)
+    }
+
+    deleteContact = (pid: string, id: string) => {
+        return this.client.delete(`books/${pid}/contacts/${id}`)
     }
 
 

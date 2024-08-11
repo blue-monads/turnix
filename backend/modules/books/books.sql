@@ -239,3 +239,22 @@ create table Tax__project__(
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
+
+create table Contacts__project__(
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL DEFAULT '',
+    ctype TEXT NOT NULL DEFAULT 'vendor', -- vendor, client
+    info TEXT NOT NULL DEFAULT '',
+    email TEXT NOT NULL DEFAULT '',
+    phone TEXT NOT NULL DEFAULT '',
+    phone2 TEXT NOT NULL DEFAULT '',
+    phone3 TEXT NOT NULL DEFAULT '',
+    address TEXT NOT NULL DEFAULT '',    
+    address2 TEXT NOT NULL DEFAULT '',
+    address3 TEXT NOT NULL DEFAULT '',
+    created_by INTEGER NULL,
+    updated_by INTEGER NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
+);

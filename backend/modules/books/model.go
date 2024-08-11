@@ -274,3 +274,22 @@ type Tax struct {
 	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
 	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
 }
+
+type Contact struct {
+	ID        int64      `json:"id" db:"id,omitempty"`
+	Name      string     `json:"name" db:"name"`
+	CType     string     `json:"ctype" db:"ctype"`
+	Info      string     `json:"info" db:"info"`
+	Email     string     `json:"email" db:"email"`
+	Phone     string     `json:"phone" db:"phone"`
+	Phone2    string     `json:"phone2" db:"phone2"`
+	Phone3    string     `json:"phone3" db:"phone3"`
+	Address   string     `json:"address" db:"address"`
+	Address2  string     `json:"address2" db:"address2"`
+	Address3  string     `json:"address3" db:"address3"`
+	CreatedBy int64      `json:"created_by" db:"created_by"`
+	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+}

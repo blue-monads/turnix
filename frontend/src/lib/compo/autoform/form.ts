@@ -9,6 +9,7 @@ export interface Field {
   key_name: string;
   ftype:
     | "TEXT"
+    | "EMAIL"
     | "SELECT"
     | "TEXT_SLUG"
     | "MULTI_TEXT"

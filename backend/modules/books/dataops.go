@@ -904,6 +904,76 @@ func (b *BookModule) dbOpsTaxDelete(pid, uid, id int64) error {
 	return b.taxTable(pid).Find(db.Cond{"id": id}).Delete()
 }
 
+// contacts
+
+func (b *BookModule) dbOpsContactAdd(pid, uid int64, data *Contact) (int64, error) {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return 0, err
+	}
+
+	table := b.contactTable(pid)
+
+	r, err := table.Insert(data)
+	if err != nil {
+		return 0, err
+	}
+
+	return r.ID().(int64), nil
+}
+
+func (b *BookModule) dbOpsContactUpdate(pid, uid, id int64, data map[string]any) error {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	return b.contactTable(pid).Find(db.Cond{"id": id}).Update(data)
+}
+
+func (b *BookModule) dbOpsContactGet(pid, uid, id int64) (*Contact, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	data := &Contact{}
+	table := b.contactTable(pid)
+
+	err = table.Find(db.Cond{"id": id}).One(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (b *BookModule) dbOpsContactList(pid, uid int64) ([]Contact, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	datas := make([]Contact, 0)
+	table := b.contactTable(pid)
+
+	err = table.Find().All(&datas)
+	if err != nil {
+		return nil, err
+	}
+
+	return datas, nil
+}
+
+func (b *BookModule) dbOpsContactDelete(pid, uid, id int64) error {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	return b.contactTable(pid).Find(db.Cond{"id": id}).Delete()
+}
+
 // utils
 
 func (b *BookModule) txnTable(pid int64) db.Collection {
@@ -932,6 +1002,10 @@ func (b *BookModule) productStockInTable(pid int64) db.Collection {
 
 func (b *BookModule) productStockInLineTable(pid int64) db.Collection {
 	return b.db.Table(fmt.Sprintf("ProductStockInLines_%d_", pid))
+}
+
+func (b *BookModule) contactTable(pid int64) db.Collection {
+	return b.db.Table(fmt.Sprintf("Contacts_%d_", pid))
 }
 
 /*
