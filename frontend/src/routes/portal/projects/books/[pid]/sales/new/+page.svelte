@@ -187,7 +187,7 @@
                         bind:value={info}
                         class="textarea p-1"
                         rows="4"
-                        placeholder={"information about account"}
+                        placeholder="Notes about the sale.."
                     />
                 </label>
 
