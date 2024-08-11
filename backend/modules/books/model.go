@@ -146,3 +146,127 @@ type ShortLedgerRecord struct {
 	TotalCredit int64  `json:"total_credit" db:"total_credit"`
 	AccountType string `json:"acc_type" db:"acc_type"`
 }
+
+type Invoice struct {
+	ID          int64      `json:"id" db:"id,omitempty"`
+	Title       string     `json:"title" db:"title"`
+	Notes       string     `json:"notes" db:"notes"`
+	Attachments string     `json:"attachments" db:"attachments,omitempty"`
+	TaxID       int64      `json:"tax_id" db:"tax_id"`
+	SubTotal    float64    `json:"sub_total" db:"sub_total"`
+	ClientID    int64      `json:"client_id" db:"client_id"`
+	Total       float64    `json:"total" db:"total"`
+	CreatedBy   int64      `json:"created_by" db:"created_by"`
+	UpdatedBy   int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt   *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt   *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted   bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+}
+
+type InvoiceLine struct {
+	ID        int64      `json:"id" db:"id,omitempty"`
+	Info      string     `json:"info" db:"info"`
+	ProductID int64      `json:"product_id" db:"product_id"`
+	Qty       float64    `json:"qty" db:"qty"`
+	InvoiceID int64      `json:"invoice_id" db:"invoice_id"`
+	Amount    float64    `json:"amount" db:"amount"`
+	CreatedBy int64      `json:"created_by" db:"created_by"`
+	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+}
+
+type Catagory struct {
+	ID        int64      `json:"id" db:"id,omitempty"`
+	Name      string     `json:"name" db:"name"`
+	Info      string     `json:"info" db:"info"`
+	ParentID  int64      `json:"parent_id" db:"parent_id"`
+	CreatedBy int64      `json:"created_by" db:"created_by"`
+	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+}
+
+type Product struct {
+	ID        int64      `json:"id" db:"id,omitempty"`
+	Name      string     `json:"name" db:"name"`
+	Info      string     `json:"info" db:"info"`
+	VariantID string     `json:"variant_id" db:"variant_id"`
+	Price     float64    `json:"price" db:"price"`
+	ParentID  int64      `json:"parent_id" db:"parent_id"`
+	Images    string     `json:"images" db:"images"`
+	CreatedBy int64      `json:"created_by" db:"created_by"`
+	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+}
+
+type ProductStockIn struct {
+	ID         int64      `json:"id" db:"id,omitempty"`
+	Info       string     `json:"info" db:"info"`
+	Amount     float64    `json:"amount" db:"amount"`
+	SupplierID int64      `json:"supplier_id" db:"supplier_id"`
+	CreatedBy  int64      `json:"created_by" db:"created_by"`
+	UpdatedBy  int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt  *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt  *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted  bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+}
+
+type ProductStockInLine struct {
+	ID        int64      `json:"id" db:"id,omitempty"`
+	Info      string     `json:"info" db:"info"`
+	ProductID int64      `json:"product_id" db:"product_id"`
+	Qty       float64    `json:"qty" db:"qty"`
+	Amount    float64    `json:"amount" db:"amount"`
+	CreatedBy int64      `json:"created_by" db:"created_by"`
+	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+}
+
+type Sales struct {
+	ID          int64      `json:"id" db:"id,omitempty"`
+	Title       string     `json:"title" db:"title"`
+	Notes       string     `json:"notes" db:"notes"`
+	Attachments string     `json:"attachments" db:"attachments,omitempty"`
+	TaxID       int64      `json:"tax_id" db:"tax_id"`
+	SubTotal    float64    `json:"sub_total" db:"sub_total"`
+	Total       float64    `json:"total" db:"total"`
+	TxnLinkID   int64      `json:"txn_link_id" db:"txn_link_id"`
+	CreatedBy   int64      `json:"created_by" db:"created_by"`
+	UpdatedBy   int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt   *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt   *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted   bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+}
+
+type SalesLine struct {
+	ID        int64      `json:"id" db:"id,omitempty"`
+	Info      string     `json:"info" db:"info"`
+	Qty       float64    `json:"qty" db:"qty"`
+	SaleID    int64      `json:"sale_id" db:"sale_id"`
+	ProductID int64      `json:"product_id" db:"product_id"`
+	Amount    float64    `json:"amount" db:"amount"`
+	CreatedBy int64      `json:"created_by" db:"created_by"`
+	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+}
+
+type Tax struct {
+	ID        int64      `json:"id" db:"id,omitempty"`
+	Name      string     `json:"name" db:"name"`
+	Info      string     `json:"info" db:"info"`
+	Rate      float64    `json:"rate" db:"rate"`
+	CreatedBy int64      `json:"created_by" db:"created_by"`
+	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+}
