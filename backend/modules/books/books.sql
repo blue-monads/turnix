@@ -155,6 +155,7 @@ create table Products__project__(
     name TEXT NOT NULL DEFAULT '',
     info TEXT NOT NULL DEFAULT '',
     variant_id TEXT NOT NULL DEFAULT '',
+    catagory_id INTEGER NOT NULL DEFAULT 0,
     price INTEGER NOT NULL DEFAULT 0,
     parent_id INTEGER NOT NULL DEFAULT 0,
     image TEXT NOT NULL DEFAULT '',

@@ -78,6 +78,7 @@ export interface Catagory {
     id: number
     name: string
     info: string
+    image: string
     parent_id: number
     created_by: number
     updated_by: number
@@ -93,8 +94,10 @@ export interface Product {
     variant_id: string
     price: number
     parent_id: number
-    images: string
+    image: string
+    alt_images: string
     created_by: number
+    catagory_id: number
     updated_by: number
     created_at: string
     updated_at: string

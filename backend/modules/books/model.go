@@ -191,19 +191,20 @@ type Catagory struct {
 }
 
 type Product struct {
-	ID        int64      `json:"id" db:"id,omitempty"`
-	Name      string     `json:"name" db:"name"`
-	Info      string     `json:"info" db:"info"`
-	VariantID string     `json:"variant_id" db:"variant_id"`
-	Price     float64    `json:"price" db:"price"`
-	ParentID  int64      `json:"parent_id" db:"parent_id"`
-	Images    string     `json:"image" db:"image"`
-	AltImages string     `json:"alt_images" db:"alt_images"`
-	CreatedBy int64      `json:"created_by" db:"created_by"`
-	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
-	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
-	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+	ID         int64      `json:"id" db:"id,omitempty"`
+	Name       string     `json:"name" db:"name"`
+	Info       string     `json:"info" db:"info"`
+	CatagoryID int64      `json:"catagory_id" db:"catagory_id"`
+	VariantID  string     `json:"variant_id" db:"variant_id"`
+	Price      float64    `json:"price" db:"price"`
+	ParentID   int64      `json:"parent_id" db:"parent_id"`
+	Images     string     `json:"image" db:"image"`
+	AltImages  string     `json:"alt_images" db:"alt_images"`
+	CreatedBy  int64      `json:"created_by" db:"created_by"`
+	UpdatedBy  int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt  *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt  *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted  bool       `json:"is_deleted" db:"is_deleted,omitempty"`
 }
 
 type ProductStockIn struct {

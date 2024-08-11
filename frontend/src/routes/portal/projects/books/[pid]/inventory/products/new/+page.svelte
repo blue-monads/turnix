@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { NewBookAPI } from "$lib/projects/books";
+    import { NewBookAPI, type Catagory } from "$lib/projects/books";
     import { getContext } from "svelte";
     import type { RootAPI } from "$lib/api";
     import { page } from "$app/stores";
@@ -11,10 +11,27 @@
 
     let message = "";
 
-    const submit = async (data: Record<string, any>) => {
+    let name = "";
+    let info = "";
+    let catid = 0;
+
+    let allCatagories: Catagory[] = [];
+
+    const load = async () => {
+        const resp = await api.listCatagories(pid);
+        if (resp.status !== 200) {
+            return;
+        }
+        allCatagories = resp.data;
+    };
+
+    load();
+
+    const submit = async () => {
         const resp = await api.addProduct(pid, {
-            name: data.name,
-            info: data.info,
+            name,
+            info,
+            catagory_id: Number(catid),
         });
         if (resp.status !== 200) {
             message = resp.data.message;
@@ -25,24 +42,44 @@
     };
 </script>
 
-<AutoForm
-    {message}
-    schema={{
-        fields: [
-            {
-                name: "Name",
-                ftype: "TEXT",
-                key_name: "name",
-            },
-            {
-                name: "Info",
-                ftype: "LONG_TEXT",
-                key_name: "info",
+<form class="p-2" on:submit|preventDefault={submit}>
+    <div class="card">
+        <header class="card-header">
+            <h4 class="h4">Add Product</h4>
+        </header>
 
-            },
-        ],
-        name: "Add Product",
-        required_fields: ["name"],
-    }}
-    onSave={submit}
-/>
+        <section class="p-4 flex flex-col gap-4">
+            <label class="label">
+                <span>Name</span>
+                <input
+                    bind:value={name}
+                    class="input p-1"
+                    type="text"
+                    placeholder="Input"
+                />
+            </label>
+
+            <label class="label">
+                <span>Catagory</span>
+                <select bind:value={catid} class="select" required>
+                    {#each allCatagories as catagory}
+                        <option value={catagory.id}>{catagory.name}</option>
+                    {/each}
+                </select>
+            </label>
+
+            <label class="label">
+                <span>Info</span>
+                <textarea
+                    bind:value={info}
+                    class="textarea p-1"
+                    rows="4"
+                    placeholder={"information about account"}
+                />
+            </label>
+        </section>
+        <footer class="card-footer flex justify-end">
+            <button type="submit" class="btn variant-filled"> save </button>
+        </footer>
+    </div>
+</form>
