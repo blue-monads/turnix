@@ -82,6 +82,7 @@
         ["id", "ID"],
         ["name", "Name"],
         ["info", "Info"],
+        ["price", "Price"],
     ]}
     datas={cats}
     color={[]}

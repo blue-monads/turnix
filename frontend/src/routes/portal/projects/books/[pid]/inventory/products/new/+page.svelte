@@ -14,6 +14,7 @@
     let name = "";
     let info = "";
     let catid = 0;
+    let price = 0;
 
     let allCatagories: Catagory[] = [];
 
@@ -32,6 +33,7 @@
             name,
             info,
             catagory_id: Number(catid),
+            price,
         });
         if (resp.status !== 200) {
             message = resp.data.message;
@@ -68,6 +70,17 @@
                 </select>
             </label>
 
+
+            <!-- price -->
+            <label class="label">
+                <span>Price</span>
+                <input
+                    bind:value={price}
+                    class="input p-1"
+                    type="number"
+                    placeholder="Input"
+                />
+
             <label class="label">
                 <span>Info</span>
                 <textarea
@@ -77,6 +90,8 @@
                     placeholder={"information about account"}
                 />
             </label>
+
+
         </section>
         <footer class="card-footer flex justify-end">
             <button type="submit" class="btn variant-filled"> save </button>
