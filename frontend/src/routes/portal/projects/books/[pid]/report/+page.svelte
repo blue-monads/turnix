@@ -64,13 +64,5 @@
       Templates
     </a>
 
-    <a
-      href={`/z/pages/portal/projects/books/${pid}`}
-      class="btn variant-glass-secondary btn-sm"
-    >
-      <SvgIcon className="h-4 w-4" name="users" />
-
-      Accounts
-    </a>
   </svelte:fragment>
 </AppBar>

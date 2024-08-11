@@ -39,14 +39,14 @@
     ];
 </script>
 
-<div class="flex relative md:initial h-screen flex-col md:flex-row md:w-full md:h-32">
+<div class="flex relative h-screen flex-col md:flex-row md:w-full md:h-32">
     <div
         id="sidebar"
 
         class="p-4  flex flex-col gap-2 transition-all duration-300 ease-in-out md:flex-row flex-wrap
         {active ? 'w-48': 'hidden'}"
     >
-        <div class="mb-10 text-center variant-outline uppercase font-medium font-token hidden md:block p-1">
+        <div class="mb-10 text-center variant-outline uppercase font-medium font-token hidden md:block p-1 w-full">
             <h4 class="h4">Books</h4> 
         </div>
 
@@ -64,7 +64,7 @@
 
     </div>
 
-    <div class="absolute bottom-8">
+    <div class="absolute md:bottom-8 ">
         <button
             class=" rounded border-2 bg-slate-100 p-1"
             on:click={() => {
