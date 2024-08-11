@@ -51,7 +51,7 @@
     ];
 </script>
 
-<div class="flex relative h-screen flex-col md:flex-row md:w-full md:h-32">
+<div class="flex relative h-screen flex-col md:flex-row md:w-full md:h-32 border-r border-gray-800">
     <div
         id="sidebar"
 

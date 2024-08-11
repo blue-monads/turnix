@@ -1,3 +1,9 @@
+<script>
+    import Catagories from "./catagories/+page.svelte";
+</script>
 
 
-<div>Inventory</div>
+
+
+<Catagories />
+
