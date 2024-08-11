@@ -52,7 +52,6 @@
     {#if $store[0]}
         {#if mode === "pick_product"}
             <h4 class="h4">Pick Product</h4>
-            <!-- Enable for debugging: -->
             <AutoTable
                 action_key={"id"}
                 key_names={[
@@ -63,7 +62,7 @@
                     ["variant_id", "Variant"],
                 ]}
                 datas={data}
-                color={[]}
+                color={["variant_id"]}
                 actions={[
                     {
                         Name: "select",

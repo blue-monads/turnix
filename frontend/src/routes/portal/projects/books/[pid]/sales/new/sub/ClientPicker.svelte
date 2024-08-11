@@ -6,14 +6,14 @@
 
     const store = getModalStore();
     let mode: "loading" | "main";
-    let info = "";
-    let qty = 1;
-    let amount = 0;
-    let product_id: number;
 
-    let data: object[] = [];
+    let data: object[] = $store[0].meta["data"] || [];
 
     const loadData = async () => {
+        if (data.length) {
+            return;
+        }
+
         const api = $store[0].meta["api"] as BooksAPI;
         if (!api) {
             return;
@@ -56,7 +56,11 @@
                     Name: "select",
                     icon: "plus",
                     // @ts-ignore
-                    Action: async (id, data) => {},
+                    Action: async (id, data) => {
+                        const onSelect = $store[0].meta["onSelect"];
+                        onSelect?.(data);
+                        store.close();
+                    },
                 },
             ]}
         />
