@@ -180,6 +180,7 @@ create table ProductStockIn__project__(
 create table ProductStockInLines__project__(
     id INTEGER PRIMARY KEY,
     info TEXT NOT NULL DEFAULT '',
+    product_stockin_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
     qty INTEGER NOT NULL DEFAULT 0,
     amount INTEGER NOT NULL DEFAULT 0,

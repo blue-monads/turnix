@@ -217,16 +217,17 @@ type ProductStockIn struct {
 }
 
 type ProductStockInLine struct {
-	ID        int64      `json:"id" db:"id,omitempty"`
-	Info      string     `json:"info" db:"info"`
-	ProductID int64      `json:"product_id" db:"product_id"`
-	Qty       float64    `json:"qty" db:"qty"`
-	Amount    float64    `json:"amount" db:"amount"`
-	CreatedBy int64      `json:"created_by" db:"created_by"`
-	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
-	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
-	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+	ID               int64      `json:"id" db:"id,omitempty"`
+	Info             string     `json:"info" db:"info"`
+	ProductStockInID int64      `json:"product_stockin_id" db:"product_stockin_id"`
+	ProductID        int64      `json:"product_id" db:"product_id"`
+	Qty              float64    `json:"qty" db:"qty"`
+	Amount           float64    `json:"amount" db:"amount"`
+	CreatedBy        int64      `json:"created_by" db:"created_by"`
+	UpdatedBy        int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt        *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt        *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted        bool       `json:"is_deleted" db:"is_deleted,omitempty"`
 }
 
 type Sales struct {
