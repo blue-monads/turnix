@@ -81,6 +81,7 @@
     key_names={[
         ["id", "ID"],
         ["name", "Name"],
+        ["variant_id", "Variant"],
         ["info", "Info"],
         ["price", "Price"],
     ]}
