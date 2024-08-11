@@ -630,6 +630,282 @@ func (b *BookModule) dbOpsImport(pid, uid int64, opts ImportOptions) (err error)
 	return nil
 }
 
+func (b *BookModule) dbOpsCatagoryAdd(pid, uid int64, data *Catagory) (int64, error) {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return 0, err
+	}
+
+	table := b.catagoryTable(pid)
+
+	r, err := table.Insert(data)
+	if err != nil {
+		return 0, err
+	}
+
+	return r.ID().(int64), nil
+}
+
+func (b *BookModule) dbOpsCatagoryUpdate(pid, uid, id int64, data map[string]any) error {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	return b.catagoryTable(pid).Find(db.Cond{"id": id}).Update(data)
+}
+
+func (b *BookModule) dbOpsCatagoryGet(pid, uid, id int64) (*Catagory, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	data := &Catagory{}
+	table := b.catagoryTable(pid)
+
+	err = table.Find(db.Cond{"id": id}).One(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (b *BookModule) dbOpsCatagoryList(pid, uid int64) ([]Catagory, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	datas := make([]Catagory, 0)
+	table := b.catagoryTable(pid)
+
+	err = table.Find().All(&datas)
+	if err != nil {
+		return nil, err
+	}
+
+	return datas, nil
+}
+
+func (b *BookModule) dbOpsCatagoryDelete(pid, uid, id int64) error {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	return b.catagoryTable(pid).Find(db.Cond{"id": id}).Delete()
+}
+
+// products
+
+func (b *BookModule) dbOpsProductAdd(pid, uid int64, data *Product) (int64, error) {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return 0, err
+	}
+
+	table := b.productTable(pid)
+
+	r, err := table.Insert(data)
+	if err != nil {
+		return 0, err
+	}
+
+	return r.ID().(int64), nil
+}
+
+func (b *BookModule) dbOpsProductUpdate(pid, uid, id int64, data map[string]any) error {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	return b.productTable(pid).Find(db.Cond{"id": id}).Update(data)
+}
+
+func (b *BookModule) dbOpsProductGet(pid, uid, id int64) (*Product, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	data := &Product{}
+	table := b.productTable(pid)
+
+	err = table.Find(db.Cond{"id": id}).One(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (b *BookModule) dbOpsProductList(pid, uid int64) ([]Product, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	datas := make([]Product, 0)
+	table := b.productTable(pid)
+
+	err = table.Find().All(&datas)
+	if err != nil {
+		return nil, err
+	}
+
+	return datas, nil
+}
+
+func (b *BookModule) dbOpsProductDelete(pid, uid, id int64) error {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	return b.productTable(pid).Find(db.Cond{"id": id}).Delete()
+}
+
+// product stock in
+
+type StockInData struct {
+	Info     string            `json:"info"`
+	Amount   float64           `json:"amount"`
+	VendorID int64             `json:"vendor_id"`
+	Lines    []StockInLineData `json:"lines"`
+}
+
+type StockInLineData struct {
+	Info      string  `json:"info"`
+	ProductID int64   `json:"product_id"`
+	Qty       float64 `json:"qty"`
+	Amount    float64 `json:"amount"`
+}
+
+func (b *BookModule) dbOpsProductStockInAdd(pid, uid int64, data *StockInData) (pstockInid int64, err error) {
+	err = b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return 0, err
+	}
+
+	psinTable := b.productStockInTable(pid)
+	psinLinTable := b.productStockInLineTable(pid)
+
+	r, err := psinTable.Insert(data)
+	if err != nil {
+		return 0, err
+	}
+
+	pstockInid = r.ID().(int64)
+	doneLines := make([]int64, 0, len(data.Lines))
+
+	defer func() {
+		if err == nil {
+			return
+		}
+
+		psinTable.Find(db.Cond{"id": pstockInid}).Delete()
+		psinLinTable.Find(db.Cond{"id IN": doneLines}).Delete()
+
+	}()
+
+	for _, inline := range data.Lines {
+
+		line := &ProductStockInLine{
+			Info:             inline.Info,
+			ProductID:        inline.ProductID,
+			Qty:              inline.Qty,
+			Amount:           inline.Amount,
+			ProductStockInID: pstockInid,
+			CreatedBy:        uid,
+			UpdatedBy:        uid,
+		}
+
+		r, err := b.productStockInLineTable(pid).Insert(line)
+		if err != nil {
+			return 0, err
+		}
+
+		doneLines = append(doneLines, r.ID().(int64))
+	}
+
+	return pstockInid, nil
+}
+
+// tax
+
+func (b *BookModule) dbOpsTaxAdd(pid, uid int64, data *Tax) (int64, error) {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return 0, err
+	}
+
+	table := b.taxTable(pid)
+
+	r, err := table.Insert(data)
+	if err != nil {
+		return 0, err
+	}
+
+	return r.ID().(int64), nil
+}
+
+func (b *BookModule) dbOpsTaxUpdate(pid, uid, id int64, data map[string]any) error {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	return b.taxTable(pid).Find(db.Cond{"id": id}).Update(data)
+}
+
+func (b *BookModule) dbOpsTaxGet(pid, uid, id int64) (*Tax, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	data := &Tax{}
+	table := b.taxTable(pid)
+
+	err = table.Find(db.Cond{"id": id}).One(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (b *BookModule) dbOpsTaxList(pid, uid int64) ([]Tax, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	datas := make([]Tax, 0)
+	table := b.taxTable(pid)
+
+	err = table.Find().All(&datas)
+	if err != nil {
+		return nil, err
+	}
+
+	return datas, nil
+}
+
+func (b *BookModule) dbOpsTaxDelete(pid, uid, id int64) error {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	return b.taxTable(pid).Find(db.Cond{"id": id}).Delete()
+}
+
+// utils
+
 func (b *BookModule) txnTable(pid int64) db.Collection {
 	return b.db.Table(fmt.Sprintf("Transactions_%d_", pid))
 }
@@ -640,6 +916,53 @@ func (b *BookModule) accountsTable(pid int64) db.Collection {
 
 func (b *BookModule) txnLineTable(pid int64) db.Collection {
 	return b.db.Table(fmt.Sprintf("TransactionLines_%d_", pid))
+}
+
+func (b *BookModule) catagoryTable(pid int64) db.Collection {
+	return b.db.Table(fmt.Sprintf("Catagories_%d_", pid))
+}
+
+func (b *BookModule) productTable(pid int64) db.Collection {
+	return b.db.Table(fmt.Sprintf("Products_%d_", pid))
+}
+
+func (b *BookModule) productStockInTable(pid int64) db.Collection {
+	return b.db.Table(fmt.Sprintf("ProductStockIn_%d_", pid))
+}
+
+func (b *BookModule) productStockInLineTable(pid int64) db.Collection {
+	return b.db.Table(fmt.Sprintf("ProductStockInLines_%d_", pid))
+}
+
+/*
+func (b *BookModule) salesTable(pid int64) db.Collection {
+	return b.db.Table(fmt.Sprintf("Sales_%d_", pid))
+}
+
+func (b *BookModule) salesLineTable(pid int64) db.Collection {
+	return b.db.Table(fmt.Sprintf("SalesLines_%d_", pid))
+}
+
+func (b *BookModule) invoiceTable(pid int64) db.Collection {
+	return b.db.Table(fmt.Sprintf("Invoices_%d_", pid))
+}
+
+func (b *BookModule) invoiceLineTable(pid int64) db.Collection {
+	return b.db.Table(fmt.Sprintf("InvoiceLines_%d_", pid))
+}
+
+func (b *BookModule) estimateTable(pid int64) db.Collection {
+	return b.db.Table(fmt.Sprintf("Estimates_%d_", pid))
+}
+
+func (b *BookModule) estimateLineTable(pid int64) db.Collection {
+	return b.db.Table(fmt.Sprintf("EstimateLines_%d_", pid))
+}
+
+*/
+
+func (b *BookModule) taxTable(pid int64) db.Collection {
+	return b.db.Table(fmt.Sprintf("Tax_%d_", pid))
 }
 
 func (b *BookModule) userHasScope(pid, uid int64, scope string) error {
