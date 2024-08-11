@@ -182,6 +182,7 @@ type Catagory struct {
 	Name      string     `json:"name" db:"name"`
 	Info      string     `json:"info" db:"info"`
 	ParentID  int64      `json:"parent_id" db:"parent_id"`
+	Image     string     `json:"image" db:"image"`
 	CreatedBy int64      `json:"created_by" db:"created_by"`
 	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
 	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
@@ -196,7 +197,8 @@ type Product struct {
 	VariantID string     `json:"variant_id" db:"variant_id"`
 	Price     float64    `json:"price" db:"price"`
 	ParentID  int64      `json:"parent_id" db:"parent_id"`
-	Images    string     `json:"images" db:"images"`
+	Images    string     `json:"image" db:"image"`
+	AltImages string     `json:"alt_images" db:"alt_images"`
 	CreatedBy int64      `json:"created_by" db:"created_by"`
 	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
 	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
