@@ -21,6 +21,7 @@
     let info = "";
     let totalPrice = 0;
     let client_id = 1;
+    let sales_date = new Date().toISOString().slice(0, 16)
 
     let lines: SaleLine[] = [
         {
@@ -63,6 +64,8 @@
                         type="datetime-local"
                         class="input p-1"
                         placeholder="Date"
+                        bind:value={sales_date}
+
                     />
                 </label>
             </div>
@@ -84,7 +87,7 @@
                 >
                     <thead>
                         <tr
-                            class="text-white bg-gray-700 print:bg-gray-300 print:text-black"
+                            class="variant-filled  print:bg-gray-300 print:text-black"
                         >
                             <th class="px-4 py-2">Item</th>
                             <th class="px-4 py-2 text-right">Qty</th>
