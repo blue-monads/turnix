@@ -73,7 +73,7 @@
                         Action: async (id, data) => {
                             product_id = id;
                             amount = data["price"] || 0;
-                            info = data["name"] || "";
+                            info = (data["name"] || "") + "  " + (data["variant_id"] || "");
                             mode = "set_quantity";
                         },
                     },
