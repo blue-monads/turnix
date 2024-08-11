@@ -55,7 +55,7 @@
             class="btn variant-ghost-primary btn-sm"
         >
             <SvgIcon className="h-4 w-4" name="plus" />
-            Add Catagory
+            Catagory
         </a>
 
         <a
@@ -63,7 +63,7 @@
             class="btn variant-ghost-secondary btn-sm"
         >
             <SvgIcon className="h-4 w-4" name="plus" />
-            Add Product
+            Product
         </a>
 
         <a
