@@ -181,11 +181,11 @@
             </div>
 
             <div class="flex gap-2 w-full justify-between">
-                <label class="label flex flex-col gap-2 w-full md:w-1/3">
+                <label class="label flex flex-col gap-2 w-full md:w-1/2">
                     <span>Notes</span>
                     <textarea
                         bind:value={info}
-                        class="textarea p-1 w-full"
+                        class="textarea p-1"
                         rows="4"
                         placeholder={"information about account"}
                     />
