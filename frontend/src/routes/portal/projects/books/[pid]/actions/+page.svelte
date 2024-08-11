@@ -34,7 +34,7 @@
     <div class="p-2">Loading..</div>
 {:else}
     <div class="p-2">
-        <div class="card p-2">
+        <div class="card p-4">
             <header class="flex justify-center">
                 <div class="flex flex-col gap-2">
                     <h3 class="h3">Project Actions</h3>
@@ -60,7 +60,7 @@
                 >
             </section>
 
-            <footer class="flex justify-start p-2 gap-2">
+            <footer class="flex justify-start pt-8 gap-2">
                 <a
                     href="/z/pages/portal/projects/books/{pid}/actions/import"
                     class="btn variant-filled-secondary btn-sm"
