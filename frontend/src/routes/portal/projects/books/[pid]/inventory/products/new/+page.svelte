@@ -15,6 +15,7 @@
     let info = "";
     let catid = 0;
     let price = 0;
+    let variant_id = "";
 
     let allCatagories: Catagory[] = [];
 
@@ -70,8 +71,17 @@
                 </select>
             </label>
 
+            <label class="label">
+                <span>Variant</span>
+                <input
+                    type="text"
+                    name="variant_id"
+                    bind:value={variant_id}
+                    class="input p-1"
+                    placeholder="LARGE XL"
+                />
+            </label>
 
-            <!-- price -->
             <label class="label">
                 <span>Price</span>
                 <input
@@ -81,17 +91,16 @@
                     placeholder="Input"
                 />
 
-            <label class="label">
-                <span>Info</span>
-                <textarea
-                    bind:value={info}
-                    class="textarea p-1"
-                    rows="4"
-                    placeholder={"information about account"}
-                />
+                <label class="label">
+                    <span>Info</span>
+                    <textarea
+                        bind:value={info}
+                        class="textarea p-1"
+                        rows="4"
+                        placeholder={"information about account"}
+                    />
+                </label>
             </label>
-
-
         </section>
         <footer class="card-footer flex justify-end">
             <button type="submit" class="btn variant-filled"> save </button>
