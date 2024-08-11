@@ -1,18 +1,13 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
-    import { AutoTable, FloatyButton } from "$lib/compo";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-    import { NewBookAPI } from "$lib/projects/books";
     import { getContext } from "svelte";
-    import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
     import type { RootAPI } from "$lib/api";
     import { page } from "$app/stores";
+    import { Loader } from "$lib/compo";
 
     const pid = $page.params["pid"];
 
-    const store = getModalStore();
     const rootApi = getContext("__api__") as RootAPI;
-    const api = NewBookAPI(rootApi);
 
     let loading = false;
     let data: any = undefined;
@@ -31,7 +26,7 @@
 </script>
 
 {#if loading}
-    <div class="p-2">Loading..</div>
+    <Loader />
 {:else}
     <div class="p-2">
         <div class="card p-4">
@@ -76,8 +71,6 @@
                     <SvgIcon className="h-4 w-4" name="arrow-down-tray" />
                     Export
                 </a>
-
-
             </footer>
         </div>
     </div>
