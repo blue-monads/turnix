@@ -18,7 +18,7 @@
 
 <button
   on:click={handler}
-  class="p-1 text-white text-sm font-semibold flex self-center shadow rounded hover:scale-110 bg-blue-400"
+  class="btn btn-sm variant-filled"
 >
   {#if loading}
     <SvgIcon name="arrow-path" className="h-5 w-5 animate-spin" />

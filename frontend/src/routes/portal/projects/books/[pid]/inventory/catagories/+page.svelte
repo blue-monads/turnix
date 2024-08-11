@@ -5,19 +5,21 @@
     import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
     import type { RootAPI } from "$lib/api";
     import { page } from "$app/stores";
+    import { AutoTable } from "$lib/compo";
+    import { goto } from "$app/navigation";
 
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let accounts: any[] = [];
+    let cats: any[] = [];
 
     const load = async () => {
-        const resp = await api.listAccount(pid);
+        const resp = await api.listCatagories(pid);
         if (resp.status !== 200) {
             return;
         }
 
-        accounts = resp.data;
+        cats = resp.data;
     };
 
     load();
@@ -74,3 +76,46 @@
         </a>
     </svelte:fragment>
 </AppBar>
+
+<AutoTable
+    action_key={"id"}
+    key_names={[
+        ["id", "ID"],
+        ["name", "Name"],
+        ["info", "Info"],
+    ]}
+    datas={cats}
+    color={[]}
+    actions={[
+        {
+            Name: "explore products",
+            Class: "variant-filled-primary",
+
+            icon: "plus",
+            Action: async (id) => {
+                goto(
+                    `/z/pages/portal/projects/books/${pid}/inventory/products?cid=${id}`,
+                );
+            },
+        },
+
+        {
+            Name: "edit",
+            Class: "variant-filled-secondary",
+            Action: async (id) => {
+                goto(
+                    `/z/pages/portal/projects/books/${pid}/inventory/catagories/edit?pid=${pid}&cid=${id}`,
+                );
+            },
+        },
+        {
+            Name: "delete",
+            Class: "variant-filled-error",
+            Action: async (id) => {
+                await api.deleteCatagory(pid, id);
+
+                load();
+            },
+        },
+    ]}
+/>
