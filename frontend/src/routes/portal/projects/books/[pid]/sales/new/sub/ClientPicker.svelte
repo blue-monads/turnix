@@ -35,7 +35,7 @@
 </script>
 
 <div class="card rounded p-4 w-modal-wide min-h-96 {parent.backgroundColor}">
-    <h4 class="h4">Pick Client</h4>
+    <h4 class="h4">Pick Contact</h4>
 
     {#if mode === "loading"}
         <Loader />
@@ -45,12 +45,12 @@
             key_names={[
                 ["id", "ID"],
                 ["name", "Name"],
-                ["info", "Info"],
-                ["price", "Price"],
-                ["variant_id", "Variant"],
+                ["ctype", "Type"],
+                ["email", "Email"],
+                ["phone", "Phone"],
             ]}
             datas={data}
-            color={[]}
+            color={["ctype"]}
             actions={[
                 {
                     Name: "select",
