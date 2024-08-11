@@ -11,7 +11,6 @@ create table Accounts__project__(
     total_credit INTEGER NOT NULL DEFAULT 0,
     contact_id INTEGER NOT NULL DEFAULT 0,
     calculated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    txn_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
@@ -24,11 +23,12 @@ create table Transactions__project__(
     txn_type TEXT NOT NULL DEFAULT 'normal',
     linked_sales_id INTEGER NOT NULL DEFAULT 0,
     linked_invoice_id INTEGER NOT NULL DEFAULT 0,
-    linked_bill_id INTEGER NOT NULL DEFAULT 0,
+    linked_stockin_id INTEGER NOT NULL DEFAULT 0,
     reference_id TEXT NOT NULL DEFAULT '',
     attachments TEXT NOT NULL DEFAULT '',
     created_by INTEGER NULL,
     updated_by INTEGER NULL,
+    txn_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
@@ -98,21 +98,6 @@ create table InvoiceLines__project__(
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-create table Bills__project__(
-    id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL DEFAULT '',
-    notes TEXT NOT NULL DEFAULT '',
-    attachments TEXT NOT NULL DEFAULT '',
-    sub_total INTEGER NOT NULL DEFAULT 0,
-    total INTEGER NOT NULL DEFAULT 0,
-    client_id INTEGER NOT NULL DEFAULT 0,
-    vendor_id INTEGER NOT NULL DEFAULT 0,
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
-);
 
 -- INVENTORY
 
@@ -148,10 +133,21 @@ create table Products__project__(
 
 create table ProductStockIn__project__(
     id INTEGER PRIMARY KEY,
+    info TEXT NOT NULL DEFAULT '',
+    amount INTEGER NOT NULL DEFAULT 0,
+    supplier_id INTEGER NOT NULL DEFAULT 0,
+    created_by INTEGER NULL,
+    updated_by INTEGER NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+create table ProductStockInLines__project__(
+    id INTEGER PRIMARY KEY,
+    info TEXT NOT NULL DEFAULT '',
     product_id INTEGER NOT NULL,
     qty INTEGER NOT NULL DEFAULT 0,
-    supplier_id INTEGER NOT NULL DEFAULT 0,
-    bill_id INTEGER NOT NULL DEFAULT 0,
+    amount INTEGER NOT NULL DEFAULT 0,
     created_by INTEGER NULL,
     updated_by INTEGER NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
