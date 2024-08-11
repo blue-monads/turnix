@@ -1,0 +1,1 @@
+<div>New invoice</div>

@@ -37,12 +37,6 @@
             active: false,
         },
         {
-            name: "Invoice",
-            link: `/z/pages/portal/projects/books/${pid}/invoice`,
-            icon: "document-text",
-            active: false,
-        },
-        {
             name: "Settings",
             link: `/z/pages/portal/projects/books/${pid}/actions`,
             icon: "cog",

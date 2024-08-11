@@ -52,7 +52,7 @@
 
 
         <a
-            href={`/z/pages/portal/projects/books/${pid}/invoices`}
+            href={`/z/pages/portal/projects/books/${pid}/sales/invoice`}
             class="btn variant-filled btn-sm"
         >
             <SvgIcon className="h-4 w-4 mr-1" name="document-text" />
