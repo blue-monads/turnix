@@ -163,14 +163,6 @@
                                 },
                             },
                         });
-
-                        // lines.push({
-                        //     info: "Shared Hosting - Simple Plan (Monthly)",
-                        //     product_id: 1,
-                        //     qty: 1,
-                        //     amount: 2.45,
-                        // });
-                        // lines = lines;
                     }}
                 >
                     <SvgIcon
@@ -180,7 +172,7 @@
                 </button>
             </div>
 
-            <div class="flex gap-2 w-full justify-between">
+            <div class="flex gap-2 w-full justify-between text-xs">
                 <label class="label flex flex-col gap-2 w-full md:w-1/2">
                     <span>Notes</span>
                     <textarea
@@ -191,15 +183,32 @@
                     />
                 </label>
 
-                <label class="label flex flex-col gap-2 w-full md:w-1/3">
-                    <span>Total</span>
-                    <input
-                        type="number"
-                        bind:value={totalPrice}
-                        class="input p-1 w-full"
-                        placeholder="Input"
-                    />
-                </label>
+                <div class="flex flex-col gap-2">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="px-2 py-2 border"> Sub Total </td>
+                                <td class="px-2 py-2 border text-right"> 10000 </td>
+                            </tr>
+
+                            <tr>
+                                <td class="px-2 py-2 border">TAX</td>
+                                <td class="px-2 py-2 border text-right">12%</td>
+                            </tr>
+
+                            <tr>
+                                <td class="px-2 py-2 border">Discount</td>
+                                <td class="px-2 py-2 border text-right">0%</td>
+                            </tr>
+
+                            <tr>
+                                <td class="px-2 py-2 border font-semibold"> Total </td>
+                                <td class="px-2 py-2 border text-right font-semibold"> 1120 </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
         <footer class="card-footer flex justify-end">
