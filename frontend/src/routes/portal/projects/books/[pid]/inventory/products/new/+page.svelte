@@ -5,6 +5,7 @@
     import { page } from "$app/stores";
     import { AutoForm } from "$lib/compo";
     import { goto } from "$app/navigation";
+    import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
@@ -82,24 +83,37 @@
                 />
             </label>
 
-            <label class="label">
+            <label class="label" for="price">
                 <span>Price</span>
+            </label>
+
+            <div
+                class="input-group input-group-divider grid-cols-[auto_1fr_auto]"
+            >
+                <span class="w-8">
+                    <SvgIcon
+                        name="currency-dollar"
+                        className="w-5 h-5 text-gray-700 inline-flex justify-self-center items-center mt-1 ml-1"
+                    />
+                </span>
+
                 <input
+                    id="price"
                     bind:value={price}
                     class="input p-1"
                     type="number"
                     placeholder="Input"
                 />
+            </div>
 
-                <label class="label">
-                    <span>Info</span>
-                    <textarea
-                        bind:value={info}
-                        class="textarea p-1"
-                        rows="4"
-                        placeholder={"information about account"}
-                    />
-                </label>
+            <label class="label">
+                <span>Info</span>
+                <textarea
+                    bind:value={info}
+                    class="textarea p-1"
+                    rows="4"
+                    placeholder={"information about account"}
+                />
             </label>
         </section>
         <footer class="card-footer flex justify-end">
