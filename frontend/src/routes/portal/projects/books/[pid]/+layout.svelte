@@ -19,12 +19,6 @@
             active: false,
         },
         {
-            name: "Reports",
-            link: `/z/pages/portal/projects/books/${pid}/report`,
-            icon: "document-chart-bar",
-            active: false,
-        },
-        {
             name: "Inventory",
             link: `/z/pages/portal/projects/books/${pid}/inventory`,
             icon: "archive-box",
@@ -36,6 +30,13 @@
             icon: "banknotes",
             active: false,
         },
+        {
+            name: "Reports",
+            link: `/z/pages/portal/projects/books/${pid}/report`,
+            icon: "document-chart-bar",
+            active: false,
+        },
+
         {
             name: "Settings",
             link: `/z/pages/portal/projects/books/${pid}/actions`,
