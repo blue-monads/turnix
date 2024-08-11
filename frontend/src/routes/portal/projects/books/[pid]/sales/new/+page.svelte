@@ -172,7 +172,7 @@
                 </button>
             </div>
 
-            <div class="flex gap-2 w-full justify-between text-xs">
+            <div class="flex gap-2 w-full justify-between">
                 <label class="label flex flex-col gap-2 w-full md:w-1/2">
                     <span>Notes</span>
                     <textarea
@@ -183,7 +183,7 @@
                     />
                 </label>
 
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-2 text-sm">
                     <table>
                         <tbody>
                             <tr>
