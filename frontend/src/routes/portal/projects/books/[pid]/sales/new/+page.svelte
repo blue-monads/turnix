@@ -6,9 +6,9 @@
     import { AutoForm } from "$lib/compo";
     import { goto } from "$app/navigation";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-    import type { SaleLine } from "./sales";
+    import type { SaleLine } from "./sub/sales";
     import { getModalStore } from "@skeletonlabs/skeleton";
-    import SalesItemPick from "./SalesItemPick.svelte";
+    import SalesItemPick from "./sub/SalesItemPick.svelte";
 
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
@@ -21,7 +21,7 @@
     let info = "";
     let totalPrice = 0;
     let client_id = 1;
-    let sales_date = new Date().toISOString().slice(0, 16)
+    let sales_date = new Date().toISOString().slice(0, 16);
 
     let lines: SaleLine[] = [
         {
@@ -43,19 +43,40 @@
 <form class="p-2" on:submit|preventDefault={submit}>
     <div class="card">
         <header class="card-header">
-            <h4 class="h4">New Sale</h4>
+            <h3 class="h3">New Sale</h3>
         </header>
 
         <section class="p-4 flex flex-col gap-4">
             <div class="flex gap-2 justify-between">
                 <label class="label">
                     <span>Billed To</span>
-                    <input
-                        type="text"
-                        value={clientIndex[client_id] || ""}
-                        class="input p-1"
-                        placeholder="Client"
-                    />
+
+                    <div class="flex gap-2">
+                        <input
+                            type="text"
+                            value={clientIndex[client_id] || ""}
+                            class="input p-1"
+                            placeholder="Client"
+                        />
+
+                        <button
+                            on:click={() => {
+                                store.trigger({
+                                    type: "component",
+                                    component: "books_client_picker",
+                                    meta: {
+                                        api,
+                                        pid,
+                                    },
+                                });
+                            }}
+                        >
+                            <SvgIcon
+                                name="plus"
+                                className="w-4 h-4 inline-block align-middle"
+                            />
+                        </button>
+                    </div>
                 </label>
 
                 <label class="label">
@@ -65,7 +86,6 @@
                         class="input p-1"
                         placeholder="Date"
                         bind:value={sales_date}
-
                     />
                 </label>
             </div>
@@ -87,12 +107,13 @@
                 >
                     <thead>
                         <tr
-                            class="variant-filled  print:bg-gray-300 print:text-black"
+                            class="variant-filled print:bg-gray-300 print:text-black"
                         >
                             <th class="px-4 py-2">Item</th>
                             <th class="px-4 py-2 text-right">Qty</th>
                             <th class="px-4 py-2 text-right">Unit Price</th>
                             <th class="px-4 py-2 text-right">Subtotal</th>
+                            <th class="px-4 py-2 text-right"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -111,6 +132,14 @@
                                     class="px-4 py-2 text-right border tabular-nums slashed-zero"
                                     >{line.amount * line.qty}</td
                                 >
+                                <td
+                                    class="px-4 py-2 text-right border tabular-nums slashed-zero"
+                                >
+                                    <button
+                                        class="hover:underline text-warning-800"
+                                        >delete</button
+                                    >
+                                </td>
                             </tr>
                         {/each}
                     </tbody>
@@ -126,7 +155,7 @@
                             meta: {
                                 api,
                                 pid,
-                                
+
                                 onSave: (data) => {
                                     lines.push(data);
                                     lines = lines;

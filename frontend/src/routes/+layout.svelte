@@ -9,7 +9,8 @@
   import Options from "./portal/project/options.svelte";
   import "./styles.css";
   import AccountPicker from "./portal/projects/books/[pid]/txn/AccountPicker.svelte";
-  import SalesItemPick from "./portal/projects/books/[pid]/sales/new/SalesItemPick.svelte";
+  import SalesItemPick from "./portal/projects/books/[pid]/sales/new/sub/SalesItemPick.svelte";
+  import ClientPicker from "./portal/projects/books/[pid]/sales/new/sub/ClientPicker.svelte";
 
   initializeStores();
 
@@ -18,6 +19,7 @@
     project_options: { ref: Options },
     books_account_picker: { ref: AccountPicker },
     books_sales_item_pick: { ref: SalesItemPick },
+    books_client_picker: { ref: ClientPicker },
   };
 </script>
 
