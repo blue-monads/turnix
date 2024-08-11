@@ -114,6 +114,13 @@ func (a *App) apiRoutes(root *gin.RouterGroup) {
 	apiv1.POST("/project/:pid/hook/:id", a.accessMiddleware(a.updateProjectHook))
 	apiv1.DELETE("/project/:pid/hook/:id", a.accessMiddleware(a.removeProjectHook))
 
+	// project files
+	// apiv1.GET("/project/:pid/files", a.accessMiddleware(a.listProjectFiles))
+	// apiv1.POST("/project/:pid/files", a.accessMiddleware(a.addProjectFile))
+	// apiv1.GET("/project/:pid/files/:id", a.accessMiddleware(a.getProjectFile))
+	// apiv1.POST("/project/:pid/files/:id", a.accessMiddleware(a.updateProjectFile))
+	// apiv1.DELETE("/project/:pid/files/:id", a.accessMiddleware(a.removeProjectFile))
+
 }
 
 func (a *App) noRoute(ctx *gin.Context) {
