@@ -205,15 +205,15 @@ type Product struct {
 }
 
 type ProductStockIn struct {
-	ID         int64      `json:"id" db:"id,omitempty"`
-	Info       string     `json:"info" db:"info"`
-	Amount     float64    `json:"amount" db:"amount"`
-	SupplierID int64      `json:"supplier_id" db:"supplier_id"`
-	CreatedBy  int64      `json:"created_by" db:"created_by"`
-	UpdatedBy  int64      `json:"updated_by" db:"updated_by"`
-	CreatedAt  *time.Time `json:"created_at" db:"created_at,omitempty"`
-	UpdatedAt  *time.Time `json:"updated_at" db:"updated_at,omitempty"`
-	IsDeleted  bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+	ID        int64      `json:"id" db:"id,omitempty"`
+	Info      string     `json:"info" db:"info"`
+	Amount    float64    `json:"amount" db:"amount"`
+	VendorID  int64      `json:"vendor_id" db:"vendor_id"`
+	CreatedBy int64      `json:"created_by" db:"created_by"`
+	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
 }
 
 type ProductStockInLine struct {
