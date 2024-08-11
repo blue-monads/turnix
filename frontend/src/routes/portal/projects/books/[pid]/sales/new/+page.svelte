@@ -54,6 +54,7 @@
                     <div class="flex gap-2">
                         <input
                             type="text"
+                            disabled
                             value={clientIndex[client_id] || ""}
                             class="input p-1"
                             placeholder="Client"
@@ -137,7 +138,7 @@
                                 >
                                     <button
                                         class="hover:underline text-warning-800"
-                                        >delete</button
+                                        >remove</button
                                     >
                                 </td>
                             </tr>
