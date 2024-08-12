@@ -103,16 +103,27 @@ create table EstimateLines__project__(
 create table Invoices__project__(
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL DEFAULT '',
+    client_id INTEGER NOT NULL DEFAULT 0,
+    client_name TEXT NOT NULL DEFAULT '',
+
     notes TEXT NOT NULL DEFAULT '',
     attachments TEXT NOT NULL DEFAULT '',
+
     tax_id INTEGER NOT NULL DEFAULT 0,
+    tax_amount INTEGER NOT NULL DEFAULT 0,
+
+    discount_id INTEGER NOT NULL DEFAULT 0,
+    discount_amount INTEGER NOT NULL DEFAULT 0,
+
     sub_total INTEGER NOT NULL DEFAULT 0,
-    client_id INTEGER NOT NULL DEFAULT 0,
     total INTEGER NOT NULL DEFAULT 0,
+    txn_link_id INTEGER NOT NULL DEFAULT 0,
     created_by INTEGER NULL,
     updated_by INTEGER NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    invalidated_reason TEXT NOT NULL DEFAULT '',
+
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -200,10 +211,18 @@ create table ProductStockInLines__project__(
 create table Sales__project__(
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL DEFAULT '',
+    client_id INTEGER NOT NULL DEFAULT 0,
+    client_name TEXT NOT NULL DEFAULT '',
+
     notes TEXT NOT NULL DEFAULT '',
     attachments TEXT NOT NULL DEFAULT '',
+
     tax_id INTEGER NOT NULL DEFAULT 0,
     tax_amount INTEGER NOT NULL DEFAULT 0,
+
+    discount_id INTEGER NOT NULL DEFAULT 0,
+    discount_amount INTEGER NOT NULL DEFAULT 0,
+
     sub_total INTEGER NOT NULL DEFAULT 0,
     total INTEGER NOT NULL DEFAULT 0,
     txn_link_id INTEGER NOT NULL DEFAULT 0,
@@ -211,6 +230,8 @@ create table Sales__project__(
     updated_by INTEGER NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    invalidated_reason TEXT NOT NULL DEFAULT '',
+
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
