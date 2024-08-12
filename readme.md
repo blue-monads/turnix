@@ -27,6 +27,7 @@ Platform for apps.
 - user invite to project
 - logger service
 - project logs
+- force reload project
 
 ## control plane
 
