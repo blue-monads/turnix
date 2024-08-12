@@ -28,6 +28,7 @@ Platform for apps.
 - logger service
 - project logs
 - force reload project
+- project binding handle { log, logProject }
 
 ## control plane
 
