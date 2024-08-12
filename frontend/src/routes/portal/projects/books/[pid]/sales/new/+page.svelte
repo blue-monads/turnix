@@ -8,7 +8,6 @@
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import type { SaleLine } from "./sub/sales";
     import { getModalStore } from "@skeletonlabs/skeleton";
-    import SalesItemPick from "./sub/SalesItemPick.svelte";
 
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
@@ -47,7 +46,10 @@
         return acc;
     }, {});
 
-    const submit = async () => {};
+    const submit = async () => {
+        
+
+    };
 </script>
 
 {#if loadingContacts}
@@ -134,7 +136,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {#each lines as line}
+                            {#each lines as line, index}
                                 <tr>
                                     <td class="px-4 py-2 border">{line.info}</td
                                     >
@@ -156,9 +158,8 @@
                                         <button
                                             class="hover:underline text-warning-800 text-xs"
                                             on:click={() => {
-                                                lines = lines.filter(
-                                                    (item) => item.id !== line.id
-                                                );
+                                                lines.splice(index, 1);
+                                                lines = lines;
                                             }}
                                         >
                                             remove
@@ -248,7 +249,13 @@
                 </div>
             </section>
             <footer class="card-footer flex justify-end">
-                <button type="submit" class="btn variant-filled"> save </button>
+                <button  
+                    class="btn variant-filled"
+                    on:click={submit}
+                    
+                    > 
+                    save 
+                </button>
             </footer>
         </div>
     </form>

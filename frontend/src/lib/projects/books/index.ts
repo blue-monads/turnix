@@ -278,6 +278,8 @@ export class BooksAPI {
         return this.client.delete(`books/${pid}/contacts/${id}`)
     }
 
+    // sales
+
 
 }
 
