@@ -74,6 +74,24 @@
 
             Products
         </a>
+
+        <a
+            href={`/z/pages/portal/projects/books/${pid}/inventory/tax`}
+            class="btn variant-filled-secondary btn-sm"
+        >
+            <SvgIcon className="h-4 w-4 mr-1" name="tag" />
+
+            Tax
+        </a>
+
+        <a
+            href={`/z/pages/portal/projects/books/${pid}/inventory/discount`}
+            class="btn variant-filled-tertiary btn-sm"
+        >
+            <SvgIcon className="h-4 w-4 mr-1" name="receipt-percent" />
+
+            Discount
+        </a>
     </svelte:fragment>
 </AppBar>
 
