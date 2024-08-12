@@ -5,7 +5,6 @@ import (
 	_ "embed"
 	"log"
 
-	"github.com/bornjre/turnix/backend/modules/books"
 	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
 	"github.com/upper/db/v4"
 	"github.com/upper/db/v4/adapter/sqlite"
@@ -35,12 +34,6 @@ func NewDB() (*DB, error) {
 		driver := sess.Driver().(*sql.DB)
 
 		_, err = driver.Exec(schema)
-		if err != nil {
-			sess.Close()
-			return nil, err
-		}
-
-		_, err = driver.Exec(books.Schema)
 		if err != nil {
 			sess.Close()
 			return nil, err
