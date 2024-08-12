@@ -232,6 +232,20 @@ create table SalesLines__project__(
 create table Tax__project__(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
+    ttype TEXT NOT NULL DEFAULT 'item_percent',
+    info TEXT NOT NULL DEFAULT '',
+    rate INTEGER NOT NULL DEFAULT 0,
+    created_by INTEGER NULL,
+    updated_by INTEGER NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+create table Discounts__project__(
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL DEFAULT '',
+    ttype TEXT NOT NULL DEFAULT 'item_percent',
     info TEXT NOT NULL DEFAULT '',
     rate INTEGER NOT NULL DEFAULT 0,
     created_by INTEGER NULL,
