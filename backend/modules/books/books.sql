@@ -160,7 +160,8 @@ create table Products__project__(
     parent_id INTEGER NOT NULL DEFAULT 0,
     image TEXT NOT NULL DEFAULT '',
     alt_images TEXT NOT NULL DEFAULT '',
-    -- epoch INTEGER NOT NULL DEFAULT 0,
+    epoch INTEGER NOT NULL DEFAULT 0, -- optimistic counter for stock count
+    stock_count INTEGER NOT NULL DEFAULT 0, 
     created_by INTEGER NULL,
     updated_by INTEGER NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
