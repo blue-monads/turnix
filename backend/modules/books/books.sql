@@ -1,7 +1,7 @@
 
 -- ACCOUNTING 
 
-create table Accounts__project__(
+create table __project__Accounts(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
     info TEXT NOT NULL DEFAULT '',
@@ -16,7 +16,7 @@ create table Accounts__project__(
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-create table Transactions__project__(
+create table __project__Transactions(
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
@@ -34,7 +34,7 @@ create table Transactions__project__(
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-create table TransactionLines__project__(
+create table __project__TransactionLines(
     id INTEGER PRIMARY KEY,
     account_id INTEGER NOT NULL,
     txn_id INTEGER NULL,
@@ -46,7 +46,7 @@ create table TransactionLines__project__(
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-create table ReportTemplates__project__(
+create table __project__ReportTemplates(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
     input_options JSON NOT NULL DEFAULT '{}',
@@ -54,7 +54,7 @@ create table ReportTemplates__project__(
     query_template TEXT NOT NULL DEFAULT '',
     filter_script TEXT NULL DEFAULT ''
 );
-create table Reports__project__(
+create table __project__Reports(
     id INTEGER PRIMARY KEY,
     template_id INTEGER NOT NULL DEFAULT 0,
     report_type TEXT NOT NULL DEFAULT 'custom',
@@ -68,9 +68,10 @@ create table Reports__project__(
 
 -- INVOICING
 
--- Estimates has not direct link to Txn, it will be used as template to create actual invoice or sales
+-- Estimates has not direct link to Txn, it will be used as template to create actual invoice or directsales
 
-create table Estimates__project__(
+-- z_1_Estimates
+create table __project__Estimates(
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
@@ -86,7 +87,7 @@ create table Estimates__project__(
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-create table EstimateLines__project__(
+create table __project__EstimateLines(
     id INTEGER PRIMARY KEY,
     info TEXT NOT NULL DEFAULT '',
     qty INTEGER NOT NULL DEFAULT 0,    
@@ -100,7 +101,7 @@ create table EstimateLines__project__(
 );
 
 
-create table Invoices__project__(
+create table __project__Invoices(
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL DEFAULT '',
     client_id INTEGER NOT NULL DEFAULT 0,
@@ -128,7 +129,7 @@ create table Invoices__project__(
 );
 
 
-create table InvoiceLines__project__(
+create table __project__InvoiceLines(
     id INTEGER PRIMARY KEY,
     info TEXT NOT NULL DEFAULT '',
     product_id INTEGER NOT NULL,
@@ -147,7 +148,7 @@ create table InvoiceLines__project__(
 
 -- INVENTORY
 
-create table Catagories__project__(
+create table __project__Catagories(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
     info TEXT NOT NULL DEFAULT '',
@@ -161,7 +162,7 @@ create table Catagories__project__(
 );
 
 
-create table Products__project__(
+create table __project__Products(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
     info TEXT NOT NULL DEFAULT '',
@@ -181,7 +182,7 @@ create table Products__project__(
 );
 
 
-create table ProductStockIn__project__(
+create table __project__ProductStockIn(
     id INTEGER PRIMARY KEY,
     info TEXT NOT NULL DEFAULT '',
     amount INTEGER NOT NULL DEFAULT 0,
@@ -192,7 +193,7 @@ create table ProductStockIn__project__(
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-create table ProductStockInLines__project__(
+create table __project__ProductStockInLines(
     id INTEGER PRIMARY KEY,
     info TEXT NOT NULL DEFAULT '',
     product_stockin_id INTEGER NOT NULL,
@@ -208,7 +209,7 @@ create table ProductStockInLines__project__(
 
 -- SALES
 
-create table Sales__project__(
+create table __project__Sales(
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL DEFAULT '',
     client_id INTEGER NOT NULL DEFAULT 0,
@@ -236,7 +237,7 @@ create table Sales__project__(
 );
 
 
-create table SalesLines__project__(
+create table __project__SalesLines(
     id INTEGER PRIMARY KEY,
     info TEXT NOT NULL DEFAULT '',
     qty INTEGER NOT NULL DEFAULT 0,    
@@ -250,7 +251,7 @@ create table SalesLines__project__(
 );
 
 
-create table Tax__project__(
+create table __project__Tax(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
     ttype TEXT NOT NULL DEFAULT 'item_percent', -- item_percent, overall_percent, item_custom, overall_custom
@@ -264,7 +265,7 @@ create table Tax__project__(
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-create table Discounts__project__(
+create table __project__Discounts(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
     ttype TEXT NOT NULL DEFAULT 'item_percent', -- item_percent, item_fixed, item_custom,  overall_percent, overall_fixed, overall_custom
@@ -278,7 +279,7 @@ create table Discounts__project__(
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-create table Contacts__project__(
+create table __project__Contacts(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
     ctype TEXT NOT NULL DEFAULT 'vendor', -- vendor, client

@@ -269,9 +269,9 @@ func (b *BookModule) dbOpListAccountTxnWithLines(pid, uid, accId, offset int64) 
 		t.updated_by AS txn_updated_by, t.created_at AS txn_created_at,
 		t.updated_at AS txn_updated_at, t.is_deleted
 	FROM
-		TransactionLines_%d_ t1, TransactionLines_%d_ t2
+		z_%d_TransactionLines t1, z_%d_TransactionLines t2
 	INNER JOIN
-		Transactions_%d_ t ON t.id = t1.txn_id
+		z_%d_Transactions t ON t.id = t1.txn_id
 	WHERE
 		t1.account_id = ? AND t1.txn_id = t2.txn_id AND t2.account_id <> ? and t.is_deleted = FALSE and t.id > ? ORDER BY t.id LIMIT 100;
 		`, pid, pid, pid))
@@ -396,10 +396,19 @@ func (b *BookModule) dbOptsGenerateReportLongLedger(pid, uid int64, opts ReportO
 	records := []LongLedgerRecord{}
 
 	rows, err := b.db.GetSession().SQL().Query(fmt.Sprintf(`
-SELECT tx.title, tx.id as txn_id, a.name as account_name, a.acc_type,  tl.debit_amount, tl.credit_amount, SUM( tl.debit_amount) OVER (PARTITION BY tl.account_id) as total_debit, SUM(tl.credit_amount) OVER (PARTITION BY tl.account_id) as total_credit, tl.account_id
-FROM Accounts_%d_ a
-	JOIN TransactionLines_%d_ tl ON tl.account_id = a.id
-	JOIN Transactions_%d_ tx on tl.txn_id = tx.id
+SELECT 
+	tx.title, 
+	tx.id as txn_id, 
+	a.name as account_name, 
+	a.acc_type,  
+	tl.debit_amount, 
+	tl.credit_amount, 
+	SUM( tl.debit_amount) OVER (PARTITION BY tl.account_id) as total_debit, 
+	SUM(tl.credit_amount) OVER (PARTITION BY tl.account_id) as total_credit, 
+	tl.account_id
+FROM z_%d_Accounts a
+	JOIN z_%d_TransactionLines tl ON tl.account_id = a.id
+	JOIN z_%d_Transactions tx on tl.txn_id = tx.id
 WHERE
 	a.is_deleted = FALSE AND
 	tx.is_deleted = FALSE		
@@ -434,9 +443,9 @@ SELECT
 	a.acc_type,
 	SUM( tl.debit_amount) as  total_debit,
 	SUM(tl.credit_amount) as total_credit
-FROM TransactionLines_%d_ tl
-INNER JOIN Accounts_%d_ a ON tl.account_id = a.id
-INNER JOIN Transactions_%d_ t ON tl.txn_id = t.id
+FROM z_%d_TransactionLines tl
+INNER JOIN z_%d_Accounts a ON tl.account_id = a.id
+INNER JOIN z_%d_Transactions t ON tl.txn_id = t.id
 WHERE 
 	t.is_deleted = FALSE AND
 	a.is_deleted = FALSE 
@@ -977,66 +986,66 @@ func (b *BookModule) dbOpsContactDelete(pid, uid, id int64) error {
 // utils
 
 func (b *BookModule) txnTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("Transactions_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_Transactions", pid))
 }
 
 func (b *BookModule) accountsTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("Accounts_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_Accounts", pid))
 }
 
 func (b *BookModule) txnLineTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("TransactionLines_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_TransactionLines", pid))
 }
 
 func (b *BookModule) catagoryTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("Catagories_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_Catagories", pid))
 }
 
 func (b *BookModule) productTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("Products_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_Products", pid))
 }
 
 func (b *BookModule) productStockInTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("ProductStockIn_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_ProductStockIn", pid))
 }
 
 func (b *BookModule) productStockInLineTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("ProductStockInLines_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_ProductStockInLines", pid))
 }
 
 func (b *BookModule) contactTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("Contacts_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_Contacts", pid))
 }
 
 /*
 func (b *BookModule) salesTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("Sales_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_Sales", pid))
 }
 
 func (b *BookModule) salesLineTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("SalesLines_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_SalesLines", pid))
 }
 
 func (b *BookModule) invoiceTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("Invoices_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_Invoices", pid))
 }
 
 func (b *BookModule) invoiceLineTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("InvoiceLines_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_InvoiceLines", pid))
 }
 
 func (b *BookModule) estimateTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("Estimates_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_Estimates", pid))
 }
 
 func (b *BookModule) estimateLineTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("EstimateLines_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_EstimateLines", pid))
 }
 
 */
 
 func (b *BookModule) taxTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("Tax_%d_", pid))
+	return b.db.Table(fmt.Sprintf("z_%d_Tax", pid))
 }
 
 func (b *BookModule) userHasScope(pid, uid int64, scope string) error {

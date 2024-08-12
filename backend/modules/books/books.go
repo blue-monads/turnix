@@ -22,7 +22,7 @@ type BookModule struct {
 
 func (b *BookModule) Init(pid int64) error {
 
-	parameterizedSchema := strings.ReplaceAll(Schema, "__project__", fmt.Sprintf("_%d_", pid))
+	parameterizedSchema := strings.ReplaceAll(Schema, "__project__", fmt.Sprintf("z_%d_", pid))
 
 	pp.Println("@parameterizedSchema")
 	fmt.Println(parameterizedSchema)
