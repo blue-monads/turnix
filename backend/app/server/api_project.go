@@ -6,82 +6,25 @@ import (
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/models"
 	"github.com/gin-gonic/gin"
-	"github.com/k0kubun/pp"
 )
 
 func (a *Server) ListProjectTypes(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
-
-	pdefs := make([]models.ProjectTypes, 0)
-
-	for _, pdef := range a.projects {
-		pdefs = append(pdefs, models.ProjectTypes{
-			Name:       pdef.Name,
-			Ptype:      pdef.Slug,
-			Icon:       pdef.Icon,
-			Info:       pdef.Info,
-			IsExternal: pdef.AssetData != nil,
-			EventTypes: pdef.EventTypes,
-		})
-
-	}
-
-	return pdefs, nil
+	return a.cProject.ListProjectTypes()
 }
 
 func (a *Server) GetProjectType(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
-	for _, pdef := range a.projects {
-
-		if pdef.Slug == ctx.Param("ptype") {
-			return &models.ProjectTypes{
-				Name:       pdef.Name,
-				Ptype:      pdef.Slug,
-				Slug:       pdef.Slug,
-				Info:       pdef.Info,
-				Icon:       pdef.Icon,
-				IsExternal: pdef.AssetData != nil,
-				EventTypes: pdef.EventTypes,
-			}, nil
-		}
-
-	}
-
-	return nil, nil
+	return a.cProject.GetProjectType(ctx.Param("ptype"))
 }
 
 func (a *Server) GetProjectTypeForm(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
-	for _, pdef := range a.projects {
-
-		if pdef.Slug == ctx.Param("ptype") {
-			return pdef.NewFormSchemaFields, nil
-		}
-
-	}
-
-	return nil, nil
+	return a.cProject.GetProjectTypeForm(ctx.Param("ptype"))
 }
 
 func (a *Server) listProjects(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
-	ptype := ctx.Query("ptype")
-
-	ownpjs, err := a.db.ListOwnProjects(claim.UserId, ptype)
-	if err != nil {
-		return nil, err
-	}
-
-	pp.Println("@own_projects", ownpjs)
-
-	tprojs, err := a.db.ListThirdPartyProjects(claim.UserId, ptype)
-	if err != nil {
-		return nil, err
-	}
-	pp.Println("@thirdparty_projects", tprojs)
-
-	tprojs = append(tprojs, ownpjs...)
-
-	return tprojs, nil
+	return a.cProject.ListProjects(claim.UserId, ctx.Query("ptype"))
 
 }
 
@@ -94,26 +37,7 @@ func (a *Server) addProject(claim *signer.AccessClaim, ctx *gin.Context) (any, e
 
 	data.OwnerID = (claim.UserId)
 
-	return a.Addproject(&data)
-}
-
-func (a *Server) Addproject(data *models.Project) (any, error) {
-
-	id, err := a.db.AddProject(data)
-	if err != nil {
-		return nil, err
-	}
-
-	ptype := a.projects[data.Ptype]
-
-	if ptype.OnInit != nil {
-		err = ptype.OnInit(id)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return id, nil
+	return a.cProject.AddProject(claim.UserId, &data)
 }
 
 func (a *Server) removeProject(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
@@ -123,8 +47,9 @@ func (a *Server) removeProject(claim *signer.AccessClaim, ctx *gin.Context) (any
 		return nil, err
 	}
 
-	err = a.db.RemoveProject(id, claim.UserId)
+	err = a.cProject.RemoveProject(claim.UserId, id)
 	return nil, err
+
 }
 
 func (a *Server) updateProject(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
@@ -140,8 +65,7 @@ func (a *Server) updateProject(claim *signer.AccessClaim, ctx *gin.Context) (any
 		return nil, err
 	}
 
-	err = a.db.UpdateProject(id, claim.UserId, data)
-
+	err = a.cProject.UpdateProject(claim.UserId, id, data)
 	return nil, err
 
 }
@@ -152,7 +76,7 @@ func (a *Server) getProject(claim *signer.AccessClaim, ctx *gin.Context) (any, e
 		return nil, err
 	}
 
-	return a.db.GetProjectByOwner(id, claim.UserId)
+	return a.cProject.GetProject(claim.UserId, id)
 }
 
 func (a *Server) inviteUserToPoject(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
@@ -170,7 +94,7 @@ func (a *Server) listProjectHooks(claim *signer.AccessClaim, ctx *gin.Context) (
 
 	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 
-	return a.db.ListProjectHooksByUser(claim.UserId, pid)
+	return a.cProject.ListProjectHooks(claim.UserId, pid)
 }
 
 func (a *Server) addProjectHook(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
@@ -182,7 +106,7 @@ func (a *Server) addProjectHook(claim *signer.AccessClaim, ctx *gin.Context) (an
 		return nil, err
 	}
 
-	return a.db.AddProjectHook(claim.UserId, pid, data)
+	return a.cProject.AddProjectHook(claim.UserId, pid, data)
 }
 
 func (a *Server) removeProjectHook(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
@@ -190,7 +114,7 @@ func (a *Server) removeProjectHook(claim *signer.AccessClaim, ctx *gin.Context) 
 	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
 
-	err := a.db.RemoveProjectHook(claim.UserId, pid, id)
+	err := a.cProject.RemoveProjectHook(claim.UserId, pid, id)
 	return nil, err
 
 }
@@ -206,7 +130,7 @@ func (a *Server) updateProjectHook(claim *signer.AccessClaim, ctx *gin.Context) 
 		return nil, err
 	}
 
-	err = a.db.UpdateProjectHook(claim.UserId, pid, id, data)
+	err = a.cProject.UpdateProjectHook(claim.UserId, pid, id, data)
 
 	return nil, err
 
@@ -217,6 +141,6 @@ func (a *Server) getProjectHook(claim *signer.AccessClaim, ctx *gin.Context) (an
 	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
 
-	return a.db.GetProjectHook(claim.UserId, pid, id)
+	return a.cProject.GetProjectHook(claim.UserId, pid, id)
 
 }

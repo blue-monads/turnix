@@ -4,7 +4,9 @@ import (
 	"os"
 
 	"github.com/bornjre/turnix/backend/controller"
+	"github.com/bornjre/turnix/backend/controller/auth"
 	"github.com/bornjre/turnix/backend/controller/project"
+	"github.com/bornjre/turnix/backend/controller/self"
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
@@ -20,7 +22,12 @@ type Server struct {
 	globalJS   []byte
 	projects   map[string]*xproject.Defination
 	rootLogger zerolog.Logger
-	controller *controller.RootController
+
+	// controllers
+
+	cAuth    *auth.AuthController
+	cProject *project.ProjectController
+	cSelf    *self.SelfController
 }
 
 type Options struct {
@@ -49,7 +56,9 @@ func New(opts Options) *Server {
 		rootLogger: zerolog.New(os.Stdout).With().Str("service", "server").Logger(),
 		projects:   opts.ProjectBuilders,
 		globalJS:   out,
-		controller: opts.Controller,
+		cAuth:      opts.Controller.GetAuthController(),
+		cProject:   opts.Controller.GetProjectController(),
+		cSelf:      opts.Controller.GetSelfController(),
 	}
 }
 
