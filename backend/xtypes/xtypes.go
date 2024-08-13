@@ -18,7 +18,8 @@ type App interface {
 	GetDatabase() xdatabase.Database
 	GetSockd() xsockd.Sockd
 
-	GetEventBus() xbus.EventBus
+	GetController() any
+	GetServer() any
 
-	NewId() int64
+	GetEventBus() xbus.EventBus
 }

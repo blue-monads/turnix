@@ -4,13 +4,15 @@ import (
 	"log"
 	"os"
 
+	"github.com/bornjre/turnix/backend/app/server"
+	"github.com/bornjre/turnix/backend/controller"
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
+	"github.com/bornjre/turnix/backend/xtypes"
 	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
 	"github.com/bornjre/turnix/backend/xtypes/services/xsockd"
 	"github.com/bornjre/turnix/backend/xtypes/xbus"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
-	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 	"github.com/rs/zerolog"
@@ -19,10 +21,10 @@ import (
 type App struct {
 	db         *database.DB
 	signer     *signer.Signer
-	flakeNode  *snowflake.Node
-	globalJS   []byte
 	projects   map[string]*xproject.Defination
 	rootLogger zerolog.Logger
+	controller *controller.RootController
+	server     *server.Server
 }
 
 type Options struct {
@@ -33,26 +35,13 @@ type Options struct {
 
 func New(opts Options) *App {
 
-	node, err := snowflake.NewNode(0)
-	if err != nil {
-		panic(err)
-	}
-
-	// out, err := buildGlobalJS(opts.ProjectTypes)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
 	rootLogger := zerolog.New(os.Stdout)
 
 	app := &App{
-		db:        opts.DB,
-		signer:    opts.Signer,
-		flakeNode: node,
-		//		globalJS:   out,
+		db:         opts.DB,
+		signer:     opts.Signer,
 		rootLogger: rootLogger,
 		projects:   make(map[string]*xproject.Defination),
-		// 		hookEngine: hookengine.New(opts.DB, opts.Signer, rootLogger.With().Str("service", "engine").Logger()),
 	}
 
 	for pbName, pBuilder := range opts.ProjectBuilders {
@@ -72,21 +61,20 @@ func New(opts Options) *App {
 
 	}
 
+	app.controller = controller.New(app.db, app.projects)
+
+	app.server = server.New(server.Options{
+		DB:              app.db,
+		Signer:          app.signer,
+		ProjectBuilders: app.projects,
+		Controller:      app.controller,
+	})
+
 	return app
 }
 
 func (a *App) Start(port string) error {
-
-	r := gin.Default()
-
-	a.bindRoutes(r)
-
-	// err := a.hookEngine.Init()
-	// if err != nil {
-	// 	return err
-	// }
-
-	return r.Run(port)
+	return a.server.Start(port)
 }
 
 func (a *App) Stop() error {
@@ -105,6 +93,14 @@ func (a *App) GetSockd() xsockd.Sockd {
 	return nil
 }
 
-func (a *App) NewId() int64 {
-	return a.flakeNode.Generate().Int64()
+func (a *App) GetController() any {
+	return a.controller
+}
+
+func (a *App) GetServer() any {
+	return a.server
+}
+
+func (a *App) AuthMiddleware(fn xtypes.ApiHandler) gin.HandlerFunc {
+	return a.server.AuthMiddleware(fn)
 }

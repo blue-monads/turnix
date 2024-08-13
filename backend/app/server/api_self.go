@@ -1,4 +1,4 @@
-package app
+package server
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (a *App) selfInfo(claim *signer.AccessClaim, _ *gin.Context) (any, error) {
+func (a *Server) selfInfo(claim *signer.AccessClaim, _ *gin.Context) (any, error) {
 
 	usr, err := a.db.GetUser(claim.UserId)
 	if err != nil {
@@ -29,7 +29,7 @@ type changePasswordRequest struct {
 
 var errIncorrectOldPassword = errors.New("err invalid old password")
 
-func (a *App) selfChangePassword(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *Server) selfChangePassword(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	data := &changePasswordRequest{}
 	err := ctx.Bind(data)
@@ -49,11 +49,11 @@ func (a *App) selfChangePassword(claim *signer.AccessClaim, ctx *gin.Context) (a
 	return httpx.MessageOk, nil
 }
 
-func (a *App) selfUsers(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *Server) selfUsers(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 	return a.db.ListUserByOwner(claim.UserId)
 }
 
-func (a *App) selfAddUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *Server) selfAddUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	data := &models.User{}
 
@@ -69,7 +69,7 @@ func (a *App) selfAddUser(claim *signer.AccessClaim, ctx *gin.Context) (any, err
 
 var errNotAllowed = errors.New("err Not Allowed")
 
-func (a *App) selfGetUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *Server) selfGetUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	usr, err := a.db.GetUser(claim.UserId)
 	if err != nil {
@@ -85,7 +85,7 @@ func (a *App) selfGetUser(claim *signer.AccessClaim, ctx *gin.Context) (any, err
 	return usr, nil
 }
 
-func (a *App) selfUpdateUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *Server) selfUpdateUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	data := make(map[string]any)
 	ctx.Bind(&data)
@@ -114,7 +114,7 @@ func (a *App) selfUpdateUser(claim *signer.AccessClaim, ctx *gin.Context) (any, 
 	return httpx.MessageOk, nil
 }
 
-func (a *App) selfDeleteUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *Server) selfDeleteUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	uid, err := strconv.ParseInt(ctx.Param("uid"), 10, 64)
 	if err != nil {

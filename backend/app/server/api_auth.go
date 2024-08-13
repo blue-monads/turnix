@@ -1,4 +1,4 @@
-package app
+package server
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 	"github.com/bornjre/turnix/backend/services/signer"
 )
 
-func (a *App) signUpDirect(ctx *gin.Context) {
+func (a *Server) signUpDirect(ctx *gin.Context) {
 
 	data := &models.User{}
 	err := ctx.BindJSON(data)
@@ -52,7 +52,7 @@ func (a *App) signUpDirect(ctx *gin.Context) {
 
 }
 
-func (a *App) signUpInvite(ctx *gin.Context) {
+func (a *Server) signUpInvite(ctx *gin.Context) {
 
 	claim, err := a.withAccess(ctx)
 	if err != nil {
@@ -68,7 +68,7 @@ type loginDetails struct {
 	Password string `db:"password"`
 }
 
-func (a *App) login(ctx *gin.Context) {
+func (a *Server) login(ctx *gin.Context) {
 	data := &loginDetails{}
 	err := ctx.Bind(data)
 	if err != nil {
@@ -104,7 +104,7 @@ func (a *App) login(ctx *gin.Context) {
 
 }
 
-func (a *App) accessMiddleware(fn func(claim *signer.AccessClaim, ctx *gin.Context) (any, error)) func(ctx *gin.Context) {
+func (a *Server) accessMiddleware(fn func(claim *signer.AccessClaim, ctx *gin.Context) (any, error)) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 
 		claim, err := a.withAccess(ctx)
@@ -118,7 +118,7 @@ func (a *App) accessMiddleware(fn func(claim *signer.AccessClaim, ctx *gin.Conte
 
 }
 
-func (a *App) withAccess(ctx *gin.Context) (*signer.AccessClaim, error) {
+func (a *Server) withAccess(ctx *gin.Context) (*signer.AccessClaim, error) {
 
 	tok := ctx.GetHeader("Authorization")
 	claim, err := a.signer.ParseAccess(tok)

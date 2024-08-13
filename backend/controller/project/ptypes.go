@@ -1,4 +1,4 @@
-package app
+package project
 
 import (
 	"bytes"
@@ -9,7 +9,7 @@ import (
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
 )
 
-func buildGlobalJS(projTypes []*xproject.Defination) ([]byte, error) {
+func BuildGlobalJS(projTypes map[string]*xproject.Defination) ([]byte, error) {
 	data := make([]models.ProjectTypes, 0)
 	var buf bytes.Buffer
 

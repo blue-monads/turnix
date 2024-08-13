@@ -1,12 +1,13 @@
-package app
+package server
 
 import (
 	"github.com/bornjre/turnix/backend/utils/libx/httpx"
 	"github.com/bornjre/turnix/backend/xtypes"
+
 	"github.com/gin-gonic/gin"
 )
 
-func (a *App) AuthMiddleware(fn xtypes.ApiHandler) gin.HandlerFunc {
+func (a *Server) AuthMiddleware(fn xtypes.ApiHandler) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		claim, err := a.withAccess(ctx)

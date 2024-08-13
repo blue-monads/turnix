@@ -1,4 +1,4 @@
-package app
+package server
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ import (
 	"github.com/k0kubun/pp"
 )
 
-func (a *App) bindRoutes(e *gin.Engine) {
+func (a *Server) bindRoutes(e *gin.Engine) {
 
 	root := e.Group("/z")
 
@@ -59,7 +59,7 @@ func (a *App) bindRoutes(e *gin.Engine) {
 
 }
 
-func (a *App) apiRoutes(root *gin.RouterGroup) {
+func (a *Server) apiRoutes(root *gin.RouterGroup) {
 
 	apiv1 := root.Group("/api/v1")
 
@@ -104,7 +104,7 @@ func (a *App) apiRoutes(root *gin.RouterGroup) {
 
 }
 
-func (a *App) noRoute(ctx *gin.Context) {
+func (s *Server) noRoute(ctx *gin.Context) {
 
 	if strings.HasPrefix(ctx.Request.URL.Path, "/z/") {
 		pparts := strings.Split(ctx.Request.URL.Path, "/")
@@ -124,7 +124,7 @@ func (a *App) noRoute(ctx *gin.Context) {
 }
 
 // during dev we just proxy to dev vite server running otherwise serve files from build folder
-func (s *App) pages(z *gin.RouterGroup) {
+func (s *Server) pages(z *gin.RouterGroup) {
 	rfunc := s.pagesRoutes()
 
 	z.GET("/pages", rfunc)
@@ -134,7 +134,7 @@ func (s *App) pages(z *gin.RouterGroup) {
 
 const NoPreBuildFiles = false
 
-func (s *App) pagesRoutes() gin.HandlerFunc {
+func (s *Server) pagesRoutes() gin.HandlerFunc {
 	var proxy *httputil.ReverseProxy
 	pserver := os.Getenv("FRONTEND_DEV_SERVER")
 
@@ -185,7 +185,7 @@ var pingResponse = []byte(`{ "message": "pong" }`)
 
 const JsonContentType = "application/json"
 
-func (a *App) ping(ctx *gin.Context) {
+func (a *Server) ping(ctx *gin.Context) {
 	ctx.Writer.WriteHeader(200)
 	ctx.Data(http.StatusOK, JsonContentType, pingResponse)
 }
