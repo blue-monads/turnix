@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS Users (
   id INTEGER PRIMARY KEY, 
   name TEXT NOT NULL, 
-  utype TEXT NOT NULL DEFAULT 'real',  -- real, device
+  utype TEXT NOT NULL DEFAULT 'real',  -- super, real, device
   email TEXT, 
   phone TEXT NOT NULL DEFAULT '', 
   bio TEXT NOT NULL DEFAULT '', 
