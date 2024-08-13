@@ -7,12 +7,12 @@ import (
 )
 
 var (
-	registeredProjects = []*xproject.Defination{}
+	registeredProjects = map[string]xproject.Builder{}
 	rmutex             = sync.Mutex{}
 	initFinished       = false
 )
 
-func Register(projdef *xproject.Defination) {
+func Register(name string, builder xproject.Builder) {
 	rmutex.Lock()
 	defer rmutex.Unlock()
 
@@ -20,12 +20,11 @@ func Register(projdef *xproject.Defination) {
 		panic("Registered Projects are already being initilized, too late to register")
 
 	}
-
-	registeredProjects = append(registeredProjects, projdef)
+	registeredProjects[name] = builder
 
 }
 
-func GetAll() []*xproject.Defination {
+func GetAll() map[string]xproject.Builder {
 	rmutex.Lock()
 	defer rmutex.Unlock()
 	initFinished = true

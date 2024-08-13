@@ -1,7 +1,6 @@
 package unloop
 
 import (
-	"github.com/bornjre/turnix/backend/registry"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
 )
 
@@ -19,8 +18,4 @@ var def = &xproject.Defination{
 		},
 	},
 	EventTypes: []string{"on_splat"},
-}
-
-func init() {
-	registry.Register(def)
 }

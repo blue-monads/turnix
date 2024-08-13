@@ -1,6 +1,7 @@
 package app
 
 import (
+	"log"
 	"os"
 
 	"github.com/bornjre/turnix/backend/services/database"
@@ -11,6 +12,7 @@ import (
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
 	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
+	"github.com/k0kubun/pp"
 	"github.com/rs/zerolog"
 )
 
@@ -19,21 +21,14 @@ type App struct {
 	signer     *signer.Signer
 	flakeNode  *snowflake.Node
 	globalJS   []byte
-	ptypeDefs  []*xproject.Defination
-	projects   map[string]ProjectInstance
+	projects   map[string]*xproject.Defination
 	rootLogger zerolog.Logger
 }
 
-type ProjectInstance struct {
-	Project xproject.ProjectType
-	Def     *xproject.Defination
-}
-
 type Options struct {
-	DB     *database.DB
-	Signer *signer.Signer
-
-	ProjectTypes []*xproject.Defination
+	DB              *database.DB
+	Signer          *signer.Signer
+	ProjectBuilders map[string]xproject.Builder
 }
 
 func New(opts Options) *App {
@@ -43,23 +38,41 @@ func New(opts Options) *App {
 		panic(err)
 	}
 
-	out, err := buildGlobalJS(opts.ProjectTypes)
-	if err != nil {
-		panic(err)
-	}
+	// out, err := buildGlobalJS(opts.ProjectTypes)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	rootLogger := zerolog.New(os.Stdout)
 
-	return &App{
-		db:         opts.DB,
-		signer:     opts.Signer,
-		flakeNode:  node,
-		globalJS:   out,
-		ptypeDefs:  opts.ProjectTypes,
+	app := &App{
+		db:        opts.DB,
+		signer:    opts.Signer,
+		flakeNode: node,
+		//		globalJS:   out,
 		rootLogger: rootLogger,
-		projects:   make(map[string]ProjectInstance),
+		projects:   make(map[string]*xproject.Defination),
 		// 		hookEngine: hookengine.New(opts.DB, opts.Signer, rootLogger.With().Str("service", "engine").Logger()),
 	}
+
+	for pbName, pBuilder := range opts.ProjectBuilders {
+		pp.Println("@buinding_ptype", pbName)
+
+		subLogger := rootLogger.With().Str("ptype", pbName).Logger()
+
+		proj, err := pBuilder(xproject.BuilderOption{
+			App:    app,
+			Logger: subLogger,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		app.projects[pbName] = proj
+
+	}
+
+	return app
 }
 
 func (a *App) Start(port string) error {

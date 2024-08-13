@@ -7,7 +7,8 @@ import (
 
 	"github.com/bornjre/turnix/backend/distro"
 	_ "github.com/bornjre/turnix/backend/modules/books"
-	_ "github.com/bornjre/turnix/backend/modules/tracker"
+
+	// _ "github.com/bornjre/turnix/backend/modules/tracker"
 	_ "github.com/bornjre/turnix/backend/modules/unloop"
 )
 

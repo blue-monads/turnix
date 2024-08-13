@@ -13,7 +13,7 @@ func (a *App) ListProjectTypes(claim *signer.AccessClaim, ctx *gin.Context) (any
 
 	pdefs := make([]models.ProjectTypes, 0)
 
-	for _, pdef := range a.ptypeDefs {
+	for _, pdef := range a.projects {
 		pdefs = append(pdefs, models.ProjectTypes{
 			Name:       pdef.Name,
 			Ptype:      pdef.Slug,
@@ -30,7 +30,7 @@ func (a *App) ListProjectTypes(claim *signer.AccessClaim, ctx *gin.Context) (any
 
 func (a *App) GetProjectType(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
-	for _, pdef := range a.ptypeDefs {
+	for _, pdef := range a.projects {
 
 		if pdef.Slug == ctx.Param("ptype") {
 			return &models.ProjectTypes{
@@ -51,7 +51,7 @@ func (a *App) GetProjectType(claim *signer.AccessClaim, ctx *gin.Context) (any, 
 
 func (a *App) GetProjectTypeForm(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
-	for _, pdef := range a.ptypeDefs {
+	for _, pdef := range a.projects {
 
 		if pdef.Slug == ctx.Param("ptype") {
 			return pdef.NewFormSchemaFields, nil
@@ -106,9 +106,11 @@ func (a *App) Addproject(data *models.Project) (any, error) {
 
 	ptype := a.projects[data.Ptype]
 
-	err = ptype.Project.Init(id)
-	if err != nil {
-		return nil, err
+	if ptype.OnInit != nil {
+		err = ptype.OnInit(id)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return id, nil

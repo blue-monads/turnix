@@ -37,9 +37,9 @@ func NewAppWithOptions(opts Options) (*DistroApp, error) {
 	signer := signer.New([]byte(opts.MasterSecret))
 
 	as := app.New(app.Options{
-		DB:           db,
-		Signer:       signer,
-		ProjectTypes: registry.GetAll(),
+		DB:              db,
+		Signer:          signer,
+		ProjectBuilders: registry.GetAll(),
 	})
 
 	return &DistroApp{

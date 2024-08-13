@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -11,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/bornjre/turnix/backend/utils/libx/httpx"
-	"github.com/bornjre/turnix/backend/xtypes/xproject"
 	"github.com/bornjre/turnix/frontend"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
@@ -35,29 +33,12 @@ func (a *App) bindRoutes(e *gin.Engine) {
 
 	projectRoute := e.Group("/z/project")
 
-	for _, pdef := range a.ptypeDefs {
-		subLogger := a.rootLogger.With().Str("ptype", pdef.Slug).Logger()
-
-		pp.Println("@mounting_ptype", pdef.Slug)
-
-		if pdef.Builder == nil {
+	for _, instance := range a.projects {
+		if instance.OnAPIMount == nil {
 			continue
 		}
 
-		proj, err := pdef.Builder(xproject.BuilderOption{
-			App:         a,
-			Logger:      subLogger,
-			RouterGroup: projectRoute.Group(fmt.Sprintf("/%s", pdef.Slug)),
-		})
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		a.projects[pdef.Slug] = ProjectInstance{
-			Project: proj,
-			Def:     pdef,
-		}
-
+		instance.OnAPIMount(projectRoute.Group(fmt.Sprintf("/%s", instance.Slug)))
 	}
 
 	e.NoRoute(a.noRoute)
@@ -65,12 +46,12 @@ func (a *App) bindRoutes(e *gin.Engine) {
 	root.Any("/projects/:ptype", func(ctx *gin.Context) {
 		instance := a.projects[ctx.Param("ptype")]
 
-		if instance.Def == nil || instance.Def.OnProjectRequest == nil {
+		if instance.OnProjectRequest == nil {
 			ctx.AbortWithStatus(http.StatusNotFound)
 			return
 		}
 
-		instance.Def.OnProjectRequest(ctx)
+		instance.OnProjectRequest(ctx)
 
 	})
 

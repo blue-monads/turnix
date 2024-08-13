@@ -13,11 +13,9 @@ type BuilderOption struct {
 	App xtypes.App
 
 	Logger zerolog.Logger
-
-	RouterGroup *gin.RouterGroup
 }
 
-type Builder func(opt BuilderOption) (ProjectType, error)
+type Builder func(opt BuilderOption) (*Defination, error)
 
 type Defination struct {
 	Name                string
@@ -28,13 +26,16 @@ type Defination struct {
 	NewFormSchemaFields []PTypeField
 	Perminssions        []string
 	EventTypes          []string
-	Builder             Builder
 	GlobalJS            []byte
 	AssetData           fs.FS
 
+	OnAPIMount       func(RouterGroup *gin.RouterGroup)
 	OnPageRequest    func(ctx *gin.Context)
 	OnProjectRequest func(ctx *gin.Context)
 	OnFileRequest    func(ctx *gin.Context)
+	OnInit           func(pid int64) error
+	IsInitilized     func(pid int64) (bool, error)
+	OnDeInit         func(pid int64) error
 }
 
 type PTypeField struct {
@@ -44,12 +45,4 @@ type PTypeField struct {
 	Disabled   bool     `json:"disabled"`
 	Options    []string `json:"options"`
 	IsRequired bool     `json:"is_required"`
-}
-
-type ProjectType interface {
-	Init(pid int64) error
-
-	IsInitilized(pid int64) (bool, error)
-
-	DeInit(pid int64) error
 }
