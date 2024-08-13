@@ -7,7 +7,11 @@
     import { goto } from "$app/navigation";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import type { SaleLine } from "./sub/sales";
-    import { getModalStore } from "@skeletonlabs/skeleton";
+    import {
+        getModalStore,
+        RadioGroup,
+        RadioItem,
+    } from "@skeletonlabs/skeleton";
 
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
@@ -46,10 +50,9 @@
         return acc;
     }, {});
 
-    const submit = async () => {
-        
+    const submit = async () => {};
 
-    };
+    let mode = "invoice";
 </script>
 
 {#if loadingContacts}
@@ -57,8 +60,22 @@
 {:else}
     <form class="p-2" on:submit|preventDefault={submit}>
         <div class="card">
-            <header class="card-header">
+            <header class="card-header flex justify-between">
                 <h3 class="h3">New Sale</h3>
+                <div class="w-64">
+                    <RadioGroup>
+                        <RadioItem
+                            bind:group={mode}
+                            name="justify"
+                            value={"direct_sale"}>Direct Sale</RadioItem
+                        >
+                        <RadioItem
+                            bind:group={mode}
+                            name="justify"
+                            value={"invoice"}>Invoice</RadioItem
+                        >
+                    </RadioGroup>
+                </div>
             </header>
 
             <section class="p-4 flex flex-col gap-4">
@@ -108,16 +125,6 @@
                         />
                     </label>
                 </div>
-
-                <label class="label flex flex-col gap-2">
-                    <span>Title</span>
-                    <input
-                        bind:value={name}
-                        class="input p-1 w-36"
-                        type="text"
-                        placeholder="Input"
-                    />
-                </label>
 
                 <div class="max-h-96 overflow-auto">
                     <table
@@ -249,12 +256,8 @@
                 </div>
             </section>
             <footer class="card-footer flex justify-end">
-                <button  
-                    class="btn variant-filled"
-                    on:click={submit}
-                    
-                    > 
-                    save 
+                <button class="btn variant-filled" on:click={submit}>
+                    save
                 </button>
             </footer>
         </div>
