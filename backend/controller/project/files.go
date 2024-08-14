@@ -2,6 +2,7 @@ package project
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/bornjre/turnix/backend/services/database"
 )
@@ -12,14 +13,17 @@ func (a *ProjectController) ListProjectFiles(userId int64, pid int64) ([]databas
 
 func (a *ProjectController) AddProjectFile(userId int64, pid int64, name string, data []byte) (int64, error) {
 
+	now := time.Now()
+
 	file := &database.File{
 		Name:      name,
-		Path:      name,
+		Path:      "",
 		OwnerUser: userId,
 		OwnerProj: pid,
 		FType:     "project",
 		IsPublic:  false,
 		Size:      int64(len(data)),
+		CreatedAt: &now,
 	}
 
 	return a.db.AddFile(file, data)

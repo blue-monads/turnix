@@ -16,11 +16,39 @@ type File struct {
 	Size      int64      `db:"size"`
 	Mime      string     `db:"mime"`
 	Hash      string     `db:"hash"`
+	IsFolder  bool       `db:"is_folder"`
 	External  bool       `db:"external"`
 	IsPublic  bool       `db:"is_public"`
 	OwnerUser int64      `db:"owner_user_id"`
 	OwnerProj int64      `db:"owner_project_id"`
 	CreatedAt *time.Time `db:"created_at"`
+}
+
+func (d *DB) AddFolder(pid, uid int64, ftype, path, name string) (int64, error) {
+	table := d.filesTable()
+
+	t := time.Now()
+
+	file := &File{
+		Name:      name,
+		Path:      path,
+		OwnerUser: uid,
+		OwnerProj: pid,
+		FType:     ftype,
+		IsPublic:  false,
+		Size:      0,
+		CreatedAt: &t,
+		IsFolder:  true,
+	}
+
+	rid, err := table.Insert(file)
+	if err != nil {
+		return 0, err
+	}
+
+	id := rid.ID().(int64)
+
+	return id, nil
 }
 
 func (d *DB) AddFile(file *File, data []byte) (id int64, err error) {
@@ -41,7 +69,7 @@ func (d *DB) AddFile(file *File, data []byte) (id int64, err error) {
 	if !d.externalFileMode {
 		_, err = d.sess.SQL().
 			InsertInto("Files").
-			Columns("data").
+			Columns("blob").
 			Values(data).
 			Exec()
 
@@ -64,7 +92,7 @@ func (d *DB) ListFilesByProject(pid int64, path string) ([]File, error) {
 	cond := db.Cond{
 		"ftype":            "project",
 		"owner_project_id": pid,
-		"path LIKE":        fmt.Sprintf("%s%%", path),
+		"path":             path,
 	}
 
 	files := make([]File, 0)
@@ -83,7 +111,7 @@ func (d *DB) ListFilesByUser(uid int64, path string) ([]File, error) {
 	cond := db.Cond{
 		"ftype":         "user",
 		"owner_user_id": uid,
-		"path LIKE":     fmt.Sprintf("%s%%", path),
+		"path":          path,
 	}
 
 	files := make([]File, 0)
