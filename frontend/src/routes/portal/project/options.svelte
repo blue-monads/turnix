@@ -25,6 +25,8 @@
   load();
 
   let message = "";
+
+  const data = $modalStore[0].meta['data'];
 </script>
 
 {#if loading}
@@ -46,20 +48,21 @@
         on:click={() => {
           modalStore.close();
         }}
-        href="/z/pages/portal/projects/{$modalStore[0].meta['data'][
+        href="/z/pages/portal/projects/{[
           'ptype'
-        ]}?pid={$modalStore[0].meta['data']['id']}"
+        ]}?pid={data['id']}"
       >
         <SvgIcon name="document-text" className="w-6 h-6" />
         <span>Project Home</span>
       </a>
-
       <a
         class="logo-item"
         on:click={() => {
           modalStore.close();
         }}
-        href="/z/pages/portal/hooks"
+
+
+        href={`/z/pages/portal/project/files/${data['id']}`}
       >
         <SvgIcon name="folder" className="w-6 h-6" />
         <span>Project Files</span>
@@ -70,7 +73,7 @@
         on:click={() => {
           modalStore.close();
         }}
-        href={`/z/pages/portal/hooks?ptype=${$modalStore[0].meta['data']['ptype']}&pid=${$modalStore[0].meta['data']['id']}`}
+        href={`/z/pages/portal/hooks?ptype=${data['ptype']}&pid=${data['id']}`}
       >
         <SvgIcon name="code-bracket-square" className="w-6 h-6" />
         <span>Project Hooks</span>
