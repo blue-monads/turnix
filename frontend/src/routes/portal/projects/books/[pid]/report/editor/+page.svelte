@@ -10,10 +10,15 @@
     import { sql, SQLite } from "@codemirror/lang-sql";
 
     import * as sampleCode from "./sampleCode";
+    import { samplePreview } from "./samplePreview";
 
     let tabSet: number = 0;
     let sqlCode = sampleCode.sqlCode;
-    let htmlCode = sampleCode.htmlCode;
+    let htmlCode = samplePreview;
+    let savedHtmlCode = "";
+
+
+
 </script>
 
 <AppBar>
@@ -29,6 +34,20 @@
             <li>Editor</li>
         </ol>
     </svelte:fragment>
+
+    <svelte:fragment slot="trail">
+        <button 
+            class="btn variant-filled btn-sm"
+            on:click={() => {
+                savedHtmlCode = htmlCode;   
+            }}
+            >
+            Run
+        </button>
+
+    </svelte:fragment>
+
+
 </AppBar>
 
 <div class=" flex flex-col md:flex-row w-full h-full max-h-[90vh]">
@@ -56,12 +75,12 @@
         </TabGroup>
     </div>
 
-    <div class="flex-1 w-full md:w-1/2 border border-slate-50 h-1/2 md:h-full">
+    <div class="flex-1 w-full md:w-1/2 border border-slate-50 h-1/2 md:h-full p-2">
         <h4 class="h4 p-1 uppercase">Preview</h4>
 
         <div class="card p-2 h-full w-full">
 
-            <iframe title="preview" srcdoc="<h1>Hello World</h1>" 
+            <iframe title="preview" srcdoc={savedHtmlCode} 
                 width="100%" height="100%">
             </iframe>
 
