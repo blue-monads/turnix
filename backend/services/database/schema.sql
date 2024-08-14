@@ -86,3 +86,20 @@ CREATE TABLE IF NOT EXISTS ProjectUsers (
   FOREIGN KEY (user_id) REFERENCES Users(id), 
   unique(project_id, user_id)
 );
+
+CREATE TABLE IF NOT EXISTS Files (
+  id INTEGER PRIMARY KEY, 
+  name TEXT NOT NULL DEFAULT '', 
+  ftype TEXT NOT NULL DEFAULT 'project', -- project, user
+  path TEXT NOT NULL DEFAULT '', 
+  size INTEGER NOT NULL DEFAULT 0, 
+  mime TEXT NOT NULL DEFAULT '', 
+  hash TEXT NOT NULL DEFAULT '', 
+  blob BLOB,
+  external BOOLEAN NOT NULL DEFAULT FALSE,
+  is_public BOOLEAN NOT NULL DEFAULT FALSE,
+  owner_user_id INTEGER NOT NULL DEFAULT 0,
+  owner_project_id INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (owner_user_id, owner_project_id, path, name)
+);
