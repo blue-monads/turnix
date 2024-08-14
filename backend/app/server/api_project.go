@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"io"
 	"strconv"
 
@@ -158,7 +159,11 @@ func (a *Server) listProjectFiles(claim *signer.AccessClaim, ctx *gin.Context) (
 func (a *Server) addProjectFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 
-	name := ctx.Param("name")
+	name := ctx.Query("name")
+
+	if name == "" {
+		return nil, fmt.Errorf("name is required")
+	}
 
 	data, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
