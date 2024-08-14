@@ -14,22 +14,30 @@ export const samplePreview = `
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
 <body>
+
+  <div class="container">
     <h1>Hello World</h1>
     <p>This is a sample preview</p>    
 
-
-<button class="btn btn-secondary" type="button">
-  <span class="icon icon-thumbs-up"></span>
-  Like
-</button>
-    
-<button class="btn btn-primary" type="button">
-        <span class="icon icon-thumbs-up"></span>
-        Liked!
+    <button class="btn btn-secondary" type="button">
+      <span class="icon icon-thumbs-up"></span>
+      Like
     </button>
+        
+    <button class="btn btn-primary" type="button">
+      <span class="icon icon-thumbs-up"></span>
+      Liked!
+    </button>
+    
+  </div>
+  
 
 </body>
 </html>
+
+
+
+
 
 
 
