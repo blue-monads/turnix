@@ -8,6 +8,9 @@
 
     import CodeMirror from "svelte-codemirror-editor";
     import { sql, SQLite } from "@codemirror/lang-sql";
+    import { html } from "@codemirror/lang-html";
+
+    import {} from "@codemirror/language";
 
     import * as sampleCode from "./sampleCode";
     import { samplePreview } from "./samplePreview";
@@ -69,7 +72,10 @@
                         })}
                     />
                 {:else if tabSet === 1}
-                    <CodeMirror bind:value={htmlCode} />
+                    <CodeMirror 
+                        bind:value={htmlCode} 
+                        lang={html()}
+                        />
                 {/if}
             </svelte:fragment>
         </TabGroup>
