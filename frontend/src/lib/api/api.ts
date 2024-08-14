@@ -28,6 +28,22 @@ export interface ProjectHook {
 }
 
 
+export interface File {
+    id: number;
+    name: string;
+    ftype: string;
+    path: string;
+    size: number;
+    mime: string;
+    hash: string;
+    external: boolean;
+    is_public: boolean;
+    owner_user_id: number;
+    owner_proj_id: number;
+    created_at: string;
+}
+
+
 
 export class RootAPI {
     client: AxiosInstance
@@ -129,6 +145,28 @@ export class RootAPI {
 
     removeProjectHook = (pid: string, id: string) => {
         return this.client.delete(`/project/${pid}/hook/${id}`)
+    }
+
+    // project files
+
+    listProjectFiles = (pid: string) => {
+        return this.client.get<File[]>(`/project/${pid}/files`)
+    }
+
+    addProjectFile = (pid: string, name: string, data: any) => {
+        return this.client.post(`/project/${pid}/files?name=${name}`, data, {
+            headers: {
+                "Content-Type": "application/octet-stream"
+            }
+        })
+    }
+
+    getProjectFile = (pid: string, id: string) => {
+        return this.client.get<File>(`/project/${pid}/files/${id}`)
+    }
+
+    deleteProjectFile = (pid: string, id: string) => {
+        return this.client.delete(`/project/${pid}/files/${id}`)
     }
 
 
