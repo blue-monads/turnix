@@ -38,6 +38,14 @@
 
   <svelte:fragment slot="trail">
     <a
+    href={`/z/pages/portal/projects/books/${pid}/report/editor`}
+    class="btn variant-filled-primary btn-sm"
+  >
+    <SvgIcon className="h-4 w-4" name="pencil-square" />
+
+    Editor 
+  </a>
+    <a
       href={`/z/pages/portal/projects/books/${pid}/report/live`}
       class="btn variant-filled btn-sm"
     >
@@ -54,6 +62,8 @@
 
       Saved Reports
     </a>
+
+    
 
     <a
       href={`/z/pages/portal/projects/books/${pid}/report/template`}
