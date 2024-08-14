@@ -5,7 +5,7 @@ import (
 	"github.com/upper/db/v4"
 )
 
-func (d *DB) dbOpsAddUserMessage(msg *models.User) (int64, error) {
+func (d *DB) AddUserMessage(msg *models.User) (int64, error) {
 	rid, err := d.userMessagesTable().Insert(msg)
 	if err != nil {
 		return 0, err
@@ -16,10 +16,9 @@ func (d *DB) dbOpsAddUserMessage(msg *models.User) (int64, error) {
 	return id, nil
 }
 
-func (d *DB) dbOpsUserMessageSetRead(user string, id int64) error {
+func (d *DB) UserMessageSetRead(user string, id int64) error {
 	return d.userMessagesTable().Find(
 		db.Cond{
-
 			"toUser": user,
 			"id":     id},
 	).Update(db.Cond{
@@ -27,11 +26,11 @@ func (d *DB) dbOpsUserMessageSetRead(user string, id int64) error {
 	})
 }
 
-func (d *DB) dbOpsRemoveUserMessage(userId string, id int64) error {
+func (d *DB) RemoveUserMessage(userId string, id int64) error {
 	return d.userMessagesTable().Find(db.Cond{"toUser": userId, "id": id}).Delete()
 }
 
-func (d *DB) dbOpsListUserMessages(uid, count, cursor int64) ([]models.UserMessage, error) {
+func (d *DB) ListUserMessages(uid, count, cursor int64) ([]models.UserMessage, error) {
 	messages := make([]models.UserMessage, 0)
 	cond := db.Cond{
 		"toUser": uid,
@@ -57,7 +56,7 @@ func (d *DB) dbOpsListUserMessages(uid, count, cursor int64) ([]models.UserMessa
 	return messages, nil
 }
 
-func (d *DB) dbOpsReadUserMessages(userId string, id []int64) error {
+func (d *DB) ReadUserMessages(userId string, id []int64) error {
 	return d.userMessagesTable().Find(db.Cond{
 
 		"toUser": userId,
@@ -67,9 +66,8 @@ func (d *DB) dbOpsReadUserMessages(userId string, id []int64) error {
 	})
 }
 
-func (d *DB) dbOpsDeleteUserMessages(userId string, id []int64) error {
+func (d *DB) DeleteUserMessages(userId string, id []int64) error {
 	return d.userMessagesTable().Find(db.Cond{
-
 		"toUser": userId,
 		"id IN":  id,
 	}).Delete()
