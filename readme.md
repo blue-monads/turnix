@@ -33,3 +33,9 @@ Platform for apps.
 ## control plane
 
 - manage turnix instance itself
+
+
+## NO build JS framework
+
+- https://strawberry.quest/
+- https://www.arrow-js.com/
