@@ -3,23 +3,24 @@ package database
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/upper/db/v4"
 )
 
 type File struct {
-	ID        int64  `db:"id"`
-	Name      string `db:"name"`
-	FType     string `db:"ftype"`
-	Path      string `db:"path"`
-	Size      int64  `db:"size"`
-	Mime      string `db:"mime"`
-	Hash      string `db:"hash"`
-	External  bool   `db:"external"`
-	IsPublic  bool   `db:"is_public"`
-	OwnerUser int64  `db:"owner_user_id"`
-	OwnerProj int64  `db:"owner_project_id"`
-	CreatedAt string `db:"created_at"`
+	ID        int64      `db:"id"`
+	Name      string     `db:"name"`
+	FType     string     `db:"ftype"`
+	Path      string     `db:"path"`
+	Size      int64      `db:"size"`
+	Mime      string     `db:"mime"`
+	Hash      string     `db:"hash"`
+	External  bool       `db:"external"`
+	IsPublic  bool       `db:"is_public"`
+	OwnerUser int64      `db:"owner_user_id"`
+	OwnerProj int64      `db:"owner_project_id"`
+	CreatedAt *time.Time `db:"created_at"`
 }
 
 func (d *DB) AddFile(file *File, data []byte) (id int64, err error) {
