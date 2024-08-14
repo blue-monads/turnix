@@ -95,6 +95,18 @@ func (d *DB) ListFilesByUser(uid int64, path string) ([]File, error) {
 	return files, nil
 }
 
+func (d *DB) GetFileMeta(id int64) (*File, error) {
+	table := d.filesTable()
+
+	file := File{}
+	err := table.Find(db.Cond{"id": id}).One(&file)
+	if err != nil {
+		return nil, err
+	}
+
+	return &file, nil
+}
+
 func (d *DB) GetFileBlob(id int64) ([]byte, error) {
 	table := d.filesTable()
 

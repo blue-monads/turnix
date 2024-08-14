@@ -1,6 +1,7 @@
 package server
 
 import (
+	"io"
 	"strconv"
 
 	"github.com/bornjre/turnix/backend/services/signer"
@@ -143,4 +144,42 @@ func (a *Server) getProjectHook(claim *signer.AccessClaim, ctx *gin.Context) (an
 
 	return a.cProject.GetProjectHook(claim.UserId, pid, id)
 
+}
+
+// files
+
+func (a *Server) listProjectFiles(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+
+	return a.cProject.ListProjectFiles(claim.UserId, pid)
+}
+
+func (a *Server) addProjectFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+
+	name := ctx.Param("name")
+
+	data, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return a.cProject.AddProjectFile(claim.UserId, pid, name, data)
+}
+
+func (a *Server) getProjectFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	return a.cProject.GetProjectFile(claim.UserId, pid, id)
+}
+
+func (a *Server) removeProjectFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	err := a.cProject.DeleteProjectFile(claim.UserId, pid, id)
+
+	return nil, err
 }
