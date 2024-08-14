@@ -9,7 +9,6 @@ import (
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes"
-	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
 	"github.com/bornjre/turnix/backend/xtypes/services/xsockd"
 	"github.com/bornjre/turnix/backend/xtypes/xbus"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
@@ -81,7 +80,7 @@ func (a *App) Stop() error {
 	return a.db.Close()
 }
 
-func (a *App) GetDatabase() xdatabase.Database {
+func (a *App) GetDatabase() any {
 	return a.db
 }
 

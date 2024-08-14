@@ -1,7 +1,6 @@
 package xtypes
 
 import (
-	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
 	"github.com/bornjre/turnix/backend/xtypes/services/xsockd"
 	"github.com/bornjre/turnix/backend/xtypes/xbus"
 
@@ -15,7 +14,7 @@ type App interface {
 	Stop() error
 
 	AuthMiddleware(fn ApiHandler) gin.HandlerFunc
-	GetDatabase() xdatabase.Database
+	GetDatabase() any
 	GetSockd() xsockd.Sockd
 
 	GetController() any

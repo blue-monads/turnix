@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
+	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/jmoiron/sqlx"
 	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
@@ -1054,8 +1054,8 @@ func (b *BookModule) userHasScope(pid, uid int64, scope string) error {
 		return err
 	}
 
-	if dbscope != xdatabase.ScopeOwner && strings.Contains(dbscope, scope) {
-		return xdatabase.ErrUserNoScope
+	if dbscope != database.ScopeOwner && strings.Contains(dbscope, scope) {
+		return database.ErrUserNoScope
 	}
 
 	return nil

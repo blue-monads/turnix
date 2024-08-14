@@ -1,11 +1,14 @@
 package distro
 
 import (
+	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/xtypes/models"
 )
 
 func (d *DistroApp) RunNormalSeed() error {
-	db := d.App.GetDatabase()
+	dz := d.App.GetDatabase()
+
+	db := dz.(*database.DB)
 
 	//	innerApp := d.App.(*app.App)
 
@@ -60,7 +63,9 @@ func (d *DistroApp) RunNormalSeed() error {
 
 func (d *DistroApp) RunTestSeed() error {
 
-	db := d.App.GetDatabase()
+	dz := d.App.GetDatabase()
+
+	db := dz.(*database.DB)
 
 	_, err := db.AddUser(&models.User{
 		Name:            "dev",

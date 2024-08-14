@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/bornjre/turnix/backend/xtypes/models"
-	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
 	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )
@@ -143,7 +142,7 @@ type ProjectUserScope struct {
 
 func (d *DB) GetProjectUserScope(userId int64, projectId int64) (string, error) {
 	if d.isOwner(userId, projectId) {
-		return xdatabase.ScopeOwner, nil
+		return ScopeOwner, nil
 	}
 
 	data := &ProjectUserScope{}

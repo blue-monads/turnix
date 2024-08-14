@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/xtypes"
-	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
 	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )
@@ -17,7 +17,7 @@ var Schema string
 type BookModule struct {
 	app  xtypes.App
 	sess db.Session
-	db   xdatabase.Database
+	db   *database.DB
 }
 
 func (b *BookModule) Init(pid int64) error {
@@ -27,9 +27,7 @@ func (b *BookModule) Init(pid int64) error {
 	pp.Println("@parameterizedSchema")
 	fmt.Println(parameterizedSchema)
 
-	err := b.db.RunDDL(xdatabase.DDLContext{
-		DDL: parameterizedSchema,
-	})
+	err := b.db.RunDDL(parameterizedSchema)
 	if err != nil {
 		pp.Println("@err", err.Error())
 	}

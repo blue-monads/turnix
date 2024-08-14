@@ -62,7 +62,9 @@ func (d *DistroApp) NeedsMigrate() (bool, error) {
 
 	db := d.App.GetDatabase()
 
-	usrs, err := db.ListUser()
+	dz := db.(*database.DB)
+
+	usrs, err := dz.ListUser()
 	if err != nil {
 		return false, err
 	}

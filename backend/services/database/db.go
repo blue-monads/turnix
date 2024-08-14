@@ -3,9 +3,9 @@ package database
 import (
 	"database/sql"
 	_ "embed"
+	"errors"
 	"log"
 
-	"github.com/bornjre/turnix/backend/xtypes/services/xdatabase"
 	"github.com/upper/db/v4"
 	"github.com/upper/db/v4/adapter/sqlite"
 )
@@ -14,8 +14,17 @@ import (
 var schema string
 
 type DB struct {
-	sess db.Session
+	sess             db.Session
+	externalFileMode bool
 }
+
+const (
+	ScopeOwner = "owner"
+)
+
+var (
+	ErrUserNoScope = errors.New("err: user doesnot have required scope")
+)
 
 func NewDB() (*DB, error) {
 
@@ -42,7 +51,8 @@ func NewDB() (*DB, error) {
 	}
 
 	return &DB{
-		sess: sess,
+		sess:             sess,
+		externalFileMode: false,
 	}, nil
 }
 
@@ -59,7 +69,7 @@ func (db *DB) Vender() string {
 	return "sqlite"
 }
 
-func (db *DB) RunDDL(ctx xdatabase.DDLContext) error {
+func (db *DB) RunDDL(ddl string) error {
 	// var buf strings.Builder
 
 	// t := translators.NewSQLite("")
@@ -84,7 +94,7 @@ func (db *DB) RunDDL(ctx xdatabase.DDLContext) error {
 
 	driver := db.sess.Driver().(*sql.DB)
 
-	_, err := driver.Exec(ctx.DDL)
+	_, err := driver.Exec(ddl)
 	if err != nil {
 		return err
 	}
