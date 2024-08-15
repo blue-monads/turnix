@@ -10,16 +10,20 @@
     import { sql, SQLite } from "@codemirror/lang-sql";
     import { html } from "@codemirror/lang-html";
 
-    import {} from "@codemirror/language";
-
     import * as sampleCode from "./sampleCode";
     import { samplePreview } from "./samplePreview";
+
+    let iframe: HTMLIFrameElement;
 
     let tabSet: number = 0;
     let sqlCode = sampleCode.sqlCode;
     let htmlCode = samplePreview;
     let savedHtmlCode = "";
 
+    const onFrameMessage = (ev: MessageEvent) => {
+        const data = JSON.parse(ev.data);
+        console.log("onFrameMessage", data);
+    };
 
 
 </script>
@@ -39,22 +43,21 @@
     </svelte:fragment>
 
     <svelte:fragment slot="trail">
-        <button 
+        <button
             class="btn variant-filled btn-sm"
             on:click={() => {
-                savedHtmlCode = htmlCode;   
+                savedHtmlCode = htmlCode;
             }}
-            >
+        >
             Run
         </button>
-
     </svelte:fragment>
-
-
 </AppBar>
 
 <div class=" flex flex-col md:flex-row w-full h-full max-h-[90vh]">
-    <div class="flex-1 w-full md:w-1/2 border border-slate-50 h-1/2 md:h-full overflow-auto">
+    <div
+        class="flex-1 w-full md:w-1/2 border border-slate-50 h-1/2 md:h-full overflow-auto"
+    >
         <TabGroup>
             <Tab bind:group={tabSet} name="tab1" value={0}>
                 <span>SQL Query</span>
@@ -72,25 +75,46 @@
                         })}
                     />
                 {:else if tabSet === 1}
-                    <CodeMirror 
-                        bind:value={htmlCode} 
-                        lang={html()}
-                        />
+                    <CodeMirror bind:value={htmlCode} lang={html()} />
                 {/if}
             </svelte:fragment>
         </TabGroup>
     </div>
 
-    <div class="flex-1 w-full md:w-1/2 border border-slate-50 h-1/2 md:h-full p-2">
+    <div
+        class="flex-1 w-full md:w-1/2 border border-slate-50 h-1/2 md:h-full p-2"
+    >
         <h4 class="h4 p-1 uppercase">Preview</h4>
 
         <div class="card p-2 h-full w-full">
+            <iframe
+                on:load={(ev) => {
+                    try {
 
-            <iframe title="preview" srcdoc={savedHtmlCode} 
-                width="100%" height="100%">
+                        let chan = new MessageChannel();
+                        chan.port1.onmessage = onFrameMessage;
+
+                        console.log("chan.port2 type:", chan.port2 instanceof MessagePort);
+
+                        iframe?.contentWindow?.postMessage(
+                            "transfer_port",
+                            "*",
+                            [chan.port2],
+                        );
+                    } catch (error) {
+                        console.error("Error in postMessage:", error);
+                    }
+                }}
+                bind:this={iframe}
+                title="preview"
+                srcdoc={savedHtmlCode}
+                width="100%"
+                height="100%"
+                class="border-green-200 w-full h-full transition-all"
+                allow="accelerometer; ambient-light-sensor; autoplay; battery; camera; clipboard-write; document-domain; encrypted-media; fullscreen; geolocation; gyroscope; layout-animations; legacy-image-formats; magnetometer; microphone; midi; oversized-images; payment; picture-in-picture; publickey-credentials-get; sync-xhr; usb; vr ; wake-lock; xr-spatial-tracking"
+                sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads allow-storage-access-by-user-activation"
+            >
             </iframe>
-
-
         </div>
     </div>
 </div>
