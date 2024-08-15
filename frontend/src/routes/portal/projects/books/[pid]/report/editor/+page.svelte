@@ -27,27 +27,51 @@
 
     const pid = $page.params["pid"];
 
-    const rootApi = getContext("__api__") as RootAPI
-    const api = NewBookAPI(rootApi);  
+    const rootApi = getContext("__api__") as RootAPI;
+    const api = NewBookAPI(rootApi);
 
     interface Message {
         type: "sql_query" | "api_call" | "ping";
         name?: string;
         data: any;
-        msgId: number
+        msgId: number;
     }
 
     let port: MessagePort;
 
-   const onFrameMessage = async  (ev: MessageEvent) => {
+    const onFrameMessage = async (ev: MessageEvent) => {
         const data = ev.data as Message;
         console.log("onFrameMessage", data);
 
         if (data.type === "sql_query") {
             console.log("sql_query", data);
-        }  else if (data.type === "api_call") {
 
-  
+
+            try {
+                const resp = await rootApi.runProjectSQL(pid, {
+                    input: sqlCode,
+                    name: data.name as string,
+                    data: data.data,
+                });
+
+                if (resp.status !== 200) {
+                    port?.postMessage({
+                        msgId: data.msgId,
+                        data: { msg: "error", data: resp.data },
+                    });
+                    return;
+                }
+
+                port?.postMessage({
+                    msgId: data.msgId,
+                    data: { msg: "success", data: resp.data },
+                });
+
+            } catch (error) {}
+
+
+        } else if (data.type === "api_call") {
+            
 
             console.log("api_call", data);
         } else if (data.type === "ping") {
@@ -55,28 +79,23 @@
                 msgId: data.msgId,
                 data: { msg: "pong" },
             });
-            
-
         }
-
     };
 
     const testRun = async () => {
         const resp = await rootApi.runProjectSQL(pid, {
-                input: `
--- query_name: test
+            input: `
+-- query_name: list_accounts;
 select * from __project__Accounts;
 
                 
                 `,
-                name: "test",
-                data: [],
-            })
+            name: "list_accounts",
+            data: [],
+        });
 
-            console.log("api_call", resp);
-    }
-
-
+        console.log("api_call", resp);
+    };
 </script>
 
 <AppBar>
@@ -103,14 +122,9 @@ select * from __project__Accounts;
             Run
         </button>
 
-        <button
-            class="btn variant-filled btn-sm"
-            on:click={testRun}
-        >
+        <button class="btn variant-filled btn-sm" on:click={testRun}>
             Test Run
         </button>
-
-
     </svelte:fragment>
 </AppBar>
 
@@ -150,22 +164,20 @@ select * from __project__Accounts;
             <iframe
                 on:load={(ev) => {
                     try {
-
                         let chan = new MessageChannel();
                         chan.port1.onmessage = onFrameMessage;
                         port = chan.port1;
 
-                        console.log("chan.port2 type:", chan.port2 instanceof MessagePort);
+                        console.log(
+                            "chan.port2 type:",
+                            chan.port2 instanceof MessagePort,
+                        );
 
                         iframe?.contentWindow?.postMessage(
                             "transfer_port",
                             "*",
                             [chan.port2],
                         );
-
-                        
-
-
                     } catch (error) {
                         console.error("Error in postMessage:", error);
                     }

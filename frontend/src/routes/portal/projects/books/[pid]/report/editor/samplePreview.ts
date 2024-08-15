@@ -92,12 +92,9 @@ like?.addEventListener("click", async () => {
   console.log("like", like);
   
     const data = await sendMessage({
-        type: "ping",
-        name: "listXYZ",
-        data: {
-            pid: 1,
-            uid: 1,
-        },
+        type: "sql_query",
+        name: "list_accounts",
+        data: [],
     });
     console.log("like", data);
 });
