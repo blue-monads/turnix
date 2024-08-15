@@ -20,9 +20,32 @@
     let htmlCode = samplePreview;
     let savedHtmlCode = "";
 
-    const onFrameMessage = (ev: MessageEvent) => {
-        const data = JSON.parse(ev.data);
+    interface Message {
+        type: "sql_query" | "api_call" | "ping";
+        name?: string;
+        data: any;
+        msgId: number
+    }
+
+    let port: MessagePort;
+
+   const onFrameMessage = (ev: MessageEvent) => {
+        const data = ev.data as Message;
         console.log("onFrameMessage", data);
+
+        if (data.type === "sql_query") {
+            console.log("sql_query", data);
+        }  else if (data.type === "api_call") {
+            console.log("api_call", data);
+        } else if (data.type === "ping") {
+            port?.postMessage({
+                msgId: data.msgId,
+                data: { msg: "pong" },
+            });
+            
+
+        }
+
     };
 
 
@@ -93,6 +116,7 @@
 
                         let chan = new MessageChannel();
                         chan.port1.onmessage = onFrameMessage;
+                        port = chan.port1;
 
                         console.log("chan.port2 type:", chan.port2 instanceof MessagePort);
 
@@ -101,6 +125,10 @@
                             "*",
                             [chan.port2],
                         );
+
+                        
+
+
                     } catch (error) {
                         console.error("Error in postMessage:", error);
                     }
