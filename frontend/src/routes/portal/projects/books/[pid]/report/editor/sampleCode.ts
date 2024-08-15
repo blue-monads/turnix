@@ -1,9 +1,8 @@
-export let sqlCode = `-- sql 
+export let sqlCode = `
+    
+-- query_name: testxyz
 
-
-    
-    
-    
+select 1;    
 
 
 
