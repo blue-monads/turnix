@@ -2,7 +2,9 @@ package database
 
 import (
 	"errors"
+	"fmt"
 	"log"
+	"strings"
 
 	"github.com/bornjre/turnix/backend/xtypes/models"
 	"github.com/k0kubun/pp"
@@ -72,6 +74,38 @@ func (d *DB) ListOwnProjects(ownerId int64, ptype string) ([]models.Project, err
 
 type TPProjects struct {
 	Project int64 `db:"projectId"`
+}
+
+func (d *DB) RunProjectSQLQuery(pid int64, query string, data []any) ([]map[string]any, error) {
+
+	parameterizedQuery := strings.ReplaceAll(query, "__project__", fmt.Sprintf("z_%d_", pid))
+
+	rows, err := d.sess.SQL().Query(parameterizedQuery, data...)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	columns, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
+	values := make([]map[string]any, 0)
+
+	for rows.Next() {
+		row := make(map[string]any)
+
+		for i, col := range columns {
+			row[col] = rows.Scan(i)
+		}
+
+		values = append(values, row)
+	}
+
+	return values, nil
+
 }
 
 func (d *DB) ListThirdPartyProjects(userid int64, ptype string) ([]models.Project, error) {
