@@ -188,3 +188,23 @@ func (a *Server) removeProjectFile(claim *signer.AccessClaim, ctx *gin.Context) 
 
 	return nil, err
 }
+
+type ProjectSQLExec struct {
+	Input string `json:"input"`
+	Name  string `json:"name"`
+	Data  []any  `json:"data"`
+}
+
+func (a *Server) runProjectSQL(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+
+	data := ProjectSQLExec{}
+	err := ctx.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := a.cProject.RunQuerySQL(claim.UserId, pid, data.Input, data.Name, data.Data)
+
+	return res, err
+}

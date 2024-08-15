@@ -3,8 +3,10 @@ package project
 import (
 	"bufio"
 	"fmt"
+	"regexp"
 	"strings"
 
+	"github.com/k0kubun/pp"
 	"github.com/rqlite/sql"
 )
 
@@ -17,22 +19,27 @@ func splitQueries(input string) []Query {
 	var queries []Query
 	var currentQuery Query
 
+	// Regular expression to match query name lines
+	re := regexp.MustCompile(`(?i)^\s*--\s*query_name\s*:\s*(.+)\s*$`)
+
 	scanner := bufio.NewScanner(strings.NewReader(input))
 	for scanner.Scan() {
 		line := scanner.Text()
-		if strings.HasPrefix(line, "-- query_name:") {
+		if match := re.FindStringSubmatch(line); len(match) > 1 {
 			if currentQuery.Name != "" {
+				currentQuery.Content = strings.TrimSpace(currentQuery.Content)
 				queries = append(queries, currentQuery)
 			}
 			currentQuery = Query{
-				Name: strings.TrimSpace(strings.TrimPrefix(line, "-- query_name:")),
+				Name: strings.TrimSpace(match[1]),
 			}
-		} else {
+		} else if currentQuery.Name != "" {
 			currentQuery.Content += line + "\n"
 		}
 	}
 
 	if currentQuery.Name != "" {
+		currentQuery.Content = strings.TrimSpace(currentQuery.Content)
 		queries = append(queries, currentQuery)
 	}
 
@@ -92,6 +99,8 @@ func (a *ProjectController) RunQuerySQL(userId int64, pid int64, input, name str
 			queryContent = q.Content
 		}
 	}
+
+	pp.Println("@qq", queries)
 
 	if queryContent == "" {
 		return nil, fmt.Errorf("cannot extract query by name: %s", name)

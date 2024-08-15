@@ -10,8 +10,13 @@
     import { sql, SQLite } from "@codemirror/lang-sql";
     import { html } from "@codemirror/lang-html";
 
+    import { page } from "$app/stores";
+
     import * as sampleCode from "./sampleCode";
     import { samplePreview } from "./samplePreview";
+    import { NewBookAPI } from "$lib/projects/books";
+    import { getContext } from "svelte";
+    import type { RootAPI } from "$lib/api";
 
     let iframe: HTMLIFrameElement;
 
@@ -19,6 +24,11 @@
     let sqlCode = sampleCode.sqlCode;
     let htmlCode = samplePreview;
     let savedHtmlCode = "";
+
+    const pid = $page.params["pid"];
+
+    const rootApi = getContext("__api__") as RootAPI
+    const api = NewBookAPI(rootApi);  
 
     interface Message {
         type: "sql_query" | "api_call" | "ping";
@@ -29,13 +39,16 @@
 
     let port: MessagePort;
 
-   const onFrameMessage = (ev: MessageEvent) => {
+   const onFrameMessage = async  (ev: MessageEvent) => {
         const data = ev.data as Message;
         console.log("onFrameMessage", data);
 
         if (data.type === "sql_query") {
             console.log("sql_query", data);
         }  else if (data.type === "api_call") {
+
+  
+
             console.log("api_call", data);
         } else if (data.type === "ping") {
             port?.postMessage({
@@ -47,6 +60,21 @@
         }
 
     };
+
+    const testRun = async () => {
+        const resp = await rootApi.runProjectSQL(pid, {
+                input: `
+-- query_name: test
+select * from __project__Accounts;
+
+                
+                `,
+                name: "test",
+                data: [],
+            })
+
+            console.log("api_call", resp);
+    }
 
 
 </script>
@@ -74,6 +102,15 @@
         >
             Run
         </button>
+
+        <button
+            class="btn variant-filled btn-sm"
+            on:click={testRun}
+        >
+            Test Run
+        </button>
+
+
     </svelte:fragment>
 </AppBar>
 

@@ -43,6 +43,11 @@ export interface File {
     created_at: string;
 }
 
+export interface ProjectSQLExec {
+    input: string;
+    name: string;
+    data: any[];
+}
 
 
 export class RootAPI {
@@ -167,6 +172,10 @@ export class RootAPI {
 
     deleteProjectFile = (pid: string, id: string) => {
         return this.client.delete(`/project/${pid}/files/${id}`)
+    }
+
+    runProjectSQL = (pid: string, data: ProjectSQLExec) => {
+        return this.client.post(`/project/${pid}/sqlexec`, data)
     }
 
 

@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/bornjre/turnix/backend/utils/libx/dbutils"
 	"github.com/bornjre/turnix/backend/xtypes/models"
 	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
@@ -85,26 +86,7 @@ func (d *DB) RunProjectSQLQuery(pid int64, query string, data []any) ([]map[stri
 		return nil, err
 	}
 
-	defer rows.Close()
-
-	columns, err := rows.Columns()
-	if err != nil {
-		return nil, err
-	}
-
-	values := make([]map[string]any, 0)
-
-	for rows.Next() {
-		row := make(map[string]any)
-
-		for i, col := range columns {
-			row[col] = rows.Scan(i)
-		}
-
-		values = append(values, row)
-	}
-
-	return values, nil
+	return dbutils.SelectScan(rows)
 
 }
 
