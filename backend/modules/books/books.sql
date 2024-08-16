@@ -221,7 +221,6 @@ create table __project__Sales(
     tax_id INTEGER NOT NULL DEFAULT 0,
     tax_amount INTEGER NOT NULL DEFAULT 0,
 
-    discount_id INTEGER NOT NULL DEFAULT 0,
     discount_amount INTEGER NOT NULL DEFAULT 0,
 
     sub_total INTEGER NOT NULL DEFAULT 0,
@@ -265,19 +264,6 @@ create table __project__Tax(
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-create table __project__Discounts(
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL DEFAULT '',
-    ttype TEXT NOT NULL DEFAULT 'item_percent', -- item_percent, item_fixed, item_custom,  overall_percent, overall_fixed, overall_custom
-    info TEXT NOT NULL DEFAULT '',
-    rate INTEGER NOT NULL DEFAULT 0,
-    strict BOOLEAN NOT NULL DEFAULT FALSE,
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
-);
 
 create table __project__Contacts(
     id INTEGER PRIMARY KEY,
