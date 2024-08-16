@@ -119,7 +119,8 @@
 <div class=" flex flex-col md:flex-row w-full h-[94vh]">
     <div class="flex-1 w-full md:w-1/2 border border-slate-50 h-1/2 md:h-full">
         <TabGroup>
-            <Tab bind:group={tabSet} name="SQL Query" value={0}>
+            
+            <Tab padding="ml-6 p-2" bind:group={tabSet} name="SQL Query" value={0}>
                 <span>SQL Query</span>
             </Tab>
             <Tab bind:group={tabSet} name="UI" value={1}>
