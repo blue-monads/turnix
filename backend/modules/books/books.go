@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/bornjre/turnix/backend/modules/books/dbops"
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/xtypes"
 	"github.com/k0kubun/pp"
@@ -15,9 +16,10 @@ import (
 var Schema string
 
 type BookModule struct {
-	app  xtypes.App
-	sess db.Session
-	db   *database.DB
+	app    xtypes.App
+	sess   db.Session
+	db     *database.DB
+	dbOpts dbops.DbOps
 }
 
 func (b *BookModule) Init(pid int64) error {

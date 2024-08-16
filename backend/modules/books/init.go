@@ -1,6 +1,7 @@
 package books
 
 import (
+	"github.com/bornjre/turnix/backend/modules/books/dbops"
 	"github.com/bornjre/turnix/backend/registry"
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
@@ -35,9 +36,10 @@ func New(opt xproject.BuilderOption) (*xproject.Defination, error) {
 	d := db.(*database.DB)
 
 	mod := &BookModule{
-		sess: d.GetSession(),
-		db:   d,
-		app:  opt.App,
+		sess:   d.GetSession(),
+		db:     d,
+		app:    opt.App,
+		dbOpts: dbops.New(d),
 	}
 
 	def := &xproject.Defination{

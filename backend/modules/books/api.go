@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
+	"github.com/bornjre/turnix/backend/modules/books/dbops"
+	"github.com/bornjre/turnix/backend/modules/books/models"
 	"github.com/bornjre/turnix/backend/xtypes"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
@@ -73,24 +74,24 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 func (b *BookModule) listAccount(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	return b.dbOpListAccount(pid, ctx.Claim.UserId)
+	return b.dbOpts.ListAccount(pid, ctx.Claim.UserId)
 }
 
 func (b *BookModule) addAccount(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	data := &Account{}
+	data := &models.Account{}
 	err := ctx.Http.Bind(data)
 	if err != nil {
 		return nil, err
 	}
 
-	return b.dbOpAddAccount(pid, ctx.Claim.UserId, data)
+	return b.dbOpts.AddAccount(pid, ctx.Claim.UserId, data)
 }
 
 func (b *BookModule) getAccount(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
-	return b.dbOpGetAccount(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	return b.dbOpts.GetAccount(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 }
 
 func (b *BookModule) updateAccount(ctx xtypes.ContextPlus) (any, error) {
@@ -103,7 +104,7 @@ func (b *BookModule) updateAccount(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
-	err = b.dbOpUpdateAccount(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
+	err = b.dbOpts.UpdateAccount(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +122,7 @@ func (b *BookModule) deleteAccount(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
-	err = b.dbOpDeleteAccount(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	err = b.dbOpts.DeleteAccount(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +135,7 @@ func (b *BookModule) deleteAccount(ctx xtypes.ContextPlus) (any, error) {
 func (b *BookModule) listTxn(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	return b.dbOpListTxn(pid, ctx.Claim.UserId)
+	return b.dbOpts.ListTxn(pid, ctx.Claim.UserId)
 }
 
 func (b *BookModule) listTxnWithLines(ctx xtypes.ContextPlus) (any, error) {
@@ -142,7 +143,7 @@ func (b *BookModule) listTxnWithLines(ctx xtypes.ContextPlus) (any, error) {
 
 	offset, _ := strconv.ParseInt(ctx.Http.Param("offset"), 10, 64)
 
-	return b.dbOpListTxnWithLines(pid, ctx.Claim.UserId, offset)
+	return b.dbOpts.ListTxnWithLines(pid, ctx.Claim.UserId, offset)
 }
 
 func (b *BookModule) listAccountTxnWithLines(ctx xtypes.ContextPlus) (any, error) {
@@ -151,13 +152,13 @@ func (b *BookModule) listAccountTxnWithLines(ctx xtypes.ContextPlus) (any, error
 	offset, _ := strconv.ParseInt(ctx.Http.Query("offset"), 10, 64)
 	account, _ := strconv.ParseInt(ctx.Http.Param("aid"), 10, 64)
 
-	return b.dbOpListAccountTxnWithLines(pid, ctx.Claim.UserId, account, offset)
+	return b.dbOpts.ListAccountTxnWithLines(pid, ctx.Claim.UserId, account, offset)
 }
 
 func (b *BookModule) addTxn(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	data := &TxnRecord{}
+	data := &models.TxnRecord{}
 
 	err := ctx.Http.Bind(data)
 	if err != nil {
@@ -173,7 +174,7 @@ func (b *BookModule) addTxn(ctx xtypes.ContextPlus) (any, error) {
 
 	// fixme store files
 
-	txnid, err := b.dbOpAddTxn(pid, ctx.Claim.UserId, &Transaction{
+	txnid, err := b.dbOpts.AddTxn(pid, ctx.Claim.UserId, &models.Transaction{
 		Title:           data.Title,
 		Notes:           data.Notes,
 		LinkedSalesID:   data.LinkedSalesID,
@@ -188,7 +189,7 @@ func (b *BookModule) addTxn(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
-	did, err := b.dbOpAddTxnLine(pid, ctx.Claim.UserId, &TransactionLine{
+	did, err := b.dbOpts.AddTxnLine(pid, ctx.Claim.UserId, &models.TransactionLine{
 		AccountID:    data.CreditAccountID,
 		DebitAmount:  0,
 		CreditAmount: data.CreditAmount,
@@ -201,7 +202,7 @@ func (b *BookModule) addTxn(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
-	cid, err := b.dbOpAddTxnLine(pid, ctx.Claim.UserId, &TransactionLine{
+	cid, err := b.dbOpts.AddTxnLine(pid, ctx.Claim.UserId, &models.TransactionLine{
 		AccountID:    data.DebitAccountID,
 		DebitAmount:  data.DebitAmount,
 		CreditAmount: 0,
@@ -213,7 +214,7 @@ func (b *BookModule) addTxn(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
-	return TxnResult{
+	return models.TxnResult{
 		TxnId:        txnid,
 		DebitLineId:  did,
 		CreditLineId: cid,
@@ -227,13 +228,13 @@ func (b *BookModule) getTxn(ctx xtypes.ContextPlus) (any, error) {
 	pp.Println("ctx.Http.FullPath()", ctx.Http.FullPath())
 	pp.Println("ctx.Http.Request.URL.Path()", ctx.Http.Request.URL.Path)
 
-	return b.dbOpGetTxn(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	return b.dbOpts.GetTxn(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 }
 
 func (b *BookModule) getTxnWithLine(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	return b.dbOpGetTxnWithLine(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	return b.dbOpts.GetTxnWithLine(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 }
 
 func (b *BookModule) updateTxn(ctx xtypes.ContextPlus) (any, error) {
@@ -246,7 +247,7 @@ func (b *BookModule) updateTxn(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
-	err = b.dbOpUpdateTxn(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
+	err = b.dbOpts.UpdateTxn(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
 	if err != nil {
 		return nil, err
 	}
@@ -278,14 +279,14 @@ func (b *BookModule) updateTxnWithLine(ctx xtypes.ContextPlus) (any, error) {
 	txnId := ctx.ParamInt64("id")
 
 	if len(data.TxnData) != 0 {
-		err = b.dbOpUpdateTxn(pid, ctx.Claim.UserId, txnId, data.TxnData)
+		err = b.dbOpts.UpdateTxn(pid, ctx.Claim.UserId, txnId, data.TxnData)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	if len(data.FirstLineData) != 0 {
-		err = b.dbOpUpdateTxnLine(pid, ctx.Claim.UserId, txnId, data.FirstLineId, data.FirstLineData)
+		err = b.dbOpts.UpdateTxnLine(pid, ctx.Claim.UserId, txnId, data.FirstLineId, data.FirstLineData)
 		if err != nil {
 			return nil, err
 		}
@@ -293,7 +294,7 @@ func (b *BookModule) updateTxnWithLine(ctx xtypes.ContextPlus) (any, error) {
 	}
 
 	if len(data.SecondLineData) != 0 {
-		err = b.dbOpUpdateTxnLine(pid, ctx.Claim.UserId, txnId, data.SecondLineId, data.SecondLineData)
+		err = b.dbOpts.UpdateTxnLine(pid, ctx.Claim.UserId, txnId, data.SecondLineId, data.SecondLineData)
 		if err != nil {
 			return nil, err
 		}
@@ -306,7 +307,7 @@ func (b *BookModule) updateTxnWithLine(ctx xtypes.ContextPlus) (any, error) {
 func (b *BookModule) deleteTxn(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	err := b.dbOpDeleteTxn(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	err := b.dbOpts.DeleteTxn(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 	if err != nil {
 		return nil, err
 	}
@@ -314,28 +315,21 @@ func (b *BookModule) deleteTxn(ctx xtypes.ContextPlus) (any, error) {
 	return nil, nil
 }
 
-type ReportOptions struct {
-	ReportType string     `json:"report_type"`
-	TemplateId int64      `json:"template_id"`
-	FromDate   *time.Time `json:"from_date"`
-	ToDate     *time.Time `json:"to_date"`
-}
-
 func (b *BookModule) reportLiveGenerate(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	opts := ReportOptions{}
+	opts := dbops.ReportOptions{}
 	err := ctx.Http.Bind(&opts)
 	if err != nil {
 		return nil, err
 	}
 
 	switch opts.ReportType {
-	case ReportTypeLongLedger:
-		return b.dbOptsGenerateReportLongLedger(pid, ctx.Claim.UserId, opts)
-	case ReportTypeShortLedger:
-		return b.dbOptsGenerateReportShortLedger(pid, ctx.Claim.UserId, opts)
-	case ReportTypeCustom:
+	case models.ReportTypeLongLedger:
+		return b.dbOpts.GenerateReportLongLedger(pid, ctx.Claim.UserId, opts)
+	case models.ReportTypeShortLedger:
+		return b.dbOpts.GenerateReportShortLedger(pid, ctx.Claim.UserId, opts)
+	case models.ReportTypeCustom:
 		fallthrough
 
 	default:
@@ -344,28 +338,17 @@ func (b *BookModule) reportLiveGenerate(ctx xtypes.ContextPlus) (any, error) {
 
 }
 
-type ExportData struct {
-	Accounts         []Account         `json:"accounts"`
-	Transactions     []Transaction     `json:"transactions"`
-	TransactionLines []TransactionLine `json:"transaction_lines"`
-}
-
-type ImportOptions struct {
-	Data     ExportData `json:"data"`
-	AsNewTxn bool       `json:"as_new_txn"`
-}
-
 func (b *BookModule) importData(ctx xtypes.ContextPlus) (any, error) {
 
 	pp.Println("@importData")
 
-	opts := ImportOptions{}
+	opts := dbops.ImportOptions{}
 	err := ctx.Http.Bind(&opts)
 	if err != nil {
 		return nil, err
 	}
 
-	err = b.dbOpsImport(ctx.ProjectId(), ctx.Claim.UserId, opts)
+	err = b.dbOpts.Import(ctx.ProjectId(), ctx.Claim.UserId, opts)
 
 	return nil, err
 
@@ -374,30 +357,30 @@ func (b *BookModule) importData(ctx xtypes.ContextPlus) (any, error) {
 func (b *BookModule) exportData(ctx xtypes.ContextPlus) (any, error) {
 	pp.Println("@exportData")
 
-	return b.dbOpsExport(ctx.ProjectId(), ctx.Claim.UserId)
+	return b.dbOpts.Export(ctx.ProjectId(), ctx.Claim.UserId)
 }
 
 func (b *BookModule) listCatagories(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	return b.dbOpsCatagoryList(pid, ctx.Claim.UserId)
+	return b.dbOpts.CatagoryList(pid, ctx.Claim.UserId)
 }
 
 func (b *BookModule) addCatagory(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	data := &Catagory{}
+	data := &models.Catagory{}
 	err := ctx.Http.Bind(data)
 	if err != nil {
 		return nil, err
 	}
 
-	return b.dbOpsCatagoryAdd(pid, ctx.Claim.UserId, data)
+	return b.dbOpts.CatagoryAdd(pid, ctx.Claim.UserId, data)
 }
 
 func (b *BookModule) getCatagory(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
-	return b.dbOpsCatagoryGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	return b.dbOpts.CatagoryGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 }
 
 func (b *BookModule) updateCatagory(ctx xtypes.ContextPlus) (any, error) {
@@ -410,7 +393,7 @@ func (b *BookModule) updateCatagory(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
-	err = b.dbOpsCatagoryUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
+	err = b.dbOpts.CatagoryUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
 	if err != nil {
 		return nil, err
 	}
@@ -422,7 +405,7 @@ func (b *BookModule) updateCatagory(ctx xtypes.ContextPlus) (any, error) {
 func (b *BookModule) deleteCatagory(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	err := b.dbOpsCatagoryDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	err := b.dbOpts.CatagoryDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 	if err != nil {
 		return nil, err
 	}
@@ -435,24 +418,24 @@ func (b *BookModule) deleteCatagory(ctx xtypes.ContextPlus) (any, error) {
 func (b *BookModule) listProducts(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	return b.dbOpsProductList(pid, ctx.Claim.UserId)
+	return b.dbOpts.ProductList(pid, ctx.Claim.UserId)
 }
 
 func (b *BookModule) addProduct(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	data := &Product{}
+	data := &models.Product{}
 	err := ctx.Http.Bind(data)
 	if err != nil {
 		return nil, err
 	}
 
-	return b.dbOpsProductAdd(pid, ctx.Claim.UserId, data)
+	return b.dbOpts.ProductAdd(pid, ctx.Claim.UserId, data)
 }
 
 func (b *BookModule) getProduct(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
-	return b.dbOpsProductGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	return b.dbOpts.ProductGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 }
 
 func (b *BookModule) updateProduct(ctx xtypes.ContextPlus) (any, error) {
@@ -465,7 +448,7 @@ func (b *BookModule) updateProduct(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
-	err = b.dbOpsProductUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
+	err = b.dbOpts.ProductUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
 	if err != nil {
 		return nil, err
 	}
@@ -477,7 +460,7 @@ func (b *BookModule) updateProduct(ctx xtypes.ContextPlus) (any, error) {
 func (b *BookModule) deleteProduct(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	err := b.dbOpsProductDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	err := b.dbOpts.ProductDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 	if err != nil {
 		return nil, err
 	}
@@ -490,24 +473,24 @@ func (b *BookModule) deleteProduct(ctx xtypes.ContextPlus) (any, error) {
 func (b *BookModule) listContacts(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	return b.dbOpsContactList(pid, ctx.Claim.UserId)
+	return b.dbOpts.ContactList(pid, ctx.Claim.UserId)
 }
 
 func (b *BookModule) addContact(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	data := &Contact{}
+	data := &models.Contact{}
 	err := ctx.Http.Bind(data)
 	if err != nil {
 		return nil, err
 	}
 
-	return b.dbOpsContactAdd(pid, ctx.Claim.UserId, data)
+	return b.dbOpts.ContactAdd(pid, ctx.Claim.UserId, data)
 }
 
 func (b *BookModule) getContact(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
-	return b.dbOpsContactGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	return b.dbOpts.ContactGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 }
 
 func (b *BookModule) updateContact(ctx xtypes.ContextPlus) (any, error) {
@@ -520,7 +503,7 @@ func (b *BookModule) updateContact(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
-	err = b.dbOpsContactUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
+	err = b.dbOpts.ContactUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
 	if err != nil {
 		return nil, err
 	}
@@ -532,7 +515,7 @@ func (b *BookModule) updateContact(ctx xtypes.ContextPlus) (any, error) {
 func (b *BookModule) deleteContact(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	err := b.dbOpsContactDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	err := b.dbOpts.ContactDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 	if err != nil {
 		return nil, err
 	}

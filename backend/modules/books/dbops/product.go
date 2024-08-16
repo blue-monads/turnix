@@ -1,0 +1,142 @@
+package dbops
+
+import (
+	"github.com/bornjre/turnix/backend/modules/books/models"
+	"github.com/upper/db/v4"
+)
+
+// products
+
+func (b *DbOps) ProductAdd(pid, uid int64, data *models.Product) (int64, error) {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return 0, err
+	}
+
+	table := b.productTable(pid)
+
+	r, err := table.Insert(data)
+	if err != nil {
+		return 0, err
+	}
+
+	return r.ID().(int64), nil
+}
+
+func (b *DbOps) ProductUpdate(pid, uid, id int64, data map[string]any) error {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	return b.productTable(pid).Find(db.Cond{"id": id}).Update(data)
+}
+
+func (b *DbOps) ProductGet(pid, uid, id int64) (*models.Product, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	data := &models.Product{}
+	table := b.productTable(pid)
+
+	err = table.Find(db.Cond{"id": id}).One(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (b *DbOps) ProductList(pid, uid int64) ([]models.Product, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	datas := make([]models.Product, 0)
+	table := b.productTable(pid)
+
+	err = table.Find().All(&datas)
+	if err != nil {
+		return nil, err
+	}
+
+	return datas, nil
+}
+
+func (b *DbOps) ProductDelete(pid, uid, id int64) error {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	return b.productTable(pid).Find(db.Cond{"id": id}).Delete()
+}
+
+// product stock in
+
+type StockInData struct {
+	Info     string            `json:"info"`
+	Amount   float64           `json:"amount"`
+	VendorID int64             `json:"vendor_id"`
+	Lines    []StockInLineData `json:"lines"`
+}
+
+type StockInLineData struct {
+	Info      string  `json:"info"`
+	ProductID int64   `json:"product_id"`
+	Qty       float64 `json:"qty"`
+	Amount    float64 `json:"amount"`
+}
+
+func (b *DbOps) ProductStockInAdd(pid, uid int64, data *StockInData) (pstockInid int64, err error) {
+	err = b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return 0, err
+	}
+
+	psinTable := b.productStockInTable(pid)
+	psinLinTable := b.productStockInLineTable(pid)
+
+	r, err := psinTable.Insert(data)
+	if err != nil {
+		return 0, err
+	}
+
+	pstockInid = r.ID().(int64)
+	doneLines := make([]int64, 0, len(data.Lines))
+
+	defer func() {
+		if err == nil {
+			return
+		}
+
+		psinTable.Find(db.Cond{"id": pstockInid}).Delete()
+		psinLinTable.Find(db.Cond{"id IN": doneLines}).Delete()
+
+	}()
+
+	for _, inline := range data.Lines {
+
+		line := &models.ProductStockInLine{
+			Info:             inline.Info,
+			ProductID:        inline.ProductID,
+			Qty:              inline.Qty,
+			Amount:           inline.Amount,
+			ProductStockInID: pstockInid,
+			CreatedBy:        uid,
+			UpdatedBy:        uid,
+		}
+
+		r, err := b.productStockInLineTable(pid).Insert(line)
+		if err != nil {
+			return 0, err
+		}
+
+		doneLines = append(doneLines, r.ID().(int64))
+	}
+
+	return pstockInid, nil
+}
