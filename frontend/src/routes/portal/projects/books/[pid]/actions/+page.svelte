@@ -53,6 +53,50 @@
                         value={data?.info || ""}
                     /></label
                 >
+
+                <label class="label">
+                    <span>Default unpaid sales account</span>
+
+                    <div class="flex gap-1">
+                        <input class="input p-1" disabled={true} />
+                        <button class="btn variant-filled-secondary btn-sm">
+                            <SvgIcon
+                                className="h-4 w-4"
+                                name="chevron-up"
+                            />
+                        </button>
+                    </div>
+                </label>
+
+                <label class="label">
+                    <span>Default  paid sales account</span>
+
+                    <div class="flex gap-1">
+                        <input class="input p-1" disabled={true} />
+                        <button class="btn variant-filled-secondary btn-sm">
+                            <SvgIcon
+                                className="h-4 w-4"
+                                name="chevron-up"
+                            />
+                        </button>
+                    </div>
+                </label>
+
+                <label class="label">
+                    <span>Default bills account</span>
+
+                    <div class="flex gap-1">
+                        <input class="input p-1" disabled={true} />
+                        <button class="btn variant-filled-secondary btn-sm">
+                            <SvgIcon
+                                className="h-4 w-4"
+                                name="chevron-up"
+                            />
+                        </button>
+                    </div>
+                </label>
+
+
             </section>
 
             <footer class="flex justify-start pt-8 gap-2">
