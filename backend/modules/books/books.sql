@@ -101,46 +101,7 @@ create table __project__EstimateLines(
 );
 
 
-create table __project__Invoices(
-    id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL DEFAULT '',
-    client_id INTEGER NOT NULL DEFAULT 0,
-    client_name TEXT NOT NULL DEFAULT '',
 
-    notes TEXT NOT NULL DEFAULT '',
-    attachments TEXT NOT NULL DEFAULT '',
-
-    tax_id INTEGER NOT NULL DEFAULT 0,
-    tax_amount INTEGER NOT NULL DEFAULT 0,
-
-    discount_id INTEGER NOT NULL DEFAULT 0,
-    discount_amount INTEGER NOT NULL DEFAULT 0,
-
-    sub_total INTEGER NOT NULL DEFAULT 0,
-    total INTEGER NOT NULL DEFAULT 0,
-    txn_link_id INTEGER NOT NULL DEFAULT 0,
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    invalidated_reason TEXT NOT NULL DEFAULT '',
-
-    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
-);
-
-
-create table __project__InvoiceLines(
-    id INTEGER PRIMARY KEY,
-    info TEXT NOT NULL DEFAULT '',
-    product_id INTEGER NOT NULL,
-    qty INTEGER NOT NULL DEFAULT 0,    
-    invoice_id INTEGER NOT NULL,
-    amount INTEGER NOT NULL DEFAULT 0,
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
 
 -- SALES could be made two way 
 -- 1. Invoice[credit] <-[paid]-> Txn
@@ -218,13 +179,16 @@ create table __project__Sales(
     notes TEXT NOT NULL DEFAULT '',
     attachments TEXT NOT NULL DEFAULT '',
 
-    tax_id INTEGER NOT NULL DEFAULT 0,
-    tax_amount INTEGER NOT NULL DEFAULT 0,
+    total_item_price INTEGER NOT NULL DEFAULT 0,
+    total_item_tax_amount INTEGER NOT NULL DEFAULT 0,
+    total_item_discount_amount INTEGER NOT NULL DEFAULT 0,
 
-    discount_amount INTEGER NOT NULL DEFAULT 0,
+    sub_total INTEGER NOT NULL DEFAULT 0, -- total_item_price + total_item_tax_amount - total_item_discount_amount
 
-    sub_total INTEGER NOT NULL DEFAULT 0,
-    total INTEGER NOT NULL DEFAULT 0,
+    overall_discount_amount INTEGER NOT NULL DEFAULT 0,
+    overall_tax_amount INTEGER NOT NULL DEFAULT 0,
+    
+    total INTEGER NOT NULL DEFAULT 0, -- sub_total +  overall_discount_amount - overall_discount_amount
     txn_link_id INTEGER NOT NULL DEFAULT 0,
     created_by INTEGER NULL,
     updated_by INTEGER NULL,
@@ -242,7 +206,12 @@ create table __project__SalesLines(
     qty INTEGER NOT NULL DEFAULT 0,    
     sale_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL DEFAULT 0,
-    amount INTEGER NOT NULL DEFAULT 0,
+
+    price INTEGER NOT NULL DEFAULT 0, -- original item price
+    tax_amount INTEGER NOT NULL DEFAULT 0,
+    discount_amount INTEGER NOT NULL DEFAULT 0,
+
+    total_amount INTEGER NOT NULL DEFAULT 0, -- total_amount = item_price + item_tax_amount - discount_amount
     created_by INTEGER NULL,
     updated_by INTEGER NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -253,7 +222,7 @@ create table __project__SalesLines(
 create table __project__Tax(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
-    ttype TEXT NOT NULL DEFAULT 'item_percent', -- item_percent, overall_percent, item_custom, overall_custom
+    ttype TEXT NOT NULL DEFAULT 'item_percent', -- item_percent, category_percent
     info TEXT NOT NULL DEFAULT '',
     rate INTEGER NOT NULL DEFAULT 0,
     strict BOOLEAN NOT NULL DEFAULT FALSE,
@@ -262,6 +231,18 @@ create table __project__Tax(
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+
+create table __project__ProductTaxes(
+    id INTEGER PRIMARY KEY,
+    catagory_id INTEGER NOT NULL DEFAULT 0,
+    product_id INTEGER NOT NULL DEFAULT 0,
+    tax_id INTEGER NOT NULL,
+    created_by INTEGER NULL,
+    updated_by INTEGER NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 
