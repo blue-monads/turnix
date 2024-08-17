@@ -12,7 +12,7 @@ import (
 // fixme: add updated at everywhere
 
 type SalesData struct {
-	Sales models.Sales       `json:"sales"`
+	Sale  models.Sales       `json:"sale"`
 	Lines []models.SalesLine `json:"lines"`
 }
 
@@ -31,7 +31,7 @@ func (b *DbOps) SalesAdd(pid, uid int64, data *SalesData) (int64, error) {
 
 	t := time.Now()
 
-	sd := data.Sales
+	sd := data.Sale
 	sd.CreatedBy = uid
 	sd.UpdatedBy = uid
 	sd.CreatedAt = &t
@@ -131,8 +131,8 @@ func (b *DbOps) SalesAdd(pid, uid int64, data *SalesData) (int64, error) {
 }
 
 type SalesGetData struct {
-	SaleData models.Sales       `json:"sale_data"`
-	Lines    []models.SalesLine `json:"lines"`
+	Sale  models.Sales       `json:"sale"`
+	Lines []models.SalesLine `json:"lines"`
 }
 
 func (b *DbOps) SalesGet(pid, uid, id int64) (*SalesGetData, error) {
@@ -142,13 +142,13 @@ func (b *DbOps) SalesGet(pid, uid, id int64) (*SalesGetData, error) {
 	}
 
 	data := &SalesGetData{
-		SaleData: models.Sales{},
-		Lines:    make([]models.SalesLine, 0),
+		Sale:  models.Sales{},
+		Lines: make([]models.SalesLine, 0),
 	}
 
 	salestable := b.salesTable(pid)
 
-	err = salestable.Find(db.Cond{"id": id}).One(&data.SaleData)
+	err = salestable.Find(db.Cond{"id": id}).One(&data.Sale)
 	if err != nil {
 		return nil, err
 	}

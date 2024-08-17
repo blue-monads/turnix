@@ -123,6 +123,51 @@ export interface Contact {
     is_deleted: boolean
 }
 
+export interface Sale {
+    id: number
+    title: string
+    client_id: number
+    client_name: string
+    notes: string
+    attachments: string
+    total_item_price: number
+    total_item_tax_amount: number
+    total_item_discount_amount: number
+    sub_total: number
+    overall_discount_amount: number
+    overall_tax_amount: number
+    total: number
+    txn_link_id: number
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+    is_deleted: boolean
+}
+
+export interface SaleLine {
+    id: number
+    info: string
+    qty: number
+    sale_id: number
+    product_id: number
+    price: number
+    tax_amount: number
+    discount_amount: number
+    total_amount: number
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+    is_deleted: boolean
+}
+
+export interface SalesData {
+    sale: Sale
+    lines: SaleLine[]
+}
+
+
 
 export const NewBookAPI = (api: RootAPI) => {
     return new BooksAPI(api.projectClient)
@@ -279,6 +324,22 @@ export class BooksAPI {
     }
 
     // sales
+
+    addSale = (pid: string, data: Partial<SalesData>) => {
+        return this.client.post(`books/${pid}/sales`, data)
+    }
+
+    getSale = (pid: string, id: string) => {
+        return this.client.get<SalesData>(`books/${pid}/sales/${id}`)
+    }
+
+    listSales = (pid: string) => {
+        return this.client.get<Sale[]>(`books/${pid}/sales`)
+    }
+
+    deleteSale = (pid: string, id: string) => {
+        return this.client.delete(`books/${pid}/sales/${id}`)
+    }
 
 
 }
