@@ -74,6 +74,7 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	taxGrp.DELETE("/:id", x(b.deleteTax))
 	taxGrp.POST("/:id/product", x(b.addTaxProduct))
 	taxGrp.DELETE("/:id/product/:tpid", x(b.deleteTaxProduct))
+	taxGrp.GET("/:id/product", x(b.listTaxProduct))
 
 	// report
 
