@@ -176,6 +176,18 @@ func (b *DbOps) SalesList(pid, uid int64) ([]models.Sales, error) {
 	return datas, nil
 }
 
+func (b *DbOps) SalesDelete(pid, uid, id int64) error {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	return b.salesTable(pid).Find(db.Cond{"id": id}).Update(db.Cond{
+		"is_deleted": true,
+	})
+
+}
+
 func (b *DbOps) salesTable(pid int64) db.Collection {
 	return b.db.Table(salesTableName(pid))
 }
