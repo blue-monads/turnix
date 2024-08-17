@@ -223,7 +223,6 @@ type Sales struct {
 	OverallTaxAmount      float64 `json:"overall_tax_amount" db:"overall_tax_amount"`
 	Total                 float64 `json:"total" db:"total"`
 
-	TxnLinkID int64      `json:"txn_link_id" db:"txn_link_id"`
 	CreatedBy int64      `json:"created_by" db:"created_by"`
 	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
 	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`

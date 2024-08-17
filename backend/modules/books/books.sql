@@ -79,7 +79,6 @@ create table __project__Estimates(
     tax_id INTEGER NOT NULL DEFAULT 0,
     sub_total INTEGER NOT NULL DEFAULT 0,
     total INTEGER NOT NULL DEFAULT 0,
-    txn_link_id INTEGER NOT NULL DEFAULT 0,
     created_by INTEGER NULL,
     updated_by INTEGER NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -189,7 +188,6 @@ create table __project__Sales(
     overall_tax_amount INTEGER NOT NULL DEFAULT 0,
     
     total INTEGER NOT NULL DEFAULT 0, -- sub_total +  overall_discount_amount - overall_discount_amount
-    txn_link_id INTEGER NOT NULL DEFAULT 0,
     created_by INTEGER NULL,
     updated_by INTEGER NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
