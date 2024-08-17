@@ -36,6 +36,7 @@
             info,
             catagory_id: Number(catid),
             price,
+            variant_id
         });
         if (resp.status !== 200) {
             message = resp.data.message;
