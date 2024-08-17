@@ -114,25 +114,3 @@
 {/if}
 
 
-<!-- 
-
-        title: string
-    client_id: number
-    client_name: string
-    notes: string
-    attachments: string
-    total_item_price: number
-    total_item_tax_amount: number
-    total_item_discount_amount: number
-    sub_total: number
-    overall_discount_amount: number
-    overall_tax_amount: number
-    total: number
-    created_by: number
-    updated_by: number
-    created_at: string
-    updated_at: string
-    is_deleted: boolean
-
-
- -->

@@ -28,7 +28,7 @@
 
     let lines: SaleLine[] = [];
     let contacts: object[] = [];
-    let loadingContacts = true;
+    let loadingContacts = false;
 
     const loadData = async () => {
         loadingContacts = true;
@@ -41,7 +41,7 @@
         loadingContacts = false;
     };
 
-    loadData();
+
 
     $: __clientIndex = contacts.reduce((acc: any, item: any) => {
         const item_id = item["id"];
