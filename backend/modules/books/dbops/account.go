@@ -61,7 +61,7 @@ func (b *DbOps) ListAccount(pid, uid int64) ([]models.Account, error) {
 	datas := make([]models.Account, 0)
 	table := b.accountsTable(pid)
 
-	err = table.Find().All(&datas)
+	err = table.Find(db.Cond{"is_deleted": false}).All(&datas)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,9 @@ func (b *DbOps) DeleteAccount(pid, uid, aid int64) error {
 	}
 
 	table := b.accountsTable(pid)
-	err = table.Find(db.Cond{"id": aid}).Delete()
+	err = table.Find(db.Cond{"id": aid}).Update(db.Cond{
+		"is_deleted": true,
+	})
 	if err != nil {
 		return err
 	}

@@ -58,7 +58,7 @@ func (b *DbOps) ContactList(pid, uid int64) ([]models.Contact, error) {
 	datas := make([]models.Contact, 0)
 	table := b.contactTable(pid)
 
-	err = table.Find().All(&datas)
+	err = table.Find(db.Cond{"is_deleted": false}).All(&datas)
 	if err != nil {
 		return nil, err
 	}
@@ -72,5 +72,7 @@ func (b *DbOps) ContactDelete(pid, uid, id int64) error {
 		return err
 	}
 
-	return b.contactTable(pid).Find(db.Cond{"id": id}).Delete()
+	return b.contactTable(pid).Find(db.Cond{"id": id}).Update(db.Cond{
+		"is_deleted": true,
+	})
 }
