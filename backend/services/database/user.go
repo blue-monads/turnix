@@ -58,7 +58,7 @@ func (d *DB) ListUserByOwner(owner int64) ([]models.User, error) {
 
 	users := make([]models.User, 0)
 
-	err := d.userTable().Find(db.Cond{"owned_by": owner}).All(&users)
+	err := d.userTable().Find(db.Cond{"owner_user_id": owner}).All(&users)
 	if err != nil {
 		return nil, err
 	}
