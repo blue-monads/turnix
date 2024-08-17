@@ -96,6 +96,20 @@
                     </div>
                 </label>
 
+                <label class="label">
+                    <span>Currency</span>
+                    <select class="select" >
+
+                            <option>USD</option>
+                            <option>EUR</option>
+                            <option>GBP</option>
+                            <option>JPY</option>
+                            <option>INR</option>
+                            <option>NRS</option>
+
+                    </select>
+                </label>
+
 
             </section>
 
