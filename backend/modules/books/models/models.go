@@ -234,7 +234,7 @@ type Sales struct {
 type SalesLine struct {
 	ID             int64      `json:"id" db:"id"`
 	Info           string     `json:"info" db:"info"`
-	Qty            float64    `json:"qty" db:"qty"`
+	Qty            int64      `json:"qty" db:"qty"`
 	SaleID         int64      `json:"sale_id" db:"sale_id"`
 	ProductID      int64      `json:"product_id" db:"product_id"`
 	Price          float64    `json:"price" db:"price"`
