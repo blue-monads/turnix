@@ -112,11 +112,8 @@ func (b *BookModule) updateAccount(ctx xtypes.ContextPlus) (any, error) {
 	}
 
 	err = b.dbOpts.UpdateAccount(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
-	if err != nil {
-		return nil, err
-	}
 
-	return nil, nil
+	return nil, err
 
 }
 
@@ -130,11 +127,8 @@ func (b *BookModule) deleteAccount(ctx xtypes.ContextPlus) (any, error) {
 	}
 
 	err = b.dbOpts.DeleteAccount(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
-	if err != nil {
-		return nil, err
-	}
 
-	return nil, nil
+	return nil, err
 }
 
 // txn
@@ -255,11 +249,8 @@ func (b *BookModule) updateTxn(ctx xtypes.ContextPlus) (any, error) {
 	}
 
 	err = b.dbOpts.UpdateTxn(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
-	if err != nil {
-		return nil, err
-	}
 
-	return nil, nil
+	return nil, err
 
 }
 
@@ -315,11 +306,8 @@ func (b *BookModule) deleteTxn(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
 	err := b.dbOpts.DeleteTxn(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
-	if err != nil {
-		return nil, err
-	}
 
-	return nil, nil
+	return nil, err
 }
 
 func (b *BookModule) reportLiveGenerate(ctx xtypes.ContextPlus) (any, error) {
@@ -401,23 +389,16 @@ func (b *BookModule) updateCatagory(ctx xtypes.ContextPlus) (any, error) {
 	}
 
 	err = b.dbOpts.CatagoryUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
-	if err != nil {
-		return nil, err
-	}
 
-	return nil, nil
-
+	return nil, err
 }
 
 func (b *BookModule) deleteCatagory(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
 	err := b.dbOpts.CatagoryDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
-	if err != nil {
-		return nil, err
-	}
+	return nil, err
 
-	return nil, nil
 }
 
 // products
@@ -456,23 +437,15 @@ func (b *BookModule) updateProduct(ctx xtypes.ContextPlus) (any, error) {
 	}
 
 	err = b.dbOpts.ProductUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
-	if err != nil {
-		return nil, err
-	}
-
-	return nil, nil
-
+	return nil, err
 }
 
 func (b *BookModule) deleteProduct(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
 	err := b.dbOpts.ProductDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
-	if err != nil {
-		return nil, err
-	}
 
-	return nil, nil
+	return nil, err
 }
 
 // contacts
@@ -511,11 +484,8 @@ func (b *BookModule) updateContact(ctx xtypes.ContextPlus) (any, error) {
 	}
 
 	err = b.dbOpts.ContactUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
-	if err != nil {
-		return nil, err
-	}
 
-	return nil, nil
+	return nil, err
 
 }
 
@@ -523,11 +493,8 @@ func (b *BookModule) deleteContact(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
 	err := b.dbOpts.ContactDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
-	if err != nil {
-		return nil, err
-	}
 
-	return nil, nil
+	return nil, err
 }
 
 // sales
@@ -559,9 +526,6 @@ func (b *BookModule) deleteSales(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
 	err := b.dbOpts.SalesDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
-	if err != nil {
-		return nil, err
-	}
 
-	return nil, nil
+	return nil, err
 }
