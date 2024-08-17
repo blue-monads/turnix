@@ -95,6 +95,8 @@ export interface Product {
     price: number
     parent_id: number
     image: string
+    stock_count: number
+    epoch: number
     alt_images: string
     created_by: number
     catagory_id: number

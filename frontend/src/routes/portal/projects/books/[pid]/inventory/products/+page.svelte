@@ -82,6 +82,7 @@
         ["id", "ID"],
         ["name", "Name"],
         ["variant_id", "Variant"],
+        ["stock_count", "Stock"],
         ["info", "Info"],
         ["price", "Price"],
     ]}

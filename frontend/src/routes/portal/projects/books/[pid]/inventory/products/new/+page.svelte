@@ -17,6 +17,7 @@
     let catid = 0;
     let price = 0;
     let variant_id = "";
+    let stock_count = 0;
 
     let allCatagories: Catagory[] = [];
 
@@ -36,7 +37,8 @@
             info,
             catagory_id: Number(catid),
             price,
-            variant_id
+            variant_id,
+            stock_count
         });
         if (resp.status !== 200) {
             message = resp.data.message;
@@ -84,9 +86,13 @@
                 />
             </label>
 
+
             <label class="label" for="price">
                 <span>Price</span>
+               
+
             </label>
+
 
             <div
                 class="input-group input-group-divider grid-cols-[auto_1fr_auto]"
@@ -106,6 +112,17 @@
                     placeholder="Input"
                 />
             </div>
+
+            <label class="label">
+                <span>In Stock</span>
+                <input
+                    id="stock_count"
+                    bind:value={stock_count}
+                    class="input p-1"
+                    type="number"
+                    placeholder="Input"
+                />
+            </label>
 
             <label class="label">
                 <span>Info</span>
