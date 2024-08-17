@@ -51,6 +51,12 @@
     },
   ];
 
+  sibarItems.push({
+    name: "Playground",
+    link: "/z/pages/portal/playground",
+    icon: "code-bracket-square",
+  });
+
   let api: RootAPI;
 
   const load = () => {
