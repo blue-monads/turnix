@@ -86,7 +86,7 @@
         ["price", "Price"],
     ]}
     datas={cats}
-    color={[]}
+    color={["variant_id"]}
     actions={[
         {
             Name: "Sales",
