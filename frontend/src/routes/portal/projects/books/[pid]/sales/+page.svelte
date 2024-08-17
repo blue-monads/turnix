@@ -1,25 +1,28 @@
 <script lang="ts">
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-    import { NewBookAPI } from "$lib/projects/books";
+    import { NewBookAPI, type Sale } from "$lib/projects/books";
     import { getContext } from "svelte";
     import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
     import type { RootAPI } from "$lib/api";
     import { page } from "$app/stores";
-    import { AutoTable } from "$lib/compo";
+    import { AutoTable, Loader } from "$lib/compo";
     import { goto } from "$app/navigation";
 
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let cats: any[] = [];
+    let sales: Sale[] = [];
+    let loading = true;
 
     const load = async () => {
-        const resp = await api.listCatagories(pid);
+        loading = true;
+        const resp = await api.listSales(pid);
         if (resp.status !== 200) {
             return;
         }
 
-        cats = resp.data;
+        sales = resp.data;
+        loading = false;
     };
 
     load();
@@ -69,3 +72,67 @@
         </a>
     </svelte:fragment>
 </AppBar>
+
+{#if loading}
+    <Loader />
+{:else}
+    <AutoTable
+        action_key={"id"}
+        key_names={[
+            ["id", "ID"],
+            ["title", "Title"],
+            ["client_name", "Client"],
+            ["total", "Total"],
+            ["updated_at", "Updated At"],
+        ]}
+        datas={sales}
+        color={["ctype"]}
+        actions={[
+            {
+                Name: "edit",
+                Class: "variant-filled-primary",
+                Action: async (id) => {
+                    goto(
+                        `/z/pages/portal/projects/books/${pid}/sales/edit?sid=${id}`,
+                    );
+                },
+            },
+            {
+                Name: "delete",
+                Class: "variant-filled-error",
+                Action: async (id) => {
+                    const res = await api.deleteSale(pid, id);
+                    if (res.status !== 200) {
+                        return;
+                    }
+
+                    load();
+                },
+            },
+        ]}
+    />
+{/if}
+
+
+<!-- 
+
+        title: string
+    client_id: number
+    client_name: string
+    notes: string
+    attachments: string
+    total_item_price: number
+    total_item_tax_amount: number
+    total_item_discount_amount: number
+    sub_total: number
+    overall_discount_amount: number
+    overall_tax_amount: number
+    total: number
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+    is_deleted: boolean
+
+
+ -->

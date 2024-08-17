@@ -137,7 +137,6 @@ export interface Sale {
     overall_discount_amount: number
     overall_tax_amount: number
     total: number
-    txn_link_id: number
     created_by: number
     updated_by: number
     created_at: string
