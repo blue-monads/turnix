@@ -81,12 +81,6 @@ func (b *DbOps) DeleteAccount(pid, uid, aid int64) error {
 	err = table.Find(db.Cond{"id": aid}).Update(db.Cond{
 		"is_deleted": true,
 	})
-	if err != nil {
-		return err
-	}
 
-	// fixme cleanup txns
-
-	return nil
-
+	return err
 }
