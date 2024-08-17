@@ -11,19 +11,10 @@
 
     const api = getContext("__api__") as RootAPI;
 
-    let projects = [];
 
-    const load = async () => {
-        const resp = await api.listProjects();
-        if (resp.status !== 200) {
-            return;
-        }
-
-        projects = resp.data;
-    };
     const store = getModalStore();
 
-    load();
+
 </script>
 
 <svelte:head>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { RootAPI } from "$lib/api";
+  import { RootAPI, type ProjectHook } from "$lib/api";
   import { getContext } from "svelte";
   import {
     AppBar,
@@ -12,15 +12,7 @@
   const api = getContext("__api__") as RootAPI;
   export let ptype: string | undefined = undefined
 
-  let projects = [
-    {
-      id: 12,
-      ptype: "xyz",
-      name: "test",
-      info: "This is test",
-      isInitilized: false,
-    },
-  ];
+  let projects: any[] = [];
 
   const load = async () => {
     const resp = await api.listProjects(ptype);
