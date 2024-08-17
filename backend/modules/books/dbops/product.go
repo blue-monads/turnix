@@ -1,6 +1,9 @@
 package dbops
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/bornjre/turnix/backend/modules/books/models"
 	"github.com/upper/db/v4"
 )
@@ -136,6 +139,24 @@ func (b *DbOps) ProductStockInAdd(pid, uid int64, data *StockInData) (pstockInid
 		}
 
 		doneLines = append(doneLines, r.ID().(int64))
+	}
+
+	stmt := fmt.Sprintf(`UPDATE %s SET stock_count = stock_count + ? WHERE id = ?`, productTableName(pid))
+
+	err = b.db.GetSession().TxContext(context.Background(), func(sess db.Session) error {
+
+		for _, inline := range data.Lines {
+			_, err := sess.SQL().Exec(stmt, inline.ProductID, inline.Qty)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}, nil)
+
+	if err != nil {
+		return 0, err
 	}
 
 	return pstockInid, nil

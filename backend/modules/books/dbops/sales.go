@@ -51,7 +51,7 @@ func (b *DbOps) SalesAdd(pid, uid int64, data *SalesData) (int64, error) {
 
 	products := make([]ProductLite, 0, len(data.Lines))
 
-	b.db.GetSession().TxContext(context.Background(), func(tx db.Session) error {
+	err = b.db.GetSession().TxContext(context.Background(), func(tx db.Session) error {
 
 		productTable := tx.Collection(productTableName(pid))
 		salesTable := tx.Collection(salesTableName(pid))
@@ -122,6 +122,10 @@ func (b *DbOps) SalesAdd(pid, uid int64, data *SalesData) (int64, error) {
 
 		return nil
 	}, nil)
+
+	if err != nil {
+		return 0, err
+	}
 
 	return salesId, nil
 }
