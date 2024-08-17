@@ -49,6 +49,24 @@ export interface ProjectSQLExec {
     data: any[];
 }
 
+export interface User {
+    id: number;
+    name: string;
+    utype: string;
+    email: string;
+    bio: string;
+    phone: string;
+
+    password: string;
+    email_verified: boolean;
+    owner_user_id: number;
+    owner_project_id: number;
+    disabled: boolean;
+    msg_read_head: number;
+    extrameta: any;
+    created_at: string;
+}
+
 
 export class RootAPI {
     client: AxiosInstance
@@ -173,6 +191,28 @@ export class RootAPI {
     deleteProjectFile = (pid: string, id: string) => {
         return this.client.delete(`/project/${pid}/files/${id}`)
     }
+
+    listSelfUsers = () => {
+        return this.client.get<User[]>(`/self/users`)
+    }
+
+    addSelfUser = (data: Partial<User>) => {
+        return this.client.post(`/self/users`, data)
+    }
+
+    getSelfUser = (uid: string) => {
+        return this.client.get<User>(`/self/users/${uid}`)
+    }
+
+    updateSelfUser = (uid: string, data: Partial<User>) => {
+        return this.client.post(`/self/users/${uid}`, data)
+    }
+
+    deleteSelfUser = (uid: string) => {
+        return this.client.delete(`/self/users/${uid}`)
+    }
+
+
 
     runProjectSQL = (pid: string, data: ProjectSQLExec) => {
         return this.client.post(`/project/${pid}/sqlexec`, data)
