@@ -92,6 +92,14 @@ func taxTableName(pid int64) string {
 	return fmt.Sprintf("z_%d_Tax", pid)
 }
 
+func (b *DbOps) productTaxTable(pid int64) db.Collection {
+	return b.db.Table(productTaxTableName(pid))
+}
+
+func productTaxTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_ProductTaxes", pid)
+}
+
 func (b *DbOps) userHasScope(pid, uid int64, scope string) error {
 	dbscope, err := b.db.GetProjectUserScope(uid, pid)
 	if err != nil {

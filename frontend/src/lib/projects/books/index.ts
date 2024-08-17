@@ -166,6 +166,31 @@ export interface SalesData {
     lines: SaleLine[]
 }
 
+export interface Tax {
+    id: number
+    name: string
+    ttype: string
+    info: string
+    rate: number
+    strict: boolean
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+    is_deleted: boolean
+}
+
+export interface ProductTax {
+    id: number
+    catagory_id: number
+    product_id: number
+    tax_id: number
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+}
+
 
 
 export const NewBookAPI = (api: RootAPI) => {
@@ -338,6 +363,34 @@ export class BooksAPI {
 
     deleteSale = (pid: string, id: string) => {
         return this.client.delete(`books/${pid}/sales/${id}`)
+    }
+
+    // tax 
+    listTax = (pid: string) => {
+        return this.client.get<Tax[]>(`books/${pid}/tax`)
+    }
+    addTax = (pid: string, data: Partial<Tax>) => {
+        return this.client.post(`books/${pid}/tax`, data)
+    }
+    getTax = (pid: string, id: string) => {
+        return this.client.get<Tax>(`books/${pid}/tax/${id}`)
+    }
+    updateTax = (pid: string, id: string, data: Partial<Tax>) => {
+        return this.client.post(`books/${pid}/tax/${id}`, data)
+    }
+    deleteTax = (pid: string, id: string) => {
+        return this.client.delete(`books/${pid}/tax/${id}`)
+    }
+
+    listTaxProduct = (pid: string, tid?: string) => {
+        return this.client.get<ProductTax[]>(`books/${pid}/tax/product?tid=${tid || ""}`)
+    }
+
+    addTaxProduct = (pid: string, id: string, data: Partial<ProductTax>) => {
+        return this.client.post(`books/${pid}/tax/${id}/product`, data)
+    }
+    deleteTaxProduct = (pid: string, id: string, tpid: string) => {
+        return this.client.delete(`books/${pid}/tax/${id}/product/${tpid}`)
     }
 
 

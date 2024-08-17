@@ -22,6 +22,7 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	txnGrp := group.Group("/:pid/txn")
 	contactGrp := group.Group("/:pid/contacts")
 	salesGrp := group.Group("/:pid/sales")
+	taxGrp := group.Group("/:pid/tax")
 
 	// accounts
 	accGrp.GET("/", x(b.listAccount))
@@ -64,6 +65,17 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	contactGrp.GET("/:id", x(b.getContact))
 	contactGrp.POST("/:id", x(b.updateContact))
 	contactGrp.DELETE("/:id", x(b.deleteContact))
+
+	// tax
+	taxGrp.GET("/", x(b.listTax))
+	taxGrp.POST("/", x(b.addTax))
+	taxGrp.GET("/:id", x(b.getTax))
+	taxGrp.POST("/:id", x(b.updateTax))
+	taxGrp.DELETE("/:id", x(b.deleteTax))
+	taxGrp.POST("/:id/product", x(b.addTaxProduct))
+	taxGrp.DELETE("/:id/product/:tpid", x(b.deleteTaxProduct))
+
+	// report
 
 	report.POST("/live", x(b.reportLiveGenerate))
 
@@ -523,6 +535,83 @@ func (b *BookModule) deleteSales(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
 	err := b.dbOpts.SalesDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+
+	return nil, err
+}
+
+// tax
+
+func (b *BookModule) listTax(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	return b.dbOpts.TaxList(pid, ctx.Claim.UserId)
+}
+
+func (b *BookModule) addTax(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	data := &models.Tax{}
+	err := ctx.Http.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.dbOpts.TaxAdd(pid, ctx.Claim.UserId, data)
+}
+
+func (b *BookModule) getTax(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	return b.dbOpts.TaxGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+}
+
+func (b *BookModule) updateTax(ctx xtypes.ContextPlus) (any, error) {
+
+	pid := ctx.ProjectId()
+
+	data := make(map[string]any)
+	err := ctx.Http.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	pp.Println("@updateTax", data)
+
+	err = b.dbOpts.TaxUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
+
+	return nil, err
+
+}
+
+func (b *BookModule) deleteTax(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	err := b.dbOpts.TaxDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+
+	return nil, err
+}
+
+func (b *BookModule) listTaxProduct(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	return b.dbOpts.ProductTaxList(pid, ctx.Claim.UserId)
+}
+
+func (b *BookModule) addTaxProduct(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	data := &models.ProductTax{}
+	err := ctx.Http.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.dbOpts.ProductTaxAdd(pid, ctx.Claim.UserId, data)
+}
+
+func (b *BookModule) deleteTaxProduct(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	err := b.dbOpts.ProductTaxDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 
 	return nil, err
 }

@@ -250,6 +250,7 @@ type SalesLine struct {
 type Tax struct {
 	ID        int64      `json:"id" db:"id,omitempty"`
 	Name      string     `json:"name" db:"name"`
+	Type      string     `json:"ttype" db:"ttype"`
 	Info      string     `json:"info" db:"info"`
 	Rate      float64    `json:"rate" db:"rate"`
 	CreatedBy int64      `json:"created_by" db:"created_by"`
@@ -257,6 +258,17 @@ type Tax struct {
 	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
 	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
 	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+}
+
+type ProductTax struct {
+	ID         int64      `json:"id" db:"id,omitempty"`
+	CatagoryID int64      `json:"catagory_id" db:"catagory_id"`
+	ProductID  int64      `json:"product_id" db:"product_id"`
+	TaxID      int64      `json:"tax_id" db:"tax_id"`
+	CreatedBy  int64      `json:"created_by" db:"created_by"`
+	UpdatedBy  int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt  *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt  *time.Time `json:"updated_at" db:"updated_at,omitempty"`
 }
 
 type Contact struct {
