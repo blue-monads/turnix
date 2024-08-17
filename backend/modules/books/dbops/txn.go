@@ -259,7 +259,9 @@ func (b *DbOps) DeleteTxn(pid, uid, aid int64) error {
 	}
 
 	table := b.txnTable(pid)
-	err = table.Find(db.Cond{"id": aid}).Delete()
+	err = table.Find(db.Cond{"id": aid}).Update(db.Cond{
+		"is_deleted": true,
+	})
 	if err != nil {
 		return err
 	}

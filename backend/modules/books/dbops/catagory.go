@@ -70,5 +70,7 @@ func (b *DbOps) CatagoryDelete(pid, uid, id int64) error {
 		return err
 	}
 
-	return b.catagoryTable(pid).Find(db.Cond{"id": id}).Delete()
+	return b.catagoryTable(pid).Find(db.Cond{"id": id}).Update(db.Cond{
+		"is_deleted": true,
+	})
 }
