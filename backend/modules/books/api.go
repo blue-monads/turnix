@@ -226,9 +226,6 @@ func (b *BookModule) addTxn(ctx xtypes.ContextPlus) (any, error) {
 func (b *BookModule) getTxn(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	pp.Println("ctx.Http.FullPath()", ctx.Http.FullPath())
-	pp.Println("ctx.Http.Request.URL.Path()", ctx.Http.Request.URL.Path)
-
 	return b.dbOpts.GetTxn(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 }
 
