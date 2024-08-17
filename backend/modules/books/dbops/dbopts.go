@@ -21,39 +21,75 @@ func New(db *database.DB) DbOps {
 // utils
 
 func (b *DbOps) txnTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("z_%d_Transactions", pid))
+	return b.db.Table(txnTableName(pid))
+}
+
+func txnTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_Transactions", pid)
 }
 
 func (b *DbOps) accountsTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("z_%d_Accounts", pid))
+	return b.db.Table(accountsTableName(pid))
+}
+
+func accountsTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_Accounts", pid)
 }
 
 func (b *DbOps) txnLineTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("z_%d_TransactionLines", pid))
+	return b.db.Table(txnLineTableName(pid))
+}
+
+func txnLineTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_TransactionLines", pid)
 }
 
 func (b *DbOps) catagoryTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("z_%d_Catagories", pid))
+	return b.db.Table(catagoryTableName(pid))
+}
+
+func catagoryTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_Catagories", pid)
 }
 
 func (b *DbOps) productTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("z_%d_Products", pid))
+	return b.db.Table(productTableName(pid))
+}
+
+func productTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_Products", pid)
 }
 
 func (b *DbOps) productStockInTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("z_%d_ProductStockIn", pid))
+	return b.db.Table(productStockInTableName(pid))
+}
+
+func productStockInTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_ProductStockIn", pid)
 }
 
 func (b *DbOps) productStockInLineTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("z_%d_ProductStockInLines", pid))
+	return b.db.Table(productStockInLineTableName(pid))
+}
+
+func productStockInLineTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_ProductStockInLines", pid)
 }
 
 func (b *DbOps) contactTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("z_%d_Contacts", pid))
+	return b.db.Table(contactTableName(pid))
+}
+
+func contactTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_Contacts", pid)
 }
 
 func (b *DbOps) taxTable(pid int64) db.Collection {
-	return b.db.Table(fmt.Sprintf("z_%d_Tax", pid))
+	return b.db.Table(taxTableName(pid))
+}
+
+func taxTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_Tax", pid)
 }
 
 func (b *DbOps) userHasScope(pid, uid int64, scope string) error {
