@@ -49,16 +49,19 @@ export const samplePreview = `
 </head>
 <body>
     <div class="container">
-        <h1>Hello World</h1>
+        <h1>Reports Editor Example</h1> 
         <p>This is a sample preview</p>
         
     </div>
-    <div class="container mt-5" x-data="accountTable()" id="ac_table">
+    <div class="container-xl mt-5" x-data="accountTable()" id="ac_table">
         
-    <button id="start" class="btn btn-primary" type="button" x-on:click="fetchAccounts">
-      <span class="icon icon-thumbs-up"></span>
-      Start
-  </button>
+    <div class="container">
+        <button id="start" class="btn btn-primary" type="button" x-on:click="fetchAccounts">
+            <span class="icon icon-thumbs-up"></span>
+            Start
+        </button>    
+    </div>
+
 
         <div x-show="!loading" class="table-responsive">
             <table class="table table-striped table-hover">
