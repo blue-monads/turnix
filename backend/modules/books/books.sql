@@ -189,7 +189,7 @@ create table __project__Sales(
     
     total INTEGER NOT NULL DEFAULT 0, -- sub_total +  overall_discount_amount - overall_discount_amount
     created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    updated_by INTEGER NULL,    
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     invalidated_reason TEXT NOT NULL DEFAULT '',

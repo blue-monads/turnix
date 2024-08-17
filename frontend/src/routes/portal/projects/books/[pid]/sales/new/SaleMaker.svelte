@@ -1,64 +1,52 @@
 <script lang="ts">
-    import { NewBookAPI, type Catagory } from "$lib/projects/books";
-    import { getContext } from "svelte";
-    import type { RootAPI } from "$lib/api";
-    import { page } from "$app/stores";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+    import type { Contact } from "$lib/projects/books";
+    import { createEventDispatcher } from "svelte";
     import type { NewSaleLine } from "./sub/sales";
     import {
         getModalStore,
         RadioGroup,
         RadioItem,
     } from "@skeletonlabs/skeleton";
-    import { Loader } from "$lib/compo";
 
-    const pid = $page.params["pid"];
-    const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let message = "";
 
     const store = getModalStore();
+    const dispatch = createEventDispatcher();
 
-    let title = "";
-    let info = "";
-    let totalPrice = 0;
-    let client_id = 0;
-    let sales_date = new Date().toISOString().slice(0, 16);
+    export let pid = 0; 
 
-    let showTitle = !!title;
+    // data fields
+    export let title = "";
+    export let notes = "";
+    export let client_id = 0;
+    export let total_item_price = 0;
+    export let total_item_tax_amount = 0;
+    export let total_item_discount_amount = 0;
+    export let sub_total = 0;
+    export let overall_discount_amount = 0;
+    export let overall_tax_amount = 0;
+    export let total = 0;
+    export let sales_date = new Date().toISOString().slice(0, 16);
 
-    let lines: NewSaleLine[] = [];
-    let contacts: object[] = [];
-    let loadingContacts = true;
+    
+    // extra data 
+    export let lines: NewSaleLine[] = [];
+    export let contacts: Contact[] = [];
+    export let contactsNameIndex: Record<number, string> = {};
 
-    const loadData = async () => {
-        loadingContacts = true;
-        const resp = await api.listContacts(pid);
-        if (resp.status !== 200) {
-            return;
-        }
+   
+    let mode = "invoice";
 
-        contacts = resp.data;
-        loadingContacts = false;
-    };
 
-    loadData();
 
-    $: __clientIndex = contacts.reduce((acc: any, item: any) => {
-        const item_id = item["id"];
-        const name = item["name"];
-        acc[item_id] = name;
-        return acc;
-    }, {});
 
     const submit = async () => {};
 
-    let mode = "invoice";
+
 </script>
 
-{#if loadingContacts}
-    <Loader />
-{:else}
+
     <form class="p-2" on:submit|preventDefault={submit}>
         <div class="card">
             <header class="card-header flex justify-between">
@@ -88,7 +76,7 @@
                             <input
                                 type="text"
                                 disabled
-                                value={__clientIndex[client_id] || ""}
+                                value={contactsNameIndex[client_id] || ""}
                                 class="input p-1"
                                 placeholder="Client"
                             />
@@ -263,4 +251,3 @@
             </footer>
         </div>
     </form>
-{/if}
