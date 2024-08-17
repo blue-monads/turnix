@@ -21,6 +21,7 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	inventry := group.Group("/:pid/inventory")
 	txnGrp := group.Group("/:pid/txn")
 	contactGrp := group.Group("/:pid/contacts")
+	salesGrp := group.Group("/:pid/sales")
 
 	// accounts
 	accGrp.GET("/", x(b.listAccount))
@@ -65,6 +66,12 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	contactGrp.DELETE("/:id", x(b.deleteContact))
 
 	report.POST("/live", x(b.reportLiveGenerate))
+
+	// sales
+	salesGrp.GET("/", x(b.listSales))
+	salesGrp.POST("/", x(b.addSales))
+	salesGrp.GET("/:id", x(b.getSales))
+	salesGrp.DELETE("/:id", x(b.deleteSales))
 
 	return nil
 }
@@ -516,6 +523,42 @@ func (b *BookModule) deleteContact(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
 	err := b.dbOpts.ContactDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+// sales
+
+func (b *BookModule) listSales(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	return b.dbOpts.SalesList(pid, ctx.Claim.UserId)
+}
+
+func (b *BookModule) addSales(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	data := &dbops.SalesData{}
+	err := ctx.Http.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.dbOpts.SalesAdd(pid, ctx.Claim.UserId, data)
+}
+
+func (b *BookModule) getSales(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	return b.dbOpts.SalesGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+}
+
+func (b *BookModule) deleteSales(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	err := b.dbOpts.SalesDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 	if err != nil {
 		return nil, err
 	}
