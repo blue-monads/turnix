@@ -3,7 +3,7 @@
   import Dropdown from "./_dropdown.svelte";
 
   export let actions: {
-    Action: Function;
+    Action:  (id: any, data: any) => Promise<void> | void;
     Class?: string;
     icon?: string;
     Name: string;
