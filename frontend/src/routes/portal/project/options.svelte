@@ -26,7 +26,7 @@
 
   let message = "";
 
-  const data = $modalStore[0].meta['data'];
+  const data = $modalStore[0].meta["data"];
 </script>
 
 {#if loading}
@@ -48,9 +48,7 @@
         on:click={() => {
           modalStore.close();
         }}
-        href="/z/pages/portal/projects/{[
-          'ptype'
-        ]}?pid={data['id']}"
+        href="/z/pages/portal/projects/{['ptype']}?pid={data['id']}"
       >
         <SvgIcon name="document-text" className="w-6 h-6" />
         <span>Project Home</span>
@@ -60,9 +58,7 @@
         on:click={() => {
           modalStore.close();
         }}
-
-
-        href={`/z/pages/portal/project/files/${data['id']}`}
+        href={`/z/pages/portal/project/files/${data["id"]}`}
       >
         <SvgIcon name="folder" className="w-6 h-6" />
         <span>Project Files</span>
@@ -73,7 +69,18 @@
         on:click={() => {
           modalStore.close();
         }}
-        href={`/z/pages/portal/hooks?ptype=${data['ptype']}&pid=${data['id']}`}
+        href={`/z/pages/portal/sideapps?pid=${data["id"]}`}
+      >
+        <SvgIcon name="squares-2x2" className="w-6 h-6" />
+        <span>Side Apps</span>
+      </a>
+
+      <a
+        class="logo-item"
+        on:click={() => {
+          modalStore.close();
+        }}
+        href={`/z/pages/portal/hooks?ptype=${data["ptype"]}&pid=${data["id"]}`}
       >
         <SvgIcon name="code-bracket-square" className="w-6 h-6" />
         <span>Project Hooks</span>
