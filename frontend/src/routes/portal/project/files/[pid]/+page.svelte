@@ -9,7 +9,6 @@
     import { params } from "$lib/params";
     import { goto } from "$app/navigation";
 
-
     export let files: File[] = []; //sampleFiles
 
     export let selected;
@@ -72,9 +71,12 @@
                                 class="mr-1 text-indigo-500"
                                 type="button"
                                 on:click|preventDefault={() => {
-                                    goto(
-                                        `/z/pages/portal/project/files/${pid}?folder=${_path ? _path + "/" + row.name : row.name}`,
-                                    );
+                                    if (row.is_folder) {
+                                        goto(`/z/pages/portal/project/files/${pid}?folder=${_path ? _path + "/" + row.name : row.name}`,);
+                                    } else {
+                                        goto(`/z/pages/portal/project/files/${pid}/preview?folder=${_path}`,)
+                                    }
+
                                 }}
                             >
                                 {#if row.is_folder}
