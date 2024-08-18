@@ -105,6 +105,16 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 	apiv1.DELETE("/project/:pid/files/:id", a.accessMiddleware(a.removeProjectFile))
 
 	apiv1.POST("/project/:pid/sqlexec", a.accessMiddleware(a.runProjectSQL))
+
+	// self files
+
+	apiv1.GET("/self/files", a.accessMiddleware(a.listSelfFiles))
+	apiv1.POST("/self/files", a.accessMiddleware(a.addSelfFile))
+	apiv1.PUT("/self/files", a.accessMiddleware(a.addSelfFolder))
+
+	apiv1.GET("/self/files/:id", a.accessMiddleware(a.getSelfFile))
+	apiv1.DELETE("/self/files/:id", a.accessMiddleware(a.removeSelfFile))
+
 }
 
 func (s *Server) noRoute(ctx *gin.Context) {

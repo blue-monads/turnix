@@ -2,6 +2,8 @@ package server
 
 import (
 	"errors"
+	"fmt"
+	"io"
 	"strconv"
 
 	"github.com/bornjre/turnix/backend/services/signer"
@@ -136,4 +138,57 @@ func (a *Server) selfDeleteUser(claim *signer.AccessClaim, ctx *gin.Context) (an
 	}
 
 	return httpx.MessageOk, nil
+}
+
+// self files
+
+func (a *Server) listSelfFiles(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	path := ctx.Query("path")
+
+	return a.cSelf.ListSelfFiles(claim.UserId, path)
+}
+
+func (a *Server) addSelfFolder(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	data := CreateFolder{}
+	err := ctx.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	return a.cSelf.AddSelfFolder(claim.UserId, data.Path, data.Name)
+}
+
+func (a *Server) addSelfFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	name := ctx.Query("name")
+	path := ctx.Query("path")
+
+	if name == "" {
+		return nil, fmt.Errorf("name is required")
+	}
+
+	data, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return a.cSelf.AddSelfFile(claim.UserId, name, path, data)
+}
+
+func (a *Server) getSelfFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	return a.cSelf.GetSelfFile(claim.UserId, id)
+}
+
+func (a *Server) removeSelfFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	err := a.cSelf.DeleteSelfFile(claim.UserId, id)
+
+	return nil, err
 }

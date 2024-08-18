@@ -158,7 +158,7 @@ func (a *Server) listProjectFiles(claim *signer.AccessClaim, ctx *gin.Context) (
 	return a.cProject.ListProjectFiles(claim.UserId, pid, path)
 }
 
-type ProjectFolder struct {
+type CreateFolder struct {
 	Name string `json:"name"`
 	Path string `json:"path"`
 }
@@ -166,7 +166,7 @@ type ProjectFolder struct {
 func (a *Server) addProjectFolder(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 
-	data := ProjectFolder{}
+	data := CreateFolder{}
 	err := ctx.Bind(&data)
 	if err != nil {
 		return nil, err

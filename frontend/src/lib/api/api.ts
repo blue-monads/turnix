@@ -171,6 +171,11 @@ export class RootAPI {
         return this.client.delete(`/project/${pid}/hook/${id}`)
     }
 
+    runProjectSQL = (pid: string, data: ProjectSQLExec) => {
+        return this.client.post(`/project/${pid}/sqlexec`, data)
+    }
+
+
     // project files
 
     listProjectFiles = (pid: string, path?: string) => {
@@ -220,11 +225,36 @@ export class RootAPI {
         return this.client.delete(`/self/users/${uid}`)
     }
 
+    // self files
 
-
-    runProjectSQL = (pid: string, data: ProjectSQLExec) => {
-        return this.client.post(`/project/${pid}/sqlexec`, data)
+    listSelfFiles = (path?: string) => {
+        return this.client.get<File[]>(`/self/files?path=${path}`)
     }
+
+    addSelfFile = (name: string, path: string, data: any) => {
+        return this.client.post(`/self/files?name=${name}&path=${path}`, data, {
+            headers: {
+                "Content-Type": "application/octet-stream"
+            }
+        })
+    }
+
+    addSelfFolder = (path: string, name: string) => {
+        return this.client.put(`/self/files`, {
+            name,
+            path
+        })
+    }
+
+    getSelfFile = (id: string) => {
+        return this.client.get<File>(`/self/files/${id}`)
+    }
+
+    deleteSelfFile = (id: string) => {
+        return this.client.delete(`/self/files/${id}`)
+    }
+
+
 
 
 }
