@@ -4,6 +4,11 @@
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { AppBar } from "@skeletonlabs/skeleton";
 
+    import { page } from "$app/stores";
+
+    const pid = $page.params["pid"];
+
+
     $: _paths = ($params["folder"] || "").split("/");
 
     $: __epoch = 1;
@@ -48,7 +53,7 @@
 <div class="flex justify-between p-2 pl-4">
     <ol class="breadcrumb">
         <li class="crumb">
-            <a class="anchor" href="/z/pages/portal/project/files">Home</a>
+            <a class="anchor" href="/z/pages/portal/project/files/{pid}">Home</a>
         </li>
 
         {#each _paths as path, i}
@@ -57,9 +62,7 @@
             <li class="crumb">
                 <a
                     class="anchor"
-                    href="/z/pages/portal/cabinet/listings/folder?source={$params[
-                        'source'
-                    ]}&folder={_paths.slice(0, i + 1).join('/')}">{path}</a
+                    href="/z/pages/portal/project/files/{pid}?folder={_paths.slice(0, i + 1).join('/')}">{path}</a
                 >
             </li>
         {/each}
