@@ -29,6 +29,10 @@ func (a *ProjectController) AddProjectFile(userId int64, pid int64, name string,
 	return a.db.AddFile(file, data)
 }
 
+func (a *ProjectController) AddProjectFolder(userId int64, pid int64, path, name string) (int64, error) {
+	return a.db.AddFolder(pid, userId, "project", path, name)
+}
+
 func (a *ProjectController) GetProjectFile(userId int64, pid int64, id int64) ([]byte, error) {
 	// fixme check if user has access to file
 

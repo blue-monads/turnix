@@ -185,6 +185,13 @@ export class RootAPI {
         })
     }
 
+    addProjectFolder = (pid: string, name: string, path: string) => {
+        return this.client.put(`/project/${pid}/files`, {
+            name,
+            path
+        })
+    }
+
     getProjectFile = (pid: string, id: string) => {
         return this.client.get<File>(`/project/${pid}/files/${id}`)
     }
