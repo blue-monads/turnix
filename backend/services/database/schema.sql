@@ -76,6 +76,18 @@ CREATE TABLE IF NOT EXISTS ProjectHooks (
   FOREIGN KEY (project_id) REFERENCES Projects(id)
 );
 
+-- CREATE TABLE IF NOT EXISTS ProjectSideApps (
+--   id INTEGER PRIMARY KEY, 
+--   name TEXT NOT NULL DEFAULT '', 
+--   apptype TEXT NOT NULL DEFAULT 'v1', 
+--   project_id INTEGER NOT NULL,
+--   server_code TEXT NOT NULL DEFAULT '',
+--   client_code TEXT NOT NULL DEFAULT '',
+--   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--   FOREIGN KEY (project_id) REFERENCES Projects(id)
+-- );
+
+
 CREATE TABLE IF NOT EXISTS ProjectUsers (
   id INTEGER PRIMARY KEY, 
   user_id INTEGER NOT NULL, 
