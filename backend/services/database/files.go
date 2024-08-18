@@ -107,6 +107,8 @@ func (d *DB) ListFilesByProject(pid int64, path string) ([]File, error) {
 func (d *DB) ListFilesByUser(uid int64, path string) ([]File, error) {
 	table := d.filesTable()
 
+	pp.Println("@list_files_by_user", uid, path)
+
 	cond := db.Cond{
 		"ftype":         "user",
 		"owner_user_id": uid,
