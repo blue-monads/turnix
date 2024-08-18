@@ -45,35 +45,31 @@
     </svelte:fragment>
 </AppBar>
 
-<header class="card-header">
-    <div class="flex justify-between">
-        <ol class="breadcrumb">
+<div class="flex justify-between p-2 pl-4">
+    <ol class="breadcrumb">
+        <li class="crumb">
+            <a class="anchor" href="/z/pages/portal/project/files">Home</a>
+        </li>
+
+        {#each _paths as path, i}
+            <li class="crumb-separator" aria-hidden>/</li>
+
             <li class="crumb">
-                <a class="anchor" href="/z/pages/portal/project/files">Home</a>
+                <a
+                    class="anchor"
+                    href="/z/pages/portal/cabinet/listings/folder?source={$params[
+                        'source'
+                    ]}&folder={_paths.slice(0, i + 1).join('/')}">{path}</a
+                >
             </li>
+        {/each}
+    </ol>
+</div>
 
-            {#each _paths as path, i}
-                <li class="crumb-separator" aria-hidden>/</li>
-
-                <li class="crumb">
-                    <a
-                        class="anchor"
-                        href="/z/pages/portal/cabinet/listings/folder?source={$params[
-                            'source'
-                        ]}&folder={_paths.slice(0, i + 1).join('/')}">{path}</a
-                    >
-                </li>
-            {/each}
-        </ol>
-    </div>
-</header>
-
-<div class="h-full p-0 md:p-2">
+<div class="px-2 h-full">
     <div class="card p-2 h-full">
-        <section class="p-2">
-            {#key __epoch}
-                <slot />
-            {/key}
-        </section>
+        {#key __epoch}
+            <slot />
+        {/key}
     </div>
 </div>
