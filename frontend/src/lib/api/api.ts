@@ -38,6 +38,7 @@ export interface File {
     hash: string;
     external: boolean;
     is_public: boolean;
+    is_folder: boolean;
     owner_user_id: number;
     owner_proj_id: number;
     created_at: string;

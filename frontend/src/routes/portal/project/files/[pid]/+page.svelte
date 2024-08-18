@@ -1,46 +1,32 @@
-<script>
+<script lang="ts">
+    import { createEventDispatcher, getContext } from "svelte";
+    import type { RootAPI, File } from "$lib/api";
     import { FolderIcon } from "$lib/compo";
     import FileIcon from "$lib/compo/FileIcons/FileIcon.svelte";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-    import { createEventDispatcher } from "svelte";
+    import { page } from "$app/stores";
+    import { sampleFiles } from "./sample";
 
-    export let files = [
-        {
-            name: "public",
-            last_modified: "",
-            size: "",
-            is_dir: true,
-        },
-        {
-            name: "test.mp4",
-            last_modified: "2022/03/45",
-            size: "23M",
-        },
-        {
-            name: "test.zip",
-            last_modified: "2022/03/45",
-            size: "1K",
-        },
-        {
-            name: "test.png",
-            last_modified: "2022/03/45",
-            size: "1K",
-        },
-        {
-            name: "xyz.mp3",
-            last_modified: "2022/03/45",
-            size: "1K",
-        },
-        {
-            name: "test.txt",
-            last_modified: "2022/03/45",
-            size: "1K",
-        },
-    ];
+    
+
+    export let files: File[] = [] //sampleFiles
 
     export let selected;
 
     const dispatcher = createEventDispatcher();
+    const api = getContext("__api__") as RootAPI;
+    const pid = $page.params["pid"];
+
+    const load = async () => {
+        const resp = await api.listProjectFiles(pid);
+        if (resp.status !== 200) {
+            return;
+        }
+
+        files = resp.data as any;
+    };
+
+    load();
 
     let size = "32";
 </script>
@@ -51,7 +37,7 @@
             <tr>
                 <td />
                 <th>Name</th>
-                <th>Last Modified</th>
+                <th>Created At</th>
                 <th>Size</th>
                 <th>Action</th>
             </tr>
@@ -73,7 +59,7 @@
                     </td>
                     <td>
                         <span class="mr-1 text-indigo-500">
-                            {#if row.is_dir}
+                            {#if row.is_folder}
                                 <FolderIcon {size} />
                             {:else}
                                 <FileIcon {size} name={row.name} />
@@ -82,14 +68,11 @@
 
                         {row.name}
                     </td>
-                    <td>{row.last_modified || ""}</td>
+                    <td>{row.created_at || ""}</td>
                     <td>{row.size || ""}</td>
                     <td>
-                        <button
-                            type="button"
-                            class="btn btn-sm variant-filled"
-                        >
-                            <SvgIcon name="eye" className="w-4 h-4"  />
+                        <button type="button" class="btn btn-sm variant-filled">
+                            <SvgIcon name="eye" className="w-4 h-4" />
                         </button>
                     </td>
                 </tr>
