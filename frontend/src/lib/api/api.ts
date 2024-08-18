@@ -177,8 +177,8 @@ export class RootAPI {
         return this.client.get<File[]>(`/project/${pid}/files?path=${path}`)
     }
 
-    addProjectFile = (pid: string, name: string, data: any) => {
-        return this.client.post(`/project/${pid}/files?name=${name}`, data, {
+    addProjectFile = (pid: string, name: string, path: string, data: any) => {
+        return this.client.post(`/project/${pid}/files?name=${name}&path=${path}`, data, {
             headers: {
                 "Content-Type": "application/octet-stream"
             }

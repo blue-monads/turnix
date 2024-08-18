@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )
 
@@ -52,6 +53,9 @@ func (d *DB) AddFolder(pid, uid int64, ftype, path, name string) (int64, error) 
 }
 
 func (d *DB) AddFile(file *File, data []byte) (id int64, err error) {
+
+	pp.Println("@file_add", file)
+
 	table := d.filesTable()
 	rid, err := table.Insert(file)
 	if err != nil {
@@ -67,13 +71,8 @@ func (d *DB) AddFile(file *File, data []byte) (id int64, err error) {
 	}()
 
 	if !d.externalFileMode {
-		_, err = d.sess.SQL().
-			InsertInto("Files").
-			Columns("blob").
-			Values(data).
-			Exec()
-
-		return
+		err = table.Find(db.Cond{"id": id}).Update(db.Cond{"blob": data})
+		return id, err
 	}
 
 	pidOrUid := file.OwnerUser

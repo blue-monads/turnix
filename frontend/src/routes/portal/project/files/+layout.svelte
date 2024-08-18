@@ -31,15 +31,16 @@
     <svelte:fragment slot="trail">
         {#if !$params["file"]}
             <div class="flex flex-row gap-1">
-                {#if $params["folder"]}
-                    <button
-                        class="btn btn-sm variant-filled-primary"
-                        on:click={() => {}}
-                    >
-                        <SvgIcon name="cloud-arrow-up" className="h-4 w4" />
-                        <span class="hidden md:inline">Upload</span>
-                    </button>
-                {/if}
+
+                
+                <a href="/z/pages/portal/project/files/{pid}/upload?folder={$params["folder"]}" class="btn btn-sm variant-filled">
+                    <SvgIcon name="cloud-arrow-up" className="h-4 w-4" />
+                    <span class="hidden md:inline">Upload</span>
+                </a>
+
+
+
+
 
                 <button
                     class="btn btn-sm variant-filled-primary"

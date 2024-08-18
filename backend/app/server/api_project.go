@@ -179,6 +179,7 @@ func (a *Server) addProjectFile(claim *signer.AccessClaim, ctx *gin.Context) (an
 	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 
 	name := ctx.Query("name")
+	path := ctx.Query("path")
 
 	if name == "" {
 		return nil, fmt.Errorf("name is required")
@@ -189,7 +190,7 @@ func (a *Server) addProjectFile(claim *signer.AccessClaim, ctx *gin.Context) (an
 		return nil, err
 	}
 
-	return a.cProject.AddProjectFile(claim.UserId, pid, name, data)
+	return a.cProject.AddProjectFile(claim.UserId, pid, name, path, data)
 }
 
 func (a *Server) getProjectFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {

@@ -11,13 +11,13 @@ func (a *ProjectController) ListProjectFiles(userId int64, pid int64, path strin
 	return a.db.ListFilesByProject(pid, path)
 }
 
-func (a *ProjectController) AddProjectFile(userId int64, pid int64, name string, data []byte) (int64, error) {
+func (a *ProjectController) AddProjectFile(userId int64, pid int64, name, path string, data []byte) (int64, error) {
 
 	now := time.Now()
 
 	file := &database.File{
 		Name:      name,
-		Path:      "",
+		Path:      path,
 		OwnerUser: userId,
 		OwnerProj: pid,
 		FType:     "project",
