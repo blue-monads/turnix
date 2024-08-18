@@ -9,19 +9,19 @@ import (
 )
 
 type File struct {
-	ID        int64      `db:"id"`
-	Name      string     `db:"name"`
-	FType     string     `db:"ftype"`
-	Path      string     `db:"path"`
-	Size      int64      `db:"size"`
-	Mime      string     `db:"mime"`
-	Hash      string     `db:"hash"`
-	IsFolder  bool       `db:"is_folder"`
-	External  bool       `db:"external"`
-	IsPublic  bool       `db:"is_public"`
-	OwnerUser int64      `db:"owner_user_id"`
-	OwnerProj int64      `db:"owner_project_id"`
-	CreatedAt *time.Time `db:"created_at"`
+	ID        int64      `db:"id" json:"id"`
+	Name      string     `db:"name" json:"name"`
+	FType     string     `db:"ftype" json:"ftype"`
+	Path      string     `db:"path" json:"path"`
+	Size      int64      `db:"size" json:"size"`
+	Mime      string     `db:"mime" json:"mime"`
+	Hash      string     `db:"hash" json:"hash"`
+	IsFolder  bool       `db:"is_folder" json:"is_folder"`
+	External  bool       `db:"external" json:"external"`
+	IsPublic  bool       `db:"is_public" json:"is_public"`
+	OwnerUser int64      `db:"owner_user_id" json:"owner_user_id"`
+	OwnerProj int64      `db:"owner_project_id" json:"owner_project_id"`
+	CreatedAt *time.Time `db:"created_at" json:"created_at"`
 }
 
 func (d *DB) AddFolder(pid, uid int64, ftype, path, name string) (int64, error) {

@@ -5,7 +5,7 @@
     import Video from "./Video.svelte";
     import Zip from "./Zip.svelte";
 
-    export let name: string;
+    export let name: string = "";
     export let size: string;
 
     const icons = {
