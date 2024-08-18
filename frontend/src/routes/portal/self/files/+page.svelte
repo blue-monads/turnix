@@ -71,9 +71,9 @@
                                 type="button"
                                 on:click|preventDefault={() => {
                                     if (row.is_folder) {
-                                        goto(`/z/pages/portal/project/files/${pid}?folder=${_path ? _path + "/" + row.name : row.name}`,);
+                                        goto(`/z/pages/portal/self/files?folder=${_path ? _path + "/" + row.name : row.name}`,);
                                     } else {
-                                        goto(`/z/pages/portal/project/files/${pid}/preview?folder=${_path}`,)
+                                        goto(`/z/pages/portal/self/files/preview?folder=${_path}`,)
                                     }
 
                                 }}
