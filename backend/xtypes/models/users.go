@@ -9,7 +9,8 @@ type User struct {
 	Name            string     `json:"name" db:"name"`
 	Utype           string     `json:"utype" db:"utype,omitempty"`
 	Email           string     `json:"email" db:"email,omitempty"`
-	Phone           string     `json:"phone" db:"phone,omitempty"`
+	Phone           *string    `json:"phone" db:"phone,omitempty"`
+	Username        *string    `json:"username" db:"username,omitempty"`
 	Bio             string     `json:"bio" db:"bio"`
 	Password        string     `json:"password" db:"password,omitempty"`
 	IsVerified      bool       `json:"is_verified" db:"is_verified"`

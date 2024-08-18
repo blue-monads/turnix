@@ -60,26 +60,3 @@ func (d *DistroApp) RunNormalSeed() error {
 	return err
 
 }
-
-func (d *DistroApp) RunTestSeed() error {
-
-	dz := d.App.GetDatabase()
-
-	db := dz.(*database.DB)
-
-	_, err := db.AddUser(&models.User{
-		Name:       "dev",
-		Utype:      "real",
-		Email:      "dev@example.com",
-		Bio:        "I am a dev.",
-		Password:   "dev123",
-		IsVerified: true,
-	})
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-
-}
