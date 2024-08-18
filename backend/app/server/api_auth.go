@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
+	"strings"
 
 	"github.com/bornjre/turnix/backend/utils/libx/httpx"
 	"github.com/bornjre/turnix/backend/xtypes/models"
@@ -26,7 +28,7 @@ func (a *Server) signUpDirect(ctx *gin.Context) {
 		return
 	}
 
-	data.IsEmailVerified = false
+	data.IsVerified = false
 
 	id, err := a.db.AddUser(data)
 	if err != nil {
@@ -68,6 +70,8 @@ type loginDetails struct {
 	Password string `db:"password"`
 }
 
+var phoneRegex = regexp.MustCompile(`^\+?[1-9]\d{1,14}$`)
+
 func (a *Server) login(ctx *gin.Context) {
 	data := &loginDetails{}
 	err := ctx.Bind(data)
@@ -76,7 +80,17 @@ func (a *Server) login(ctx *gin.Context) {
 		return
 	}
 
-	user, err := a.db.GetUserByEmail(data.Email)
+	var user *models.User
+
+	if strings.Contains(data.Email, "@") {
+		user, err = a.db.GetUserByEmail(data.Email)
+	} else if phoneRegex.MatchString(data.Email) {
+		panic("Implement login by phone")
+	} else {
+		panic("Implement login by username")
+	}
+
+	user, err = a.db.GetUserByEmail(data.Email)
 	if err != nil {
 		httpx.WriteAuthErr(ctx, err)
 		return

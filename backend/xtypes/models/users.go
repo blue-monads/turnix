@@ -12,7 +12,7 @@ type User struct {
 	Phone           string     `json:"phone" db:"phone,omitempty"`
 	Bio             string     `json:"bio" db:"bio"`
 	Password        string     `json:"password" db:"password,omitempty"`
-	IsEmailVerified bool       `json:"isEmailVerified" db:"email_verified"`
+	IsVerified      bool       `json:"is_verified" db:"is_verified"`
 	ExtraMeta       string     `json:"extrameta" db:"extrameta,omitempty"`
 	CreatedAt       *time.Time `json:"createdAt" db:"created_at,omitempty"`
 	OwnerUserId     int64      `json:"owner_user_id" db:"owner_user_id,omitempty"`

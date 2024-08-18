@@ -1,12 +1,14 @@
 CREATE TABLE IF NOT EXISTS Users (
   id INTEGER PRIMARY KEY, 
+  username TEXT,
+  email TEXT, 
+  phone TEXT,
+
   name TEXT NOT NULL, 
   utype TEXT NOT NULL DEFAULT 'real',  -- super, real, device
-  email TEXT, 
-  phone TEXT NOT NULL DEFAULT '', 
   bio TEXT NOT NULL DEFAULT '', 
   password TEXT NOT NULL, 
-  email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+  is_verified BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
   owner_user_id INTEGER NOT NULL DEFAULT 0,
   owner_project_id INTEGER NOT NULL DEFAULT 0,
@@ -15,7 +17,9 @@ CREATE TABLE IF NOT EXISTS Users (
   
   disabled BOOLEAN NOT NULL DEFAULT FALSE, 
   is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
-  unique(email, owner_project_id)
+  unique(username),  
+  unique(email),
+  unique(phone)
 );
 
 CREATE TABLE IF NOT EXISTS UserDevices (

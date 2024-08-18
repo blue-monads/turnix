@@ -13,25 +13,25 @@ func (d *DistroApp) RunNormalSeed() error {
 	//	innerApp := d.App.(*app.App)
 
 	userId, err := db.AddUser(&models.User{
-		Name:            "dev",
-		Utype:           "real",
-		Email:           "dev@example.com",
-		Bio:             "I am a dev.",
-		Password:        "dev123",
-		IsEmailVerified: true,
+		Name:       "dev",
+		Utype:      "real",
+		Email:      "dev@example.com",
+		Bio:        "I am a dev.",
+		Password:   "dev123",
+		IsVerified: true,
 	})
 	if err != nil {
 		return err
 	}
 
 	_, err = db.AddUser(&models.User{
-		Name:            "zesus",
-		Utype:           "device",
-		Email:           "zesus@example.com",
-		Bio:             "I am a zesus.",
-		Password:        "dev123",
-		IsEmailVerified: true,
-		OwnerUserId:     userId,
+		Name:        "zesus",
+		Utype:       "device",
+		Email:       "zesus@example.com",
+		Bio:         "I am a zesus.",
+		Password:    "dev123",
+		IsVerified:  true,
+		OwnerUserId: userId,
 	})
 	if err != nil {
 		return err
@@ -68,12 +68,12 @@ func (d *DistroApp) RunTestSeed() error {
 	db := dz.(*database.DB)
 
 	_, err := db.AddUser(&models.User{
-		Name:            "dev",
-		Utype:           "real",
-		Email:           "dev@example.com",
-		Bio:             "I am a dev.",
-		Password:        "dev123",
-		IsEmailVerified: true,
+		Name:       "dev",
+		Utype:      "real",
+		Email:      "dev@example.com",
+		Bio:        "I am a dev.",
+		Password:   "dev123",
+		IsVerified: true,
 	})
 
 	if err != nil {
