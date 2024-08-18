@@ -67,24 +67,23 @@
                             {/if}
                         </td>
                         <td>
-                            <span class="mr-1 text-indigo-500">
-                                <button
-                                    type="button"
-                                    on:click={() => {
-                                        goto(
-                                            `/z/pages/portal/project/files/${pid}?folder=${_path ? _path + "/" + row.name : row.name}`,
-                                        );
-                                    }}
-                                >
-                                    {#if row.is_folder}
-                                        <FolderIcon {size} />
-                                    {:else}
-                                        <FileIcon {size} name={row.name} />
-                                    {/if}
-                                </button>
-                            </span>
+                            <button
+                                class="mr-1 text-indigo-500"
+                                type="button"
+                                on:click={() => {
+                                    goto(
+                                        `/z/pages/portal/project/files/${pid}?folder=${_path ? _path + "/" + row.name : row.name}`,
+                                    );
+                                }}
+                            >
+                                {#if row.is_folder}
+                                    <FolderIcon {size} />
+                                {:else}
+                                    <FileIcon {size} name={row.name} />
+                                {/if}
 
-                            {row.name}
+                                {row.name}
+                            </button>
                         </td>
                         <td>{row.created_at || ""}</td>
                         <td>{row.size || ""}</td>
