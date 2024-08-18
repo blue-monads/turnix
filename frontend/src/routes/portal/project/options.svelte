@@ -69,11 +69,24 @@
         on:click={() => {
           modalStore.close();
         }}
-        href={`/z/pages/portal/sideapps?pid=${data["id"]}`}
+        href={`/z/pages/portal/project/plugins?pid=${data["id"]}`}
       >
         <SvgIcon name="squares-2x2" className="w-6 h-6" />
-        <span>Side Apps</span>
+        <span>Plugins</span>
       </a>
+
+      <a
+        class="logo-item"
+        on:click={() => {
+          modalStore.close();
+        }}
+        href={`/z/pages/portal/project/users?pid=${data["id"]}`}
+      >
+        <SvgIcon name="users" className="w-6 h-6" />
+        <span>Users and Permissions</span>
+      </a>
+
+
 
       <a
         class="logo-item"
