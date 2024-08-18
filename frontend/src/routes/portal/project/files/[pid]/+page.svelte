@@ -70,7 +70,7 @@
                             <button
                                 class="mr-1 text-indigo-500"
                                 type="button"
-                                on:click={() => {
+                                on:click|preventDefault={() => {
                                     goto(
                                         `/z/pages/portal/project/files/${pid}?folder=${_path ? _path + "/" + row.name : row.name}`,
                                     );
