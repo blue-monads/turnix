@@ -43,11 +43,16 @@
       link: "/z/pages/portal/self",
       icon: "user-circle",
     },
-   
+
     {
       name: "Users",
       link: "/z/pages/portal/self/users",
       icon: "users",
+    },
+    {
+      name: "Files",
+      link: "/z/pages/portal/self/files",
+      icon: "folder",
     },
   ];
 
