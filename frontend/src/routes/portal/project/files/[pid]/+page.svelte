@@ -1,62 +1,99 @@
-<script lang="ts">
-    import { RootAPI } from "$lib/api";
-    import { getContext } from "svelte";
-    import {
-        AppBar,
-        FileDropzone,
-        getModalStore,
-        type ModalSettings,
-    } from "@skeletonlabs/skeleton";
-    import { page } from "$app/stores";
-    import { Loader } from "$lib/compo";
+<script>
+    import { FolderIcon } from "$lib/compo";
+    import FileIcon from "$lib/compo/FileIcons/FileIcon.svelte";
+    import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+    import { createEventDispatcher } from "svelte";
 
-    const pid = $page.params["pid"];
+    export let files = [
+        {
+            name: "public",
+            last_modified: "",
+            size: "",
+            is_dir: true,
+        },
+        {
+            name: "test.mp4",
+            last_modified: "2022/03/45",
+            size: "23M",
+        },
+        {
+            name: "test.zip",
+            last_modified: "2022/03/45",
+            size: "1K",
+        },
+        {
+            name: "test.png",
+            last_modified: "2022/03/45",
+            size: "1K",
+        },
+        {
+            name: "xyz.mp3",
+            last_modified: "2022/03/45",
+            size: "1K",
+        },
+        {
+            name: "test.txt",
+            last_modified: "2022/03/45",
+            size: "1K",
+        },
+    ];
 
+    export let selected;
 
-    const api = getContext("__api__") as RootAPI;
+    const dispatcher = createEventDispatcher();
 
-    let projects = [];
-
-    const load = async () => {
-        const resp = await api.listProjectFiles(pid);
-        if (resp.status !== 200) {
-            return;
-        }
-
-        projects = resp.data;
-    };
-    const store = getModalStore();
-
-    load();
-
-    const onDrop = async (e: any) => {
-        console.log("onDrop", e);
-
-      await  api.addProjectFile(pid, "testxyz", e.target.files[0]);
-    };
-
-
+    let size = "32";
 </script>
 
-<svelte:head>
-  <title>Project Files</title>
-</svelte:head>
+<div class="table-container">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <td />
+                <th>Name</th>
+                <th>Last Modified</th>
+                <th>Size</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {#each files as row, i}
+                <tr
+                    on:dblclick={() => dispatcher("open_item", row)}
+                    on:click={() => dispatcher("select_item", row)}
+                    class="cursor-pointer hover:bg-gray-700 {selected ===
+                    row.name
+                        ? 'variant-outline-primary'
+                        : ''}"
+                >
+                    <td class="w-1">
+                        {#if selected === row.name}
+                            <input type="checkbox" checked={true} />
+                        {/if}
+                    </td>
+                    <td>
+                        <span class="mr-1 text-indigo-500">
+                            {#if row.is_dir}
+                                <FolderIcon {size} />
+                            {:else}
+                                <FileIcon {size} name={row.name} />
+                            {/if}
+                        </span>
 
-<AppBar>
-  <svelte:fragment slot="lead">
-    <h4 class="h4">Project Files</h4>
-  </svelte:fragment>
-</AppBar>
-
-<FileDropzone 
-on:change={onDrop}
-name="files"
-
-
->
-	<svelte:fragment slot="lead">(icon)</svelte:fragment>
-	<svelte:fragment slot="message">Upload files to your project</svelte:fragment>
-</FileDropzone>
-
-
-
+                        {row.name}
+                    </td>
+                    <td>{row.last_modified || ""}</td>
+                    <td>{row.size || ""}</td>
+                    <td>
+                        <button
+                            type="button"
+                            class="btn btn-sm variant-filled"
+                        >
+                            <SvgIcon name="eye" className="w-4 h-4"  />
+                        </button>
+                    </td>
+                </tr>
+            {/each}
+        </tbody>
+    </table>
+</div>
