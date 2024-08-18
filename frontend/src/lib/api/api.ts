@@ -174,7 +174,7 @@ export class RootAPI {
     // project files
 
     listProjectFiles = (pid: string, path?: string) => {
-        return this.client.get<File[]>(`/project/${pid}/files?$path=${path}`)
+        return this.client.get<File[]>(`/project/${pid}/files?path=${path}`)
     }
 
     addProjectFile = (pid: string, name: string, data: any) => {

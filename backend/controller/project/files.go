@@ -8,7 +8,7 @@ import (
 )
 
 func (a *ProjectController) ListProjectFiles(userId int64, pid int64, path string) ([]database.File, error) {
-	return a.db.ListFilesByProject(pid, "")
+	return a.db.ListFilesByProject(pid, path)
 }
 
 func (a *ProjectController) AddProjectFile(userId int64, pid int64, name string, data []byte) (int64, error) {
