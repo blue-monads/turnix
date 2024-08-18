@@ -153,7 +153,9 @@ func (a *Server) listProjectFiles(claim *signer.AccessClaim, ctx *gin.Context) (
 
 	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 
-	return a.cProject.ListProjectFiles(claim.UserId, pid)
+	path := ctx.Query("path")
+
+	return a.cProject.ListProjectFiles(claim.UserId, pid, path)
 }
 
 func (a *Server) addProjectFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {

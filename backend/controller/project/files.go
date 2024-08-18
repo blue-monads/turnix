@@ -7,7 +7,7 @@ import (
 	"github.com/bornjre/turnix/backend/services/database"
 )
 
-func (a *ProjectController) ListProjectFiles(userId int64, pid int64) ([]database.File, error) {
+func (a *ProjectController) ListProjectFiles(userId int64, pid int64, path string) ([]database.File, error) {
 	return a.db.ListFilesByProject(pid, "")
 }
 
