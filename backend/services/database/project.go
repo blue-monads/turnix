@@ -284,7 +284,7 @@ func (d *DB) ListProjectPlugins(uid, pid int64) ([]models.ProjectPlugin, error) 
 	plugins := []models.ProjectPlugin{}
 
 	err := table.Find(db.Cond{"project_id": pid}).
-		Select("id", "name", "ptype", "created_by", "updated_by", "created_at", "updated_at").
+		Select("id", "name", "ptype", "created_by", "updated_by", "project_id", "created_at", "updated_at").
 		All(&plugins)
 	if err != nil {
 		return nil, err
@@ -299,9 +299,13 @@ func (d *DB) AddProjectPlugin(uid, pid int64, data *models.ProjectPlugin) (int64
 		return 0, errNotFound
 	}
 
+	t := time.Now()
+
 	data.ProjectID = pid
 	data.CreatedBy = uid
 	data.UpdatedBy = uid
+	data.CreatedAt = &t
+	data.UpdatedAt = &t
 
 	table := d.projectPluginsTable()
 
