@@ -10,10 +10,11 @@ CREATE TABLE IF NOT EXISTS Users (
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
   owner_user_id INTEGER NOT NULL DEFAULT 0,
   owner_project_id INTEGER NOT NULL DEFAULT 0,
-
-  disabled BOOLEAN NOT NULL DEFAULT FALSE, 
-  msg_read_head INTEGER NOT NULL DEFAULT 0,
   extrameta JSON NOT NULL DEFAULT '{}',
+  msg_read_head INTEGER NOT NULL DEFAULT 0,
+  
+  disabled BOOLEAN NOT NULL DEFAULT FALSE, 
+  is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
   unique(email, owner_project_id)
 );
 

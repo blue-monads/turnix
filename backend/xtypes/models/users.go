@@ -19,6 +19,7 @@ type User struct {
 	OwnerProjectId  int64      `json:"owner_project_id" db:"owner_project_id,omitempty"`
 	MessageReadHead int64      `json:"msg_read_head" db:"msg_read_head,omitempty"`
 	Disabled        bool       `json:"disabled" db:"disabled,omitempty"`
+	IsDeleted       bool       `json:"isDeleted" db:"is_deleted,omitempty"`
 }
 
 type UserMessage struct {
