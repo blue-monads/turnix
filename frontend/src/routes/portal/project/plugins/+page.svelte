@@ -71,6 +71,16 @@
             ["updated_at", "Updated At"],
         ]}
         actions={[
+
+            {
+                Name: "Run",
+                Class: "variant-filled-success",
+                Action: async (id, data) => {
+                    console.log("@run", id, data); 
+                    goto(`/z/pages/portal/project/plugins/run?pid=${pid}&id=${id}`);
+                },
+            },
+
             {
                 Name: "edit",
                 Class: "variant-filled-primary",
