@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/bornjre/turnix/backend/utils/libx/dbutils"
 	"github.com/bornjre/turnix/backend/xtypes/models"
@@ -270,6 +271,94 @@ func (d *DB) GetProjectHook(uid, pid, hid int64) (*models.ProjectHook, error) {
 	return hook, nil
 }
 
+// Plugins
+
+func (d *DB) ListProjectPlugins(uid, pid int64) ([]models.ProjectPlugin, error) {
+
+	if !d.isOwner(uid, pid) {
+		return nil, errNotFound
+	}
+
+	table := d.projectPluginsTable()
+
+	plugins := []models.ProjectPlugin{}
+
+	err := table.Find(db.Cond{"project_id": pid}).
+		Select("id", "name", "ptype", "created_by", "updated_by", "created_at", "updated_at").
+		All(&plugins)
+	if err != nil {
+		return nil, err
+	}
+
+	return plugins, nil
+}
+
+func (d *DB) AddProjectPlugin(uid, pid int64, data *models.ProjectPlugin) (int64, error) {
+
+	if !d.isOwner(uid, pid) {
+		return 0, errNotFound
+	}
+
+	data.ProjectID = pid
+	data.CreatedBy = uid
+	data.UpdatedBy = uid
+
+	table := d.projectPluginsTable()
+
+	res, err := table.Insert(data)
+	if err != nil {
+		return 0, err
+	}
+
+	return res.ID().(int64), nil
+
+}
+
+func (d *DB) RemoveProjectPlugin(uid, pid int64, hid int64) error {
+	if !d.isOwner(uid, pid) {
+		return errNotFound
+	}
+
+	table := d.projectPluginsTable()
+
+	return table.Find(db.Cond{"project_id": pid, "id": hid}).Delete()
+
+}
+
+func (d *DB) UpdateProjectPlugin(uid, pid, hid int64, data map[string]any) error {
+
+	if !d.isOwner(uid, pid) {
+		return errNotFound
+	}
+
+	t := time.Now()
+
+	data["updated_at"] = t
+	data["updated_by"] = uid
+
+	table := d.projectPluginsTable()
+
+	return table.Find(db.Cond{"project_id": pid, "id": hid}).Update(&data)
+}
+
+func (d *DB) GetProjectPlugin(uid, pid, hid int64) (*models.ProjectPlugin, error) {
+
+	if !d.isOwner(uid, pid) {
+		return nil, errNotFound
+	}
+
+	table := d.projectPluginsTable()
+
+	plugin := &models.ProjectPlugin{}
+
+	err := table.Find(db.Cond{"project_id": pid, "id": hid}).One(plugin)
+	if err != nil {
+		return nil, err
+	}
+
+	return plugin, nil
+}
+
 // private
 
 func (d *DB) isOwner(ownerid int64, projId int64) bool {
@@ -286,6 +375,10 @@ func (d *DB) isOwner(ownerid int64, projId int64) bool {
 
 func (d *DB) projectHooksTable() db.Collection {
 	return d.Table("ProjectHooks")
+}
+
+func (d *DB) projectPluginsTable() db.Collection {
+	return d.Table("ProjectPlugins")
 }
 
 func (d *DB) projectTable() db.Collection {

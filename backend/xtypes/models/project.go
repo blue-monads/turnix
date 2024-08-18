@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Project struct {
 	ID           int64  `json:"id" db:"id,omitempty"`
 	Name         string `json:"name" db:"name"`
@@ -43,4 +45,25 @@ type ProjectTypes struct {
 	IsExternal bool     `json:"is_external"`
 	Link       string   `json:"link,omitempty"`
 	EventTypes []string `json:"event_types,omitempty"`
+}
+
+type PluginImport struct {
+	Name            string `json:"name" yaml:"name"`
+	AppType         string `json:"apptype" yaml:"apptype"`
+	ProjectTypeSlug string `json:"project_type_slug" yaml:"project_type_slug"`
+	ServerCode      string `json:"server_code" yaml:"server_code"`
+	ClientCode      string `json:"client_code" yaml:"client_code"`
+}
+
+type ProjectPlugin struct {
+	ID         int64      `json:"id" db:"id,omitempty"`
+	Name       string     `json:"name" db:"name"`
+	AppType    string     `json:"apptype" db:"apptype"`
+	ProjectID  int64      `json:"project_id" db:"project_id"`
+	ServerCode string     `json:"server_code" db:"server_code"`
+	ClientCode string     `json:"client_code" db:"client_code"`
+	CreatedBy  int64      `json:"created_by" db:"created_by"`
+	UpdatedBy  int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt  *time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt  *time.Time `json:"updated_at" db:"updated_at"`
 }
