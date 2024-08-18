@@ -5,7 +5,7 @@
     import FileIcon from "$lib/compo/FileIcons/FileIcon.svelte";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { page } from "$app/stores";
-    import { sampleFiles } from "./sample";
+    import { sampleFiles } from "./sub/sample";
     import { params } from "$lib/params";
     import { goto } from "$app/navigation";
 
