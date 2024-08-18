@@ -294,6 +294,14 @@ export class RootAPI {
     }
 
 
+    // messages
+
+    listUserMessages = (uid: string, count?: number, cursor?: number) => {
+        return this.client.get<any[]>(`/self/messages?uid=${uid}&count=${count}&cursor=${cursor}`)
+    }
+
+    
+
 
 
 }
