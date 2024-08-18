@@ -183,7 +183,7 @@
       <div slot="trail" class="mb-4">
         <a
           class="flex flex-col justify-center items-center rounded-full bg-secondary-100 hover:bg-secondary-200 p-2"
-          href={"/z/pages/portal/self/notifications"}
+          href={"/z/pages/portal/self/messages"}
         >
           <SvgIcon name="bell" className="w-6 h-6" />
         </a>
