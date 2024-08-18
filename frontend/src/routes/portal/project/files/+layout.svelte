@@ -3,20 +3,23 @@
     import { params } from "$lib/params";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { AppBar } from "@skeletonlabs/skeleton";
-
+    import { getModalStore } from "@skeletonlabs/skeleton";
     import { page } from "$app/stores";
+    import type { RootAPI } from "$lib/api";
 
     const pid = $page.params["pid"];
 
+    const store = getModalStore();
+
+    const api = getContext("__api__") as RootAPI;
 
     $: _paths = ($params["folder"] || "").split("/");
 
     $: __epoch = 1;
 
     const complete_new_folder = async (name: string) => {
-        // await capi.newFolder(($params["folder"] || "") + "/" + name);
-        // __epoch = __epoch + 1;
-        // app.utils.small_modal_close();
+        await api.addProjectFolder(pid, name, $params["folder"]);
+        __epoch = __epoch + 1;
     };
 </script>
 
@@ -40,7 +43,15 @@
 
                 <button
                     class="btn btn-sm variant-filled-primary"
-                    on:click={() => {}}
+                    on:click={() => {
+                        store.trigger({
+                            type: "component",
+                            component: "new_folder_panel",
+                            meta: {
+                                onNewName: complete_new_folder,
+                            },
+                        });
+                    }}
                 >
                     <SvgIcon name="folder-plus" className="h-4 w4" />
                     <span class="hidden md:inline">Folder</span>
@@ -53,7 +64,8 @@
 <div class="flex justify-between p-2 pl-4">
     <ol class="breadcrumb">
         <li class="crumb">
-            <a class="anchor" href="/z/pages/portal/project/files/{pid}">Home</a>
+            <a class="anchor" href="/z/pages/portal/project/files/{pid}">Home</a
+            >
         </li>
 
         {#each _paths as path, i}
@@ -62,7 +74,9 @@
             <li class="crumb">
                 <a
                     class="anchor"
-                    href="/z/pages/portal/project/files/{pid}?folder={_paths.slice(0, i + 1).join('/')}">{path}</a
+                    href="/z/pages/portal/project/files/{pid}?folder={_paths
+                        .slice(0, i + 1)
+                        .join('/')}">{path}</a
                 >
             </li>
         {/each}

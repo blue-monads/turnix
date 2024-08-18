@@ -9,7 +9,7 @@ import (
 )
 
 type File struct {
-	ID        int64      `db:"id" json:"id"`
+	ID        int64      `db:"id,omitempty" json:"id"`
 	Name      string     `db:"name" json:"name"`
 	FType     string     `db:"ftype" json:"ftype"`
 	Path      string     `db:"path" json:"path"`

@@ -9,6 +9,7 @@
     import { params } from "$lib/params";
     import { goto } from "$app/navigation";
 
+
     export let files: File[] = []; //sampleFiles
 
     export let selected;
