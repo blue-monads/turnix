@@ -1,4 +1,5 @@
 <script lang="ts">
+    import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { AppBar } from "@skeletonlabs/skeleton";
 
 </script>
@@ -10,10 +11,14 @@
     </svelte:fragment>
 
 	<svelte:fragment slot="trail">
-        <a href="/z/pages/portal/self/users" class="btn variant-filled">Users</a>
-        <a href="/z/pages/portal/self/devices" class="btn variant-filled">Devices</a>
-        <a href="/z/pages/portal/self/sessions" class="btn variant-filled">Switch Session</a>
-        <a href="/z/pages/portal/self/messages" class="btn variant-filled">Messages</a>
+        <a href="/z/pages/portal/self/devices" class="btn variant-filled btn-sm mr-1">
+            <SvgIcon className="w-4 h-4" name="rectangle-group" />
+            Devices
+        </a>
+        <a href="/z/pages/portal/self/messages" class="btn variant-filled-secondary btn-sm mr-1">
+            <SvgIcon className="w-4 h-4" name="bell-alert" />
+            Messages
+        </a>
     </svelte:fragment>
 </AppBar>
 
