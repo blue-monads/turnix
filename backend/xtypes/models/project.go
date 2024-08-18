@@ -58,7 +58,7 @@ type PluginImport struct {
 type ProjectPlugin struct {
 	ID         int64      `json:"id" db:"id,omitempty"`
 	Name       string     `json:"name" db:"name"`
-	AppType    string     `json:"apptype" db:"apptype"`
+	Type       string     `json:"ptype" db:"ptype"`
 	ProjectID  int64      `json:"project_id" db:"project_id"`
 	ServerCode string     `json:"server_code" db:"server_code"`
 	ClientCode string     `json:"client_code" db:"client_code"`

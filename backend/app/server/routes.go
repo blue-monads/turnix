@@ -106,6 +106,14 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 
 	apiv1.POST("/project/:pid/sqlexec", a.accessMiddleware(a.runProjectSQL))
 
+	// project plugins
+
+	apiv1.GET("/project/:pid/plugins", a.accessMiddleware(a.listProjectPlugins))
+	apiv1.POST("/project/:pid/plugins", a.accessMiddleware(a.addProjectPlugin))
+	apiv1.DELETE("/project/:pid/plugins/:id", a.accessMiddleware(a.removeProjectPlugin))
+	apiv1.POST("/project/:pid/plugins/:id", a.accessMiddleware(a.updateProjectPlugin))
+	apiv1.GET("/project/:pid/plugins/:id", a.accessMiddleware(a.getProjectPlugin))
+
 	// self files
 
 	apiv1.GET("/self/files", a.accessMiddleware(a.listSelfFiles))

@@ -228,3 +228,56 @@ func (a *Server) runProjectSQL(claim *signer.AccessClaim, ctx *gin.Context) (any
 
 	return res, err
 }
+
+// plugins
+func (a *Server) listProjectPlugins(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+
+	return a.cProject.ListProjectPlugins(claim.UserId, pid)
+}
+
+func (a *Server) addProjectPlugin(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+
+	data := models.ProjectPlugin{}
+	err := ctx.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	return a.cProject.AddProjectPlugin(claim.UserId, pid, &data)
+}
+
+func (a *Server) removeProjectPlugin(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	err := a.cProject.RemoveProjectPlugin(claim.UserId, pid, id)
+	return nil, err
+}
+
+func (a *Server) updateProjectPlugin(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	data := make(map[string]any)
+	err := ctx.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	err = a.cProject.UpdateProjectPlugin(claim.UserId, pid, id, data)
+
+	return nil, err
+}
+
+func (a *Server) getProjectPlugin(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	return a.cProject.GetProjectPlugin(claim.UserId, pid, id)
+}

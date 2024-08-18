@@ -68,6 +68,20 @@ export interface User {
     created_at: string;
 }
 
+export interface ProjectPlugin {
+    id: number;
+    name: string;
+    ptype: string;
+    project_id: number;
+    server_code: string;
+    client_code: string;
+    created_by: number;
+    updated_by: number;
+    created_at: string;
+    updated_at: string;
+}
+
+
 
 export class RootAPI {
     client: AxiosInstance
@@ -224,6 +238,31 @@ export class RootAPI {
     deleteSelfUser = (uid: string) => {
         return this.client.delete(`/self/users/${uid}`)
     }
+
+
+    // plugins
+
+    listProjectPlugins = (pid: string) => {
+        return this.client.get<ProjectPlugin[]>(`/project/${pid}/plugins`)
+    }
+
+    addProjectPlugin = (pid: string, data: Partial<ProjectPlugin>) => {
+        return this.client.post(`/project/${pid}/plugins`, data)
+    }
+
+    removeProjectPlugin = (pid: string, id: string) => {
+        return this.client.delete(`/project/${pid}/plugins/${id}`)
+    }
+
+    updateProjectPlugin = (pid: string, id: string, data: Partial<ProjectPlugin>) => {
+        return this.client.post(`/project/${pid}/plugins/${id}`, data)
+    }
+
+    getProjectPlugin = (pid: string, id: string) => {
+        return this.client.get<ProjectPlugin>(`/project/${pid}/plugins/${id}`)
+    }
+
+
 
     // self files
 
