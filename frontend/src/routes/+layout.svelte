@@ -12,17 +12,20 @@
   import SalesItemPick from "./portal/projects/books/[pid]/sales/new/sub/SalesItemPick.svelte";
   import ClientPicker from "./portal/projects/books/[pid]/sales/new/sub/ClientPicker.svelte";
     import NewFolderPanel from "./portal/project/files/[pid]/sub/NewFolderPanel.svelte";
+    import NewPluginPicker from "./portal/project/plugins/NewPluginPicker.svelte";
 
   initializeStores();
 
   const modalRegistry: Record<string, ModalComponent> = {
     project_picker: { ref: Picker },
     project_options: { ref: Options },
+    project_new_plugin_picker: { ref: NewPluginPicker },
     new_folder_panel: { ref: NewFolderPanel },
 
     books_account_picker: { ref: AccountPicker },
     books_sales_item_pick: { ref: SalesItemPick },
     books_client_picker: { ref: ClientPicker },
+
 
   };
 </script>

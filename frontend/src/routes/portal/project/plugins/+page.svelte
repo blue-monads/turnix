@@ -30,6 +30,8 @@
 
     load();
 
+    const store = getModalStore();
+
     const remove = async (id: string) => {
         const resp = await api.removeProjectPlugin(pid, id);
         if (resp.status !== 200) {
@@ -46,14 +48,23 @@
     </svelte:fragment>
 
     <svelte:fragment slot="trail">
-        <a
-            href="/z/pages/portal/project/plugins/new?pid={pid}"
+        <button
             class="btn btn-sm variant-ghost-secondary"
+            on:click={() => {
+
+                store.trigger({
+                    type: "component",
+                    component: "project_new_plugin_picker",
+                    meta: {
+                        pid: pid,
+                    },
+                });
+            }}
         >
             <SvgIcon name="plus" className="w-6 h-6" />
 
             Plugin
-        </a>
+        </button>
     </svelte:fragment>
 </AppBar>
 
@@ -72,29 +83,32 @@
         ]}
         color={["ptype"]}
         actions={[
-
             {
                 Name: "Run",
                 Class: "variant-filled-success",
                 Action: async (id, data) => {
-                    console.log("@run", id, data); 
-                    goto(`/z/pages/portal/project/plugins/run?pid=${pid}&id=${id}`);
+                    console.log("@run", id, data);
+                    goto(
+                        `/z/pages/portal/project/plugins/run?pid=${pid}&id=${id}`,
+                    );
                 },
             },
 
             {
                 Name: "edit",
                 Class: "variant-filled-primary",
-            
-                Action: async (id, data) => {
-                    console.log("@edit", id, data); 
 
-                    goto(`/z/pages/portal/project/plugins/edit?pid=${pid}&id=${id}`);
+                Action: async (id, data) => {
+                    console.log("@edit", id, data);
+
+                    goto(
+                        `/z/pages/portal/project/plugins/edit?pid=${pid}&id=${id}`,
+                    );
                 },
             },
             {
                 Name: "remove",
-                Class : "variant-filled-error",
+                Class: "variant-filled-error",
                 Action: remove,
             },
         ]}
