@@ -95,12 +95,6 @@ func (a *Server) login(ctx *gin.Context) {
 		panic("Implement login by username")
 	}
 
-	user, err = a.db.GetUserByEmail(data.Email)
-	if err != nil {
-		httpx.WriteAuthErr(ctx, err)
-		return
-	}
-
 	// fixme => hash it
 	if user.Password != data.Password {
 		httpx.WriteAuthErr(ctx, err)
