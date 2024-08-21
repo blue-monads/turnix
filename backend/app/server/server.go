@@ -10,7 +10,6 @@ import (
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
-	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -18,7 +17,6 @@ import (
 type Server struct {
 	db         *database.DB
 	signer     *signer.Signer
-	flakeNode  *snowflake.Node
 	globalJS   []byte
 	projects   map[string]*xproject.Defination
 	rootLogger zerolog.Logger
@@ -44,15 +42,9 @@ func New(opts Options) *Server {
 		panic(err)
 	}
 
-	node, err := snowflake.NewNode(0)
-	if err != nil {
-		panic(err)
-	}
-
 	return &Server{
 		db:         opts.DB,
 		signer:     opts.Signer,
-		flakeNode:  node,
 		rootLogger: zerolog.New(os.Stdout).With().Str("service", "server").Logger(),
 		projects:   opts.ProjectBuilders,
 		globalJS:   out,

@@ -36,7 +36,7 @@ func New(db *database.DB, signer *signer.Signer, logger zerolog.Logger) *Engine 
 	return &Engine{
 		handlers:     make(map[string][]handlerRef),
 		hLock:        sync.RWMutex{},
-		hookEngine:   hookengine.New(db, signer, logger, snode),
+		hookEngine:   hookengine.New(db, signer, logger),
 		pluginEngine: nil,
 		snowflake:    snode,
 	}

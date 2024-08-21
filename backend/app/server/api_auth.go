@@ -11,6 +11,7 @@ import (
 	"github.com/bornjre/turnix/backend/xtypes/models"
 	_ "github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/xid"
 
 	"github.com/bornjre/turnix/backend/services/signer"
 )
@@ -39,7 +40,7 @@ func (a *Server) signUpDirect(ctx *gin.Context) {
 	log.Println("created user", id)
 
 	token, err := a.signer.SignAccess(&signer.AccessClaim{
-		XID:    a.flakeNode.Generate().Int64(),
+		XID:    xid.New().String(),
 		UserId: id,
 	})
 
@@ -84,6 +85,10 @@ func (a *Server) login(ctx *gin.Context) {
 
 	if strings.Contains(data.Email, "@") {
 		user, err = a.db.GetUserByEmail(data.Email)
+		if err != nil {
+			httpx.WriteAuthErr(ctx, err)
+			return
+		}
 	} else if phoneRegex.MatchString(data.Email) {
 		panic("Implement login by phone")
 	} else {
@@ -103,7 +108,7 @@ func (a *Server) login(ctx *gin.Context) {
 	}
 
 	token, err := a.signer.SignAccess(&signer.AccessClaim{
-		XID:    a.flakeNode.Generate().Int64(),
+		XID:    xid.New().String(),
 		UserId: int64(user.ID),
 	})
 

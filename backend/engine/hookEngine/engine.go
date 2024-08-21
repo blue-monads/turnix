@@ -7,7 +7,6 @@ import (
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/xengine"
-	"github.com/bwmarrin/snowflake"
 
 	"github.com/rs/zerolog"
 )
@@ -18,11 +17,10 @@ type HookEngine struct {
 	hrLock      sync.RWMutex
 	gojaPool    *pool.GojaPool
 	logger      zerolog.Logger
-	snowflake   *snowflake.Node
 	signer      *signer.Signer
 }
 
-func New(db *database.DB, signer *signer.Signer, logger zerolog.Logger, snowflake *snowflake.Node) *HookEngine {
+func New(db *database.DB, signer *signer.Signer, logger zerolog.Logger) *HookEngine {
 
 	hook := &HookEngine{
 		db:          db,
@@ -31,7 +29,6 @@ func New(db *database.DB, signer *signer.Signer, logger zerolog.Logger, snowflak
 		hrLock:      sync.RWMutex{},
 		logger:      logger,
 		signer:      signer,
-		snowflake:   snowflake,
 	}
 
 	return hook

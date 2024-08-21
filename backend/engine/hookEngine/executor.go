@@ -10,6 +10,7 @@ import (
 	"github.com/bornjre/turnix/backend/xtypes/xengine"
 	"github.com/dop251/goja"
 	"github.com/k0kubun/pp"
+	"github.com/rs/xid"
 )
 
 type ParsedHook struct {
@@ -115,7 +116,7 @@ func (e *Executor) buildEventObject(hook ParsedHook) *goja.Object {
 		}
 
 		token, err := e.engine.signer.SignAccess(&signer.AccessClaim{
-			XID:    e.engine.snowflake.Generate().Int64(),
+			XID:    xid.New().String(),
 			Typeid: signer.TokenTypeAccess,
 			UserId: userId,
 			Extrameta: map[string]any{

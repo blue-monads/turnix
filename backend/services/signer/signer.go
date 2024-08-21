@@ -15,14 +15,14 @@ const (
 )
 
 type AccessClaim struct {
-	XID       int64          `json:"x,omitempty"`
+	XID       string         `json:"x,omitempty"`
 	Typeid    uint8          `json:"t,omitempty"`
 	UserId    int64          `json:"u,omitempty"`
 	Extrameta map[string]any `json:"e,omitempty"`
 }
 
 type InviteClaim struct {
-	XID            int64  `json:"x,omitempty"`
+	XID            string `json:"x,omitempty"`
 	Typeid         uint8  `json:"t,omitempty"`
 	InviteFromUser int64  `json:"u,omitempty"`
 	InviteToUser   int64  `json:"z,omitempty"`
