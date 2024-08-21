@@ -1,4 +1,4 @@
-package hookengine
+package pool
 
 import (
 	"time"
@@ -7,18 +7,18 @@ import (
 	"github.com/k0kubun/pp"
 )
 
-type gojaHandle struct {
-	js      *goja.Runtime
-	lastPid int64
+type GojaHandle struct {
+	JS      *goja.Runtime
+	LastPid int64
 }
 
 type FetchRequest struct{}
 
 type FetchResponse struct{}
 
-func (g *gojaHandle) bind() {
+func (g *GojaHandle) Bind() {
 
-	obj := g.js.NewObject()
+	obj := g.JS.NewObject()
 
 	obj.Set("sleep", func(ms int32) {
 		time.Sleep(time.Millisecond * time.Duration(ms))
@@ -42,6 +42,6 @@ func (g *gojaHandle) bind() {
 		pp.Println(msg, opts)
 	})
 
-	g.js.Set("runtime", obj)
+	g.JS.Set("runtime", obj)
 
 }

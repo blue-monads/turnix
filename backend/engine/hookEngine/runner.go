@@ -95,24 +95,24 @@ func (r *hookRunner) execute(evt xengine.EventContext) (*xengine.EventResult, er
 		return nil, fmt.Errorf("could not accure JS runtime")
 	}
 
-	if gojah.lastPid != evt.Event.Project {
-		gojah.lastPid = 0
-		_, err := gojah.js.RunProgram(r.jsCodeCache)
+	if gojah.LastPid != evt.Event.Project {
+		gojah.LastPid = 0
+		_, err := gojah.JS.RunProgram(r.jsCodeCache)
 		if err != nil {
 			return nil, err
 		}
 
-		gojah.bind()
-		gojah.js.SetFieldNameMapper(goja.TagFieldNameMapper("json", true))
+		gojah.Bind()
+		gojah.JS.SetFieldNameMapper(goja.TagFieldNameMapper("json", true))
 
-		gojah.lastPid = evt.Event.Project
+		gojah.LastPid = evt.Event.Project
 
 	}
 
 	execCtx := Executor{
 		engine:        r.parent,
 		Event:         evt,
-		JsRuntime:     gojah.js,
+		JsRuntime:     gojah.JS,
 		PreventAction: false,
 		ResultData:    map[string]any{},
 	}

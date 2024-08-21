@@ -3,6 +3,7 @@ package hookengine
 import (
 	"sync"
 
+	"github.com/bornjre/turnix/backend/engine/pool"
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/xengine"
@@ -15,7 +16,7 @@ type HookEngine struct {
 	db          *database.DB
 	hookRunners map[int64]*hookRunner
 	hrLock      sync.RWMutex
-	gojaPool    GojaPool
+	gojaPool    *pool.GojaPool
 	logger      zerolog.Logger
 	snowflake   *snowflake.Node
 	signer      *signer.Signer
@@ -26,14 +27,12 @@ func New(db *database.DB, signer *signer.Signer, logger zerolog.Logger, snowflak
 	hook := &HookEngine{
 		db:          db,
 		hookRunners: make(map[int64]*hookRunner),
-		gojaPool:    newGojaPool(),
+		gojaPool:    pool.New(logger),
 		hrLock:      sync.RWMutex{},
 		logger:      logger,
 		signer:      signer,
 		snowflake:   snowflake,
 	}
-
-	hook.gojaPool.engine = hook
 
 	return hook
 }
