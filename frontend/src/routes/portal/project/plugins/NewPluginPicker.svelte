@@ -19,7 +19,7 @@
         },
         {
             name: "Live Editor",
-            description: "Edit a plugin in the editor",
+            description: "Create a plugin in the editor",
             link: "/todo",
         },
         {
