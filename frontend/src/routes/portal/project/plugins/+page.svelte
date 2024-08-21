@@ -48,11 +48,11 @@
     <svelte:fragment slot="trail">
         <a
             href="/z/pages/portal/project/plugins/new?pid={pid}"
-            class="btn variant-ghost-secondary"
+            class="btn btn-sm variant-ghost-secondary"
         >
             <SvgIcon name="plus" className="w-6 h-6" />
 
-            New Plugin
+            Plugin
         </a>
     </svelte:fragment>
 </AppBar>
