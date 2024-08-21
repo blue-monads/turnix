@@ -5,7 +5,7 @@ import (
 
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
-	"github.com/bornjre/turnix/backend/xtypes/xbus"
+	"github.com/bornjre/turnix/backend/xtypes/xengine"
 	"github.com/bwmarrin/snowflake"
 
 	"github.com/rs/zerolog"
@@ -57,7 +57,7 @@ func (h *HookEngine) Invalidate(pid int64) error {
 	return nil
 }
 
-func (h *HookEngine) Emit(e xbus.EventContext) (*xbus.EventResult, error) {
+func (h *HookEngine) Emit(e xengine.EventContext) (*xengine.EventResult, error) {
 
 	h.logger.Info().
 		Int64("pid", e.Event.Project).

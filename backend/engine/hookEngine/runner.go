@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/bornjre/turnix/backend/xtypes/models"
-	"github.com/bornjre/turnix/backend/xtypes/xbus"
+	"github.com/bornjre/turnix/backend/xtypes/xengine"
 	"github.com/dop251/goja"
 	"github.com/k0kubun/pp"
 )
@@ -88,7 +88,7 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) (*hookR
 
 }
 
-func (r *hookRunner) execute(evt xbus.EventContext) (*xbus.EventResult, error) {
+func (r *hookRunner) execute(evt xengine.EventContext) (*xengine.EventResult, error) {
 
 	gojah := r.parent.gojaPool.Get(evt.Event.Project, evt.EventId, false)
 	if gojah == nil {
@@ -117,7 +117,7 @@ func (r *hookRunner) execute(evt xbus.EventContext) (*xbus.EventResult, error) {
 		ResultData:    map[string]any{},
 	}
 
-	result := &xbus.EventResult{
+	result := &xengine.EventResult{
 		PreventAction: false,
 		Errors:        map[string]string{},
 		Data:          nil,

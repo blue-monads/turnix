@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/bornjre/turnix/backend/services/signer"
-	"github.com/bornjre/turnix/backend/xtypes/xbus"
+	"github.com/bornjre/turnix/backend/xtypes/xengine"
 	"github.com/dop251/goja"
 	"github.com/k0kubun/pp"
 )
@@ -27,7 +27,7 @@ type ParsedHook struct {
 type Executor struct {
 	engine *HookEngine
 
-	Event         xbus.EventContext
+	Event         xengine.EventContext
 	JsRuntime     *goja.Runtime
 	ResultData    map[string]any
 	PreventAction bool

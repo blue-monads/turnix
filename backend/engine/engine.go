@@ -1,17 +1,17 @@
-package eventbus
+package engine
 
 import (
 	"sync"
 
-	hookengine "github.com/bornjre/turnix/backend/eventbus/hookEngine"
+	hookengine "github.com/bornjre/turnix/backend/engine/hookEngine"
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
-	"github.com/bornjre/turnix/backend/xtypes/xbus"
+	"github.com/bornjre/turnix/backend/xtypes/xengine"
 	"github.com/bwmarrin/snowflake"
 	"github.com/rs/zerolog"
 )
 
-type EventBus struct {
+type Engine struct {
 	handlers   map[string][]handlerRef
 	hLock      sync.RWMutex
 	hookEngine *hookengine.HookEngine
@@ -19,17 +19,17 @@ type EventBus struct {
 }
 
 type handlerRef struct {
-	handler  xbus.EventHandler
+	handler  xengine.EventHandler
 	priority int16
 }
 
-func New(db *database.DB, signer *signer.Signer, logger zerolog.Logger) *EventBus {
+func New(db *database.DB, signer *signer.Signer, logger zerolog.Logger) *Engine {
 	snode, err := snowflake.NewNode(1)
 	if err != nil {
 		panic(err)
 	}
 
-	return &EventBus{
+	return &Engine{
 		handlers:   make(map[string][]handlerRef),
 		hLock:      sync.RWMutex{},
 		hookEngine: hookengine.New(db, signer, logger, snode),
@@ -38,15 +38,15 @@ func New(db *database.DB, signer *signer.Signer, logger zerolog.Logger) *EventBu
 
 }
 
-func (e *EventBus) Init() error {
+func (e *Engine) Init() error {
 	return e.hookEngine.Init()
 }
 
-func (e *EventBus) Invalidate(pid int64) error {
+func (e *Engine) Invalidate(pid int64) error {
 	return e.hookEngine.Invalidate(pid)
 }
 
-func (e *EventBus) Emit(ev xbus.EventNew) (*xbus.EventResult, error) {
+func (e *Engine) Emit(ev xengine.EventNew) (*xengine.EventResult, error) {
 
 	e.hLock.RLock()
 
@@ -54,7 +54,7 @@ func (e *EventBus) Emit(ev xbus.EventNew) (*xbus.EventResult, error) {
 
 	e.hLock.RUnlock()
 
-	ctx := xbus.EventContext{
+	ctx := xengine.EventContext{
 		EventId:       e.snowflake.Generate().Int64(),
 		Event:         &ev,
 		PreventAction: false,
@@ -69,7 +69,7 @@ func (e *EventBus) Emit(ev xbus.EventNew) (*xbus.EventResult, error) {
 	}
 
 	if ev.Project == 0 || !ev.AllowHook {
-		return &xbus.EventResult{
+		return &xengine.EventResult{
 			PreventAction: ctx.PreventAction,
 			Errors:        map[string]string{},
 			Data:          ctx.Data,
@@ -80,7 +80,7 @@ func (e *EventBus) Emit(ev xbus.EventNew) (*xbus.EventResult, error) {
 
 }
 
-func (e *EventBus) OnEvent(name string, handler xbus.EventHandler, priority int16) {
+func (e *Engine) OnEvent(name string, handler xengine.EventHandler, priority int16) {
 
 	e.hLock.Lock()
 	defer e.hLock.Unlock()
@@ -96,6 +96,6 @@ func (e *EventBus) OnEvent(name string, handler xbus.EventHandler, priority int1
 
 }
 
-func (e *EventBus) Stop(force bool) error {
+func (e *Engine) Stop(force bool) error {
 	return nil
 }

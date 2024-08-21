@@ -2,7 +2,8 @@ package xtypes
 
 import (
 	"github.com/bornjre/turnix/backend/xtypes/services/xsockd"
-	"github.com/bornjre/turnix/backend/xtypes/xbus"
+
+	"github.com/bornjre/turnix/backend/xtypes/xengine"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,5 +21,5 @@ type App interface {
 	GetController() any
 	GetServer() any
 
-	GetEventBus() xbus.EventBus
+	GetEngine() xengine.XEngine
 }

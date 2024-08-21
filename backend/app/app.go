@@ -10,7 +10,7 @@ import (
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes"
 	"github.com/bornjre/turnix/backend/xtypes/services/xsockd"
-	"github.com/bornjre/turnix/backend/xtypes/xbus"
+	"github.com/bornjre/turnix/backend/xtypes/xengine"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
@@ -84,7 +84,7 @@ func (a *App) GetDatabase() any {
 	return a.db
 }
 
-func (a *App) GetEventBus() xbus.EventBus {
+func (a *App) GetEngine() xengine.XEngine {
 	return nil
 }
 

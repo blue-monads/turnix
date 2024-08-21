@@ -1,4 +1,4 @@
-package xbus
+package xengine
 
 import (
 	"github.com/gin-gonic/gin"
@@ -59,12 +59,12 @@ func (r *EventContext) MapStruct(target any) error {
 
 type EventHandler func(ctx EventContext) error
 
-type EventBus interface {
+type XEngine interface {
 	Init() error
 	Invalidate(pid int64) error
 	Emit(e EventNew) (*EventResult, error)
-
 	OnEvent(name string, handler EventHandler, priority int16)
-
 	Stop(force bool) error
+
+	PluginAction(name string, data any) (any, error)
 }
