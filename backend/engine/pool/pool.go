@@ -29,9 +29,9 @@ func New(logger zerolog.Logger) *GojaPool {
 	}
 }
 
-func (g *GojaPool) Get(pid int64, eid string, cacheOnly bool) *GojaHandle {
+func (g *GojaPool) Get(pid int64, cacheOnly bool) *GojaHandle {
 
-	g.logger.Info().Int64("pid", pid).Str("eid", eid).Msg("GojaPool.Get")
+	g.logger.Info().Int64("pid", pid).Msg("GojaPool.Get")
 
 	g.idexMLock.Lock()
 	defer g.idexMLock.Unlock()

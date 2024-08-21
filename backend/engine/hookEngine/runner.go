@@ -90,7 +90,7 @@ func newHookRunner(h *HookEngine, pid int64, hooks []models.ProjectHook) (*hookR
 
 func (r *hookRunner) execute(evt xengine.EventContext) (*xengine.EventResult, error) {
 
-	gojah := r.parent.gojaPool.Get(evt.Event.Project, evt.EventId, false)
+	gojah := r.parent.gojaPool.Get(evt.Event.Project, false)
 	if gojah == nil {
 		return nil, fmt.Errorf("could not accure JS runtime")
 	}
