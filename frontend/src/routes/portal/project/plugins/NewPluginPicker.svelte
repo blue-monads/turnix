@@ -31,7 +31,7 @@
 </script>
 
 <div class="w-modal-slim bg-white rounded card p-4">
-    <h3 class="h3">Plugins</h3>
+    <h3 class="h3">Plugins Sources</h3>
 
     <section class="flex flex-col gap-2">
         {#each pluginSources as pluginSource}
