@@ -6,7 +6,7 @@ type PluginAction struct {
 	pool *pool.GojaPool
 }
 
-func NewPluginAction(pool *pool.GojaPool) *PluginAction {
+func New(pool *pool.GojaPool) *PluginAction {
 	return &PluginAction{
 		pool: pool,
 	}

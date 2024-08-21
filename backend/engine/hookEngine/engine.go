@@ -20,15 +20,22 @@ type HookEngine struct {
 	signer      *signer.Signer
 }
 
-func New(db *database.DB, signer *signer.Signer, logger zerolog.Logger) *HookEngine {
+type Options struct {
+	DB       *database.DB
+	Signer   *signer.Signer
+	Logger   zerolog.Logger
+	GojaPool *pool.GojaPool
+}
+
+func New(opts Options) *HookEngine {
 
 	hook := &HookEngine{
-		db:          db,
+		db:          opts.DB,
 		hookRunners: make(map[int64]*hookRunner),
-		gojaPool:    pool.New(logger),
+		gojaPool:    pool.New(opts.Logger),
 		hrLock:      sync.RWMutex{},
-		logger:      logger,
-		signer:      signer,
+		logger:      opts.Logger,
+		signer:      opts.Signer,
 	}
 
 	return hook

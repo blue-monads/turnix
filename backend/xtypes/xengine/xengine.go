@@ -37,7 +37,7 @@ type EventResult struct {
 }
 
 type EventContext struct {
-	EventId       int64
+	EventId       string
 	Event         *EventNew
 	PreventAction bool
 	Data          map[string]any

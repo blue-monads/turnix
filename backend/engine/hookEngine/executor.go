@@ -140,7 +140,7 @@ func (e *Executor) buildEventObject(hook ParsedHook) *goja.Object {
 // WEBHOOK
 
 type EventWebhookBody struct {
-	Id        int64  `json:"xid"`
+	Id        string `json:"xid"`
 	Payload   any    `json:"payload"`
 	EventType string `json:"event_type"`
 	ProjectId int64  `json:"project_id"`

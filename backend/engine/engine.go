@@ -5,11 +5,12 @@ import (
 
 	hookengine "github.com/bornjre/turnix/backend/engine/hookEngine"
 	pluginengine "github.com/bornjre/turnix/backend/engine/pluginAction"
+	"github.com/bornjre/turnix/backend/engine/pool"
 
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/xengine"
-	"github.com/bwmarrin/snowflake"
+	"github.com/rs/xid"
 	"github.com/rs/zerolog"
 )
 
@@ -18,8 +19,6 @@ type Engine struct {
 	hLock        sync.RWMutex
 	hookEngine   *hookengine.HookEngine
 	pluginEngine *pluginengine.PluginAction
-
-	snowflake *snowflake.Node
 }
 
 type handlerRef struct {
@@ -28,17 +27,19 @@ type handlerRef struct {
 }
 
 func New(db *database.DB, signer *signer.Signer, logger zerolog.Logger) *Engine {
-	snode, err := snowflake.NewNode(1)
-	if err != nil {
-		panic(err)
-	}
+
+	gpool := pool.New(logger)
 
 	return &Engine{
-		handlers:     make(map[string][]handlerRef),
-		hLock:        sync.RWMutex{},
-		hookEngine:   hookengine.New(db, signer, logger),
-		pluginEngine: nil,
-		snowflake:    snode,
+		handlers: make(map[string][]handlerRef),
+		hLock:    sync.RWMutex{},
+		hookEngine: hookengine.New(hookengine.Options{
+			DB:       db,
+			Signer:   signer,
+			Logger:   logger,
+			GojaPool: gpool,
+		}),
+		pluginEngine: pluginengine.New(gpool),
 	}
 
 }
@@ -60,7 +61,7 @@ func (e *Engine) Emit(ev xengine.EventNew) (*xengine.EventResult, error) {
 	e.hLock.RUnlock()
 
 	ctx := xengine.EventContext{
-		EventId:       e.snowflake.Generate().Int64(),
+		EventId:       xid.New().String(),
 		Event:         &ev,
 		PreventAction: false,
 		Data:          map[string]any{},
