@@ -92,12 +92,14 @@ export const sampleHtml = `<!DOCTYPE html>
 
     </script>
 </body>
-</html>
+</html>`
 
 
+export const sampleJs = `
 
 
-
-
+const myPluginDoXyz = (ctx) => {
+    console.log("myPluginDoXyz/1");
+};
 
 `

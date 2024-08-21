@@ -17,12 +17,12 @@
     import { getContext } from "svelte";
     import type { RootAPI } from "$lib/api";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-    import { sampleHtml } from "./sample";
+    import { sampleHtml, sampleJs } from "./sample";
     import { params } from "$lib/params";
     import Runner from "../../run/Runner.svelte";
 
     let tabSet: number = 0;
-    let serverCode = "";
+    let serverCode = sampleJs;
     let clientCode = sampleHtml;
     let savedClientCode = "";
 
