@@ -10,17 +10,17 @@
         {
             name: "URL",
             description: "Import plugin from a URL",
-            link: `/z/pages/portal/project/plugins/new/File?pid=${pid}`,
+            link: `/z/pages/portal/project/plugins/new/URL?pid=${pid}`,
         },
         {
             name: "File",
             description: "Upload a plugin file",
-            link: `/z/pages/portal/project/plugins/new/LiveEditor?pid=${pid}`,
+            link: `/z/pages/portal/project/plugins/new/File?pid=${pid}`,
         },
         {
             name: "Live Editor",
             description: "Create a plugin in the editor",
-            link: `/z/pages/portal/project/plugins/new/URL?pid=${pid}`,
+            link: `/z/pages/portal/project/plugins/new/LiveEditor?pid=${pid}`,
         },
         {
             name: "Raw Create",
