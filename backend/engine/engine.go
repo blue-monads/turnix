@@ -4,6 +4,8 @@ import (
 	"sync"
 
 	hookengine "github.com/bornjre/turnix/backend/engine/hookEngine"
+	pluginengine "github.com/bornjre/turnix/backend/engine/pluginAction"
+
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/xengine"
@@ -12,10 +14,12 @@ import (
 )
 
 type Engine struct {
-	handlers   map[string][]handlerRef
-	hLock      sync.RWMutex
-	hookEngine *hookengine.HookEngine
-	snowflake  *snowflake.Node
+	handlers     map[string][]handlerRef
+	hLock        sync.RWMutex
+	hookEngine   *hookengine.HookEngine
+	pluginEngine *pluginengine.PluginAction
+
+	snowflake *snowflake.Node
 }
 
 type handlerRef struct {
@@ -30,10 +34,11 @@ func New(db *database.DB, signer *signer.Signer, logger zerolog.Logger) *Engine 
 	}
 
 	return &Engine{
-		handlers:   make(map[string][]handlerRef),
-		hLock:      sync.RWMutex{},
-		hookEngine: hookengine.New(db, signer, logger, snode),
-		snowflake:  snode,
+		handlers:     make(map[string][]handlerRef),
+		hLock:        sync.RWMutex{},
+		hookEngine:   hookengine.New(db, signer, logger, snode),
+		pluginEngine: nil,
+		snowflake:    snode,
 	}
 
 }
