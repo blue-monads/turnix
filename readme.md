@@ -39,3 +39,8 @@ Platform for apps.
 
 - https://strawberry.quest/
 - https://www.arrow-js.com/
+
+
+SIAYN => Sqlite is all you need
+Turnix
+AppTroll => Real everything app
