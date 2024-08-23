@@ -10,6 +10,7 @@
     import { page } from "$app/stores";
     import Loader from "$lib/compo/loader/loader.svelte";
     import { params } from "$lib/params";
+    import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
     const pid = $page.params["pid"];
 
@@ -25,13 +26,13 @@
 </script>
 
 <FileDropzone on:change={onDrop} name="files">
-    <svelte:fragment slot="lead">
-        <span>{file?.name || ""}</span>
+    <div slot="lead" class="flex justify-center">
+        <SvgIcon name="arrow-up-tray" className="w-6 h-6" />
+    </div>
 
+    <svelte:fragment slot="message">
+        <strong>Upload a file</strong> or drag and drop
     </svelte:fragment>
-    <svelte:fragment slot="message"
-        >Upload files to your project</svelte:fragment
-    >
 </FileDropzone>
 
 <div class="flex justify-end py-2">

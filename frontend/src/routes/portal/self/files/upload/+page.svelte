@@ -1,10 +1,9 @@
 <script lang="ts">
     import { RootAPI } from "$lib/api";
     import { getContext } from "svelte";
-    import {
-        FileDropzone,
-    } from "@skeletonlabs/skeleton";
+    import { FileDropzone } from "@skeletonlabs/skeleton";
     import { params } from "$lib/params";
+    import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
     const api = getContext("__api__") as RootAPI;
 
@@ -18,10 +17,13 @@
 </script>
 
 <FileDropzone on:change={onDrop} name="files">
-    <svelte:fragment slot="lead">
-        <span>{file?.name || ""}</span>
+    <div slot="lead" class="flex justify-center">
+        <SvgIcon name="arrow-up-tray" className="w-6 h-6" />
+    </div>
+
+    <svelte:fragment slot="message">
+        <strong>Upload a file</strong> or drag and drop
     </svelte:fragment>
-    <svelte:fragment slot="message">Upload files</svelte:fragment>
 </FileDropzone>
 
 <div class="flex justify-end py-2">
