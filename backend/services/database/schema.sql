@@ -134,3 +134,11 @@ CREATE TABLE IF NOT EXISTS Files (
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE (owner_user_id, owner_project_id, path, name)
 );
+
+CREATE TABLE IF NOT EXISTS FileShares (
+  id INTEGER PRIMARY KEY,
+  file_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  expires_on TIMESTAMP NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+);
