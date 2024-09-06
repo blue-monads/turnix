@@ -65,6 +65,16 @@ CREATE TABLE IF NOT EXISTS Projects (
   FOREIGN KEY (owned_by) REFERENCES Users(id)
 );
 
+CREATE TABLE IF NOT EXISTS ProjectConfig (
+  id INTEGER PRIMARY KEY, 
+  key TEXT NOT NULL DEFAULT '', 
+  group TEXT NOT NULL DEFAULT '',
+  value TEXT NOT NULL DEFAULT '',
+  project_id INTEGER NOT NULL, 
+  unique(project_id, group, key),
+  FOREIGN KEY (project_id) REFERENCES Projects(id)
+);
+
 CREATE TABLE IF NOT EXISTS ProjectHooks (
   id INTEGER PRIMARY KEY, 
   name TEXT NOT NULL DEFAULT '', 
