@@ -72,7 +72,17 @@
                                     {user.bio}
                                 </dd></span
                             >
-                            <div class="flex gap-0 sm:gap-1">
+                            <div class="flex gap-0 sm:gap-1 flex-wrap space-y-2">
+
+
+
+                                <a
+                                
+                                href="/z/pages/portal/user/{user.id}"
+                                class="btn btn-sm variant-filled-tertiary"
+                                    >Profile
+                            </a>
+
                                 <a
                                 
                                 href="/z/pages/portal/self/users/reset-password?uid={user.id}"

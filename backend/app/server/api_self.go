@@ -140,6 +140,14 @@ func (a *Server) selfDeleteUser(claim *signer.AccessClaim, ctx *gin.Context) (an
 	return httpx.MessageOk, nil
 }
 
+// messages
+
+func (a *Server) listUserMessages(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	count, _ := strconv.ParseInt(ctx.Query("count"), 10, 64)
+	cursor, _ := strconv.ParseInt(ctx.Query("cursor"), 10, 64)
+	return a.cSelf.ListUserMessages(claim.UserId, count, cursor)
+}
+
 // self files
 
 func (a *Server) listSelfFiles(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {

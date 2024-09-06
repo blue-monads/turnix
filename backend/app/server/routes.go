@@ -72,6 +72,8 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 	apiv1.POST("/self/users/:uid", a.accessMiddleware(a.selfUpdateUser))
 	apiv1.DELETE("/self/users/:uid", a.accessMiddleware(a.selfDeleteUser))
 
+	apiv1.GET("/self/messages", a.accessMiddleware(a.listUserMessages))
+
 	apiv1.GET("/project", a.accessMiddleware(a.listProjects))
 	apiv1.POST("/project", a.accessMiddleware(a.addProject))
 	apiv1.POST("/project/:pid", a.accessMiddleware(a.updateProject))
