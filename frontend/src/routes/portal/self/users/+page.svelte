@@ -21,6 +21,12 @@
         loading = false;
     };
 
+    const deleteUser = async (user: User) => {
+        await api.deleteSelfUser(String(user.id));
+
+        load();
+    };
+
     load();
 </script>
 
@@ -32,15 +38,12 @@
     <svelte:fragment slot="trail">
         <a
             class="btn btn-sm variant-soft-secondary"
-            href="/z/pages/portal/self/users/new">
-            
-            <SvgIcon className="h-4 w-4" name="plus" />
-            
-            Add User
-            
-            
-            </a
+            href="/z/pages/portal/self/users/new"
         >
+            <SvgIcon className="h-4 w-4" name="plus" />
+
+            Add User
+        </a>
     </svelte:fragment>
 </AppBar>
 
@@ -70,15 +73,20 @@
                                 </dd></span
                             >
                             <div class="flex gap-0 sm:gap-1">
-                                <button
-                                    class="btn btn-sm variant-filled-primary"
-                                    >Login as
-                                </button>
-                                <button
+                                <a
+                                
+                                href="/z/pages/portal/self/users/reset-password?uid={user.id}"
+                                class="btn btn-sm variant-filled-primary"
+                                    >Reset Password
+                            </a>
+                                <a
+                                    href="/z/pages/portal/self/users/edit?uid={user.id}"
                                     class="btn btn-sm variant-filled-warning"
                                     >Edit
-                                </button>
-                                <button class="btn btn-sm variant-filled-error"
+                                </a>
+                                <button 
+                                    class="btn btn-sm variant-filled-error"
+                                    on:click={() => deleteUser(user)}
                                     >Delete</button
                                 >
                             </div>
