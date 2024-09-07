@@ -8,7 +8,7 @@ func (a *SelfController) ListUserMessages(userId int64, count, cursor int64) ([]
 }
 
 type MessegeRequest struct {
-	Title string `json:"name"`
+	Title string `json:"title"`
 	Body  string `json:"body"`
 }
 

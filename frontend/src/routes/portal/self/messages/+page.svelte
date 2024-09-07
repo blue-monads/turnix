@@ -1,117 +1,128 @@
 <script lang="ts">
-    import type { RootAPI } from "$lib/api";
-    import { AppBar } from "@skeletonlabs/skeleton";
-    import { getContext } from "svelte";
+  import type { RootAPI } from "$lib/api";
+  import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+  import { AppBar } from "@skeletonlabs/skeleton";
+  import { getContext } from "svelte";
 
-    const api = getContext("__api__") as RootAPI;
+  const api = getContext("__api__") as RootAPI;
 
-    let messages = [];
+  let messages: Record<string, any>[] = [];
 
-    const load = async () => {
-
-
-
-const resp = await        api.listUserMessages()
-        
-
+  const load = async () => {
+    const resp = await api.listUserMessages();
+    if (resp.status !== 200) {
+      return;
     }
 
+    messages = resp.data;
+  };
+
+  load();
 </script>
 
-
 <AppBar>
-    <svelte:fragment slot="lead">
-        <h4 class="h4">Messages</h4>
-    </svelte:fragment>
+  <svelte:fragment slot="lead">
+    <h4 class="h4">Messages</h4>
+  </svelte:fragment>
 
-    <svelte:fragment slot="trail">
-        
-    </svelte:fragment>
+  <svelte:fragment slot="trail">
+    <button class="btn btn-sm variant-filled">
+      <SvgIcon className="w-4 h-4" name="ellipsis-horizontal" />
+      Clear
+    </button>
+  </svelte:fragment>
 </AppBar>
 
-
 <div class="flex flex-col">
-  <div class="overflow-x-auto sm:mx-0.5 lg:mx-0.5">
-    <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
-      <div class="overflow-hidden">
-        <table class="min-w-full">
+  <div class="overflow-auto">
+    <div class="inline-block min-w-full p-2 "> 
+        <table class="min-w-full border-gray-300 border"> 
           <thead class="bg-gray-200 border-b">
             <tr>
-              <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+              <th
+                scope="col"
+                class="text-sm font-medium text-gray-900 p-2 text-left"
+              >
                 #
               </th>
-              <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                First
+              <th
+                scope="col"
+                class="text-sm font-medium text-gray-900 p-2 text-left"
+              >
+                Title
               </th>
-              <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                Last
+
+              <th
+              scope="col"
+              class="text-sm font-medium text-gray-900 p-2 text-left"
+            >
+              Type
+            </th>
+
+
+              <th
+                scope="col"
+                class="text-sm font-medium text-gray-900 p-2 text-left"
+              >
+                Content
               </th>
-              <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                Handle
+              <th
+                scope="col"
+                class="text-sm font-medium text-gray-900 p-2 text-left"
+              >
+                
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100">
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                Mark
-              </td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                Otto
-              </td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                @mdo
-              </td>
-            </tr>
-            <tr class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100">
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">2</td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                Jacob
-              </td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                Thornton
-              </td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                @fat
-              </td>
-            </tr>
-            <tr class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100">
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">3</td>
-              <td colspan="2" class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                Larry
-              </td>              
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                @twitter
-              </td>
-            </tr>
-            <tr class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100">
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">4</td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                Whitney
-              </td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                Austin
-              </td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                @mdo
-              </td>
-            </tr>
-            <tr class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100">
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">5</td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                Ted
-              </td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                Obama
-              </td>
-              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                @fat
-              </td>
-            </tr>
+            {#each messages as message}
+            <tr
+            class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100"
+          >
+            <td
+              class="p-2 whitespace-nowrap text-sm font-medium text-gray-900"
+              >1</td
+            >
+            <td
+              class="p-2 text-sm text-gray-900 font-light whitespace-nowrap"
+            >
+              { message.title || ""}
+            </td>
+
+            <td
+            class="p-2 text-sm text-gray-900 font-light whitespace-nowrap"
+          >
+          <span class="chip variant-filled-secondary">
+            { message.type || ""}
+          </span>
+            
+          </td>
+
+            <td
+              class="p-2 text-sm text-gray-900 font-light whitespace-nowrap"
+            >
+          { message.contents || ""}
+            </td>
+            <td
+              class="p-2 text-sm text-gray-900 font-light whitespace-nowrap"
+            >
+              
+            </td>
+          </tr>
+            {/each}
+
           </tbody>
         </table>
-      </div>
+        <div class="flex justify-between py-2">
+          <button class="btn btn-sm variant-ghost-secondary">
+            <SvgIcon className="h-4 w-4" name="arrow-left" />
+          </button>
+
+          <button class="btn btn-sm variant-ghost-secondary">
+            <SvgIcon className="h-4 w-4" name="arrow-right" />
+          </button>
+
+        </div>
     </div>
   </div>
 </div>
