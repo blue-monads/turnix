@@ -5,6 +5,7 @@ import (
 
 	"github.com/bornjre/turnix/backend/controller"
 	"github.com/bornjre/turnix/backend/controller/auth"
+	"github.com/bornjre/turnix/backend/controller/common"
 	"github.com/bornjre/turnix/backend/controller/project"
 	"github.com/bornjre/turnix/backend/controller/self"
 	"github.com/bornjre/turnix/backend/services/database"
@@ -26,6 +27,7 @@ type Server struct {
 	cAuth    *auth.AuthController
 	cProject *project.ProjectController
 	cSelf    *self.SelfController
+	cCommon  *common.CommonController
 }
 
 type Options struct {
@@ -51,6 +53,7 @@ func New(opts Options) *Server {
 		cAuth:      opts.Controller.GetAuthController(),
 		cProject:   opts.Controller.GetProjectController(),
 		cSelf:      opts.Controller.GetSelfController(),
+		cCommon:    opts.Controller.GetCommonController(),
 	}
 }
 

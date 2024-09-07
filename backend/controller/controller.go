@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/bornjre/turnix/backend/controller/auth"
+	"github.com/bornjre/turnix/backend/controller/common"
 	"github.com/bornjre/turnix/backend/controller/project"
 	"github.com/bornjre/turnix/backend/controller/self"
 	"github.com/bornjre/turnix/backend/services/database"
@@ -12,6 +13,7 @@ type RootController struct {
 	auth    *auth.AuthController
 	project *project.ProjectController
 	self    *self.SelfController
+	common  *common.CommonController
 }
 
 func New(db *database.DB, projects map[string]*xproject.Defination) *RootController {
@@ -19,6 +21,7 @@ func New(db *database.DB, projects map[string]*xproject.Defination) *RootControl
 		auth:    auth.NewAuthController(db),
 		project: project.NewProjectController(db, projects),
 		self:    self.NewSelfController(db),
+		common:  common.New(db),
 	}
 }
 
@@ -32,4 +35,8 @@ func (c *RootController) GetProjectController() *project.ProjectController {
 
 func (c *RootController) GetSelfController() *self.SelfController {
 	return c.self
+}
+
+func (c *RootController) GetCommonController() *common.CommonController {
+	return c.common
 }
