@@ -11,8 +11,10 @@
   import AccountPicker from "./portal/projects/books/[pid]/txn/AccountPicker.svelte";
   import SalesItemPick from "./portal/projects/books/[pid]/sales/new/sub/SalesItemPick.svelte";
   import ClientPicker from "./portal/projects/books/[pid]/sales/new/sub/ClientPicker.svelte";
-    import NewFolderPanel from "./portal/project/files/[pid]/sub/NewFolderPanel.svelte";
-    import NewPluginPicker from "./portal/project/plugins/NewPluginPicker.svelte";
+  import NewFolderPanel from "./portal/project/files/[pid]/sub/NewFolderPanel.svelte";
+  import NewPluginPicker from "./portal/project/plugins/NewPluginPicker.svelte";
+  import FilePicker from "./portal/filestore/FilePicker.svelte";
+  import {  Drawer } from '@skeletonlabs/skeleton';
 
   initializeStores();
 
@@ -26,9 +28,12 @@
     books_sales_item_pick: { ref: SalesItemPick },
     books_client_picker: { ref: ClientPicker },
 
+    file_picker: { ref: FilePicker },
 
   };
 </script>
+
+<Drawer />
 
 <Modal components={modalRegistry} />
 

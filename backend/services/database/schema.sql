@@ -22,6 +22,18 @@ CREATE TABLE IF NOT EXISTS Users (
   unique(phone)
 );
 
+CREATE TABLE IF NOT EXISTS UserConfig (
+  id INTEGER PRIMARY KEY, 
+  key TEXT NOT NULL DEFAULT '', 
+  group TEXT NOT NULL DEFAULT '',
+  value TEXT NOT NULL DEFAULT '',
+  user_id INTEGER NOT NULL, 
+  unique(user_id, group, key),
+  FOREIGN KEY (user_id) REFERENCES Users(id)
+);
+
+
+
 CREATE TABLE IF NOT EXISTS UserDevices (
   id INTEGER PRIMARY KEY, 
   name TEXT NOT NULL DEFAULT '', 

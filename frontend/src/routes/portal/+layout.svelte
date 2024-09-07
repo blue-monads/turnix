@@ -16,6 +16,7 @@
     flip,
     arrow,
   } from "@floating-ui/dom";
+  import { getDrawerStore } from "@skeletonlabs/skeleton";
 
   import { storePopup } from "@skeletonlabs/skeleton";
 
@@ -26,6 +27,7 @@
 
   let currentTile = "";
   let showMobileModal = false;
+  const drawer = getDrawerStore();
 
   let sibarItems: Record<string, any>[] = [
     {
@@ -134,12 +136,14 @@
     </div>
 
     <div class="flex gap-4 p-1">
-      <a
+      <button
+        on:click={() => {
+          drawer.open();
+        }}
         class="flex flex-col justify-center items-center rounded-full bg-secondary-100 hover:bg-secondary-200 p-2"
-        href={"/z/pages/portal/self/notifications"}
       >
         <SvgIcon name="bell" className="w-6 h-6" />
-      </a>
+      </button>
     </div>
   </div>
 
@@ -180,13 +184,15 @@
         {/each}
       </div>
 
-      <div slot="trail" class="mb-4">
-        <a
+      <div slot="trail" class="mb-4 p-2">
+        <button
+          on:click={() => {
+            drawer.open();
+          }}
           class="flex flex-col justify-center items-center rounded-full bg-secondary-100 hover:bg-secondary-200 p-2"
-          href={"/z/pages/portal/self/messages"}
         >
           <SvgIcon name="bell" className="w-6 h-6" />
-        </a>
+        </button>
       </div>
     </AppRail>
   </div>
