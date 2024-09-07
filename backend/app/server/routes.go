@@ -124,6 +124,7 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 
 	apiv1.GET("/self/files/:id", a.accessMiddleware(a.getSelfFile))
 	apiv1.DELETE("/self/files/:id", a.accessMiddleware(a.removeSelfFile))
+	apiv1.POST("/self/messages/:uid", a.accessMiddleware(a.messageUser))
 
 	// user profile
 	apiv1.GET("/user/:uid", a.accessMiddleware(a.userProfile))

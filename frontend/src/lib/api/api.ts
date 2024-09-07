@@ -299,9 +299,14 @@ export class RootAPI {
     listUserMessages = (count?: number, cursor?: number) => {
         return this.client.get<any[]>(`/self/messages&count=${count}&cursor=${cursor}`)
     }
-
     
+    messageUser = (uid: string, data: any) => {
+        return this.client.post(`/self/messages/${uid}`, data)
+    }
 
+    userInfo = (uid: string) => {
+        return this.client.get<Partial<User>>(`/user/${uid}`)
+    }
 
 
 }

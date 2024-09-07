@@ -7,16 +7,21 @@ func (a *SelfController) ListUserMessages(userId int64, count, cursor int64) ([]
 	return a.db.ListUserMessages(userId, count, cursor)
 }
 
-func (a *SelfController) SendUserMessage(fromUserId int64, toUserId int64) error {
+type MessegeRequest struct {
+	Title string `json:"name"`
+	Body  string `json:"body"`
+}
 
-	// a.db.AddUserMessage(&models.UserMessage{
-	// 	ToUser:        userId,
-	// 	FromUserId:    userId,
-	// 	FromProjectId: 0,
-	// 	CallbackToken: "",
-	// 	WarnLevel:     0,
-	// 	CreatedAt:     0,
-	// })
+func (a *SelfController) SendUserMessage(fromUserId int64, toUserId int64, data *MessegeRequest) error {
 
-	return nil
+	_, err := a.db.AddUserMessage(&models.UserMessage{
+		Name:     data.Title,
+		Contents: data.Body,
+		ToUser:   toUserId,
+		FromUser: fromUserId,
+		Type:     "user",
+		IsRead:   false,
+	})
+
+	return err
 }

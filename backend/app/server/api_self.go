@@ -6,6 +6,7 @@ import (
 	"io"
 	"strconv"
 
+	"github.com/bornjre/turnix/backend/controller/self"
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/utils/libx/httpx"
 	"github.com/bornjre/turnix/backend/xtypes/models"
@@ -146,6 +147,24 @@ func (a *Server) listUserMessages(claim *signer.AccessClaim, ctx *gin.Context) (
 	count, _ := strconv.ParseInt(ctx.Query("count"), 10, 64)
 	cursor, _ := strconv.ParseInt(ctx.Query("cursor"), 10, 64)
 	return a.cSelf.ListUserMessages(claim.UserId, count, cursor)
+}
+
+func (a *Server) messageUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	data := &self.MessegeRequest{}
+
+	err := ctx.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	uid, _ := strconv.ParseInt(ctx.Param("uid"), 10, 64)
+	if uid == 0 {
+		return nil, fmt.Errorf("user id is required")
+	}
+
+	err = a.cSelf.SendUserMessage(claim.UserId, uid, data)
+	return nil, err
 }
 
 // self files
