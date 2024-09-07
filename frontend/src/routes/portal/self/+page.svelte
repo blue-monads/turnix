@@ -2,6 +2,23 @@
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { AppBar } from "@skeletonlabs/skeleton";
 
+    import { RootAPI, type User } from "$lib/api";
+    import { getContext } from "svelte";
+    import { page } from "$app/stores";
+    import Loader from "$lib/compo/loader/loader.svelte";
+
+    const api = getContext("__api__") as RootAPI;
+
+    let user: Partial<User>;
+
+    const load = async () => {
+
+    };
+
+    load();
+
+
+
 </script>
 
 
