@@ -123,7 +123,7 @@
                                     />
 
                                     <div
-                                        class="absolute shadow-lg top-8 -left-4 w-32 h-max p-1 border border-zinc-200 rounded-lg flex flex-col gap-2 variant-filled"
+                                        class="absolute shadow-lg top-8 -left-16 w-28 h-max p-1 border border-zinc-200 rounded-lg flex flex-col gap-2 variant-filled"
                                     >
                                         {#each actions as action}
                                             <span
