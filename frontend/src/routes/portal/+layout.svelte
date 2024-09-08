@@ -119,7 +119,7 @@
             <li class="border rounded">
               <a
                 on:click={toggle}
-                class="h-12 px-4 flex justify-center items-center w-full text-gray-700 focus:text-orange-500 uppercase gap-2"
+                class="h-12 pl-24  flex justify-start items-center w-full text-gray-700 focus:text-primary-600 hover:text-primary-800 uppercase gap-2"
                 href={item["link"]}
               >
                 <SvgIcon name={item["icon"] || "link"} className="w-6 h-6" />
