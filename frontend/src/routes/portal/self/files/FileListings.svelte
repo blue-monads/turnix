@@ -43,7 +43,7 @@
     const handler = (e: any) => {
         isActive = false;
         activeFileId = 0;
-    }
+    };
 
     onMount(() => {
         document.addEventListener("click", handler);
@@ -105,7 +105,6 @@
                         </td>
                         <td>{row.size || ""}</td>
                         <td>
-
                             {#if !isActive || activeFileId === row.id}
                                 <button
                                     on:click={expore(row)}
@@ -118,7 +117,10 @@
                                     on:click|stopPropagation={() => {
                                         isActive = true;
                                         activeFileId = row.id;
-                                        console.log("activeFileId", activeFileId);
+                                        console.log(
+                                            "activeFileId",
+                                            activeFileId,
+                                        );
                                     }}
                                     class="btn btn-sm variant-filled-secondary relative group transition-all duration-200 focus:overflow-visible overflow-hidden"
                                 >
@@ -130,8 +132,14 @@
                                     <div
                                         class="absolute shadow-lg top-8 -left-16 w-28 h-max p-1 border border-zinc-200 rounded-lg flex flex-col gap-2 variant-filled"
                                     >
-                                        {#each (row.is_folder ? folderActions : fileActions) as action}
-                                            <span
+                                        {#each row.is_folder ? folderActions : fileActions as action}
+                                            <button
+                                                on:click|stopPropagation={() => {
+                                                    dispatcher("action", {
+                                                        action,
+                                                        row,
+                                                    });
+                                                }}
                                                 class="flex gap-1 justify-start items-center p-1 rounded-lg hover:bg-white hover:text-secondary-600"
                                             >
                                                 <SvgIcon
@@ -140,7 +148,7 @@
                                                 />
 
                                                 <p>{action.name}</p>
-                                            </span>
+                                            </button>
                                         {/each}
                                     </div>
                                 </button>
