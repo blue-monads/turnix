@@ -97,11 +97,11 @@
                                 <SvgIcon name="bars-3" className="w-4 h-4" />
 
                                 <div
-                                    class="absolute shadow-lg top-8 -left-4 w-32 h-max p-1 bg-white border border-zinc-200 rounded-lg flex flex-col gap-2 z-100"
+                                    class="absolute shadow-lg top-8 -left-4 w-32 h-max p-1 border border-zinc-200 rounded-lg flex flex-col gap-2 variant-filled "
                                 >
                                     {#each actions as action}
                                         <span
-                                            class="flex gap-1 justify-start items-center hover:bg-zinc-100 p-1 rounded-lg"
+                                            class="flex gap-1 justify-start items-center  p-1 rounded-lg"
                                         >
                                             <SvgIcon
                                                 name={action.icon}
