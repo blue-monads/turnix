@@ -26,9 +26,14 @@
         }
     };
 
-    const actions = [
+    const fileActions = [
         { name: "rename", icon: "pencil-square" },
         { name: "download", icon: "arrow-down-on-square" },
+        { name: "delete", icon: "trash" },
+    ];
+
+    const folderActions = [
+        { name: "rename", icon: "pencil-square" },
         { name: "delete", icon: "trash" },
     ];
 
@@ -125,7 +130,7 @@
                                     <div
                                         class="absolute shadow-lg top-8 -left-16 w-28 h-max p-1 border border-zinc-200 rounded-lg flex flex-col gap-2 variant-filled"
                                     >
-                                        {#each actions as action}
+                                        {#each (row.is_folder ? folderActions : fileActions) as action}
                                             <span
                                                 class="flex gap-1 justify-start items-center p-1 rounded-lg hover:bg-white hover:text-secondary-600"
                                             >
