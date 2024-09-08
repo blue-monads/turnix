@@ -127,7 +127,7 @@
                                     >
                                         {#each actions as action}
                                             <span
-                                                class="flex gap-1 justify-start items-center p-1 rounded-lg"
+                                                class="flex gap-1 justify-start items-center p-1 rounded-lg hover:bg-white hover:text-secondary-600"
                                             >
                                                 <SvgIcon
                                                     name={action.icon}
