@@ -1,29 +1,36 @@
 <script lang="ts">
-    import { AppBar, RadioGroup, RadioItem } from "@skeletonlabs/skeleton";
+    import { RadioGroup, RadioItem } from "@skeletonlabs/skeleton";
     import FileListings from "../self/files/FileListings.svelte";
 
     let value = 0;
 </script>
 
 <div class="w-modal-wide bg-white p-4">
-    <AppBar>
-        <svelte:fragment slot="lead">
-            <h4 class="h4">File Picker</h4>
-        </svelte:fragment>
 
-        <svelte:fragment slot="trail">
+    <div class="flex justify-between bg-slate-200 items-center px-2 rounded">
+        <div class="flex items-center">
+            <h4 class="h4 py-2">File Picker</h4>
+        </div>
+
+        <div class="flex items-center">
             <RadioGroup>
                 <RadioItem bind:group={value} name="justify" value={0}
+                    padding="p-0.5 px-2 text-sm"
                     >Personal
                 </RadioItem>
-                <RadioItem bind:group={value} name="justify" value={1}>
+                <RadioItem bind:group={value} name="justify" value={1}
+                    padding="p-0.5 px-2 text-sm"
+                >
                     Project
                 </RadioItem>
             </RadioGroup>
-        </svelte:fragment>
-    </AppBar>
+        </div>
 
-    <div class="p-2">
+
+    </div>
+
+
+    <div class="py-2">
         <FileListings
             baseUrl=""
             path=""
