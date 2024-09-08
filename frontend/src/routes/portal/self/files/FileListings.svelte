@@ -50,7 +50,7 @@
 </script>
 
 <div class="table-container">
-    <table class="table table-hover">
+    <table class="table table-hover overflow-auto">
         <thead>
             <tr>
                 <td />
