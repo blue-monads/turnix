@@ -15,6 +15,7 @@
   import NewPluginPicker from "./portal/project/plugins/NewPluginPicker.svelte";
   import FilePicker from "./portal/filestore/FilePicker.svelte";
   import {  Drawer } from '@skeletonlabs/skeleton';
+    import Notification from "./portal/self/inbox/notification.svelte";
 
   initializeStores();
 
@@ -33,7 +34,9 @@
   };
 </script>
 
-<Drawer />
+<Drawer> 
+  <Notification />
+</Drawer>
 
 <Modal components={modalRegistry} />
 

@@ -22,7 +22,7 @@
 
 <AppBar>
   <svelte:fragment slot="lead">
-    <h4 class="h4">Messages</h4>
+    <h4 class="h4">Inbox</h4>
   </svelte:fragment>
 
   <svelte:fragment slot="trail">
@@ -30,7 +30,20 @@
       <SvgIcon className="w-4 h-4" name="ellipsis-horizontal" />
       Clear
     </button>
+    <button 
+    
+    on:click={load}
+    class="btn btn-sm variant-filled-secondary">
+      <SvgIcon className="w-4 h-4" name="arrow-path" />
+      refresh
+    </button>
+
+
+
   </svelte:fragment>
+
+
+
 </AppBar>
 
 <div class="flex flex-col">

@@ -32,9 +32,9 @@
             <SvgIcon className="w-4 h-4" name="rectangle-group" />
             Devices
         </a>
-        <a href="/z/pages/portal/self/messages" class="btn variant-filled-secondary btn-sm mr-1">
-            <SvgIcon className="w-4 h-4" name="bell-alert" />
-            Messages
+        <a href="/z/pages/portal/self/inbox" class="btn variant-filled-secondary btn-sm mr-1">
+            <SvgIcon className="w-4 h-4" name="inbox" />
+            Inbox
         </a>
     </svelte:fragment>
 </AppBar>

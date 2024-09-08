@@ -5,6 +5,7 @@
     AppRailAnchor,
     AppRailTile,
     AppShell,
+    type DrawerSettings,
     type PopupSettings,
   } from "@skeletonlabs/skeleton";
   import { popup } from "@skeletonlabs/skeleton";
@@ -84,6 +85,14 @@
     placement: "right",
   };
 
+  const drawerSettings: DrawerSettings = {
+	id: 'notification',
+  width: "w-modal-slim",
+	meta: { 
+    getRootAPI: () => api 
+  }
+};
+
   storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
   load();
@@ -138,7 +147,7 @@
     <div class="flex gap-4 p-1">
       <button
         on:click={() => {
-          drawer.open();
+          drawer.open(drawerSettings);
         }}
         class="flex flex-col justify-center items-center rounded-full bg-secondary-100 hover:bg-secondary-200 p-2"
       >
@@ -187,7 +196,7 @@
       <div slot="trail" class="mb-4 p-2">
         <button
           on:click={() => {
-            drawer.open();
+            drawer.open(drawerSettings);
           }}
           class="flex flex-col justify-center items-center rounded-full bg-secondary-100 hover:bg-secondary-200 p-2"
         >
