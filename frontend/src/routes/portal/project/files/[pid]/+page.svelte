@@ -1,6 +1,6 @@
 <script lang="ts">
     import FileListings from "../../../self/files/FileListings.svelte";
-    import { createEventDispatcher, getContext } from "svelte";
+    import { getContext } from "svelte";
     import type { RootAPI, File } from "$lib/api";
     import { page } from "$app/stores";
     import { params } from "$lib/params";
