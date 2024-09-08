@@ -77,7 +77,11 @@
                                 {row.name}
                             </button>
                         </td>
-                        <td>{row.created_at || ""}</td>
+                        <td>
+                            {#if row.created_at}
+                                {new Date(row.created_at).toLocaleString()}
+                            {/if}
+                        </td>
                         <td>{row.size || ""}</td>
                         <td>
                             <button
@@ -93,7 +97,7 @@
                                 <SvgIcon name="bars-3" className="w-4 h-4" />
 
                                 <div
-                                    class="absolute shadow-lg top-8 -left-4 w-32 h-max p-1 bg-white border border-zinc-200 rounded-lg flex flex-col gap-2 z-100 "
+                                    class="absolute shadow-lg top-8 -left-4 w-32 h-max p-1 bg-white border border-zinc-200 rounded-lg flex flex-col gap-2 z-100"
                                 >
                                     {#each actions as action}
                                         <span
