@@ -1,43 +1,39 @@
 <script lang="ts">
-    import { getContext } from "svelte";
-    import type { RootAPI, File } from "$lib/api";
-    import { params } from "$lib/params";
-    import FileListings from "./FileListings.svelte";
+    import { createEventDispatcher } from "svelte";
+    import type { File } from "$lib/api";
+    import { FolderIcon, Loader } from "$lib/compo";
+    import FileIcon from "$lib/compo/FileIcons/FileIcon.svelte";
+    import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+    import { goto } from "$app/navigation";
 
-    export let files: File[] = []; //sampleFiles
-
+    export let files: File[] = [];
+    export let loading = false;
+    export let baseUrl = "/z/pages/portal/self/files";
+    export let path = "";
     export let selected: string;
 
-    const api = getContext("__api__") as RootAPI;
+    const dispatcher = createEventDispatcher();
 
-    $: _path = $params["folder"] || "";
+    let size = "32";
 
-    let loading = false;
-
-    const load = async (lpath?: string) => {
-        loading = true;
-        const resp = await api.listSelfFiles(lpath);
-        if (resp.status !== 200) {
-            return;
+    const expore = (row: File) => () => {
+        if (row.is_folder) {
+            goto(
+                `${baseUrl}?folder=${path ? path + "/" + row.name : row.name}`,
+            );
+        } else {
+            goto(`${baseUrl}/preview?folder=${path}`);
         }
-
-        files = resp.data as any;
-        loading = false;
     };
 
-    $: load(_path);
-
+    const actions = [
+        { name: "rename", icon: "pencil-square" },
+        { name: "download", icon: "arrow-down-on-square" },
+        { name: "delete", icon: "trash" },
+    ];
 </script>
 
-<FileListings
-    bind:selected={selected}
-    baseUrl="/z/pages/portal/self/files"
-    path={_path}
-    {files}
-    {loading}
-/>
-
-<!-- <div class="table-container">
+<div class="table-container">
     <table class="table table-hover">
         <thead>
             <tr>
@@ -70,14 +66,7 @@
                             <button
                                 class="mr-1 text-indigo-500"
                                 type="button"
-                                on:click|preventDefault={() => {
-                                    if (row.is_folder) {
-                                        goto(`/z/pages/portal/self/files?folder=${_path ? _path + "/" + row.name : row.name}`,);
-                                    } else {
-                                        goto(`/z/pages/portal/self/files/preview?folder=${_path}`,)
-                                    }
-
-                                }}
+                                on:click|preventDefault={expore(row)}
                             >
                                 {#if row.is_folder}
                                     <FolderIcon {size} />
@@ -92,24 +81,38 @@
                         <td>{row.size || ""}</td>
                         <td>
                             <button
-                                type="button"
+                                on:click={expore(row)}
                                 class="btn btn-sm variant-filled"
                             >
                                 <SvgIcon name="eye" className="w-4 h-4" />
                             </button>
 
                             <button
-                                type="button"
-                                class="btn btn-sm variant-filled-secondary"
+                                class="btn btn-sm variant-filled-secondary relative group transition-all duration-200 focus:overflow-visible overflow-hidden"
                             >
                                 <SvgIcon name="bars-3" className="w-4 h-4" />
+
+                                <div
+                                    class="absolute shadow-lg top-8 -left-4 w-32 h-max p-1 bg-white border border-zinc-200 rounded-lg flex flex-col gap-2 z-100 "
+                                >
+                                    {#each actions as action}
+                                        <span
+                                            class="flex gap-1 justify-start items-center hover:bg-zinc-100 p-1 rounded-lg"
+                                        >
+                                            <SvgIcon
+                                                name={action.icon}
+                                                className="w-4 h-4"
+                                            />
+
+                                            <p>{action.name}</p>
+                                        </span>
+                                    {/each}
+                                </div>
                             </button>
-
-
                         </td>
                     </tr>
                 {/each}
             {/if}
         </tbody>
     </table>
-</div> -->
+</div>
