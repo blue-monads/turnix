@@ -30,7 +30,7 @@
     </div>
 
 
-    <div class="py-2">
+    <div class="py-2 text-xs">
         <FileListings
             baseUrl=""
             path=""
