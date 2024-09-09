@@ -1,6 +1,6 @@
 <script lang="ts">
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-    import type { Contact } from "$lib/projects/books";
+    import type { BooksAPI, Contact } from "$lib/projects/books";
     import { createEventDispatcher } from "svelte";
     import type { NewSaleLine } from "./sub/sales";
     import {
@@ -8,12 +8,11 @@
         RadioGroup,
         RadioItem,
     } from "@skeletonlabs/skeleton";
-    import type { RootAPI } from "$lib/api";
 
     const store = getModalStore();
     const dispatch = createEventDispatcher();
 
-    export let pid = 0;
+    export let pid: number;
 
     // data fields
     export let title = "";
@@ -33,7 +32,7 @@
     export let contacts: Contact[] = [];
     export let contactsNameIndex: Record<number, string> = {};
     export let submit = async () => {};
-    export let api: RootAPI;
+    export let api: BooksAPI;
 
     let mode = "invoice";
 
