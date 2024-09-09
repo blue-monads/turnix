@@ -363,6 +363,52 @@ func (d *DB) GetProjectPlugin(uid, pid, hid int64) (*models.ProjectPlugin, error
 	return plugin, nil
 }
 
+// project config
+
+func (d *DB) ListProjectConfigs(pid int64) ([]models.ProjectConfig, error) {
+	table := d.projectConfigsTable()
+
+	configs := make([]models.ProjectConfig, 0)
+	err := table.Find(db.Cond{"project_id": pid}).All(&configs)
+	if err != nil {
+		return nil, err
+	}
+
+	return configs, nil
+}
+
+func (d *DB) AddProjectConfig(pid, uid int64, data *models.ProjectConfig) (int64, error) {
+	table := d.projectConfigsTable()
+	data.ProjectID = pid
+
+	rid, err := table.Insert(data)
+	if err != nil {
+		return 0, err
+	}
+	id := rid.ID().(int64)
+	return id, nil
+}
+
+func (d *DB) UpdateProjectConfig(pid, uid, hid int64, data map[string]any) error {
+	table := d.projectConfigsTable()
+	return table.Find(db.Cond{"project_id": pid, "id": hid}).Update(&data)
+}
+
+func (d *DB) GetProjectConfig(pid, uid, hid int64) (*models.ProjectConfig, error) {
+	table := d.projectConfigsTable()
+	config := &models.ProjectConfig{}
+	err := table.Find(db.Cond{"project_id": pid, "id": hid}).One(config)
+	if err != nil {
+		return nil, err
+	}
+	return config, nil
+}
+
+func (d *DB) RemoveProjectConfig(pid, uid, hid int64) error {
+	table := d.projectConfigsTable()
+	return table.Find(db.Cond{"project_id": pid, "id": hid}).Delete()
+}
+
 // private
 
 func (d *DB) isOwner(ownerid int64, projId int64) bool {
@@ -383,6 +429,10 @@ func (d *DB) projectHooksTable() db.Collection {
 
 func (d *DB) projectPluginsTable() db.Collection {
 	return d.Table("ProjectPlugins")
+}
+
+func (d *DB) projectConfigsTable() db.Collection {
+	return d.Table("ProjectConfigs")
 }
 
 func (d *DB) projectTable() db.Collection {

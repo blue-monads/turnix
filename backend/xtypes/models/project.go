@@ -67,3 +67,11 @@ type ProjectPlugin struct {
 	CreatedAt  *time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt  *time.Time `json:"updated_at" db:"updated_at"`
 }
+
+type ProjectConfig struct {
+	ID        int64  `json:"id" db:"id,omitempty"`
+	Key       string `json:"key" db:"key"`
+	Group     string `json:"group" db:"group"`
+	Value     string `json:"value" db:"value"`
+	ProjectID int64  `json:"project_id" db:"project_id"`
+}
