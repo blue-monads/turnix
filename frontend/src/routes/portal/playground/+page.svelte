@@ -1,7 +1,6 @@
 <script lang="ts">
   import AutoForm from "$lib/compo/autoform/auto_form.svelte";
   import { getModalStore } from "@skeletonlabs/skeleton";
-  import NewSale from "./new/new.svelte";
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
   const store = getModalStore();
