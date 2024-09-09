@@ -79,3 +79,17 @@ func (a *SelfController) DeleteSelfFile(userId int64, id int64) error {
 
 	return a.db.DeleteFile(id)
 }
+
+// file shares
+
+func (a *SelfController) ListFileShares(userId int64, fileId int64) ([]database.FileShare, error) {
+	return a.db.ListFileShares(fileId)
+}
+
+func (a *SelfController) AddFileShare(userId int64, fileId int64) (int64, error) {
+	return a.db.AddFileShare(fileId, userId)
+}
+
+func (a *SelfController) DeleteFileShare(userId int64, Id int64) error {
+	return a.db.DeleteFileShare(userId, Id)
+}

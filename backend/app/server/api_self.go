@@ -219,3 +219,23 @@ func (a *Server) removeSelfFile(claim *signer.AccessClaim, ctx *gin.Context) (an
 
 	return nil, err
 }
+
+// file shares
+
+func (a *Server) listSelfFileShares(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	fileId, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	return a.cSelf.ListFileShares(claim.UserId, fileId)
+}
+
+func (a *Server) addSelfFileShare(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	fileId, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	return a.cSelf.AddFileShare(claim.UserId, fileId)
+}
+
+func (a *Server) deleteSelfFileShare(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	fileId, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	err := a.cSelf.DeleteFileShare(claim.UserId, fileId)
+	return nil, err
+}

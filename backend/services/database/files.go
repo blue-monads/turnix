@@ -200,6 +200,57 @@ func (d *DB) DeleteFile(id int64) error {
 
 }
 
+type FileShare struct {
+	ID        int64      `json:"id" db:"id,omitempty"`
+	FileID    int64      `json:"file_id" db:"file_id"`
+	UserID    int64      `json:"user_id" db:"user_id"`
+	CreatedAt *time.Time `json:"created_at" db:"created_at"`
+}
+
+func (d *DB) AddFileShare(fileId, userId int64) (int64, error) {
+	table := d.fileSharesTable()
+
+	t := &time.Time{}
+
+	data := &FileShare{
+		FileID:    fileId,
+		UserID:    userId,
+		CreatedAt: t,
+	}
+
+	rid, err := table.Insert(data)
+	if err != nil {
+		return 0, err
+	}
+
+	id := rid.ID().(int64)
+
+	return id, nil
+}
+
+func (d *DB) ListFileShares(fileId int64) ([]FileShare, error) {
+	table := d.fileSharesTable()
+
+	shares := make([]FileShare, 0)
+
+	err := table.Find(db.Cond{"file_id": fileId}).All(&shares)
+	if err != nil {
+		return nil, err
+	}
+	return shares, nil
+
+}
+
+func (d *DB) DeleteFileShare(userId, id int64) error {
+	table := d.fileSharesTable()
+
+	return table.Find(db.Cond{"id": id, "user_id": userId}).Delete()
+}
+
+func (d *DB) fileSharesTable() db.Collection {
+	return d.Table("FileShares")
+}
+
 func (d *DB) filesTable() db.Collection {
 	return d.Table("Files")
 }
