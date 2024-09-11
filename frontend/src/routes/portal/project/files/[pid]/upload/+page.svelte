@@ -31,7 +31,11 @@
     </div>
 
     <svelte:fragment slot="message">
-        <strong>Upload a file</strong> or drag and drop
+        {#if file}
+            {file.name}
+        {:else}
+            <strong>Upload a file</strong> or drag and drop
+        {/if}
     </svelte:fragment>
 </FileDropzone>
 
@@ -41,14 +45,14 @@
         disabled={!file || loading}
         on:click={async () => {
             loading = true;
-            const path = $params["folder"] || ""
-            await api.addProjectFile(pid, file.name, path,  file);
+            const path = $params["folder"] || "";
+            await api.addProjectFile(pid, file.name, path, file);
 
             loading = false;
         }}
     >
         {#if loading}
-         Uploading...
+            Uploading...
         {:else}
             Upload
         {/if}

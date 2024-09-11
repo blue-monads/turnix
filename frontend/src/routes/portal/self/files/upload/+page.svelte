@@ -22,7 +22,11 @@
     </div>
 
     <svelte:fragment slot="message">
-        <strong>Upload a file</strong> or drag and drop
+        {#if file}
+            {file.name}
+        {:else}
+            <strong>Upload a file</strong> or drag and drop
+        {/if}
     </svelte:fragment>
 </FileDropzone>
 

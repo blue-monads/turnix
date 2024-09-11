@@ -33,7 +33,7 @@
             <div class="flex flex-row gap-1">
 
                 
-                <a href="/z/pages/portal/project/files/{pid}/upload?folder={$params["folder"]}" class="btn btn-sm variant-filled">
+                <a href="/z/pages/portal/project/files/{pid}/upload?folder={$params["folder"] || ""}" class="btn btn-sm variant-filled">
                     <SvgIcon name="cloud-arrow-up" className="h-4 w-4" />
                     <span class="hidden md:inline">Upload</span>
                 </a>
@@ -77,7 +77,7 @@
                     class="anchor"
                     href="/z/pages/portal/project/files/{pid}?folder={_paths
                         .slice(0, i + 1)
-                        .join('/')}">{path}</a
+                        .join('/')}">{path || ""}</a
                 >
             </li>
         {/each}

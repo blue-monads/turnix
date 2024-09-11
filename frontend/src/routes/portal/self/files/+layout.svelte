@@ -32,7 +32,7 @@
 
                 
                 <a 
-                    href="/z/pages/portal/self/files/upload?folder={$params["folder"]}" 
+                    href="/z/pages/portal/self/files/upload?folder={$params["folder"] || ""}" 
                     class="btn btn-sm variant-filled">
                     
                         <SvgIcon name="cloud-arrow-up" className="h-4 w-4" />
