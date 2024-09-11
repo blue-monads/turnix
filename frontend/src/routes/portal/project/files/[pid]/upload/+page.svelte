@@ -11,6 +11,7 @@
     import Loader from "$lib/compo/loader/loader.svelte";
     import { params } from "$lib/params";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+    import { goto } from "$app/navigation";
 
     const pid = $page.params["pid"];
 
@@ -49,6 +50,7 @@
             await api.addProjectFile(pid, file.name, path, file);
 
             loading = false;
+            goto(`/z/pages/portal/project/files/${pid}?folder=${path}`);
         }}
     >
         {#if loading}

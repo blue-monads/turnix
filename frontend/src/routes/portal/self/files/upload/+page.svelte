@@ -4,6 +4,7 @@
     import { FileDropzone } from "@skeletonlabs/skeleton";
     import { params } from "$lib/params";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+    import { goto } from "$app/navigation";
 
     const api = getContext("__api__") as RootAPI;
 
@@ -40,6 +41,7 @@
             await api.addSelfFile(file.name, path, file);
 
             loading = false;
+            goto(`/z/pages/portal/self/files?folder=${path}`);
         }}
     >
         {#if loading}
