@@ -55,9 +55,19 @@ func (d *DB) AddFolder(pid, uid int64, ftype, path, name string) (int64, error) 
 
 func (d *DB) AddFile(file *File, data []byte) (id int64, err error) {
 
-	pp.Println("@file_add", file)
-
 	table := d.filesTable()
+
+	exists, _ := table.Find(db.Cond{
+		"name":             file.Name,
+		"path":             file.Path,
+		"owner_user_id":    file.OwnerUser,
+		"owner_project_id": file.OwnerProj,
+	}).Exists()
+
+	if exists {
+		return 0, fmt.Errorf("file already exists")
+	}
+
 	rid, err := table.Insert(file)
 	if err != nil {
 		return 0, err
