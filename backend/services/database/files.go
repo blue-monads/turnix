@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"os"
 	"time"
@@ -71,7 +72,9 @@ func (d *DB) AddFile(file *File, data []byte) (id int64, err error) {
 	}()
 
 	if !d.externalFileMode {
-		err = table.Find(db.Cond{"id": id}).Update(db.Cond{"blob": data})
+		driver := d.sess.Driver().(*sql.DB)
+		_, err = driver.Exec("UPDATE Files SET blob = ? WHERE id = ?", data, id)
+
 		return id, err
 	}
 
