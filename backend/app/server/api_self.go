@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"strconv"
 
 	"github.com/bornjre/turnix/backend/controller/self"
@@ -204,11 +205,24 @@ func (a *Server) addSelfFile(claim *signer.AccessClaim, ctx *gin.Context) (any, 
 	return a.cSelf.AddSelfFile(claim.UserId, name, path, data)
 }
 
-func (a *Server) getSelfFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *Server) getSelfFile(ctx *gin.Context) {
+
+	claim, err := a.withAccess(ctx)
+	if err != nil {
+		return
+	}
 
 	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
 
-	return a.cSelf.GetSelfFile(claim.UserId, id)
+	bytes, err := a.cSelf.GetSelfFile(claim.UserId, id)
+	if err != nil {
+		return
+	}
+
+	ctx.Writer.Write(bytes)
+	ctx.Writer.Header().Set("Content-Type", "application/octet-stream")
+	ctx.Writer.WriteHeader(http.StatusOK)
+
 }
 
 func (a *Server) removeSelfFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {

@@ -103,7 +103,7 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 	apiv1.POST("/project/:pid/files", a.accessMiddleware(a.addProjectFile))
 	apiv1.PUT("/project/:pid/files", a.accessMiddleware(a.addProjectFolder))
 
-	apiv1.GET("/project/:pid/files/:id", a.accessMiddleware(a.getProjectFile))
+	apiv1.GET("/project/:pid/files/:id", (a.getProjectFile))
 	apiv1.DELETE("/project/:pid/files/:id", a.accessMiddleware(a.removeProjectFile))
 
 	apiv1.POST("/project/:pid/sqlexec", a.accessMiddleware(a.runProjectSQL))
@@ -122,7 +122,7 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 	apiv1.POST("/self/files", a.accessMiddleware(a.addSelfFile))
 	apiv1.PUT("/self/files", a.accessMiddleware(a.addSelfFolder))
 
-	apiv1.GET("/self/files/:id", a.accessMiddleware(a.getSelfFile))
+	apiv1.GET("/self/files/:id", (a.getSelfFile))
 	apiv1.DELETE("/self/files/:id", a.accessMiddleware(a.removeSelfFile))
 	apiv1.POST("/self/messages/:uid", a.accessMiddleware(a.messageUser))
 

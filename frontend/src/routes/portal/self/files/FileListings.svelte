@@ -22,7 +22,7 @@
                 `${baseUrl}?folder=${path ? path + "/" + row.name : row.name}`,
             );
         } else {
-            goto(`${baseUrl}/preview?folder=${path}`);
+            goto(`${baseUrl}/preview?folder=${path}&fid=${row.id}&filename=${row.name}`);
         }
     };
 

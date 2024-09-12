@@ -212,7 +212,9 @@ export class RootAPI {
     }
 
     getProjectFile = (pid: string, id: string) => {
-        return this.client.get<File>(`/project/${pid}/files/${id}`)
+        return this.client.get(`/project/${pid}/files/${id}`, {
+            responseType: "blob"
+        })
     }
 
     deleteProjectFile = (pid: string, id: string) => {
@@ -286,7 +288,9 @@ export class RootAPI {
     }
 
     getSelfFile = (id: string) => {
-        return this.client.get<File>(`/self/files/${id}`)
+        return this.client.get(`/self/files/${id}`, {
+            responseType: "blob"
+        })
     }
 
     deleteSelfFile = (id: string) => {

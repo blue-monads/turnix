@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"io"
+	"net/http"
 	"strconv"
 
 	"github.com/bornjre/turnix/backend/services/signer"
@@ -193,11 +194,25 @@ func (a *Server) addProjectFile(claim *signer.AccessClaim, ctx *gin.Context) (an
 	return a.cProject.AddProjectFile(claim.UserId, pid, name, path, data)
 }
 
-func (a *Server) getProjectFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+func (a *Server) getProjectFile(ctx *gin.Context) {
+
+	claim, err := a.withAccess(ctx)
+	if err != nil {
+		return
+	}
+
 	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
 
-	return a.cProject.GetProjectFile(claim.UserId, pid, id)
+	bytes, err := a.cProject.GetProjectFile(claim.UserId, pid, id)
+	if err != nil {
+		return
+	}
+
+	ctx.Writer.Write(bytes)
+	ctx.Writer.Header().Set("Content-Type", "application/octet-stream")
+	ctx.Writer.WriteHeader(http.StatusOK)
+
 }
 
 func (a *Server) removeProjectFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
