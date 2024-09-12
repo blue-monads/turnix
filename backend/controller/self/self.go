@@ -90,6 +90,6 @@ func (a *SelfController) AddFileShare(userId int64, fileId int64) (int64, error)
 	return a.db.AddFileShare(fileId, userId)
 }
 
-func (a *SelfController) DeleteFileShare(userId int64, Id int64) error {
+func (a *SelfController) DeleteFileShare(userId int64, Id string) error {
 	return a.db.DeleteFileShare(userId, Id)
 }

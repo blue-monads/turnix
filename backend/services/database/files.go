@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/jaevor/go-nanoid"
 	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )
@@ -214,11 +215,13 @@ func (d *DB) DeleteFile(id int64) error {
 }
 
 type FileShare struct {
-	ID        int64      `json:"id" db:"id,omitempty"`
+	ID        string     `json:"id" db:"id,omitempty"`
 	FileID    int64      `json:"file_id" db:"file_id"`
 	UserID    int64      `json:"user_id" db:"user_id"`
 	CreatedAt *time.Time `json:"created_at" db:"created_at"`
 }
+
+var generator, _ = nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12)
 
 func (d *DB) AddFileShare(fileId, userId int64) (int64, error) {
 	table := d.fileSharesTable()
@@ -226,6 +229,7 @@ func (d *DB) AddFileShare(fileId, userId int64) (int64, error) {
 	t := &time.Time{}
 
 	data := &FileShare{
+		ID:        generator(),
 		FileID:    fileId,
 		UserID:    userId,
 		CreatedAt: t,
@@ -254,10 +258,22 @@ func (d *DB) ListFileShares(fileId int64) ([]FileShare, error) {
 
 }
 
-func (d *DB) DeleteFileShare(userId, id int64) error {
+func (d *DB) DeleteFileShare(userId int64, id string) error {
 	table := d.fileSharesTable()
 
 	return table.Find(db.Cond{"id": id, "user_id": userId}).Delete()
+}
+
+func (d *DB) GetSharedFile(id string) ([]byte, error) {
+	table := d.fileSharesTable()
+	file := &FileShare{}
+
+	err := table.Find(db.Cond{"id": id}).One(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return d.GetFileBlob(file.FileID)
 }
 
 func (d *DB) fileSharesTable() db.Collection {

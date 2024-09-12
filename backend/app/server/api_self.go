@@ -249,7 +249,6 @@ func (a *Server) addSelfFileShare(claim *signer.AccessClaim, ctx *gin.Context) (
 }
 
 func (a *Server) deleteSelfFileShare(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
-	fileId, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
-	err := a.cSelf.DeleteFileShare(claim.UserId, fileId)
+	err := a.cSelf.DeleteFileShare(claim.UserId, ctx.Param("id"))
 	return nil, err
 }
