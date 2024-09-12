@@ -41,3 +41,7 @@ func (c *CommonController) GetUserInfo(uid int64) (*UserInfo, error) {
 	}, nil
 
 }
+
+func (c *CommonController) GetSharedFile(file string) ([]byte, error) {
+	return c.db.GetSharedFile(file)
+}
