@@ -105,7 +105,6 @@
         });
     };
 
-
     const onSetOverAllTax = () => {
         store.trigger({
             type: "component",
@@ -118,7 +117,7 @@
                 },
             },
         });
-    }
+    };
 
     const onSetOverAllDiscount = () => {
         store.trigger({
@@ -132,11 +131,7 @@
                 },
             },
         });
-    }
-
-
-
-
+    };
 </script>
 
 <form class="p-2" on:submit|preventDefault={submit}>
@@ -243,8 +238,27 @@
                                 </td>
                                 <td
                                     class="px-4 py-2 text-right border tabular-nums slashed-zero"
-                                    >{line.total_amount}</td
                                 >
+                                    (
+                                    <span>
+                                        {line.price}
+                                        {#if line.discount_amount}
+                                            - {line.discount_amount}
+                                        {/if}
+
+                                        {#if line.tax_amount}
+                                            + {line.tax_amount}
+                                        {/if}
+                                    </span>
+
+                                    ) * {line.qty} =
+
+                                    <strong>
+                                        {line.total_amount}
+                                    </strong>
+
+
+                                </td>
                                 <td
                                     class="px-4 py-2 text-right border tabular-nums slashed-zero"
                                 >
@@ -290,9 +304,12 @@
                     <table>
                         <tbody>
                             <tr>
-                                <td class="px-2 py-2 border border-gray-400">Total Items TAX</td
+                                <td class="px-2 py-2 border border-gray-400"
+                                    >Total Items TAX</td
                                 >
-                                <td class="px-2 py-2 border border-gray-400 text-right">
+                                <td
+                                    class="px-2 py-2 border border-gray-400 text-right"
+                                >
                                     <span>
                                         {formatCurrency(total_item_tax_amount)}
                                     </span>
@@ -303,7 +320,9 @@
                                 <td class="px-2 py-2 border border-gray-400"
                                     >Total Items Discount</td
                                 >
-                                <td class="px-2 py-2 border border-gray-400 text-right">
+                                <td
+                                    class="px-2 py-2 border border-gray-400 text-right"
+                                >
                                     <span>
                                         {formatCurrency(
                                             total_item_discount_amount,
@@ -313,16 +332,29 @@
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 border border-gray-400 border-b-gray-800"> Sub Total </td>
-                                <td class="px-2 py-2 border border-gray-400 border-b-gray-800 text-right">
+                                <td
+                                    class="px-2 py-2 border border-gray-400 border-b-gray-800"
+                                >
+                                    Sub Total
+                                </td>
+                                <td
+                                    class="px-2 py-2 border border-gray-400 border-b-gray-800 text-right"
+                                >
                                     <strong>{formatCurrency(sub_total)}</strong>
                                 </td>
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 border border-gray-800">Overall TAX</td>
-                                <td class="px-2 py-2 border border-gray-800 text-right">
-                                    <button class="underline" on:click={onSetOverAllTax}>
+                                <td class="px-2 py-2 border border-gray-800"
+                                    >Overall TAX</td
+                                >
+                                <td
+                                    class="px-2 py-2 border border-gray-800 text-right"
+                                >
+                                    <button
+                                        class="underline"
+                                        on:click={onSetOverAllTax}
+                                    >
                                         <span>
                                             <strong>
                                                 {formatCurrency(
@@ -344,8 +376,13 @@
                                     Overall Discount
                                 </td>
 
-                                <td class="px-2 py-2 border border-gray-800 text-right">
-                                    <button class="underline" on:click={onSetOverAllDiscount}>
+                                <td
+                                    class="px-2 py-2 border border-gray-800 text-right"
+                                >
+                                    <button
+                                        class="underline"
+                                        on:click={onSetOverAllDiscount}
+                                    >
                                         <span>
                                             <strong>
                                                 {formatCurrency(
@@ -353,7 +390,9 @@
                                                 )}
                                             </strong>
                                             {#if overall_discount_percentage}
-                                                [{formatCurrency(overall_discount_percentage)}%] 
+                                                [{formatCurrency(
+                                                    overall_discount_percentage,
+                                                )}%]
                                             {/if}
                                         </span>
                                     </button>
@@ -361,7 +400,9 @@
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 border border-gray-800 font-semibold">
+                                <td
+                                    class="px-2 py-2 border border-gray-800 font-semibold"
+                                >
                                     Total
                                 </td>
                                 <td
