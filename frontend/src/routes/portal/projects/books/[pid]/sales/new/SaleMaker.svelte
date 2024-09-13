@@ -19,6 +19,7 @@
     export let title = "";
     export let notes = "";
     export let client_id = 0;
+    export let client_name = "";
     export let total_item_price = 0;
     export let total_item_tax_amount = 0;
     export let total_item_discount_amount = 0;
@@ -41,7 +42,7 @@
             total_amount: 84,
         },
     ];
-    export let contacts: Contact[] = [];
+
     export let contactsNameIndex: Record<number, string> = {};
     export let submit = async () => {};
     export let api: BooksAPI;
@@ -83,6 +84,7 @@
                 api,
                 pid,
                 onSelect: (data: any) => {
+                    client_name = data["name"] || "";
                     client_id = data["id"] || 0;
                 },
             },
@@ -156,26 +158,44 @@
 
         <section class="p-4 flex flex-col gap-4">
             <div class="flex gap-2 justify-between">
-                <label class="label">
-                    <span>Billed To</span>
+                <div class="flex flex-col gap-2">
+                    <label class="label">
+                        <span>Title</span>
 
-                    <div class="flex gap-2">
-                        <input
-                            type="text"
-                            disabled
-                            value={contactsNameIndex[client_id] || ""}
-                            class="input p-1"
-                            placeholder="Client"
-                        />
-
-                        <button on:click={clientPicker}>
-                            <SvgIcon
-                                name="plus"
-                                className="w-4 h-4 inline-block align-middle"
+                        <div class="flex gap-2">
+                            <input
+                                type="text"
+                                bind:value={title}
+                                class="input p-1"
+                                placeholder="Sales title"
                             />
-                        </button>
-                    </div>
-                </label>
+                        </div>
+                    </label>
+
+                    <label class="label">
+                        <span>Billed To</span>
+
+                        <div class="flex gap-2">
+                            <input
+                                type="text"
+                                bind:value={client_name}
+                                class="input p-1"
+                                placeholder="Client"
+                            />
+
+                            <button on:click={clientPicker}>
+                                <SvgIcon
+                                    name="plus"
+                                    className="w-4 h-4 inline-block align-middle"
+                                />
+                            </button>
+                        </div>
+
+                        <span class="text-sm italic"
+                            >{contactsNameIndex[client_id] || ""}</span
+                        >
+                    </label>
+                </div>
 
                 <label class="label">
                     <span>Date of Sale</span>
@@ -256,8 +276,6 @@
                                     <strong>
                                         {line.total_amount}
                                     </strong>
-
-
                                 </td>
                                 <td
                                     class="px-4 py-2 text-right border tabular-nums slashed-zero"

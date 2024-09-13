@@ -63,7 +63,7 @@
     <SaleMaker 
         pid={Number(pid)} 
         {api} 
-        contacts={__clientIndex}
+        contactsNameIndex={__clientIndex}
         submit={submit}
         bind:client_id={client_id}
         
