@@ -9,6 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/gobuffalo/fizz v1.14.4
 	github.com/hako/branca v0.0.0-20200807062402-6052ac720505
+	github.com/jaevor/go-nanoid v1.3.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/k0kubun/pp v3.0.1+incompatible
 	github.com/mattn/go-sqlite3 v1.14.22
@@ -21,6 +22,7 @@ require (
 	github.com/temphia/temphia v0.0.0-20240217195838-8c2001a6d2da
 	github.com/thoas/go-funk v0.9.3
 	github.com/upper/db/v4 v4.7.0
+	github.com/webview/webview_go v0.0.0-20240831120633-6173450d4dd6
 	github.com/ztrue/tracerr v0.4.0
 	golang.org/x/crypto v0.24.0
 )
@@ -52,7 +54,6 @@ require (
 	github.com/gofrs/uuid v4.2.0+incompatible // indirect
 	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
-	github.com/jaevor/go-nanoid v1.3.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect

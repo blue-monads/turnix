@@ -1,10 +1,9 @@
 package climux
 
 import (
+	"errors"
 	"os"
 	"os/exec"
-
-	"github.com/temphia/temphia/code/backend/libx/easyerr"
 )
 
 type Context struct {
@@ -16,7 +15,7 @@ func (c *Context) RunSubProcessCLI(name string, args []string) error {
 
 	_, ok := c.R[name]
 	if !ok {
-		return easyerr.NotFound("cli")
+		return errors.New("cli not found")
 	}
 
 	ebin, err := os.Executable()
@@ -35,7 +34,7 @@ func (c *Context) RunCLI(name string, args []string) error {
 
 	cli, ok := c.R[name]
 	if !ok {
-		return easyerr.NotFound("cli")
+		return errors.New("cli not found")
 	}
 
 	return cli.Func(Context{
