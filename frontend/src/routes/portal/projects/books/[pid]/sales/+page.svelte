@@ -91,7 +91,7 @@
         key_names={[
             ["id", "ID"],
             ["title", "Title"],
-            ["info", "Info"],
+            ["notes", "Notes"],
             ["client_name", "Client"],
             ["total", "Total"],
             ["created_at", "Created At"],

@@ -1,7 +1,7 @@
 <script lang="ts">
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import type { BooksAPI, Contact } from "$lib/projects/books";
-    import type { NewSaleLine } from "./sub/sales";
+    import type { NewSaleLine, SaleData } from "./sub/sales";
     import {
         getModalStore,
         RadioGroup,
@@ -42,7 +42,7 @@
     ];
 
     export let contactsNameIndex: Record<number, string> = {};
-    export let submit = async (data: Record<string, any>) => {
+    export let submit = async (data: SaleData) => {
 
     };
     export let api: BooksAPI;
@@ -136,7 +136,7 @@
     };
 </script>
 
-<form class="p-2" on:submit|preventDefault={submit}>
+<form class="p-2" >
     <div class="card">
         <header class="card-header flex justify-between">
             <h3 class="h3">New Sale</h3>
@@ -440,19 +440,21 @@
             class="btn variant-filled" 
             on:click={() => {
                 submit({
-                    title,
-                    notes,
-                    client_id,
-                    client_name,
-                    total_item_price,
-                    total_item_tax_amount,
-                    total_item_discount_amount,
-                    sub_total,
-                    overall_discount_amount,
-                    overall_tax_amount,
-                    total,
-                    sales_date,
-                    lines,
+                    sale: {
+                        title,
+                        notes,
+                        client_id,
+                        client_name,
+                        total_item_price,
+                        total_item_tax_amount,
+                        total_item_discount_amount,
+                        sub_total,
+                        overall_discount_amount,
+                        overall_tax_amount,
+                        total,
+                        sales_date,
+                    },                    
+                    lines: lines,
                 })
 
             }}> save </button>

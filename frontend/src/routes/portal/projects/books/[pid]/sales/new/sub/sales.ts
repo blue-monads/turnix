@@ -1,7 +1,14 @@
+
+export interface SaleData {
+    sale: NewSale;
+    lines: NewSaleLine[];
+}
+
 export interface NewSale {
     title: string;
     notes: string;
     client_id: number;
+    client_name: string;
     total_item_price: number;
     total_item_tax_amount: number;
     total_item_discount_amount: number;
