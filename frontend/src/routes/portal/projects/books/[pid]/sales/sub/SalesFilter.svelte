@@ -21,6 +21,7 @@
                     </select>
                 </label>
 
+
                 <label class="label">
                     <span>From Date</span>
                     <input class="input" type="datetime-local" />
@@ -46,11 +47,12 @@
                         </button>
                     </div>
                 </label>
-
-                <label class="label">
-                    <span>Include Deleted</span>
-                    <input type="checkbox" class="checkbox" />
+                <label class="label inline-flex">
+                    <span>Show Deleted</span>
+                    <input type="checkbox" class="checkbox ml-2" />
                 </label>
+
+
             </div>
 
             <div>
