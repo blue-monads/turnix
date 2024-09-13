@@ -71,7 +71,7 @@ type ProjectPlugin struct {
 type ProjectConfig struct {
 	ID        int64  `json:"id" db:"id,omitempty"`
 	Key       string `json:"key" db:"key"`
-	Group     string `json:"group" db:"group"`
+	Group     string `json:"group_name" db:"group_name"`
 	Value     string `json:"value" db:"value"`
 	ProjectID int64  `json:"project_id" db:"project_id"`
 }

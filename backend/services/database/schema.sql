@@ -25,10 +25,10 @@ CREATE TABLE IF NOT EXISTS Users (
 CREATE TABLE IF NOT EXISTS UserConfig (
   id INTEGER PRIMARY KEY, 
   key TEXT NOT NULL DEFAULT '', 
-  group TEXT NOT NULL DEFAULT '',
+  group_name TEXT NOT NULL DEFAULT '',
   value TEXT NOT NULL DEFAULT '',
   user_id INTEGER NOT NULL, 
-  unique(user_id, group, key),
+  unique(user_id, group_name, key),
   FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 
@@ -80,10 +80,10 @@ CREATE TABLE IF NOT EXISTS Projects (
 CREATE TABLE IF NOT EXISTS ProjectConfig (
   id INTEGER PRIMARY KEY, 
   key TEXT NOT NULL DEFAULT '', 
-  group TEXT NOT NULL DEFAULT '',
+  group_name TEXT NOT NULL DEFAULT '',
   value TEXT NOT NULL DEFAULT '',
   project_id INTEGER NOT NULL, 
-  unique(project_id, group, key),
+  unique(project_id, group_name, key),
   FOREIGN KEY (project_id) REFERENCES Projects(id)
 );
 
