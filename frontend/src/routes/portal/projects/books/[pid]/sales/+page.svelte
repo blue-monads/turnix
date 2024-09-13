@@ -7,6 +7,7 @@
     import { page } from "$app/stores";
     import { AutoTable, Loader } from "$lib/compo";
     import { goto } from "$app/navigation";
+    import SalesFilter from "./sub/SalesFilter.svelte";
 
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
@@ -76,6 +77,8 @@
 {#if loading}
     <Loader />
 {:else}
+    <SalesFilter />
+
     <AutoTable
         action_key={"id"}
         key_names={[
@@ -101,12 +104,8 @@
             {
                 Name: "options",
                 Class: "variant-filled-secondary",
-                Action: async (id) => {
-                    
-
-                },
+                Action: async (id) => {},
             },
-
 
             {
                 Name: "delete",
@@ -123,5 +122,3 @@
         ]}
     />
 {/if}
-
-
