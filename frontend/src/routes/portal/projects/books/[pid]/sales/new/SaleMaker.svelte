@@ -31,16 +31,16 @@
 
     // extra data
     export let lines: NewSaleLine[] = [
-        {
-            info: "test",
-            product_id: 1,
-            qty: 4,
-            amount: 20,
-            price: 24,
-            tax_amount: 1,
-            discount_amount: 4,
-            total_amount: 84,
-        },
+        // {
+        //     info: "test",
+        //     product_id: 1,
+        //     qty: 4,
+        //     amount: 20,
+        //     price: 24,
+        //     tax_amount: 1,
+        //     discount_amount: 4,
+        //     total_amount: 84,
+        // },
     ];
 
     export let contactsNameIndex: Record<number, string> = {};
