@@ -8,6 +8,7 @@
         RadioGroup,
         RadioItem,
     } from "@skeletonlabs/skeleton";
+    import { formatCurrency } from "$lib";
 
     const store = getModalStore();
     const dispatch = createEventDispatcher();
@@ -28,13 +29,57 @@
     export let sales_date = new Date().toISOString().slice(0, 16);
 
     // extra data
-    export let lines: NewSaleLine[] = [];
+    export let lines: NewSaleLine[] = [{
+        info: "test",
+        product_id: 1,
+        qty: 4,
+        amount: 20,
+        price: 24,
+        tax_amount: 1,
+        discount_amount: 4,
+        total_amount: 84,
+    }];
     export let contacts: Contact[] = [];
     export let contactsNameIndex: Record<number, string> = {};
     export let submit = async () => {};
     export let api: BooksAPI;
 
     let mode = "invoice";
+
+    let overall_tax_percentage = 0;
+    let overall_discount_percentage = 0;
+
+    $: {
+        total_item_price = lines.reduce((acc, item) => {
+            return acc + item.amount * item.qty;
+        }, 0);
+
+        total_item_tax_amount = lines.reduce((acc, item) => {
+            return acc + item.tax_amount * item.qty;
+        }, 0);
+
+        total_item_discount_amount = lines.reduce((acc, item) => {
+            return acc + item.discount_amount * item.qty;
+        }, 0);
+
+        sub_total = lines.reduce((acc, item) => {
+            return acc + item.total_amount;
+        },0);
+
+        overall_tax_percentage = (overall_tax_amount / sub_total) * 100;
+        overall_discount_percentage =
+            (overall_discount_amount / sub_total) * 100;
+
+        total = sub_total + overall_tax_amount - overall_discount_amount;
+    }
+
+    const setOverAllTax = (value: number) => {
+        overall_tax_amount = value;
+    };
+
+    const setOverAllDiscount = (value: number) => {
+        overall_discount_amount = value;
+    };
 
     const clientPicker = () => {
         store.trigger({
@@ -133,6 +178,7 @@
                             <th class="px-4 py-2">Item</th>
                             <th class="px-4 py-2 text-right">Qty</th>
                             <th class="px-4 py-2 text-right">Unit Price</th>
+                            <th class="px-4 py-2 text-right">Tax</th>
                             <th class="px-4 py-2 text-right">Subtotal</th>
                             <th class="px-4 py-2 text-right"></th>
                         </tr>
@@ -145,13 +191,32 @@
                                     class="px-4 py-2 text-right border tabular-nums slashed-zero"
                                     >{line.qty}</td
                                 >
+
                                 <td
                                     class="px-4 py-2 text-right border tabular-nums slashed-zero"
-                                    >{line.amount}</td
                                 >
+                                    {#if line.amount === line.price}
+                                        {line.amount}
+                                    {:else}
+                                        <span
+                                            >{line.price} - ({line.discount_amount})</span
+                                        >
+                                        =
+                                        <strong>{line.amount}</strong>
+                                    {/if}
+                                </td>
                                 <td
                                     class="px-4 py-2 text-right border tabular-nums slashed-zero"
-                                    >{line.amount * line.qty}</td
+                                >
+                                    {#if line.tax_amount}
+                                        {line.tax_amount}
+                                    {:else}
+                                        -
+                                    {/if}
+                                </td>
+                                <td
+                                    class="px-4 py-2 text-right border tabular-nums slashed-zero"
+                                    >{line.total_amount}</td
                                 >
                                 <td
                                     class="px-4 py-2 text-right border tabular-nums slashed-zero"
@@ -200,18 +265,47 @@
                             <tr>
                                 <td class="px-2 py-2 border"> Sub Total </td>
                                 <td class="px-2 py-2 border text-right">
-                                    10000
+                                    {formatCurrency(sub_total)}
                                 </td>
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 border">TAX</td>
-                                <td class="px-2 py-2 border text-right">12%</td>
+                                <td class="px-2 py-2 border">Overall TAX</td>
+                                <td class="px-2 py-2 border text-right">
+                                    <button class="underline">
+                                        <span>
+                                            <strong>
+                                                {formatCurrency(
+                                                    overall_tax_amount,
+                                                )}
+                                            </strong>
+                                            {#if overall_tax_percentage}
+                                                [{formatCurrency(overall_tax_percentage)}%]
+                                            {/if}
+                                        </span>
+                                    </button>
+                                </td>
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 border">Discount</td>
-                                <td class="px-2 py-2 border text-right">0%</td>
+                                <td class="px-2 py-2 border">
+                                    Overall Discount
+                                </td>
+
+                                <td class="px-2 py-2 border text-right">
+                                    <button class="underline">
+                                        <span>
+                                            <strong>
+                                                {formatCurrency(
+                                                    overall_discount_amount,
+                                                )}
+                                            </strong>
+                                            {#if overall_discount_percentage}
+                                                [{overall_discount_percentage}]
+                                            {/if}
+                                        </span>
+                                    </button>
+                                </td>
                             </tr>
 
                             <tr>
@@ -221,7 +315,7 @@
                                 <td
                                     class="px-2 py-2 border text-right font-semibold"
                                 >
-                                    1120
+                                    {formatCurrency(total)}
                                 </td>
                             </tr>
                         </tbody>

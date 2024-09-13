@@ -1,7 +1,7 @@
 <script lang="ts">
     import { AutoTable, Loader } from "$lib/compo";
     import type { BooksAPI } from "$lib/projects/books";
-    import type { SaleLine } from "./sales";
+    import type { NewSaleLine } from "./sales";
 
     import { getModalStore } from "@skeletonlabs/skeleton";
     export let parent: any;
@@ -12,6 +12,7 @@
     let qty = 1;
     let amount = 0;
     let product_id: number;
+    let price = 0; // original price
 
     let data: object[] = $store[0].meta["data"] || [];
 
@@ -35,13 +36,17 @@
     console.log("@parnet", parent);
 
     const onSubmit = async () => {
-        const onSave = $store[0].meta["onSave"] as (data: SaleLine) => void;
+        const onSave = $store[0].meta["onSave"] as (data: NewSaleLine) => void;
         if (onSave) {
             onSave({
                 product_id,
                 qty,
                 amount,
+                price,
                 info,
+                total_amount: amount * qty,
+                discount_amount: price - amount,
+                tax_amount: 0,
             });
         }
         store.close();
@@ -72,6 +77,7 @@
                         Action: async (id, data) => {
                             product_id = id;
                             amount = data["price"] || 0;
+                            price = data["price"] || 0;
                             info =
                                 (data["name"] || "") +
                                 "  " +
