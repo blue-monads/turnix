@@ -8,3 +8,5 @@
     export let overall_tax_amount = 0;
     export let onSet = (data: any) => {};
 </script>
+
+<div class="card rounded w-modal-slim {parent.backgroundColor}">TODO</div>
