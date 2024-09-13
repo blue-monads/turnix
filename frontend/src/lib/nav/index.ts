@@ -27,3 +27,12 @@ export const gotoEditProjectHook = (ptype: string, pid: string, hid: string) => 
 export const gotoProjectHooks = (ptype: string, pid: string) => {
     goto(`/z/pages/portal/hooks?ptype=${ptype}&pid=${pid}`)
 }
+
+
+export const __turnix_portal_link = (relative: string) => {
+    return `/z/pages/portal/${relative}`;
+}
+
+export const __turnix_link = (relative: string) => {
+    return `/z/${relative}`;
+}
