@@ -12,47 +12,42 @@
             class="pl-4 py-2 flex justify-between items-center flex-wrap gap-2"
         >
             <div class="flex gap-2 items-center flex-wrap">
-                <label class="label">
-                    <span>Payment Status</span>
+                
 
-                    <select class="select">
-                        <option value="paid">paid</option>
-                        <option value="paid">not paid</option>
-                    </select>
-                </label>
+                <div class="flex flex-col">
+                    <label class="label">
+                        <span>From Date</span>
+                        <input class="input" type="datetime-local" />
+                    </label>
 
+                    <label class="label">
+                        <span>To Date</span>
+                        <input class="input" type="datetime-local" />
+                    </label>
+                </div>
 
-                <label class="label">
-                    <span>From Date</span>
-                    <input class="input" type="datetime-local" />
-                </label>
+                <div class="flex flex-col">
+                    <label class="label">
+                        <span>Client</span>
 
-                <label class="label">
-                    <span>To Date</span>
-                    <input class="input" type="datetime-local" />
-                </label>
+                        <div class="flex gap-2">
+                            <input
+                                type="text"
+                                class="input p-1"
+                                placeholder="Client"
+                            />
 
-                <label class="label">
-                    <span>Client</span>
+                            <button class="btn btn-sm variant-filled">
+                                <SvgIcon className="h-4 w-4" name="plus" />
+                            </button>
+                        </div>
+                    </label>
+                </div>
 
-                    <div class="flex gap-2">
-                        <input
-                            type="text"
-                            class="input p-1"
-                            placeholder="Client"
-                        />
-
-                        <button class="btn btn-sm variant-filled">
-                            <SvgIcon className="h-4 w-4" name="plus" />
-                        </button>
-                    </div>
-                </label>
                 <label class="label inline-flex">
                     <span>Show Deleted</span>
                     <input type="checkbox" class="checkbox ml-2" />
                 </label>
-
-
             </div>
 
             <div>
