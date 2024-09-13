@@ -290,9 +290,9 @@
                     <table>
                         <tbody>
                             <tr>
-                                <td class="px-2 py-2 border">Total Items TAX</td
+                                <td class="px-2 py-2 border border-gray-400">Total Items TAX</td
                                 >
-                                <td class="px-2 py-2 border text-right">
+                                <td class="px-2 py-2 border border-gray-400 text-right">
                                     <span>
                                         {formatCurrency(total_item_tax_amount)}
                                     </span>
@@ -300,10 +300,10 @@
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 border"
+                                <td class="px-2 py-2 border border-gray-400"
                                     >Total Items Discount</td
                                 >
-                                <td class="px-2 py-2 border text-right">
+                                <td class="px-2 py-2 border border-gray-400 text-right">
                                     <span>
                                         {formatCurrency(
                                             total_item_discount_amount,
@@ -313,15 +313,15 @@
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 border"> Sub Total </td>
-                                <td class="px-2 py-2 border text-right">
+                                <td class="px-2 py-2 border border-gray-400 border-b-gray-800"> Sub Total </td>
+                                <td class="px-2 py-2 border border-gray-400 border-b-gray-800 text-right">
                                     <strong>{formatCurrency(sub_total)}</strong>
                                 </td>
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 broder">Overall TAX</td>
-                                <td class="px-2 py-2 broder text-right">
+                                <td class="px-2 py-2 border border-gray-800">Overall TAX</td>
+                                <td class="px-2 py-2 border border-gray-800 text-right">
                                     <button class="underline" on:click={onSetOverAllTax}>
                                         <span>
                                             <strong>
@@ -340,11 +340,11 @@
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 broder">
+                                <td class="px-2 py-2 border border-gray-800">
                                     Overall Discount
                                 </td>
 
-                                <td class="px-2 py-2 broder text-right">
+                                <td class="px-2 py-2 border border-gray-800 text-right">
                                     <button class="underline" on:click={onSetOverAllDiscount}>
                                         <span>
                                             <strong>
@@ -361,11 +361,11 @@
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 broder font-semibold">
+                                <td class="px-2 py-2 border border-gray-800 font-semibold">
                                     Total
                                 </td>
                                 <td
-                                    class="px-2 py-2 broder text-right font-semibold"
+                                    class="px-2 py-2 border border-gray-800 text-right font-semibold"
                                 >
                                     {formatCurrency(total)}
                                 </td>
