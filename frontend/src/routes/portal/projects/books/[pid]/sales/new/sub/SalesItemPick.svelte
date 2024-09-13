@@ -17,6 +17,7 @@
     let data: object[] = $store[0].meta["data"] || [];
 
     const loadData = async () => {
+
         const api = $store[0].meta["api"] as BooksAPI;
         if (!api) {
             return;

@@ -75,14 +75,6 @@
         total = sub_total + overall_tax_amount - overall_discount_amount;
     }
 
-    const setOverAllTax = (value: number) => {
-        overall_tax_amount = value;
-    };
-
-    const setOverAllDiscount = (value: number) => {
-        overall_discount_amount = value;
-    };
-
     const clientPicker = () => {
         store.trigger({
             type: "component",
@@ -112,6 +104,39 @@
             },
         });
     };
+
+
+    const onSetOverAllTax = () => {
+        store.trigger({
+            type: "component",
+            component: "books_sales_overall_tax_picker",
+            meta: {
+                sub_total,
+                overall_tax_amount,
+                onSet: (value: number) => {
+                    overall_tax_amount = value;
+                },
+            },
+        });
+    }
+
+    const onSetOverAllDiscount = () => {
+        store.trigger({
+            type: "component",
+            component: "books_sales_overall_discount_picker",
+            meta: {
+                sub_total,
+                overall_discount_amount,
+                onSet: (value: number) => {
+                    overall_discount_amount = value;
+                },
+            },
+        });
+    }
+
+
+
+
 </script>
 
 <form class="p-2" on:submit|preventDefault={submit}>
@@ -297,7 +322,7 @@
                             <tr>
                                 <td class="px-2 py-2 broder">Overall TAX</td>
                                 <td class="px-2 py-2 broder text-right">
-                                    <button class="underline">
+                                    <button class="underline" on:click={onSetOverAllTax}>
                                         <span>
                                             <strong>
                                                 {formatCurrency(
@@ -320,7 +345,7 @@
                                 </td>
 
                                 <td class="px-2 py-2 broder text-right">
-                                    <button class="underline">
+                                    <button class="underline" on:click={onSetOverAllDiscount}>
                                         <span>
                                             <strong>
                                                 {formatCurrency(
@@ -328,7 +353,7 @@
                                                 )}
                                             </strong>
                                             {#if overall_discount_percentage}
-                                                [{overall_discount_percentage}]
+                                                [{formatCurrency(overall_discount_percentage)}%] 
                                             {/if}
                                         </span>
                                     </button>
