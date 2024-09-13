@@ -19,7 +19,6 @@ require (
 	github.com/rs/xid v1.5.0
 	github.com/rs/zerolog v1.33.0
 	github.com/siddontang/go v0.0.0-20180604090527-bdc77568d726
-	github.com/temphia/temphia v0.0.0-20240217195838-8c2001a6d2da
 	github.com/thoas/go-funk v0.9.3
 	github.com/upper/db/v4 v4.7.0
 	github.com/webview/webview_go v0.0.0-20240831120633-6173450d4dd6
@@ -37,7 +36,6 @@ require (
 	github.com/dlclark/regexp2 v1.7.0 // indirect
 	github.com/eknkc/basex v1.0.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
-	github.com/flosch/go-humanize v0.0.0-20140728123800-3ba51eabe506 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -55,6 +53,7 @@ require (
 	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
