@@ -3,4 +3,4 @@
 </script>
 
 
-<div>Edit Sale</div>
+<div>preview Sale</div>

@@ -42,7 +42,9 @@
     ];
 
     export let contactsNameIndex: Record<number, string> = {};
-    export let submit = async () => {};
+    export let submit = async (data: Record<string, any>) => {
+
+    };
     export let api: BooksAPI;
 
     let mode = "invoice";
@@ -433,7 +435,27 @@
             </div>
         </section>
         <footer class="card-footer flex justify-end">
-            <button class="btn variant-filled" on:click={submit}> save </button>
+            <button 
+            disabled={lines.length === 0 || !client_id}
+            class="btn variant-filled" 
+            on:click={() => {
+                submit({
+                    title,
+                    notes,
+                    client_id,
+                    client_name,
+                    total_item_price,
+                    total_item_tax_amount,
+                    total_item_discount_amount,
+                    sub_total,
+                    overall_discount_amount,
+                    overall_tax_amount,
+                    total,
+                    sales_date,
+                    lines,
+                })
+
+            }}> save </button>
         </footer>
     </div>
 </form>

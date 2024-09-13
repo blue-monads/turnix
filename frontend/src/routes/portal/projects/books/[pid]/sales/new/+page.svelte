@@ -32,7 +32,12 @@
         return acc;
     }, {});
 
-    const submit = async () => {};
+    const submit = async (data: Record<string, any>) => {
+        const resp = await api.addSale(pid, data);
+        
+        console.log(resp);
+
+    };
 
     let mode = "invoice";
 </script>

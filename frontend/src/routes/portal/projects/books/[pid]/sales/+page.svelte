@@ -89,14 +89,25 @@
         color={["ctype"]}
         actions={[
             {
-                Name: "edit",
+                Name: "preview",
                 Class: "variant-filled-primary",
                 Action: async (id) => {
                     goto(
-                        `/z/pages/portal/projects/books/${pid}/sales/edit?sid=${id}`,
+                        `/z/pages/portal/projects/books/${pid}/sales/preview?sid=${id}`,
                     );
                 },
             },
+
+            {
+                Name: "options",
+                Class: "variant-filled-secondary",
+                Action: async (id) => {
+                    
+
+                },
+            },
+
+
             {
                 Name: "delete",
                 Class: "variant-filled-error",

@@ -206,7 +206,7 @@ type ProductStockInLine struct {
 }
 
 type Sales struct {
-	ID int64 `json:"id" db:"id"`
+	ID int64 `json:"id" db:"id,omitempty"`
 
 	Title       string `json:"title" db:"title"`
 	ClientID    int64  `json:"client_id" db:"client_id"`
@@ -231,7 +231,7 @@ type Sales struct {
 }
 
 type SalesLine struct {
-	ID             int64      `json:"id" db:"id"`
+	ID             int64      `json:"id" db:"id,omitempty"`
 	Info           string     `json:"info" db:"info"`
 	Qty            int64      `json:"qty" db:"qty"`
 	SaleID         int64      `json:"sale_id" db:"sale_id"`
