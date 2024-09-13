@@ -1,7 +1,6 @@
 <script lang="ts">
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import type { BooksAPI, Contact } from "$lib/projects/books";
-    import { createEventDispatcher } from "svelte";
     import type { NewSaleLine } from "./sub/sales";
     import {
         getModalStore,
@@ -11,7 +10,6 @@
     import { formatCurrency } from "$lib";
 
     const store = getModalStore();
-    const dispatch = createEventDispatcher();
 
     export let pid: number;
 
