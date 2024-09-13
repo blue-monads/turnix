@@ -3,7 +3,7 @@
 </script>
 
 <div class="p-2">
-    <div class="card p-2">
+    <div class="card">
         <header class="card-header">
             <h4 class="h4">Sales Filter</h4>
         </header>
@@ -14,17 +14,32 @@
             <div class="flex gap-2 items-center flex-wrap">
                 
 
-                <div class="flex flex-col">
-                    <label class="label">
-                        <span>From Date</span>
+                <div class="flex flex-col gap-1">
+                    <span class="font-medium">Date range</span>
+
+                    <label class="label flex">
+                        <span class="w-24">From</span>
+                        <input class="input" type="datetime-local" />
+                    </label>
+
+                    <label class="label flex">
+                        <span class="w-24">To</span>
                         <input class="input" type="datetime-local" />
                     </label>
 
                     <label class="label">
-                        <span>To Date</span>
-                        <input class="input" type="datetime-local" />
+                        <select class="select">
+                            <option value="">1 Hour</option>
+                            <option value="">1 Day</option>
+                            <option value="">1 Week</option>
+                            <option value="">1 Month</option>
+                            <option value="">3 Month</option>
+                        </select>
                     </label>
+
                 </div>
+
+                
 
                 <div class="flex flex-col">
                     <label class="label">
@@ -50,15 +65,18 @@
                 </label>
             </div>
 
-            <div>
-                <button
-                    class="btn btn-sm variant-filled disabled:variant-ghost disabled:text-slate-800"
-                >
-                    <SvgIcon className="h-4 w-4" name="bolt" />
 
-                    Run
-                </button>
-            </div>
         </section>
+
+        <footer class="card-footer flex justify-end">
+            <button
+                class="btn btn-sm variant-filled disabled:variant-ghost disabled:text-slate-800"
+            >
+                <SvgIcon className="h-4 w-4" name="bolt" />
+
+                Run
+            </button>
+        </footer>
+
     </div>
 </div>
