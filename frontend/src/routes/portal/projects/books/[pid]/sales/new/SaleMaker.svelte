@@ -29,16 +29,18 @@
     export let sales_date = new Date().toISOString().slice(0, 16);
 
     // extra data
-    export let lines: NewSaleLine[] = [{
-        info: "test",
-        product_id: 1,
-        qty: 4,
-        amount: 20,
-        price: 24,
-        tax_amount: 1,
-        discount_amount: 4,
-        total_amount: 84,
-    }];
+    export let lines: NewSaleLine[] = [
+        {
+            info: "test",
+            product_id: 1,
+            qty: 4,
+            amount: 20,
+            price: 24,
+            tax_amount: 1,
+            discount_amount: 4,
+            total_amount: 84,
+        },
+    ];
     export let contacts: Contact[] = [];
     export let contactsNameIndex: Record<number, string> = {};
     export let submit = async () => {};
@@ -64,7 +66,7 @@
 
         sub_total = lines.reduce((acc, item) => {
             return acc + item.total_amount;
-        },0);
+        }, 0);
 
         overall_tax_percentage = (overall_tax_amount / sub_total) * 100;
         overall_discount_percentage =
@@ -263,15 +265,38 @@
                     <table>
                         <tbody>
                             <tr>
-                                <td class="px-2 py-2 border"> Sub Total </td>
+                                <td class="px-2 py-2 border">Total Items TAX</td
+                                >
                                 <td class="px-2 py-2 border text-right">
-                                    {formatCurrency(sub_total)}
+                                    <span>
+                                        {formatCurrency(total_item_tax_amount)}
+                                    </span>
                                 </td>
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 border">Overall TAX</td>
+                                <td class="px-2 py-2 border"
+                                    >Total Items Discount</td
+                                >
                                 <td class="px-2 py-2 border text-right">
+                                    <span>
+                                        {formatCurrency(
+                                            total_item_discount_amount,
+                                        )}
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="px-2 py-2 border"> Sub Total </td>
+                                <td class="px-2 py-2 border text-right">
+                                    <strong>{formatCurrency(sub_total)}</strong>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="px-2 py-2 broder">Overall TAX</td>
+                                <td class="px-2 py-2 broder text-right">
                                     <button class="underline">
                                         <span>
                                             <strong>
@@ -280,7 +305,9 @@
                                                 )}
                                             </strong>
                                             {#if overall_tax_percentage}
-                                                [{formatCurrency(overall_tax_percentage)}%]
+                                                [{formatCurrency(
+                                                    overall_tax_percentage,
+                                                )}%]
                                             {/if}
                                         </span>
                                     </button>
@@ -288,11 +315,11 @@
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 border">
+                                <td class="px-2 py-2 broder">
                                     Overall Discount
                                 </td>
 
-                                <td class="px-2 py-2 border text-right">
+                                <td class="px-2 py-2 broder text-right">
                                     <button class="underline">
                                         <span>
                                             <strong>
@@ -309,11 +336,11 @@
                             </tr>
 
                             <tr>
-                                <td class="px-2 py-2 border font-semibold">
+                                <td class="px-2 py-2 broder font-semibold">
                                     Total
                                 </td>
                                 <td
-                                    class="px-2 py-2 border text-right font-semibold"
+                                    class="px-2 py-2 broder text-right font-semibold"
                                 >
                                     {formatCurrency(total)}
                                 </td>

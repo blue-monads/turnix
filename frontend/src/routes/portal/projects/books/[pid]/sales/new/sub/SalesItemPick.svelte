@@ -44,7 +44,7 @@
                 amount,
                 price,
                 info,
-                total_amount: amount * qty,
+                total_amount: amount * qty, // incude tax
                 discount_amount: price - amount,
                 tax_amount: 0,
             });
