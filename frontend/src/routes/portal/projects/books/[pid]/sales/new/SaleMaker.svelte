@@ -167,7 +167,7 @@
                                 type="text"
                                 bind:value={title}
                                 class="input p-1"
-                                placeholder="Sales title"
+                                placeholder="title"
                             />
                         </div>
                     </label>
