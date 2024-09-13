@@ -96,6 +96,7 @@
                     <span>Quantity</span>
                     <input
                         bind:value={qty}
+                        min="1"
                         class="input p-1"
                         type="number"
                         placeholder="Input"
@@ -107,6 +108,8 @@
                     <input
                         bind:value={amount}
                         class="input p-1"
+                        min="0"
+                        max={price}
                         type="number"
                         placeholder="Input"
                     />
