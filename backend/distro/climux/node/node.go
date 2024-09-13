@@ -1,18 +1,8 @@
 package node
 
 import (
-	"github.com/bornjre/turnix/backend/distro/climux"
-
-	_ "github.com/mattn/go-sqlite3"
-
-	// modules
-
 	"github.com/bornjre/turnix/backend/distro"
-
-	_ "github.com/bornjre/turnix/backend/modules/books"
-
-	// _ "github.com/bornjre/turnix/backend/modules/tracker"
-	_ "github.com/bornjre/turnix/backend/modules/unloop"
+	"github.com/bornjre/turnix/backend/distro/climux"
 )
 
 func init() {
