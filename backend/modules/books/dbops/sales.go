@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/bornjre/turnix/backend/modules/books/models"
+	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )
 
@@ -24,6 +25,13 @@ type ProductLite struct {
 }
 
 func (b *DbOps) SalesAdd(pid, uid int64, data *SalesData) (int64, error) {
+
+	pp.Println("@data", data)
+
+	if len(data.Lines) == 0 {
+		return 0, fmt.Errorf("lines should not be empty")
+	}
+
 	err := b.userHasScope(pid, uid, "write")
 	if err != nil {
 		return 0, err
@@ -172,7 +180,7 @@ func (b *DbOps) SalesList(pid, uid int64) ([]models.Sales, error) {
 	datas := make([]models.Sales, 0)
 	table := b.salesTable(pid)
 
-	err = table.Find().All(&datas)
+	err = table.Find(db.Cond{"is_deleted": false}).All(&datas)
 	if err != nil {
 		return nil, err
 	}

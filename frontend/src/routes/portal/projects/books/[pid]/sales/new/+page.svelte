@@ -33,6 +33,8 @@
     }, {});
 
     const submit = async (data: Record<string, any>) => {
+        console.log("@submit/data", data);
+
         const resp = await api.addSale(pid, data);
         
         console.log(resp);

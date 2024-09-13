@@ -22,7 +22,14 @@
             return;
         }
 
-        sales = resp.data;
+        sales = (resp.data || []).map(item => {
+            return {
+                ...item,
+                created_at: new Date(item.created_at).toISOString(),
+                updated_at: new Date(item.updated_at).toISOString(),
+            }
+        });
+
         loading = false;
     };
 
@@ -84,8 +91,10 @@
         key_names={[
             ["id", "ID"],
             ["title", "Title"],
+            ["info", "Info"],
             ["client_name", "Client"],
             ["total", "Total"],
+            ["created_at", "Created At"],
             ["updated_at", "Updated At"],
         ]}
         datas={sales}
