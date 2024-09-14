@@ -414,6 +414,11 @@ func (d *DB) DeleteFile(id int64) error {
 		return err
 	}
 
+	if file.IsFolder {
+		// fixme => delete all files in folder
+		pp.Println("@delete_files_form_folder/1")
+	}
+
 	if file.StoreType == 1 {
 
 		pidOrUid := file.OwnerUser
@@ -426,6 +431,8 @@ func (d *DB) DeleteFile(id int64) error {
 			return err
 		}
 
+	} else if file.StoreType == 2 {
+		d.filePartedBlobsTable().Find(db.Cond{"file_id": id}).Delete()
 	}
 
 	return record.Delete()
