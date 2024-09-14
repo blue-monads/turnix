@@ -41,3 +41,6 @@ Platform for apps.
 SIAYN => Sqlite is all you need
 Turnix
 AppTroll => Real everything app
+
+- turnix port -> app 7703, libp2p 7704
+
