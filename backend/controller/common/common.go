@@ -103,7 +103,7 @@ func (a *CommonController) GetFileShortKey(userId int64, id int64) (string, erro
 
 func (a *CommonController) GetFileWithShortKey(ctx *gin.Context) error {
 
-	key := ctx.Param("key")
+	key := ctx.Param("shortkey")
 
 	key, err := a.b.DecodeToString(key)
 	if err != nil {

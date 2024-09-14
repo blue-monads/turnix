@@ -14,24 +14,24 @@
     let elemRoot: HTMLElement;
 
     const imageExts = ["png", "jpg", "jpeg", "gif", "bmp", "webp", "svg"];
+    const fileExt = filename.split(".").pop();
+    const isimage = imageExts.includes(fileExt as string);
 
-    const load = async () => {
-        const res = await api.getSelfFile(fileId);
+
+    const loadAsImage = async () => {
+        const res = await api.getFileShortKey(fileId);
         if (res.status !== 200) {
             return;
         }
 
-        const fileExt = filename.split(".").pop();
 
         if (!fileExt) {
             return;
         }
 
-        if (imageExts.includes(fileExt)) {
-            console.log("image");
 
-            const img = new Image();
-            img.src = URL.createObjectURL(res.data);
+        const img = new Image();
+            img.src = api.getFileWithShortKeyURL(res.data);
             img.onload = () => {
                 console.log("img loaded");
             };
@@ -40,27 +40,44 @@
             };
 
             elemRoot.appendChild(img);
-        } else {
-            // download as file button
-
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(res.data);
-            a.download = filename;
-            a.innerText = "download";
-            a.style.color = "while";
-            a.style.padding = "5%";
-            a.style.paddingLeft = "10%";
-            a.style.textDecoration = "underline";
-
-            elemRoot.appendChild(a);
-        }
     };
 
-    load();
+    if (isimage) {
+        loadAsImage();
+    }
+
+    const download = async () => {
+        const res = await api.getFileShortKey(fileId);
+        if (res.status !== 200) {
+            return;
+        }
+
+        const a = document.createElement("a");
+        a.href = api.getFileWithShortKeyURL(res.data);
+        a.download = filename;
+
+        document.body.appendChild(a);
+        a.click();
+    }
+
+
+
+
 </script>
 
+
+
+
 <div class="overflow-auto" bind:this={elemRoot}>
-    <a href="/" class="hidden">a</a>
+
+    {#if !isimage}
+        <button 
+        class="btn btn-sm variant-filled" 
+        on:click={download}>
+        download
+        </button>
+    {/if}
+
 
 </div>
 

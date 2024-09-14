@@ -317,7 +317,8 @@ export class RootAPI {
     }
 
     getFileWithShortKeyURL = (shortkey: string): string => {
-        return `${location.origin}/z/file/shortKey/${shortkey}` 
+
+        return `${location.origin}/z/api/v1/file/shortKey/${shortkey}` 
     }
 
 }
