@@ -132,7 +132,9 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 
 	// user profile
 	apiv1.GET("/user/:uid", a.accessMiddleware(a.userProfile))
-	apiv1.GET("/file/:file", a.getSharedFile)
+	apiv1.GET("/file/shared/:file", a.getSharedFile)
+	apiv1.GET("/file/shortKey/:shortkey", a.GetFileWithShortKey)
+	apiv1.GET("/file/:fid/shortkey", a.accessMiddleware(a.GetFileShortKey))
 
 }
 

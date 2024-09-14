@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"io"
 	"os"
 	"time"
 
@@ -181,6 +182,55 @@ func (d *DB) GetFileBlob(id int64) ([]byte, error) {
 	}
 
 	return os.ReadFile(fmt.Sprintf("files/%s/%d/%s", file.FType, pidOrUid, file.Path))
+
+}
+
+func (d *DB) GetFileBlobStreaming(id int64, w io.Writer) error {
+
+	table := d.filesTable()
+
+	file := File{}
+	err := table.Find(db.Cond{"id": id}).One(&file)
+	if err != nil {
+		return err
+	}
+
+	if !file.External {
+		data := make([]byte, file.Size)
+
+		row, err := d.sess.SQL().Select("blob").From("Files").Where(db.Cond{"id": id}).QueryRow()
+		if err != nil {
+			return err
+		}
+
+		err = row.Scan(&data)
+		if err != nil {
+			return err
+		}
+
+		_, err = w.Write(data)
+
+		return err
+	} else {
+
+		pidOrUid := file.OwnerUser
+		if file.FType == "project" {
+			pidOrUid = file.OwnerProj
+		}
+
+		out, err := os.ReadFile(fmt.Sprintf("files/%s/%d/%s", file.FType, pidOrUid, file.Path))
+		if err != nil {
+			return err
+		}
+
+		_, err = w.Write(out)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
 
 }
 

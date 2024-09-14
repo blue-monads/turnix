@@ -33,3 +33,22 @@ func (a *Server) getSharedFile(ctx *gin.Context) {
 	ctx.Writer.WriteHeader(http.StatusOK)
 
 }
+
+func (s *Server) GetFileShortKey(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	fid, err := strconv.ParseInt(ctx.Param("fid"), 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.cCommon.GetFileShortKey(claim.UserId, fid)
+}
+
+func (s *Server) GetFileWithShortKey(ctx *gin.Context) {
+	err := s.cCommon.GetFileWithShortKey(ctx)
+	if err != nil {
+		ctx.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+}

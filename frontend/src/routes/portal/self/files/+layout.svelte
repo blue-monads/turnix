@@ -23,7 +23,7 @@
 
 <AppBar>
     <svelte:fragment slot="lead">
-        <h4 class="h4">Project Files</h4>
+        <h4 class="h4">Files</h4>
     </svelte:fragment>
 
     <svelte:fragment slot="trail">
