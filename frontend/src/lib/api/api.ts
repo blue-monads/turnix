@@ -312,6 +312,13 @@ export class RootAPI {
         return this.client.get<Partial<User>>(`/user/${uid}`)
     }
 
+    getFileShortKey = (fid: string) => {
+        return this.client.get(`/file/${fid}/shortkey`)
+    }
+
+    getFileWithShortKeyURL = (shortkey: string): string => {
+        return `${location.origin}/z/file/shortKey/${shortkey}` 
+    }
 
 }
 
