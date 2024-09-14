@@ -1,6 +1,7 @@
 package database
 
 import (
+	"bytes"
 	"database/sql"
 	"fmt"
 	"io"
@@ -21,11 +22,17 @@ type File struct {
 	Mime      string     `db:"mime" json:"mime"`
 	Hash      string     `db:"hash" json:"hash"`
 	IsFolder  bool       `db:"is_folder" json:"is_folder"`
-	External  bool       `db:"external" json:"external"`
-	IsPublic  bool       `db:"is_public" json:"is_public"`
+	StoreType int64      `db:"storeType" json:"storeType"`
 	OwnerUser int64      `db:"owner_user_id" json:"owner_user_id"`
 	OwnerProj int64      `db:"owner_project_id" json:"owner_project_id"`
 	CreatedAt *time.Time `db:"created_at" json:"created_at"`
+}
+
+type FilePartedBlob struct {
+	Id     int64 `db:"id" json:"id"`
+	FileId int64 `db:"file_id" json:"file_id"`
+	Size   int64 `db:"size" json:"size"`
+	PartId int64 `db:"part_id" json:"part_id"`
 }
 
 func (d *DB) AddFolder(pid, uid int64, ftype, path, name string) (int64, error) {
@@ -39,7 +46,6 @@ func (d *DB) AddFolder(pid, uid int64, ftype, path, name string) (int64, error) 
 		OwnerUser: uid,
 		OwnerProj: pid,
 		FType:     ftype,
-		IsPublic:  false,
 		Size:      0,
 		CreatedAt: &t,
 		IsFolder:  true,
@@ -55,47 +61,142 @@ func (d *DB) AddFolder(pid, uid int64, ftype, path, name string) (int64, error) 
 	return id, nil
 }
 
-func (d *DB) AddFile(file *File, data []byte) (id int64, err error) {
+func (d *DB) AddFileStreaming(file *File, stream io.Reader) (id int64, err error) {
 
-	table := d.filesTable()
+	pp.Println("@add_file_streaming/1", file.FType, file.Path)
 
-	exists, _ := table.Find(db.Cond{
+	filetable := d.filesTable()
+	partstable := d.filePartedBlobsTable()
+
+	exists, _ := filetable.Find(db.Cond{
 		"name":             file.Name,
 		"path":             file.Path,
 		"owner_user_id":    file.OwnerUser,
 		"owner_project_id": file.OwnerProj,
 	}).Exists()
 
+	pp.Println("@add_file_streaming/2", exists)
+
 	if exists {
+		pp.Println("@add_file_streaming/3")
+
 		return 0, fmt.Errorf("file already exists")
 	}
 
-	rid, err := table.Insert(file)
+	if d.externalFileMode {
+		file.StoreType = 1
+	} else if file.Size > d.minFileMultiPartSize {
+		file.StoreType = 2
+	}
+
+	pp.Println("@add_file_streaming/3", file.StoreType)
+
+	rid, err := filetable.Insert(file)
 	if err != nil {
 		return 0, err
 	}
 
 	id = rid.ID().(int64)
 
+	pp.Println("@add_file_streaming/4")
+
 	defer func() {
 		if err != nil {
-			table.Find(db.Cond{"id": id}).Delete()
+			filetable.Find(db.Cond{"id": id}).Delete()
+			partstable.Find(db.Cond{"file_id": id}).Delete()
 		}
 	}()
 
-	if !d.externalFileMode {
-		driver := d.sess.Driver().(*sql.DB)
-		_, err = driver.Exec("UPDATE Files SET blob = ? WHERE id = ?", data, id)
-
-		return id, err
-	}
+	pp.Println("@add_file_streaming/5")
 
 	pidOrUid := file.OwnerUser
 	if file.FType == "project" {
 		pidOrUid = file.OwnerProj
 	}
 
-	err = os.WriteFile(fmt.Sprintf("files/%s/%d/%s", file.FType, pidOrUid, file.Path), data, 0644)
+	pp.Println("@add_file_streaming/6", pidOrUid)
+
+	if d.externalFileMode {
+
+		pp.Println("@add_file_streaming/7")
+
+		file, err := os.Create(fmt.Sprintf("files/%s/%d/%s", file.FType, pidOrUid, file.Path))
+		if err != nil {
+			return 0, err
+		}
+
+		pp.Println("@add_file_streaming/8")
+
+		defer file.Close()
+
+		_, err = io.Copy(file, stream)
+		if err != nil {
+			return 0, err
+		}
+
+		pp.Println("@add_file_streaming/9")
+
+		file.Sync()
+
+		pp.Println("@add_file_streaming/10")
+
+		return id, nil
+	}
+
+	driver := d.sess.Driver().(*sql.DB)
+
+	if file.StoreType == 0 {
+		pp.Println("@add_file_streaming/11")
+
+		data, err := io.ReadAll(stream)
+		if err != nil {
+			return 0, err
+		}
+
+		pp.Println("@add_file_streaming/12")
+
+		_, err = driver.Exec("UPDATE Files SET blob = ? WHERE id = ?", data, id)
+		return id, err
+
+	} else if file.StoreType == 2 {
+
+		pp.Println("@add_file_streaming/13")
+
+		partId := 0
+
+		buf := make([]byte, d.minFileMultiPartSize)
+
+		for {
+
+			pp.Println("@add_file_streaming/14", partId)
+
+			n, err := stream.Read(buf)
+			if err != nil && err != io.EOF {
+				return 0, err
+			}
+
+			if n == 0 {
+				break
+			}
+
+			pp.Println("@add_file_streaming/15", n)
+
+			_, err = driver.Exec("INSERT INTO FilePartedBlobs (file_id, size, part_id, blob) VALUES (?, ?, ?, ?)", id, n, partId, buf[:n])
+			if err != nil {
+				return 0, err
+			}
+
+			pp.Println("@add_file_streaming/16")
+
+			partId++
+
+		}
+
+		pp.Println("@add_file_streaming/17")
+
+	}
+
+	pp.Println("@add_file_streaming/18")
 
 	return
 }
@@ -152,41 +253,21 @@ func (d *DB) GetFileMeta(id int64) (*File, error) {
 }
 
 func (d *DB) GetFileBlob(id int64) ([]byte, error) {
-	table := d.filesTable()
+	buf := bytes.Buffer{}
 
-	file := File{}
-	err := table.Find(db.Cond{"id": id}).One(&file)
+	err := d.GetFileBlobStreaming(id, &buf)
 	if err != nil {
 		return nil, err
 	}
 
-	if !file.External {
-		data := make([]byte, file.Size)
-
-		row, err := d.sess.SQL().Select("blob").From("Files").Where(db.Cond{"id": id}).QueryRow()
-		if err != nil {
-			return nil, err
-		}
-
-		err = row.Scan(&data)
-		if err != nil {
-			return nil, err
-		}
-
-		return data, nil
-	}
-
-	pidOrUid := file.OwnerUser
-	if file.FType == "project" {
-		pidOrUid = file.OwnerProj
-	}
-
-	return os.ReadFile(fmt.Sprintf("files/%s/%d/%s", file.FType, pidOrUid, file.Path))
+	return buf.Bytes(), nil
 
 }
 
 func (d *DB) GetFileBlobStreaming(id int64, w io.Writer) error {
 
+	pp.Println("@get_file_blob_streaming/1", id)
+
 	table := d.filesTable()
 
 	file := File{}
@@ -195,40 +276,127 @@ func (d *DB) GetFileBlobStreaming(id int64, w io.Writer) error {
 		return err
 	}
 
-	if !file.External {
+	pp.Println("@get_file_blob_streaming/2", file.FType, file.Path)
+
+	if file.StoreType == 0 {
 		data := make([]byte, file.Size)
+
+		pp.Println("@get_file_blob_streaming/3")
 
 		row, err := d.sess.SQL().Select("blob").From("Files").Where(db.Cond{"id": id}).QueryRow()
 		if err != nil {
+			pp.Println("@get_file_blob_streaming/4", err)
 			return err
 		}
+
+		pp.Println("@get_file_blob_streaming/5")
 
 		err = row.Scan(&data)
 		if err != nil {
+			pp.Println("@get_file_blob_streaming/6", err)
 			return err
 		}
 
-		_, err = w.Write(data)
+		pp.Println("@get_file_blob_streaming/7")
+
+		written := int64(0)
+
+		for written <= file.Size {
+
+			pp.Println("@get_file_blob_streaming/8", written, file.Size)
+
+			n, err := w.Write(data[written:])
+			if err != nil {
+				return err
+			}
+			written += int64(n)
+
+		}
 
 		return err
-	} else {
+	} else if file.StoreType == 1 {
+
+		pp.Println("@get_file_blob_streaming/9")
 
 		pidOrUid := file.OwnerUser
 		if file.FType == "project" {
 			pidOrUid = file.OwnerProj
 		}
 
+		pp.Println("@get_file_blob_streaming/10", pidOrUid)
+
 		out, err := os.ReadFile(fmt.Sprintf("files/%s/%d/%s", file.FType, pidOrUid, file.Path))
 		if err != nil {
 			return err
 		}
+
+		pp.Println("@get_file_blob_streaming/11")
 
 		_, err = w.Write(out)
 		if err != nil {
 			return err
 		}
 
+	} else if file.StoreType == 2 {
+		parts := make([]FilePartedBlob, 0)
+
+		pp.Println("@get_file_blob_streaming/12")
+
+		err := d.filePartedBlobsTable().Find(db.Cond{"file_id": id}).
+			Select("id", "size", "part_id").
+			All(&parts)
+		if err != nil {
+			pp.Println("@get_file_blob_streaming/13", err.Error())
+			return err
+		}
+
+		pp.Println("@get_file_blob_streaming/14", len(parts))
+
+		for _, part := range parts {
+
+			pp.Println("@get_file_blob_streaming/15")
+
+			blob, err := d.sess.SQL().Select("blob").From("FilePartedBlobs").Where(db.Cond{"id": part.Id}).QueryRow()
+			if err != nil {
+				pp.Println("@get_file_blob_streaming/16", err.Error())
+				return err
+			}
+
+			pp.Println("@get_file_blob_streaming/17")
+
+			data := make([]byte, part.Size)
+			err = blob.Scan(&data)
+			if err != nil {
+				pp.Println("@get_file_blob_streaming/18", err.Error())
+				return err
+			}
+
+			pp.Println("@get_file_blob_streaming/19")
+
+			written := int64(0)
+
+			for written <= part.Size {
+				pp.Println("@get_file_blob_streaming/20")
+
+				_, err = w.Write(data[written:])
+				if err != nil {
+					return err
+				}
+
+				written += int64(len(data))
+			}
+
+			pp.Println("@get_file_blob_streaming/21")
+
+		}
+
+		pp.Println("@get_file_blob_streaming/22")
+
+		return nil
+
 	}
+
+	pp.Println("@get_file_blob_streaming/23")
 
 	return nil
 
@@ -246,7 +414,7 @@ func (d *DB) DeleteFile(id int64) error {
 		return err
 	}
 
-	if file.External {
+	if file.StoreType == 1 {
 
 		pidOrUid := file.OwnerUser
 		if file.FType == "project" {
@@ -332,4 +500,8 @@ func (d *DB) fileSharesTable() db.Collection {
 
 func (d *DB) filesTable() db.Collection {
 	return d.Table("Files")
+}
+
+func (d *DB) filePartedBlobsTable() db.Collection {
+	return d.Table("FilePartedBlobs")
 }

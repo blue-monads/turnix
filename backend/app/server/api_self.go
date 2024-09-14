@@ -3,7 +3,6 @@ package server
 import (
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 
@@ -197,12 +196,7 @@ func (a *Server) addSelfFile(claim *signer.AccessClaim, ctx *gin.Context) (any, 
 		return nil, fmt.Errorf("name is required")
 	}
 
-	data, err := io.ReadAll(ctx.Request.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return a.cSelf.AddSelfFile(claim.UserId, name, path, data)
+	return a.cSelf.AddSelfFile(claim.UserId, name, path, ctx.Request.ContentLength, ctx.Request.Body)
 }
 
 func (a *Server) getSelfFile(ctx *gin.Context) {

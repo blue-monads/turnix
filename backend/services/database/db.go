@@ -14,8 +14,9 @@ import (
 var schema string
 
 type DB struct {
-	sess             db.Session
-	externalFileMode bool
+	sess                 db.Session
+	externalFileMode     bool
+	minFileMultiPartSize int64
 }
 
 const (
@@ -51,8 +52,9 @@ func NewDB() (*DB, error) {
 	}
 
 	return &DB{
-		sess:             sess,
-		externalFileMode: false,
+		sess:                 sess,
+		externalFileMode:     false,
+		minFileMultiPartSize: 1024 * 1024 * 8,
 	}, nil
 }
 

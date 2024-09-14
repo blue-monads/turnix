@@ -2,6 +2,7 @@ package self
 
 import (
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/bornjre/turnix/backend/services/database"
@@ -21,7 +22,7 @@ func (a *SelfController) ListSelfFiles(userId int64, path string) ([]database.Fi
 	return a.db.ListFilesByUser(userId, path)
 }
 
-func (a *SelfController) AddSelfFile(userId int64, name, path string, data []byte) (int64, error) {
+func (a *SelfController) AddSelfFile(userId int64, name, path string, size int64, stream io.Reader) (int64, error) {
 
 	now := time.Now()
 
@@ -30,12 +31,11 @@ func (a *SelfController) AddSelfFile(userId int64, name, path string, data []byt
 		Path:      path,
 		OwnerUser: userId,
 		FType:     "user",
-		IsPublic:  false,
-		Size:      int64(len(data)),
+		Size:      size,
 		CreatedAt: &now,
 	}
 
-	return a.db.AddFile(file, data)
+	return a.db.AddFileStreaming(file, stream)
 }
 
 func (a *SelfController) AddSelfFolder(userId int64, path, name string) (int64, error) {

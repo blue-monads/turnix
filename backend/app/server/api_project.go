@@ -2,7 +2,6 @@ package server
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 
@@ -186,12 +185,7 @@ func (a *Server) addProjectFile(claim *signer.AccessClaim, ctx *gin.Context) (an
 		return nil, fmt.Errorf("name is required")
 	}
 
-	data, err := io.ReadAll(ctx.Request.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return a.cProject.AddProjectFile(claim.UserId, pid, name, path, data)
+	return a.cProject.AddProjectFile(claim.UserId, pid, name, path, ctx.Request.ContentLength, ctx.Request.Body)
 }
 
 func (a *Server) getProjectFile(ctx *gin.Context) {

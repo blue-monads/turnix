@@ -138,6 +138,7 @@ CREATE TABLE IF NOT EXISTS Files (
   size INTEGER NOT NULL DEFAULT 0, 
   mime TEXT NOT NULL DEFAULT '', 
   hash TEXT NOT NULL DEFAULT '',
+  storeType INTEGER NOT NULL DEFAULT 0, -- 0: inline_blob, 1: external_blob, 2: mulit_part_blob
   preview BLOB, 
   blob BLOB,
   external BOOLEAN NOT NULL DEFAULT FALSE,
@@ -148,13 +149,13 @@ CREATE TABLE IF NOT EXISTS Files (
 );
 
 
--- storeType 0: inline_blob, 1: external_blob, 2: mulit_part_blob
 
 CREATE TABLE IF NOT EXISTS FilePartedBlobs (
   id INTEGER PRIMARY KEY,
   file_id INTEGER NOT NULL,
+  size INTEGER NOT NULL,
   part_id INTEGER NOT NULL,
-  data BLOB NOT NULL
+  blob BLOB NOT NULL
 );
 
 

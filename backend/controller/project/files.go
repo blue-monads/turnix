@@ -2,6 +2,7 @@ package project
 
 import (
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/bornjre/turnix/backend/services/database"
@@ -11,7 +12,7 @@ func (a *ProjectController) ListProjectFiles(userId int64, pid int64, path strin
 	return a.db.ListFilesByProject(pid, path)
 }
 
-func (a *ProjectController) AddProjectFile(userId int64, pid int64, name, path string, data []byte) (int64, error) {
+func (a *ProjectController) AddProjectFile(userId int64, pid int64, name, path string, size int64, stream io.Reader) (int64, error) {
 
 	now := time.Now()
 
@@ -21,12 +22,11 @@ func (a *ProjectController) AddProjectFile(userId int64, pid int64, name, path s
 		OwnerUser: userId,
 		OwnerProj: pid,
 		FType:     "project",
-		IsPublic:  false,
-		Size:      int64(len(data)),
+		Size:      size,
 		CreatedAt: &now,
 	}
 
-	return a.db.AddFile(file, data)
+	return a.db.AddFileStreaming(file, stream)
 }
 
 func (a *ProjectController) AddProjectFolder(userId int64, pid int64, path, name string) (int64, error) {
