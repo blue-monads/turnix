@@ -137,15 +137,27 @@ CREATE TABLE IF NOT EXISTS Files (
   path TEXT NOT NULL DEFAULT '', 
   size INTEGER NOT NULL DEFAULT 0, 
   mime TEXT NOT NULL DEFAULT '', 
-  hash TEXT NOT NULL DEFAULT '', 
+  hash TEXT NOT NULL DEFAULT '',
+  preview BLOB, 
   blob BLOB,
   external BOOLEAN NOT NULL DEFAULT FALSE,
-  is_public BOOLEAN NOT NULL DEFAULT FALSE,
   owner_user_id INTEGER NOT NULL DEFAULT 0,
   owner_project_id INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE (owner_user_id, owner_project_id, path, name)
 );
+
+
+-- storeType 0: inline_blob, 1: external_blob, 2: mulit_part_blob
+
+CREATE TABLE IF NOT EXISTS FilePartedBlobs (
+  id INTEGER PRIMARY KEY,
+  file_id INTEGER NOT NULL,
+  part_id INTEGER NOT NULL,
+  data BLOB NOT NULL
+);
+
+
 
 CREATE TABLE IF NOT EXISTS FileShares (
   id TEXT PRIMARY KEY,
