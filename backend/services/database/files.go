@@ -301,7 +301,7 @@ func (d *DB) GetFileBlobStreaming(id int64, w io.Writer) error {
 
 		written := int64(0)
 
-		for written <= file.Size {
+		for written < file.Size || written == 0 {
 
 			pp.Println("@get_file_blob_streaming/8", written, file.Size)
 
