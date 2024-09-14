@@ -6,6 +6,7 @@
     import { getModalStore } from "@skeletonlabs/skeleton";
     import { page } from "$app/stores";
     import type { RootAPI } from "$lib/api";
+    import KvEditor from "$lib/compo/autoform/_kv_editor.svelte";
 
     const store = getModalStore();
 
@@ -15,8 +16,10 @@
 
     $: __epoch = 1;
 
+    $:  __filename = $params["filename"];
+
     const complete_new_folder = async (name: string) => {
-        await api.addSelfFolder( $params["folder"] || "", name);
+        await api.addSelfFolder($params["folder"] || "", name);
         __epoch = __epoch + 1;
     };
 </script>
@@ -29,19 +32,15 @@
     <svelte:fragment slot="trail">
         {#if !$params["file"]}
             <div class="flex flex-row gap-1">
-
-                
-                <a 
-                    href="/z/pages/portal/self/files/upload?folder={$params["folder"] || ""}" 
-                    class="btn btn-sm variant-filled">
-                    
-                        <SvgIcon name="cloud-arrow-up" className="h-4 w-4" />
+                <a
+                    href="/z/pages/portal/self/files/upload?folder={$params[
+                        'folder'
+                    ] || ''}"
+                    class="btn btn-sm variant-filled"
+                >
+                    <SvgIcon name="cloud-arrow-up" className="h-4 w-4" />
                     <span class="hidden md:inline">Upload</span>
                 </a>
-
-
-
-
 
                 <button
                     class="btn btn-sm variant-filled-primary"
@@ -66,8 +65,7 @@
 <div class="flex justify-between p-2 pl-4">
     <ol class="breadcrumb">
         <li class="crumb">
-            <a class="anchor" href="/z/pages/portal/self/files">Home</a 
-            >
+            <a class="anchor" href="/z/pages/portal/self/files">Home</a>
         </li>
 
         {#each _paths as path, i}
@@ -82,6 +80,15 @@
                 >
             </li>
         {/each}
+
+        {#key __filename}
+            {#if __filename}
+                <li class="crumb-separator" aria-hidden>/</li>
+                <li class="crumb">
+                    {__filename}
+                </li>
+            {/if}
+        {/key}
     </ol>
 </div>
 
