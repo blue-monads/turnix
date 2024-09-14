@@ -14,6 +14,7 @@
     const api = getContext("__api__") as RootAPI;
 
     $: _paths = ($params["folder"] || "").split("/");
+    $: __filename = $params["filename"];
 
     $: __epoch = 1;
 
@@ -31,16 +32,15 @@
     <svelte:fragment slot="trail">
         {#if !$params["file"]}
             <div class="flex flex-row gap-1">
-
-                
-                <a href="/z/pages/portal/project/files/{pid}/upload?folder={$params["folder"] || ""}" class="btn btn-sm variant-filled">
+                <a
+                    href="/z/pages/portal/project/files/{pid}/upload?folder={$params[
+                        'folder'
+                    ] || ''}"
+                    class="btn btn-sm variant-filled"
+                >
                     <SvgIcon name="cloud-arrow-up" className="h-4 w-4" />
                     <span class="hidden md:inline">Upload</span>
                 </a>
-
-
-
-
 
                 <button
                     class="btn btn-sm variant-filled-primary"
@@ -81,6 +81,15 @@
                 >
             </li>
         {/each}
+
+        {#key __filename}
+            {#if __filename}
+                <li class="crumb-separator" aria-hidden>/</li>
+                <li class="crumb">
+                    {__filename}
+                </li>
+            {/if}
+        {/key}
     </ol>
 </div>
 
