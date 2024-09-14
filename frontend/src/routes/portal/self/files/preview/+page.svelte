@@ -20,7 +20,6 @@
 
     let fileurlWithShortKey = "";
 
-
     const load = async () => {
         loading = true;
         const res = await api.getFileShortKey(fileId);
@@ -34,52 +33,37 @@
     load();
 
     const download = async () => {
-       
         const a = document.createElement("a");
         a.href = fileurlWithShortKey;
         a.download = filename;
 
         document.body.appendChild(a);
         a.click();
-    }
-
-
-
-
+    };
 </script>
 
-
-
-
-<div class="overflow-auto" bind:this={elemRoot}>
-
+<div
+    class="h-inherit w-inherit overflow-auto"
+    bind:this={elemRoot}
+>
     {#if loading}
-
-    <div>loading...</div>
-    {:else}
-
-
-    {#if isimage}
-
-        <img src={fileurlWithShortKey} alt={filename} />
-
+        <div>loading...</div>
+    {:else if isimage}
+        <img
+            class="h-fit w-auto overflow-auto"
+            src={fileurlWithShortKey}
+            alt={filename}
+        />
     {:else if isVideo}
         <!-- svelte-ignore a11y-media-has-caption -->
         <video controls>
-            <source src={fileurlWithShortKey} type="video/mp4">
+            <source src={fileurlWithShortKey} type="video/mp4" />
         </video>
-        {:else}
-        <button 
-        class="btn btn-sm variant-filled" 
-        on:click={download}>
-        download
+    {:else}
+        <button class="btn btn-sm variant-filled" on:click={download}>
+            download
         </button>
     {/if}
-
-    {/if}
-
-
-
 </div>
 
 <style>
@@ -90,7 +74,4 @@
         justify-content: center;
         align-items: center;
     }
-    
-
-
 </style>
