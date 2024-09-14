@@ -344,6 +344,7 @@ func (d *DB) GetFileBlobStreaming(id int64, w io.Writer) error {
 
 		err := d.filePartedBlobsTable().Find(db.Cond{"file_id": id}).
 			Select("id", "size", "part_id").
+			OrderBy("part_id").
 			All(&parts)
 		if err != nil {
 			pp.Println("@get_file_blob_streaming/13", err.Error())
