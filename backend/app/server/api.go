@@ -23,14 +23,11 @@ func (a *Server) getSharedFile(ctx *gin.Context) {
 		file = strings.Join(fileParts[:len(fileParts)-1], ".")
 	}
 
-	bytes, err := a.cCommon.GetSharedFile(file)
+	err := a.cCommon.GetSharedFile(file, ctx)
 	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-
-	ctx.Writer.Write(bytes)
-	ctx.Writer.Header().Set("Content-Type", "application/octet-stream")
-	ctx.Writer.WriteHeader(http.StatusOK)
 
 }
 

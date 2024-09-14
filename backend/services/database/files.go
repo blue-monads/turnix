@@ -1,10 +1,10 @@
 package database
 
 import (
-	"bytes"
 	"database/sql"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"time"
 
@@ -252,19 +252,7 @@ func (d *DB) GetFileMeta(id int64) (*File, error) {
 	return &file, nil
 }
 
-func (d *DB) GetFileBlob(id int64) ([]byte, error) {
-	buf := bytes.Buffer{}
-
-	err := d.GetFileBlobStreaming(id, &buf)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf.Bytes(), nil
-
-}
-
-func (d *DB) GetFileBlobStreaming(id int64, w io.Writer) error {
+func (d *DB) GetFileBlobStreaming(id int64, w http.ResponseWriter) error {
 
 	pp.Println("@get_file_blob_streaming/1", id)
 
@@ -277,6 +265,9 @@ func (d *DB) GetFileBlobStreaming(id int64, w io.Writer) error {
 	}
 
 	pp.Println("@get_file_blob_streaming/2", file.FType, file.Path)
+
+	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Length", fmt.Sprintf("%d", file.Size))
 
 	if file.StoreType == 0 {
 		data := make([]byte, file.Size)
@@ -490,16 +481,16 @@ func (d *DB) DeleteFileShare(userId int64, id string) error {
 	return table.Find(db.Cond{"id": id, "user_id": userId}).Delete()
 }
 
-func (d *DB) GetSharedFile(id string) ([]byte, error) {
+func (d *DB) GetSharedFile(id string, w http.ResponseWriter) error {
 	table := d.fileSharesTable()
 	file := &FileShare{}
 
 	err := table.Find(db.Cond{"id": id}).One(file)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return d.GetFileBlob(file.FileID)
+	return d.GetFileBlobStreaming(file.FileID, w)
 }
 
 func (d *DB) fileSharesTable() db.Collection {

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/bornjre/turnix/backend/services/database"
+	"github.com/gin-gonic/gin"
 )
 
 type SelfController struct {
@@ -42,23 +43,23 @@ func (a *SelfController) AddSelfFolder(userId int64, path, name string) (int64, 
 	return a.db.AddFolder(0, userId, "user", path, name)
 }
 
-func (a *SelfController) GetSelfFile(userId int64, id int64) ([]byte, error) {
+func (a *SelfController) GetSelfFile(userId int64, id int64, ctx *gin.Context) error {
 	// fixme check if user has access to file
 
 	fmeta, err := a.db.GetFileMeta(id)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if fmeta.FType != "user" {
-		return nil, fmt.Errorf("file is not found")
+		return fmt.Errorf("file is not found")
 	}
 
 	if fmeta.OwnerUser != userId {
-		return nil, fmt.Errorf("file not found")
+		return fmt.Errorf("file not found")
 	}
 
-	return a.db.GetFileBlob(id)
+	return a.db.GetFileBlobStreaming(id, ctx.Writer)
 }
 
 func (a *SelfController) DeleteSelfFile(userId int64, id int64) error {

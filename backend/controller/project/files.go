@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/bornjre/turnix/backend/services/database"
+	"github.com/gin-gonic/gin"
 )
 
 func (a *ProjectController) ListProjectFiles(userId int64, pid int64, path string) ([]database.File, error) {
@@ -33,23 +34,23 @@ func (a *ProjectController) AddProjectFolder(userId int64, pid int64, path, name
 	return a.db.AddFolder(pid, userId, "project", path, name)
 }
 
-func (a *ProjectController) GetProjectFile(userId int64, pid int64, id int64) ([]byte, error) {
+func (a *ProjectController) GetProjectFile(userId int64, pid int64, id int64, ctx *gin.Context) error {
 	// fixme check if user has access to file
 
 	fmeta, err := a.db.GetFileMeta(id)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if fmeta.OwnerProj != pid {
-		return nil, fmt.Errorf("file not found")
+		return fmt.Errorf("file not found")
 	}
 
 	if fmeta.FType != "project" {
-		return nil, fmt.Errorf("file is not found")
+		return fmt.Errorf("file is not found")
 	}
 
-	return a.db.GetFileBlob(id)
+	return a.db.GetFileBlobStreaming(id, ctx.Writer)
 }
 
 func (a *ProjectController) DeleteProjectFile(userId int64, pid int64, id int64) error {

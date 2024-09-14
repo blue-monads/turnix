@@ -58,8 +58,8 @@ func (c *CommonController) GetUserInfo(uid int64) (*UserInfo, error) {
 
 }
 
-func (c *CommonController) GetSharedFile(file string) ([]byte, error) {
-	return c.db.GetSharedFile(file)
+func (c *CommonController) GetSharedFile(file string, ctx *gin.Context) error {
+	return c.db.GetSharedFile(file, ctx.Writer)
 }
 
 type ShortFileKey struct {

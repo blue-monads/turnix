@@ -198,14 +198,11 @@ func (a *Server) getProjectFile(ctx *gin.Context) {
 	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
 
-	bytes, err := a.cProject.GetProjectFile(claim.UserId, pid, id)
+	err = a.cProject.GetProjectFile(claim.UserId, pid, id, ctx)
 	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-
-	ctx.Writer.Write(bytes)
-	ctx.Writer.Header().Set("Content-Type", "application/octet-stream")
-	ctx.Writer.WriteHeader(http.StatusOK)
 
 }
 
