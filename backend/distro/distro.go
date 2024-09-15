@@ -18,13 +18,13 @@ type DistroApp struct {
 	App     xtypes.App
 }
 
-var defaultOption = Options{
+var DefaultOption = Options{
 	MasterSecret: "A_long_HARD_Token",
-	HttpPort:     ":7777",
+	HttpPort:     ":7703",
 }
 
 func NewApp() (*DistroApp, error) {
-	return NewAppWithOptions(defaultOption)
+	return NewAppWithOptions(DefaultOption)
 }
 
 func NewAppWithOptions(opts Options) (*DistroApp, error) {

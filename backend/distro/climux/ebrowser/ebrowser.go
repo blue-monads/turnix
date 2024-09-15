@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/bornjre/turnix/backend/distro"
 	"github.com/bornjre/turnix/backend/distro/climux"
 
 	webview "github.com/webview/webview_go"
@@ -91,7 +92,7 @@ func (e *EbrowserApp) __BindEbrowserRPC(name string, opts map[string]string) {
 
 func (e *EbrowserApp) NavigateLocal(file string) error {
 
-	url := fmt.Sprintf("http://localhost%s/z/pages", ":7777")
+	url := fmt.Sprintf("http://localhost%s/z/pages", distro.DefaultOption)
 
 	pp.Println("@opening_url", url)
 	e.webview.Navigate(url)
