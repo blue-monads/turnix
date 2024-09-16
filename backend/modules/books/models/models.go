@@ -227,6 +227,7 @@ type Sales struct {
 	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
 	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
 	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	SalesDate *time.Time `json:"sales_date" db:"sales_date,omitempty"`
 	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
 }
 
