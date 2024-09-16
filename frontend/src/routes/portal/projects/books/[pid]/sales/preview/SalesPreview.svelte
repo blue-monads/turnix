@@ -69,7 +69,6 @@
                             <th class="px-4 py-2 text-right">Unit Price</th>
                             <th class="px-4 py-2 text-right">Tax</th>
                             <th class="px-4 py-2 text-right">Total</th>
-                            <th class="px-4 py-2 text-right"></th>
                         </tr>
                     </thead>
                     <tbody>

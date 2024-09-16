@@ -50,7 +50,6 @@
         return acc;
     }, {});
 
-    let mode = "invoice";
 </script>
 
 {#if loadingContacts || loadingData}
