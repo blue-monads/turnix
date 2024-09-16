@@ -7,6 +7,6 @@
     const data = $store[0].meta;
 </script>
 
-<div class="w-modal-wide bg-white p-4 max-h-[90vh] overflow-auto">
+<div class="w-fit min-w-96 bg-white p-4 max-h-[90vh] overflow-auto">
     <FilePreview api={data.api} fileId={data.fileId} filename={data.filename} />
 </div>
