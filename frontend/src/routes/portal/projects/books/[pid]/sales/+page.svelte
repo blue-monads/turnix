@@ -8,6 +8,7 @@
     import { AutoTable, Loader } from "$lib/compo";
     import { goto } from "$app/navigation";
     import SalesFilter from "./sub/SalesFilter.svelte";
+    import { formatCurrency } from "$lib";
 
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
@@ -25,6 +26,7 @@
         sales = (resp.data || []).map(item => {
             return {
                 ...item,
+                total: formatCurrency(item.total) as any,
                 created_at: new Date(item.created_at).toISOString(),
                 updated_at: new Date(item.updated_at).toISOString(),
             }
@@ -84,7 +86,6 @@
 {#if loading}
     <Loader />
 {:else}
-    <SalesFilter />
 
     <AutoTable
         action_key={"id"}
@@ -95,7 +96,6 @@
             ["client_name", "Client"],
             ["total", "Total"],
             ["created_at", "Created At"],
-            ["updated_at", "Updated At"],
         ]}
         datas={sales}
         color={["ctype"]}
