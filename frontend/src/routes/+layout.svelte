@@ -14,10 +14,11 @@
   import NewFolderPanel from "./portal/project/files/[pid]/sub/NewFolderPanel.svelte";
   import NewPluginPicker from "./portal/project/plugins/NewPluginPicker.svelte";
   import FilePicker from "./portal/filestore/FilePicker.svelte";
-  import {  Drawer } from '@skeletonlabs/skeleton';
-    import Notification from "./portal/self/inbox/notification.svelte";
-    import OverAllTaxPicker from "./portal/projects/books/[pid]/sales/new/sub/OverAllTaxPicker.svelte";
-    import OverAllDiscountPicker from "./portal/projects/books/[pid]/sales/new/sub/OverAllDiscountPicker.svelte";
+  import { Drawer } from "@skeletonlabs/skeleton";
+  import Notification from "./portal/self/inbox/notification.svelte";
+  import OverAllTaxPicker from "./portal/projects/books/[pid]/sales/new/sub/OverAllTaxPicker.svelte";
+  import OverAllDiscountPicker from "./portal/projects/books/[pid]/sales/new/sub/OverAllDiscountPicker.svelte";
+  import FilePreviewDialog from "./portal/self/files/preview/FilePreviewDialog.svelte";
 
   initializeStores();
 
@@ -33,13 +34,12 @@
     books_sales_overall_tax_picker: { ref: OverAllTaxPicker },
     books_sales_overall_discount_picker: { ref: OverAllDiscountPicker },
 
-
     file_picker: { ref: FilePicker },
-
+    file_preview_dialog: { ref: FilePreviewDialog },
   };
 </script>
 
-<Drawer> 
+<Drawer>
   <Notification />
 </Drawer>
 

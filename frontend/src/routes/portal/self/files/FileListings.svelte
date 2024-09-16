@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { createEventDispatcher, onMount } from "svelte";
-    import type { File } from "$lib/api";
+    import { createEventDispatcher, getContext, onMount } from "svelte";
+    import type { File, RootAPI } from "$lib/api";
     import { FolderIcon, Loader } from "$lib/compo";
     import FileIcon from "$lib/compo/FileIcons/FileIcon.svelte";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { goto } from "$app/navigation";
+    import { getModalStore } from "@skeletonlabs/skeleton";
 
     export let files: File[] = [];
     export let loading = false;
@@ -12,7 +13,10 @@
     export let path = "";
     export let selected: string;
 
+    let api = getContext("__api__") as RootAPI;
+
     const dispatcher = createEventDispatcher();
+    const store = getModalStore();
 
     let size = "32";
 
@@ -22,7 +26,9 @@
                 `${baseUrl}?folder=${path ? path + "/" + row.name : row.name}`,
             );
         } else {
-            goto(`${baseUrl}/preview?folder=${path}&fid=${row.id}&filename=${row.name}`);
+            goto(
+                `${baseUrl}/preview?folder=${path}&fid=${row.id}&filename=${row.name}`,
+            );
         }
     };
 
@@ -56,10 +62,24 @@
     const bytesToHumanReadable = (bytes: number) => {
         const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
         if (bytes === 0) return "0 Byte";
-        const i = parseInt(String(Math.floor(Math.log(bytes) / Math.log(1024))));
+        const i = parseInt(
+            String(Math.floor(Math.log(bytes) / Math.log(1024))),
+        );
         if (i === 0) return `${bytes} ${sizes[i]}`;
         return `${(bytes / 1024 ** i).toFixed(1)} ${sizes[i]}`;
-    }
+    };
+
+    const previewFile = (row: File) => {
+        store.trigger({
+            type: "component",
+            component: "file_preview_dialog",
+            meta: {
+                api,
+                fileId: row.id,
+                filename: row.name,
+            },
+        });
+    };
 </script>
 
 <div class="table-container">
@@ -114,16 +134,21 @@
                         <td>
                             {#if row.size}
                                 {bytesToHumanReadable(row.size)}
-                            {/if}                        
+                            {/if}
                         </td>
                         <td>
                             {#if !isActive || activeFileId === row.id}
-                                <button
-                                    on:click={expore(row)}
-                                    class="btn btn-sm variant-filled"
-                                >
-                                    <SvgIcon name="eye" className="w-4 h-4" />
-                                </button>
+                                {#if !row.is_folder}
+                                    <button
+                                        on:click={() => previewFile(row)}
+                                        class="btn btn-sm variant-filled"
+                                    >
+                                        <SvgIcon
+                                            name="eye"
+                                            className="w-4 h-4"
+                                        />
+                                    </button>
+                                {/if}
 
                                 <button
                                     on:click|stopPropagation={() => {
