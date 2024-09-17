@@ -12,7 +12,7 @@
 
     <div class="flex flex-wrap justify-end gap-2">
         <a
-            href={`/z/pages/startpage/peers/account/new`}
+            href={`/z/pages/startpage/peers/new`}
             class="btn variant-filled btn-sm"
         >
             <SvgIcon className="h-4 w-4" name="plus" />
