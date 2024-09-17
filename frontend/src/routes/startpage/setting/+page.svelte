@@ -15,7 +15,6 @@
                 />
 
                 <span class="italic text-xs">Zero means random</span>
-
             </label>
 
             <div class="label flex flex-col">
@@ -30,6 +29,40 @@
                 <input type="checkbox" class="checkbox" />
             </div>
 
+            <div class="label flex flex-col">
+                <span>Auto start on boot</span>
+                <input type="checkbox" class="checkbox" />
+            </div>
+
+            <div class="label flex flex-col">
+                <span>Secret Key</span>
+                <input
+                    class="input p-0.5 w-72"
+                    type="password"
+                    value="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                    placeholder="name"
+                />
+            </div>
+
+            <div class="label flex flex-col">
+                <span>Peer ID</span>
+                <textarea
+                    class="input textarea"
+                    value="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                    disabled
+                    rows="3"
+                />
+            </div>
+
+            <div class="label flex flex-col">
+                <span>Full Public Key</span>
+                <textarea
+                    class="input textarea"
+                    value="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                    disabled
+                    rows="3"
+                />
+            </div>
         </section>
         <footer class="card-footer flex justify-end gap-2">
             <button class="btn btn-sm variant-filled"> save </button>
