@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
     import Autotable from "$lib/compo/autotable/autotable.svelte";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
@@ -31,8 +32,10 @@
         },
 
         {
-            Action: async (id) => {},
-            Name: "shell",
+            Action: async (id) => {
+                goto(`/z/pages/startpage/peers/info?id=${id}`);
+            },
+            Name: "info",
             Class: "variant-filled-secondary",
         },
 
