@@ -35,6 +35,11 @@
             link: "/z/pages/startpage/peers",
             icon: "rss",
         },
+        {
+            name: "Setting",
+            link: "/z/pages/startpage/setting",
+            icon: "cog",
+        },
     ];
 
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
