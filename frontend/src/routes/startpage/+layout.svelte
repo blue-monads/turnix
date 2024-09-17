@@ -73,7 +73,7 @@
         </AppRail>
     </div>
 
-    <div class="h-[calc(100vh-4rem)] md:h-screen">
+    <div class="h-[calc(100vh-4rem)] md:h-screen bg-gradient-to-b from-indigo-50 to-purple-50">
         <slot />
     </div>
 </AppShell>
