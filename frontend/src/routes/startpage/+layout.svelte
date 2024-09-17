@@ -32,7 +32,7 @@
         },
         {
             name: "Peers",
-            link: "/z/pages/startpage",
+            link: "/z/pages/startpage/peers",
             icon: "rss",
         },
     ];

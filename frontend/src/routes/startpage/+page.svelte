@@ -1,2 +1,4 @@
+<script lang="ts">
+    import { AppBar } from "@skeletonlabs/skeleton";
+</script>
 
-<div>startpage</div>
