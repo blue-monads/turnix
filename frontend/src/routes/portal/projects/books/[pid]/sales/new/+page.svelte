@@ -5,6 +5,7 @@
     import { page } from "$app/stores";
     import { Loader } from "$lib/compo";
     import SaleMaker from "./SaleMaker.svelte";
+    import { goto } from "$app/navigation";
 
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
@@ -36,8 +37,13 @@
         console.log("@submit/data", data);
 
         const resp = await api.addSale(pid, data);
+        if (resp.status !== 200) {
+            return resp.data.message;
+        }
+
+        goto(`/z/pages/portal/projects/books/${pid}/sales`);
         
-        console.log(resp);
+        return "";
 
     };
 

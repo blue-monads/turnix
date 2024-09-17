@@ -93,7 +93,6 @@
             ["id", "ID"],
             ["title", "Title"],
             ["notes", "Notes"],
-            ["client_name", "Client"],
             ["total", "Total"],
             ["created_at", "Created At"],
         ]}

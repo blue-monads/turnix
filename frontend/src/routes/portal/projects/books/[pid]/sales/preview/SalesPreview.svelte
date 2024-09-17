@@ -14,7 +14,7 @@
     export let salesData: SalesData;
     export let contactsNameIndex: Record<number, string> = {};
 
-    export let api: BooksAPI;
+    // export let api: BooksAPI;
 
     let overall_tax_percentage = 0;
     let overall_discount_percentage = 0;

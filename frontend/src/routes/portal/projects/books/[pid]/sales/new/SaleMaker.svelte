@@ -42,12 +42,11 @@
     ];
 
     export let contactsNameIndex: Record<number, string> = {};
-    export let submit = async (data: SaleData) => {
-
-    };
+    export let submit:  (data: SaleData) => Promise<string>;
     export let api: BooksAPI;
 
     let mode = "invoice";
+    let message = ""
 
     let overall_tax_percentage = 0;
     let overall_discount_percentage = 0;
@@ -84,7 +83,11 @@
                 api,
                 pid,
                 onSelect: (data: any) => {
-                    client_name = data["name"] || "";
+                    if (!title) {
+                        title = data["name"] || "";
+                    }
+                    
+                    
                     client_id = data["id"] || 0;
                 },
             },
@@ -136,7 +139,7 @@
     };
 </script>
 
-<form class="p-2" >
+<form class="p-2">
     <div class="card">
         <header class="card-header flex justify-between">
             <h3 class="h3">New Sale</h3>
@@ -176,12 +179,10 @@
                         <span>Billed To</span>
 
                         <div class="flex gap-2">
-                            <input
-                                type="text"
-                                bind:value={client_name}
-                                class="input p-1"
-                                placeholder="Client"
-                            />
+                            
+                            <span class="text-sm italic"
+                                >{contactsNameIndex[client_id] || ""}
+                            </span>
 
                             <button on:click={clientPicker}>
                                 <SvgIcon
@@ -190,10 +191,6 @@
                                 />
                             </button>
                         </div>
-
-                        <span class="text-sm italic"
-                            >{contactsNameIndex[client_id] || ""}</span
-                        >
                     </label>
                 </div>
 
@@ -433,31 +430,42 @@
                     </table>
                 </div>
             </div>
+
+            <div>
+                <p class="text-red-500">{message}</p>
+            </div>
+
         </section>
         <footer class="card-footer flex justify-end">
-            <button 
-            disabled={lines.length === 0 || !client_id}
-            class="btn variant-filled" 
-            on:click={() => {
-                submit({
-                    sale: {
-                        title,
-                        notes,
-                        client_id,
-                        client_name,
-                        total_item_price,
-                        total_item_tax_amount,
-                        total_item_discount_amount,
-                        sub_total,
-                        overall_discount_amount,
-                        overall_tax_amount,
-                        total,
-                        sales_date,
-                    },                    
-                    lines: lines,
-                })
+            <button
+                disabled={lines.length === 0 || !client_id}
+                class="btn variant-filled"
+                on:click={async () => {
 
-            }}> save </button>
+                    const resp = await submit({
+                        sale: {
+                            title,
+                            notes,
+                            client_id,
+                            client_name,
+                            total_item_price,
+                            total_item_tax_amount,
+                            total_item_discount_amount,
+                            sub_total,
+                            overall_discount_amount,
+                            overall_tax_amount,
+                            total,
+                            sales_date,
+                        },
+                        lines: lines,
+                    });
+
+                    message = resp;
+
+                }}
+            >
+                save
+            </button>
         </footer>
     </div>
 </form>
