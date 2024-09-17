@@ -89,10 +89,11 @@
 
                 <label class="label">
                     <span>Catagory</span>
+                    
                     <select 
-                        value={data.catid} 
+                        value={data.catagory_id} 
                         class="select" 
-                        on:change={setValueNumber("catid")}
+                        on:change={setValueNumber("catagory_id")}
                         >
                         {#each allCatagories as catagory}
                             <option value={catagory.id}>{catagory.name}</option>
