@@ -1,4 +1,6 @@
 <script lang="ts">
+    import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+
     const peerInfo = {
         id: "xx-yy-zz",
         added: "2022-12-31",
@@ -9,16 +11,7 @@
         preConnect: false,
         adminKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
         multiAddrs: [
-            {
-                ip: "127.0.0.1",
-                port: 1234,
-                protocol: "tcp",
-            },
-            {
-                ip: "44.55.66.77",
-                port: 1234,
-                protocol: "tcp",
-            },
+            "/ip6/2604:a880:1:20::204:4001/udp/4001/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ"
         ],
 
         staticAddrs: [
@@ -118,17 +111,21 @@
                 <table class="table table-hover overflow-auto input">
                     <thead>
                         <tr>
-                            <th>Protocol</th>
-                            <th>IP</th>
-                            <th>Port</th>
+                            <th>Addr</th>
                         </tr>
                     </thead>
                     <tbody>
                         {#each peerInfo.multiAddrs as addr}
                             <tr>
-                                <td>{addr.protocol}</td>
-                                <td>{addr.ip}</td>
-                                <td>{addr.port}</td>
+                                <td>
+                                    <span class="chip variant-ghost-secondary text-lg">
+                                        {addr}
+
+                                    </span>
+
+                                
+                                </td>
+
                             </tr>
                         {/each}
                     </tbody>
@@ -158,6 +155,14 @@
                         {/each}
                     </tbody>
                 </table>
+
+                <div class="label flex justify-start p-1">
+                    <button class="btn btn-sm variant-filled">
+                        <SvgIcon name="plus" className="w-4 h-4" />
+                        add
+                    </button>
+                </div>
+
             </div>
 
             <!-- static relays table -->
@@ -184,6 +189,12 @@
                         {/each}
                     </tbody>
                 </table>
+                <div class="label flex justify-start p-1">
+                    <button class="btn btn-sm variant-filled">
+                        <SvgIcon name="plus" className="w-4 h-4" />
+                        add
+                    </button>
+                </div>
             </div>
 
             <footer class="card-footer flex justify-end gap-2">
