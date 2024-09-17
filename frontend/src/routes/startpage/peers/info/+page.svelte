@@ -5,7 +5,8 @@
         lastSeen: "2022-12-31",
         status: "online",
         fullPublicKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        peerType: "guest", // guest, trusted, admin
+        peerType: "guest", // admin
+        preConnect: false,
         multiAddrs: [
             {
                 ip: "127.0.0.1",
@@ -72,6 +73,16 @@
                 </div>
             </div>
 
+            <!-- peer type -->
+
+            <div class="label flex flex-col">
+                <span>Peer type</span>
+                <select bind:value={peerInfo.peerType} class="select">
+                    <option value="guest">Guest</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+
             <!-- fullpublickey -->
 
             <div class="label flex flex-col">
@@ -79,6 +90,17 @@
                 <textarea class="input textarea" disabled
                     >{peerInfo.fullPublicKey}</textarea
                 >
+            </div>
+
+            <!-- preconnect -->
+            <div class="label flex flex-col">
+                <span>Pre connect</span>
+
+                <input
+                    value={peerInfo.preConnect}
+                    type="checkbox"
+                    class="checkbox"
+                />
             </div>
 
             <!-- multiaddrs table -->
@@ -157,10 +179,21 @@
             </div>
 
             <footer class="card-footer flex justify-end gap-2">
-                <button class="btn btn-sm variant-filled-primary"> shell </button>
-                <button class="btn btn-sm variant-filled-secondary">share</button>
-                <button class="btn btn-sm variant-filled-tertiary">chat</button>
-                <button class="btn btn-sm variant-filled-error"> delete </button>
+                <button class="btn btn-sm variant-filled-primary">
+                    shell
+                </button>
+                <button class="btn btn-sm variant-filled-secondary">
+                    share
+                </button>
+                <button class="btn btn-sm variant-filled-tertiary mr-8">
+                    chat
+                </button>
+
+                <button class="btn btn-sm variant-filled"> save </button>
+
+                <button class="btn btn-sm variant-filled-error">
+                    delete
+                </button>
             </footer>
         </section>
     </div>
