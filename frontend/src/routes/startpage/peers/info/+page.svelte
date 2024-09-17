@@ -7,6 +7,7 @@
         fullPublicKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
         peerType: "guest", // admin
         preConnect: false,
+        adminKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
         multiAddrs: [
             {
                 ip: "127.0.0.1",
@@ -89,6 +90,13 @@
                 <span>Full public key</span>
                 <textarea class="input textarea" disabled
                     >{peerInfo.fullPublicKey}</textarea
+                >
+            </div>
+
+            <div class="label flex flex-col">
+                <span>Admin key</span>
+                <textarea class="input textarea" disabled
+                    >{peerInfo.adminKey}</textarea
                 >
             </div>
 
