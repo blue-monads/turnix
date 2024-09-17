@@ -93,7 +93,7 @@
                         value={data.catid} 
                         class="select" 
                         on:change={setValueNumber("catid")}
-                        required>
+                        >
                         {#each allCatagories as catagory}
                             <option value={catagory.id}>{catagory.name}</option>
                         {/each}
