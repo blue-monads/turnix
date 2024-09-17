@@ -23,6 +23,7 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	contactGrp := group.Group("/:pid/contacts")
 	salesGrp := group.Group("/:pid/sales")
 	taxGrp := group.Group("/:pid/tax")
+	stocksGrp := group.Group("/:pid/stocks")
 
 	// accounts
 	accGrp.GET("/", x(b.listAccount))
@@ -85,6 +86,13 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	salesGrp.POST("/", x(b.addSales))
 	salesGrp.GET("/:id", x(b.getSales))
 	salesGrp.DELETE("/:id", x(b.deleteSales))
+
+	// stocks
+
+	stocksGrp.GET("/", x(b.listProductStockIn))
+	stocksGrp.POST("/", x(b.addProductStockIn))
+	stocksGrp.GET("/:id", x(b.getProductStockIn))
+	stocksGrp.DELETE("/:id", x(b.deleteProductStockIn))
 
 	return nil
 }
@@ -613,6 +621,39 @@ func (b *BookModule) deleteTaxProduct(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
 	err := b.dbOpts.ProductTaxDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+
+	return nil, err
+}
+
+// stocks
+
+func (b *BookModule) listProductStockIn(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	return b.dbOpts.ProductStockInList(pid, ctx.Claim.UserId)
+}
+
+func (b *BookModule) addProductStockIn(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	data := &dbops.StockInData{}
+	err := ctx.Http.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.dbOpts.ProductStockInAdd(pid, ctx.Claim.UserId, data)
+}
+
+func (b *BookModule) getProductStockIn(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	return b.dbOpts.ProductStockInGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+}
+
+func (b *BookModule) deleteProductStockIn(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	err := b.dbOpts.ProductStockInDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 
 	return nil, err
 }

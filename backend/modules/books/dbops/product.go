@@ -161,3 +161,46 @@ func (b *DbOps) ProductStockInAdd(pid, uid int64, data *StockInData) (pstockInid
 
 	return pstockInid, nil
 }
+
+func (b *DbOps) ProductStockInGet(pid, uid, id int64) (*models.ProductStockIn, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	data := &models.ProductStockIn{}
+	table := b.productStockInTable(pid)
+
+	err = table.Find(db.Cond{"id": id}).One(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (b *DbOps) ProductStockInList(pid, uid int64) ([]models.ProductStockIn, error) {
+	err := b.userHasScope(pid, uid, "read")
+	if err != nil {
+		return nil, err
+	}
+
+	datas := make([]models.ProductStockIn, 0)
+	table := b.productStockInTable(pid)
+
+	err = table.Find().All(&datas)
+	if err != nil {
+		return nil, err
+	}
+
+	return datas, nil
+}
+
+func (b *DbOps) ProductStockInDelete(pid, uid, id int64) error {
+	err := b.userHasScope(pid, uid, "write")
+	if err != nil {
+		return err
+	}
+
+	return b.productStockInTable(pid).Find(db.Cond{"id": id}).Delete()
+}

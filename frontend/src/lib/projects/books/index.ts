@@ -194,6 +194,21 @@ export interface ProductTax {
 }
 
 
+export interface StockIn {
+    id: number
+    info: string
+    amount: number
+    vendor_id: number
+}
+
+export interface StockInLine {
+    id: number
+    info: string
+    product_id: number
+    qty: number
+    amount: number
+}
+
 
 export const NewBookAPI = (api: RootAPI) => {
     return new BooksAPI(api.projectClient)
@@ -395,6 +410,23 @@ export class BooksAPI {
         return this.client.delete(`books/${pid}/tax/${id}/product/${tpid}`)
     }
 
+    // stocks
+
+    listProductStockIn = (pid: string) => {
+        return this.client.get<StockIn[]>(`books/${pid}/stocks`)
+    }
+
+    addProductStockIn = (pid: string, data: Partial<StockIn>) => {
+        return this.client.post(`books/${pid}/stocks`, data)
+    }
+
+    getProductStockIn = (pid: string, id: string) => {
+        return this.client.get<StockIn>(`books/${pid}/stocks/${id}`)
+    }
+
+    deleteProductStockIn = (pid: string, id: string) => {
+        return this.client.delete(`books/${pid}/stocks/${id}`)
+    }
 
 }
 
