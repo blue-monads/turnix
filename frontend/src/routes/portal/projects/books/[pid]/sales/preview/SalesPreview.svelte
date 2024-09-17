@@ -36,10 +36,12 @@
 
                     <div class="label">
                         <span class="font-semibold">Billed To : </span>
-
-                        <span class="text-sm italic">
+                        <a
+                            class="text-sm italic underline"
+                            href={`/z/pages/portal/projects/books/${pid}/contacts/edit?cid=${salesData.sale.client_id}`}
+                        >
                             {contactsNameIndex[salesData.sale.client_id] || ""}
-                        </span>
+                        </a>
                     </div>
                 </div>
 
@@ -50,7 +52,9 @@
                         class="input p-1"
                         placeholder="Date"
                         disabled
-                        value={new Date(salesData.sale.created_at).toISOString().slice(0, 16)}
+                        value={new Date(salesData.sale.created_at)
+                            .toISOString()
+                            .slice(0, 16)}
                     />
                 </label>
             </div>
@@ -83,13 +87,17 @@
                                 <td
                                     class="px-4 py-2 text-right border tabular-nums slashed-zero"
                                 >
-
-                                        <span
-                                            >{line.price} - ({line.discount_amount})</span
-                                        >
-                                        =
-                                        <strong>{formatCurrency((line.price || 0 ) - (line.discount_amount || 0) + (line.tax_amount || 0))}</strong>
-                                    
+                                    <span
+                                        >{line.price} - ({line.discount_amount})</span
+                                    >
+                                    =
+                                    <strong
+                                        >{formatCurrency(
+                                            (line.price || 0) -
+                                                (line.discount_amount || 0) +
+                                                (line.tax_amount || 0),
+                                        )}</strong
+                                    >
                                 </td>
                                 <td
                                     class="px-4 py-2 text-right border tabular-nums slashed-zero"
@@ -132,6 +140,8 @@
                     <span>Notes</span>
                     <textarea
                         class="textarea p-1"
+                        value={salesData.sale.notes}
+                        disabled={true}
                         rows="4"
                         placeholder="Notes about the sale.."
                     />
