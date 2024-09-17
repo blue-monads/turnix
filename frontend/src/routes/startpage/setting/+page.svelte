@@ -65,6 +65,7 @@
             </div>
         </section>
         <footer class="card-footer flex justify-end gap-2">
+            <button class="btn btn-sm variant-ghost-primary"> other instances </button>            
             <button class="btn btn-sm variant-filled"> save </button>
         </footer>
     </div>
