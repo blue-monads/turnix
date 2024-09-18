@@ -4,8 +4,10 @@ go 1.21.7
 
 require (
 	github.com/alecthomas/repr v0.4.0
+	github.com/aurowora/compress v0.0.0-20230724224640-6512772d482f
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dop251/goja v0.0.0-20240610225006-393f6d42497b
+	github.com/gin-contrib/size v1.0.1
 	github.com/gin-gonic/gin v1.10.0
 	github.com/gobuffalo/fizz v1.14.4
 	github.com/hako/branca v0.0.0-20200807062402-6052ac720505
@@ -28,6 +30,7 @@ require (
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.0 // indirect
+	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/bytedance/sonic v1.11.6 // indirect
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
@@ -55,6 +58,7 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
+	github.com/klauspost/compress v1.15.9 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

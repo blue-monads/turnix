@@ -13,6 +13,9 @@ import (
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
+
+	"github.com/aurowora/compress"
+	limits "github.com/gin-contrib/size"
 )
 
 type Server struct {
@@ -60,6 +63,9 @@ func New(opts Options) *Server {
 func (a *Server) Start(port string) error {
 
 	r := gin.Default()
+
+	r.Use(compress.Compress())
+	r.Use(limits.RequestSizeLimiter(100 * 1024 * 1024))
 
 	a.bindRoutes(r)
 
