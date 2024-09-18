@@ -111,6 +111,7 @@ create table __project__Catagories(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL DEFAULT '',
     info TEXT NOT NULL DEFAULT '',
+    product_class TEXT NOT NULL DEFAULT 'physical_item', -- physical_item, service, digital_item        
     parent_id INTEGER NOT NULL DEFAULT 0,
     image TEXT NOT NULL DEFAULT '',
     created_by INTEGER NULL,
