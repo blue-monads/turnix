@@ -63,23 +63,27 @@
             Sale
         </a>
 
+
+        <button
+            class="btn variant-filled-secondary btn-sm"
+            on:click={() => {
+
+            }}
+        >
+            <SvgIcon className="h-4 w-4 mr-1" name="check" />
+
+            Close
+        </button>
+
         <a
             href={`/z/pages/portal/projects/books/${pid}/sales/estimates`}
-            class="btn variant-filled-secondary btn-sm"
+            class="btn variant-filled-tertiary btn-sm"
         >
+
             <SvgIcon className="h-4 w-4 mr-1" name="document" />
 
             Estimates
-        </a>
-
-        <a
-            href={`/z/pages/portal/projects/books/${pid}/sales/invoice`}
-            class="btn variant-filled btn-sm"
-        >
-            <SvgIcon className="h-4 w-4 mr-1" name="document-text" />
-
-            Invoices
-        </a>
+    </a>
     </svelte:fragment>
 </AppBar>
 
