@@ -52,10 +52,10 @@
         },
 
         {
-            name: "Journals",
-            link: `/z/pages/portal/projects/books/${pid}/journal`,
+            name: "Scratchpads",
+            link: `/z/pages/portal/projects/books/${pid}/scratchpad`,
             icon: "book-open",
-            key: "journal",
+            key: "scratchpad",
         },
         {
             name: "Settings",

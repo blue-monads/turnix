@@ -262,7 +262,7 @@ create table __project__Contacts(
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-create table __project__Journals(
+create table __project__Scrachpads(
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
