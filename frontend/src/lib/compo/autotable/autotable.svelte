@@ -43,7 +43,7 @@
   };
 </script>
 
-<div class="p-2 overflow-visible">
+<div class="p-2 overflow-auto">
   <table class="table-auto border-collapse w-full card">
     <thead>
       <tr
