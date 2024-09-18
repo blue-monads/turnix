@@ -74,16 +74,7 @@
 
             Close
         </button>
-
-        <a
-            href={`/z/pages/portal/projects/books/${pid}/sales/estimates`}
-            class="btn variant-filled-tertiary btn-sm"
-        >
-
-            <SvgIcon className="h-4 w-4 mr-1" name="document" />
-
-            Estimates
-    </a>
+        
     </svelte:fragment>
 </AppBar>
 

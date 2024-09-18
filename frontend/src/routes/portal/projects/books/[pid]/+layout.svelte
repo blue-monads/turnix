@@ -25,6 +25,13 @@
             key: "inventory",
         },
         {
+            name: "Estimates",
+            link: `/z/pages/portal/projects/books/${pid}/estimates`,
+            icon: "document",
+            key: "estimates",
+
+        },
+        {
             name: "Sales",
             link: `/z/pages/portal/projects/books/${pid}/sales`,
             icon: "banknotes",
@@ -44,6 +51,12 @@
             key: "contacts",
         },
 
+        {
+            name: "Journals",
+            link: `/z/pages/portal/projects/books/${pid}/journal`,
+            icon: "book-open",
+            key: "journal",
+        },
         {
             name: "Settings",
             link: `/z/pages/portal/projects/books/${pid}/actions`,
