@@ -207,18 +207,16 @@ func (b *DbOps) ListAccountTxnWithLines(pid, uid, accId, offset int64) (*TxnReco
 
 	for _, result := range results {
 		record.Transactions = append(record.Transactions, models.Transaction{
-			ID:              result.Id,
-			Title:           result.Title,
-			Notes:           result.Notes,
-			LinkedSalesID:   int64(result.LinkedSalesID),
-			LinkedInvoiceID: int64(result.LinkedSalesID),
-			ReferenceID:     result.ReferenceID,
-			Attachments:     result.Attachments,
-			CreatedBy:       int64(result.TxnCreatedBy),
-			UpdatedBy:       int64(result.TxnUpdatedBy),
-			CreatedAt:       result.TxnCreatedAt,
-			UpdatedAt:       result.TxnUpdatedAt,
-			IsDeleted:       false,
+			ID:          result.Id,
+			Title:       result.Title,
+			Notes:       result.Notes,
+			ReferenceID: result.ReferenceID,
+			Attachments: result.Attachments,
+			CreatedBy:   int64(result.TxnCreatedBy),
+			UpdatedBy:   int64(result.TxnUpdatedBy),
+			CreatedAt:   result.TxnCreatedAt,
+			UpdatedAt:   result.TxnUpdatedAt,
+			IsDeleted:   false,
 		})
 
 		record.Lines = append(record.Lines, models.TransactionLine{

@@ -197,14 +197,12 @@ func (b *BookModule) addTxn(ctx xtypes.ContextPlus) (any, error) {
 	// fixme store files
 
 	txnid, err := b.dbOpts.AddTxn(pid, ctx.Claim.UserId, &models.Transaction{
-		Title:           data.Title,
-		Notes:           data.Notes,
-		LinkedSalesID:   data.LinkedSalesID,
-		LinkedInvoiceID: data.LinkedSalesID,
-		ReferenceID:     data.ReferenceID,
-		Attachments:     buf.String(),
-		CreatedBy:       ctx.Claim.UserId,
-		UpdatedBy:       ctx.Claim.UserId,
+		Title:       data.Title,
+		Notes:       data.Notes,
+		ReferenceID: data.ReferenceID,
+		Attachments: buf.String(),
+		CreatedBy:   ctx.Claim.UserId,
+		UpdatedBy:   ctx.Claim.UserId,
 	})
 
 	if err != nil {

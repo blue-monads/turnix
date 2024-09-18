@@ -21,9 +21,6 @@ create table __project__Transactions(
     title TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
     txn_type TEXT NOT NULL DEFAULT 'normal',
-    linked_sales_id INTEGER NOT NULL DEFAULT 0,
-    linked_invoice_id INTEGER NOT NULL DEFAULT 0,
-    linked_stockin_id INTEGER NOT NULL DEFAULT 0,
     reference_id TEXT NOT NULL DEFAULT '',
     attachments TEXT NOT NULL DEFAULT '',
     created_by INTEGER NULL,
@@ -43,7 +40,9 @@ create table __project__TransactionLines(
     created_by INTEGER NULL,
     updated_by INTEGER NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    linked_sales_id INTEGER,
+    linked_stockin_id INTEGER
 );
 
 create table __project__ReportTemplates(
@@ -264,4 +263,17 @@ create table __project__Contacts(
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+create table __project__Journals(
+    id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL DEFAULT '',
+    notes TEXT NOT NULL DEFAULT '',
+    jtype TEXT NOT NULL DEFAULT 'normal',
+    attachments TEXT NOT NULL DEFAULT '',
+    created_by INTEGER NULL,
+    updated_by INTEGER NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    linked_client_id INTEGER
 );

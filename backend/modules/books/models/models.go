@@ -16,31 +16,31 @@ type Account struct {
 }
 
 type Transaction struct {
-	ID              int64      `json:"id" db:"id,omitempty"`
-	Title           string     `json:"title" db:"title"`
-	Notes           string     `json:"notes" db:"notes"`
-	LinkedSalesID   int64      `json:"linked_sales_id" db:"linked_sales_id,omitempty"`
-	LinkedInvoiceID int64      `json:"linked_invoice_id" db:"linked_invoice_id,omitempty"`
-	ReferenceID     string     `json:"reference_id" db:"reference_id,omitempty"`
-	Attachments     string     `json:"attachments" db:"attachments,omitempty"`
-	CreatedBy       int64      `json:"created_by" db:"created_by"`
-	UpdatedBy       int64      `json:"updated_by" db:"updated_by"`
-	TxnDate         *time.Time `json:"txn_date" db:"txn_date,omitempty"`
-	CreatedAt       *time.Time `json:"created_at" db:"created_at,omitempty"`
-	UpdatedAt       *time.Time `json:"updated_at" db:"updated_at,omitempty"`
-	IsDeleted       bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+	ID          int64      `json:"id" db:"id,omitempty"`
+	Title       string     `json:"title" db:"title"`
+	Notes       string     `json:"notes" db:"notes"`
+	ReferenceID string     `json:"reference_id" db:"reference_id,omitempty"`
+	Attachments string     `json:"attachments" db:"attachments,omitempty"`
+	CreatedBy   int64      `json:"created_by" db:"created_by"`
+	UpdatedBy   int64      `json:"updated_by" db:"updated_by"`
+	TxnDate     *time.Time `json:"txn_date" db:"txn_date,omitempty"`
+	CreatedAt   *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt   *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	IsDeleted   bool       `json:"is_deleted" db:"is_deleted,omitempty"`
 }
 
 type TransactionLine struct {
-	ID           int64      `json:"id" db:"id,omitempty"`
-	AccountID    int64      `json:"account_id" db:"account_id"`
-	TxnID        int64      `json:"txn_id" db:"txn_id"`
-	DebitAmount  float64    `json:"debit_amount" db:"debit_amount"`
-	CreditAmount float64    `json:"credit_amount" db:"credit_amount"`
-	CreatedBy    int64      `json:"created_by" db:"created_by"`
-	UpdatedBy    int64      `json:"updated_by" db:"updated_by"`
-	CreatedAt    *time.Time `json:"created_at" db:"created_at,omitempty"`
-	UpdatedAt    *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	ID              int64      `json:"id" db:"id,omitempty"`
+	AccountID       int64      `json:"account_id" db:"account_id"`
+	TxnID           int64      `json:"txn_id" db:"txn_id"`
+	DebitAmount     float64    `json:"debit_amount" db:"debit_amount"`
+	CreditAmount    float64    `json:"credit_amount" db:"credit_amount"`
+	LinkedSalesID   int64      `json:"linked_sales_id" db:"linked_sales_id,omitempty"`
+	LinkedStockinID int64      `json:"linked_stockin_id" db:"linked_stockin_id,omitempty"`
+	CreatedBy       int64      `json:"created_by" db:"created_by"`
+	UpdatedBy       int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt       *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt       *time.Time `json:"updated_at" db:"updated_at,omitempty"`
 }
 
 type ReportTemplate struct {
@@ -89,18 +89,16 @@ type TransactionWithLine struct {
 }
 
 type TransactionResult struct {
-	Id              int64      `db:"id" json:"id"`
-	Title           string     `db:"title" json:"title"`
-	Notes           string     `db:"notes" json:"notes"`
-	LinkedSalesID   int64      `db:"linked_sales_id" json:"linked_sales_id"`
-	LinkedInvoiceID int64      `db:"linked_invoice_id" json:"linked_invoice_id"`
-	ReferenceID     string     `db:"reference_id" json:"reference_id"`
-	Attachments     string     `db:"attachments" json:"attachments"`
-	TxnCreatedBy    int64      `db:"txn_created_by" json:"txn_created_by"`
-	TxnUpdatedBy    int64      `db:"txn_updated_by" json:"txn_updated_by"`
-	TxnCreatedAt    *time.Time `db:"txn_created_at" json:"txn_created_at"`
-	TxnUpdatedAt    *time.Time `db:"txn_updated_at" json:"txn_updated_at"`
-	IsDeleted       bool       `db:"is_deleted" json:"is_deleted"`
+	Id           int64      `db:"id" json:"id"`
+	Title        string     `db:"title" json:"title"`
+	Notes        string     `db:"notes" json:"notes"`
+	ReferenceID  string     `db:"reference_id" json:"reference_id"`
+	Attachments  string     `db:"attachments" json:"attachments"`
+	TxnCreatedBy int64      `db:"txn_created_by" json:"txn_created_by"`
+	TxnUpdatedBy int64      `db:"txn_updated_by" json:"txn_updated_by"`
+	TxnCreatedAt *time.Time `db:"txn_created_at" json:"txn_created_at"`
+	TxnUpdatedAt *time.Time `db:"txn_updated_at" json:"txn_updated_at"`
+	IsDeleted    bool       `db:"is_deleted" json:"is_deleted"`
 
 	FirstID           int64      `db:"first_id" json:"first_id"`
 	FirstAccountID    int64      `db:"first_account_id" json:"first_account_id"`
