@@ -67,7 +67,7 @@ create table __project__Reports(
 
 -- INVOICING
 
--- Estimates has not direct link to Txn, it will be used as template to create actual invoice or directsales
+-- Estimates has not direct link to Txn, it will be used as template to create actual sales
 
 -- z_1_Estimates
 create table __project__Estimates(
