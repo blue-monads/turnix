@@ -194,6 +194,8 @@ create table __project__Sales(
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     invalidated_reason TEXT NOT NULL DEFAULT '',
+    payment_status TEXT NOT NULL DEFAULT 'unpaid', -- unpaid, paid, partially_paid, refunded    
+    txn_accounted BOOLEAN NOT NULL DEFAULT FALSE,
 
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
