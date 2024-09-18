@@ -101,10 +101,6 @@ create table __project__EstimateLines(
 
 
 
--- SALES could be made two way 
--- 1. Invoice[credit] <-[paid]-> Txn
--- 2. Sales[debit] <-[paid]-> Txn
-
 -- INVENTORY
 
 create table __project__Catagories(
