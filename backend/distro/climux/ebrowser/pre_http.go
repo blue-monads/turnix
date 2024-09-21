@@ -15,6 +15,9 @@ func (e *EbrowserApp) runPreHttpServer() {
 
 	rfunc := assets.PagesRoutesServer()
 
+	engine.GET("/z/global.js", func(ctx *gin.Context) {
+
+	})
 	engine.GET("/z/pages", rfunc)
 	engine.GET("/z/pages/*files", rfunc)
 
