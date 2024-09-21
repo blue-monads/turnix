@@ -13,7 +13,7 @@
         <span class="text-indigo-500 chip">{workingDir} </span>
         <p class="p text-xl">
             click explore to start using it. Or click on
-            {#if isHomePage}
+            {#if !isHomePage}
                 <span>options</span>
             {:else}
                 <span>sidebar</span>
@@ -22,7 +22,7 @@
 
         <div class="flex gap-2">
             <button class="btn variant-soft-primary">Explore</button>
-            {#if isHomePage}
+            {#if !isHomePage}
                 <a href="/z/pages/startpage/home" class="btn variant-soft-secondary"
                     >Options</a
                 >
@@ -35,7 +35,7 @@
         </p>
         <p class="p text-xl">
             Or click on
-            {#if isHomePage}
+            {#if !isHomePage}
                 <span>options</span>
             {:else}
                 <span>sidebar</span>
@@ -44,7 +44,7 @@
 
         <div class="flex gap-2">
             <button class="btn variant-filled">Start</button>
-            {#if isHomePage}
+            {#if !isHomePage}
                 <a href="/z/pages/startpage/home" class="btn variant-soft-secondary"
                     >Options</a
                 >

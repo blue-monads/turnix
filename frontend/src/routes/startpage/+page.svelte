@@ -3,4 +3,4 @@
     import HomePage from "./home/+page.svelte";
 </script>
 
-<HomePage />
+<HomePage isHomePage={true} />
