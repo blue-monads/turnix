@@ -19,6 +19,7 @@ import (
 type EbrowserApp struct {
 	webview webview.WebView
 	clictx  climux.Context
+	port    int
 }
 
 func New(clictx climux.Context) *EbrowserApp {
@@ -29,6 +30,7 @@ func New(clictx climux.Context) *EbrowserApp {
 	return &EbrowserApp{
 		webview: w,
 		clictx:  clictx,
+		port:    0,
 	}
 }
 
@@ -42,7 +44,7 @@ func (e *EbrowserApp) Run() {
 	}()
 
 	e.webview.SetTitle("Turnix Start")
-	e.webview.Navigate("about:blank")
+	e.webview.Navigate(fmt.Sprintf("http://localhost:%d/z/pages/startpage", e.port))
 
 	e.webview.Run()
 

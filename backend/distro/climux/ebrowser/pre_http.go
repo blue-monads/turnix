@@ -11,11 +11,6 @@ import (
 
 func (e *EbrowserApp) runPreHttpServer() {
 
-	prort, err := xutils.GetFreePort()
-	if err != nil {
-		panic(err)
-	}
-
 	engine := gin.Default()
 
 	rfunc := assets.PagesRoutesServer()
@@ -23,7 +18,14 @@ func (e *EbrowserApp) runPreHttpServer() {
 	engine.GET("/z/pages", rfunc)
 	engine.GET("/z/pages/*files", rfunc)
 
-	err = http.ListenAndServe(fmt.Sprintf(":%d", prort), engine)
+	port, err := xutils.GetFreePort()
+	if err != nil {
+		panic(err)
+	}
+
+	e.port = port
+
+	err = http.ListenAndServe(fmt.Sprintf(":%d", port), engine)
 	if err != nil {
 		panic(err)
 	}

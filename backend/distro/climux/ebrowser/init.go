@@ -1,6 +1,10 @@
 package ebrowser
 
-import "github.com/bornjre/turnix/backend/distro/climux"
+import (
+	"time"
+
+	"github.com/bornjre/turnix/backend/distro/climux"
+)
 
 func init() {
 
@@ -9,7 +13,20 @@ func init() {
 		Help: "Run embed browser with state folder",
 		Func: func(ctx climux.Context) error {
 
-			New(ctx).Run()
+			ebApp := New(ctx)
+
+			go ebApp.runPreHttpServer()
+
+			time.Sleep(time.Second * 1)
+
+			if ebApp.port == 0 {
+				time.Sleep(time.Second * 3)
+				if ebApp.port == 0 {
+					panic("pre http server not running")
+				}
+			}
+
+			ebApp.Run()
 
 			return nil
 		},
