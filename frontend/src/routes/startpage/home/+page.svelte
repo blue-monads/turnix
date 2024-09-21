@@ -24,7 +24,7 @@
             <button class="btn variant-soft-primary">Explore</button>
             {#if !isHomePage}
                 <a href="/z/pages/startpage/home" class="btn variant-soft-secondary"
-                    >Options</a
+                    >Show Options</a
                 >
             {/if}
         </div>
@@ -46,7 +46,7 @@
             <button class="btn variant-filled">Start</button>
             {#if !isHomePage}
                 <a href="/z/pages/startpage/home" class="btn variant-soft-secondary"
-                    >Options</a
+                    >Show Options</a
                 >
             {/if}
         </div>
