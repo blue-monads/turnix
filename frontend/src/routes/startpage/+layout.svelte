@@ -1,6 +1,7 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+    import { onMount } from "svelte";
     const pid = $page.params["pid"];
 
     let active = true;
@@ -28,6 +29,16 @@
 
     $: sidebarKey = $page.url.pathname.split("/").at(4);
     $: console.log(sidebarKey);
+
+    onMount(() => {
+        const g = window as any;
+        g["__handle_rpc__"] = function (name: string, data: any) {
+            console.log("@bang/bang");
+            console.log(name, data);
+        };
+    });
+
+
 </script>
 
 <div

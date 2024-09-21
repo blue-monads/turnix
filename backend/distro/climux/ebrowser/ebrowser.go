@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/bornjre/turnix/backend/distro"
 	"github.com/bornjre/turnix/backend/distro/climux"
@@ -37,11 +36,6 @@ func New(clictx climux.Context) *EbrowserApp {
 func (e *EbrowserApp) Run() {
 
 	e.webview.Bind("__ebrowser_rpc__", e.__BindEbrowserRPC)
-
-	go func() {
-		time.Sleep(time.Second * 2)
-		pp.Println(e.__sendRPC("turnix_start", map[string]any{}))
-	}()
 
 	e.webview.SetTitle("Turnix Start")
 	e.webview.Navigate(fmt.Sprintf("http://localhost:%d/z/pages/startpage", e.port))
