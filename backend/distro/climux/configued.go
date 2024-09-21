@@ -16,7 +16,7 @@ import (
 
 var (
 	configHome    = path.Join(xdg.ConfigHome, "turnix")
-	DerivedSecret = ""
+	derivedSecret = ""
 )
 
 const (
@@ -62,7 +62,7 @@ func init() {
 	sha := sha256.New()
 	sha.Write(sout)
 
-	DerivedSecret = string(sha.Sum([]byte(wd)))
+	derivedSecret = string(sha.Sum([]byte(wd)))
 
 }
 
@@ -120,7 +120,7 @@ func (c *Configued) init() error {
 	}
 
 	if c.config.MeshKey == "" {
-		c.config.MeshKey = DerivedSecret
+		c.config.MeshKey = derivedSecret
 	}
 
 	if c.config.MeshPort == 0 {
