@@ -3,6 +3,8 @@ module github.com/bornjre/turnix
 go 1.21.7
 
 require (
+	github.com/BurntSushi/toml v0.3.1
+	github.com/adrg/xdg v0.5.0
 	github.com/alecthomas/repr v0.4.0
 	github.com/aurowora/compress v0.0.0-20230724224640-6512772d482f
 	github.com/bwmarrin/snowflake v0.3.0
@@ -76,7 +78,7 @@ require (
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	golang.org/x/arch v0.8.0 // indirect
 	golang.org/x/net v0.25.0 // indirect
-	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/sys v0.22.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

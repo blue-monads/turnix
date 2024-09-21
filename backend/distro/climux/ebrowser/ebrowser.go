@@ -32,14 +32,9 @@ func New(clictx climux.Context) *EbrowserApp {
 	}
 }
 
-func (e *EbrowserApp) RunWithStartPage(opts TurnixeOptions) {
+func (e *EbrowserApp) Run() {
 
 	e.webview.Bind("__ebrowser_rpc__", e.__BindEbrowserRPC)
-
-	shtml, err := RenderPage(opts)
-	if err != nil {
-		panic(err)
-	}
 
 	go func() {
 		time.Sleep(time.Second * 2)
@@ -47,47 +42,14 @@ func (e *EbrowserApp) RunWithStartPage(opts TurnixeOptions) {
 	}()
 
 	e.webview.SetTitle("Turnix Start")
-	e.webview.SetHtml(shtml)
+	e.webview.Navigate("about:blank")
+
 	e.webview.Run()
 
 }
 
 func (e *EbrowserApp) __BindEbrowserRPC(name string, opts map[string]string) {
 	pp.Println("@ctx", name, opts)
-
-	go func() {
-
-		switch name {
-		case "connect_local":
-
-			if opts["init_instance"] == "true" {
-				err := e.clictx.RunCLI("app", []string{"app", "init"})
-				if err != nil {
-					pp.Println("@cannot_init", err)
-					return
-				}
-			}
-
-			if opts["start_instance"] == "true" || opts["init_instance"] == "true" {
-				go func() {
-					err := e.clictx.RunCLI("app", []string{"app", "start"})
-					if err != nil {
-						pp.Println("@cannot_start", err)
-						return
-					}
-				}()
-			}
-
-			time.Sleep(time.Second * 5)
-
-			e.NavigateLocal("FIXME FILE")
-
-		case "connect_remote":
-
-		}
-
-	}()
-
 }
 
 func (e *EbrowserApp) NavigateLocal(file string) error {

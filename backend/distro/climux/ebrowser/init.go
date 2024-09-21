@@ -9,11 +9,7 @@ func init() {
 		Help: "Run embed browser with state folder",
 		Func: func(ctx climux.Context) error {
 
-			New(ctx).RunWithStartPage(TurnixeOptions{
-				LocalExists:  false,
-				LocalRunning: false,
-				LocalFile:    "", // FIXME
-			})
+			New(ctx).Run()
 
 			return nil
 		},
