@@ -10,7 +10,6 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/adrg/xdg"
 
-	// /random.go backend/utils
 	xutils "github.com/bornjre/turnix/backend/utils"
 )
 
