@@ -73,11 +73,14 @@ type PeerAddr struct {
 }
 
 type ConfigModel struct {
+	HttpServerPort     int                  `json:"http_server_port,omitempty" toml:"http_server_port"`
 	MeshPort           int                  `json:"mesh_port,omitempty" toml:"mesh_port"`
 	MeshKey            string               `json:"mesh_key,omitempty" toml:"mesh_port"`
 	AllowTunnelAnyPort bool                 `json:"allow_tunnel_any_port,omitempty" toml:"allow_tunnel_any_port"`
 	StaticAddrs        map[string]*PeerAddr `json:"static_addrs,omitempty" toml:"static_addrs"`
 	StaticRelays       map[string]*PeerAddr `json:"static_relays,omitempty" toml:"static_relays"`
+	NodeCtrlKey        string               `json:"node_ctrl_key,omitempty" toml:"node_ctrl_key"`
+	LocalSocket        string               `json:"local_socket,omitempty" toml:"local_socket"`
 }
 
 type Configued struct {
@@ -126,6 +129,22 @@ func (c *Configued) init() error {
 		if !isPortUsed(7704) {
 			c.config.MeshPort = 7704
 		}
+	}
+
+	if c.config.HttpServerPort == 0 {
+		if !isPortUsed(7703) {
+			c.config.HttpServerPort = 7703
+		}
+	}
+
+	if c.config.NodeCtrlKey == "" {
+
+		nodeCtrl, err := xutils.GenerateRandomString(32)
+		if err != nil {
+			return err
+		}
+
+		c.config.NodeCtrlKey = nodeCtrl
 	}
 
 	return nil

@@ -1,23 +1,28 @@
 import axios from "axios"
 
-export const buildApi = (base: string) => {
+export interface Status {
+    is_running: boolean;
+    port?: string;
+    status: string;
+}
+
+
+
+export const buildApi = async  (base: string) => {
 
     const client = axios.create({
         baseURL: base,
         timeout: 10000,
+        headers: {
+            "NodeCTRLKey": "fixme"
+        }
     });
 
-    client.interceptors.request.use(async (config) => {
-        
+
+    const getStatus = async () => {
+        return await client.get<Status>("/z/eapi/status")
+    }
 
 
-        return config;
-    },  (error) => {
-        return Promise.reject(error);
-    });
-
-    
-
-
-    return client;
+    return { getStatus }
 }

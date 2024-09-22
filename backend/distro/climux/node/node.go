@@ -1,6 +1,9 @@
 package node
 
 import (
+	"errors"
+	"os"
+
 	"github.com/bornjre/turnix/backend/distro"
 	"github.com/bornjre/turnix/backend/distro/climux"
 )
@@ -17,7 +20,27 @@ func init() {
 
 func RunNode(cctx climux.Context) error {
 
-	app, err := distro.NewApp()
+	masterSecret := os.Getenv("TURNIX_MASTER_SECRET")
+	if masterSecret == "" {
+		return errors.New("TURNIX_MASTER_SECRET not set")
+	}
+
+	httpPort := os.Getenv("TURNIX_HTTP_PORT")
+	if httpPort == "" {
+		return errors.New("TURNIX_HTTP_PORT not set")
+	}
+
+	localSocket := os.Getenv("TURNIX_LOCAL_SOCKET")
+	if localSocket == "" {
+		return errors.New("TURNIX_LOCAL_SOCKET not set")
+	}
+
+	app, err := distro.NewAppWithOptions(distro.Options{
+		MasterSecret: masterSecret,
+		HttpPort:     httpPort,
+		LocalSocket:  localSocket,
+	})
+
 	if err != nil {
 		return err
 	}

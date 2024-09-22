@@ -11,6 +11,7 @@ import (
 type Options struct {
 	MasterSecret string
 	HttpPort     string
+	LocalSocket  string
 }
 
 type DistroApp struct {
@@ -21,6 +22,7 @@ type DistroApp struct {
 var DefaultOption = Options{
 	MasterSecret: "A_long_HARD_Token",
 	HttpPort:     ":7703",
+	LocalSocket:  "/tmp/turnix.sock",
 }
 
 func NewApp() (*DistroApp, error) {
@@ -40,6 +42,7 @@ func NewAppWithOptions(opts Options) (*DistroApp, error) {
 		DB:              db,
 		Signer:          signer,
 		ProjectBuilders: registry.GetAll(),
+		LocalSocket:     opts.LocalSocket,
 	})
 
 	return &DistroApp{

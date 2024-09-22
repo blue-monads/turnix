@@ -30,6 +30,7 @@ type Options struct {
 	DB              *database.DB
 	Signer          *signer.Signer
 	ProjectBuilders map[string]xproject.Builder
+	LocalSocket     string
 }
 
 func New(opts Options) *App {
@@ -67,6 +68,7 @@ func New(opts Options) *App {
 		Signer:          app.signer,
 		ProjectBuilders: app.projects,
 		Controller:      app.controller,
+		LocalSocket:     opts.LocalSocket,
 	})
 
 	return app

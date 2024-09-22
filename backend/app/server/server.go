@@ -1,7 +1,10 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
+	"net"
 	"os"
 	"time"
 
@@ -28,6 +31,9 @@ type Server struct {
 	projects   map[string]*xproject.Defination
 	rootLogger zerolog.Logger
 
+	localSocket string
+	ldListener  net.Listener
+
 	// controllers
 
 	cAuth    *auth.AuthController
@@ -41,6 +47,7 @@ type Options struct {
 	Signer          *signer.Signer
 	ProjectBuilders map[string]*xproject.Defination
 	Controller      *controller.RootController
+	LocalSocket     string
 }
 
 func New(opts Options) *Server {
@@ -79,5 +86,55 @@ func (a *Server) Start(port string) error {
 
 	}()
 
+	go a.listenUnixSocket(port)
+
 	return r.Run(port)
+}
+
+type LocalStatus struct {
+	Port string `json:"port"`
+}
+
+func (s *Server) listenUnixSocket(port string) error {
+
+	l, err := net.Listen("unix", s.localSocket)
+	if err != nil {
+		return err
+	}
+
+	s.ldListener = l
+
+	go func() {
+		for {
+			c, err := l.Accept()
+			if err != nil {
+				log.Fatal("accept error:", err.Error())
+				return
+			}
+
+			func(c net.Conn) {
+				defer c.Close()
+
+				msg := LocalStatus{
+					Port: port,
+				}
+
+				out, err := json.Marshal(msg)
+				if err != nil {
+					log.Fatal("json marshal error:", err.Error())
+					return
+				}
+
+				_, err = c.Write(out)
+				if err != nil {
+					log.Fatal("Write: ", err)
+				}
+
+			}(c)
+
+		}
+
+	}()
+
+	return nil
 }
