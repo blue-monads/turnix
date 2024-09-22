@@ -313,7 +313,7 @@ export class RootAPI {
     }
 
     getFileShortKey = (fid: string) => {
-        return this.client.get(`/file/${fid}/shortkey`)
+        return this.client.post(`/file/${fid}/shortkey`, {})
     }
 
     getFileWithShortKeyURL = (shortkey: string): string => {

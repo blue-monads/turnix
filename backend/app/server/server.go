@@ -1,7 +1,9 @@
 package server
 
 import (
+	"fmt"
 	"os"
+	"time"
 
 	"github.com/bornjre/turnix/backend/controller"
 	"github.com/bornjre/turnix/backend/controller/auth"
@@ -12,6 +14,7 @@ import (
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
 	"github.com/gin-gonic/gin"
+	"github.com/k0kubun/pp"
 	"github.com/rs/zerolog"
 
 	"github.com/aurowora/compress"
@@ -68,6 +71,13 @@ func (a *Server) Start(port string) error {
 	r.Use(limits.RequestSizeLimiter(100 * 1024 * 1024))
 
 	a.bindRoutes(r)
+
+	go func() {
+		time.Sleep(time.Second * 2)
+
+		pp.Println(fmt.Sprintf("http://localhost%s/z/pages", port))
+
+	}()
 
 	return r.Run(port)
 }
