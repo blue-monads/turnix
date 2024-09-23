@@ -6,6 +6,8 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"os"
+	"os/exec"
 
 	"github.com/bornjre/turnix/backend/app/server"
 	"github.com/bornjre/turnix/backend/app/server/assets"
@@ -28,6 +30,7 @@ func (e *EbrowserApp) runPreHttpServer() {
 	eapi := engine.Group("/z/eapi")
 
 	eapi.GET("/status", e.status)
+	eapi.POST("/start", e.startInstance)
 
 	port, err := xutils.GetFreePort()
 	if err != nil {
@@ -40,6 +43,31 @@ func (e *EbrowserApp) runPreHttpServer() {
 	if err != nil {
 		panic(err)
 	}
+
+}
+
+func (e *EbrowserApp) startInstance(ctx *gin.Context) {
+	selfbinary, err := os.Executable()
+	if err != nil {
+		ctx.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	cmd := exec.Command(selfbinary, "node", fmt.Sprintf("--config-file=%s", "fixme.toml"), "actual-start")
+	cmd.Env = append(cmd.Env, os.Environ()...)
+
+	err = cmd.Start()
+	if err != nil {
+		ctx.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(200, gin.H{
+		"pid": cmd.Process.Pid,
+	})
 
 }
 
