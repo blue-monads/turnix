@@ -16,8 +16,9 @@ import (
 )
 
 var (
-	configHome    = path.Join(xdg.ConfigHome, "turnix")
-	derivedSecret = ""
+	configHome          = path.Join(xdg.ConfigHome, "turnix")
+	derivedMasterSecret = ""
+	derivedMeshKey      = ""
 )
 
 const (
@@ -60,8 +61,10 @@ func init() {
 
 	sha := sha256.New()
 	sha.Write(sout)
+	sha.Write([]byte(wd))
 
-	derivedSecret = base64.StdEncoding.EncodeToString(sha.Sum([]byte(wd)))
+	derivedMasterSecret = base64.StdEncoding.EncodeToString(sha.Sum(nil))
+	derivedMeshKey = base64.StdEncoding.EncodeToString(sha.Sum([]byte("node")))
 
 }
 
@@ -81,6 +84,7 @@ type ConfigModel struct {
 	StaticRelays       map[string]*PeerAddr `json:"static_relays,omitempty" toml:"static_relays"`
 	NodeCtrlKey        string               `json:"node_ctrl_key,omitempty" toml:"node_ctrl_key"`
 	LocalSocket        string               `json:"local_socket,omitempty" toml:"local_socket"`
+	MasterKey          string               `json:"master_key,omitempty" toml:"master_key"`
 }
 
 type Configued struct {
@@ -119,7 +123,7 @@ func (c *Configued) init() error {
 
 	pp.Println("init/3")
 
-	configPath := c.BasePath + "/config.toml"
+	configPath := path.Join(c.BasePath, "/config.toml")
 
 	_, err = os.Stat(configPath)
 	if err == nil {
@@ -136,7 +140,15 @@ func (c *Configued) init() error {
 	pp.Println("init/4")
 
 	if c.config.MeshKey == "" {
-		c.config.MeshKey = derivedSecret
+		c.config.MeshKey = derivedMeshKey
+	}
+
+	if c.config.MasterKey == "" {
+		c.config.MasterKey = derivedMasterSecret
+	}
+
+	if c.config.LocalSocket == "" {
+		c.config.LocalSocket = path.Join(c.BasePath, "/local.sock")
 	}
 
 	pp.Println("init/5")

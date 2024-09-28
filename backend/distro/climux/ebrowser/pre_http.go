@@ -55,8 +55,11 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 		})
 	}
 
-	cmd := exec.Command(selfbinary, "node", fmt.Sprintf("--config-file=%s", "fixme.toml"), "actual-start")
+	cmd := exec.Command(selfbinary, "node", "start")
 	cmd.Env = append(cmd.Env, os.Environ()...)
+	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_MASTER_SECRET=%s", e.config.MasterKey))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_HTTP_PORT=:%d", e.config.HttpServerPort))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_LOCAL_SOCKET=%s", e.config.LocalSocket))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
