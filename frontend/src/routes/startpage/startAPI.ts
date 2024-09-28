@@ -4,6 +4,7 @@ export interface Status {
     is_running: boolean;
     port?: string;
     status: string;
+    working_dir: string;
 }
 
 
@@ -14,7 +15,6 @@ export const buildApi = async  (base: string) => {
 
     const client = axios.create({
         baseURL: base,
-        timeout: 10000,
         headers: {
             "NodeCTRLKey": "fixme"
         }

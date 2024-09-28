@@ -2,15 +2,14 @@ package ebrowser
 
 import (
 	_ "embed"
-	"encoding/json"
 	"fmt"
+	"os/exec"
+	"sync"
 
-	"github.com/bornjre/turnix/backend/distro"
 	"github.com/bornjre/turnix/backend/distro/climux"
+	"github.com/k0kubun/pp"
 
 	webview "github.com/webview/webview_go"
-
-	"github.com/k0kubun/pp"
 )
 
 // p2p-eproxy
@@ -22,6 +21,9 @@ type EbrowserApp struct {
 	apiToken   string
 	config     *climux.ConfigModel
 	configurer *climux.Configued
+
+	cmd   *exec.Cmd
+	cLock sync.Mutex
 }
 
 func New(clictx climux.Context) *EbrowserApp {
@@ -38,6 +40,8 @@ func New(clictx climux.Context) *EbrowserApp {
 		apiToken:   "",
 		config:     c.GetConfig(),
 		configurer: c,
+		cmd:        nil,
+		cLock:      sync.Mutex{},
 	}
 }
 
@@ -54,30 +58,10 @@ func (e *EbrowserApp) Run() {
 
 func (e *EbrowserApp) __BindEbrowserRPC(name string, opts map[string]string) {
 	pp.Println("@ctx", name, opts)
-}
 
-func (e *EbrowserApp) NavigateLocal(file string) error {
-
-	url := fmt.Sprintf("http://localhost%s/z/pages", distro.DefaultOption)
-
-	pp.Println("@opening_url", url)
-	e.webview.Navigate(url)
-	pp.Println("@should_open_newLurl")
-
-	return nil
-
-}
-
-func (e *EbrowserApp) __sendRPC(name string, data any) error {
-
-	out, err := json.Marshal(data)
-	if err != nil {
-
-		return err
+	if name == "local-navigate" {
+		e.webview.Navigate(opts["url"])
 	}
-
-	e.webview.Eval(fmt.Sprintf(`__handle_rpc__("%s", "%s" )`, name, out))
-	return nil
 }
 
 func (e *EbrowserApp) Close() {

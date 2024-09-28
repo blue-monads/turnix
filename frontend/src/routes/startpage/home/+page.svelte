@@ -8,8 +8,9 @@
     const api = getContext("__start_api__") as StartAPI;
 
     let isInstanceRunning = false;
-
+    let workingDir = "";
     let loading = true;
+    let port = "";
 
     const load = async () => {
         loading = true;
@@ -20,12 +21,21 @@
         }
 
         isInstanceRunning = resp.data["is_running"];
+        workingDir = resp.data["working_dir"];
+        port = resp.data["port"] as string;
         loading = false;
     };
 
     load();
 
-    let workingDir = "/home/xyz/Desktop/mnop";
+    const localNavigate = () => {
+        // local-navigate
+        const rpcFunc = (window as any)["__ebrowser_rpc__"];
+
+        rpcFunc("local-navigate", {
+            url: `http://localhost${port}/z/pages`,
+        });
+    };
 </script>
 
 <div class="flex items-center justify-center min-h-screen flex-col gap-4 pt-20">
@@ -52,7 +62,9 @@
         </p>
 
         <div class="flex gap-2">
-            <button class="btn variant-soft-primary"> Explore </button>
+            <button class="btn variant-soft-primary" on:click={localNavigate}>
+                Explore
+            </button>
             {#if !isHomePage}
                 <a
                     href="/z/pages/startpage/home"
@@ -79,7 +91,7 @@
                 class="btn variant-filled"
                 on:click={async () => {
                     loading = true;
-                    
+
                     await api.startInstance();
 
                     load();

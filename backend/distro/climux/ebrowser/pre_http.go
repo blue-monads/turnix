@@ -51,6 +51,16 @@ func (e *EbrowserApp) runPreHttpServer() {
 
 func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 
+	e.cLock.Lock()
+	defer e.cLock.Unlock()
+
+	if e.cmd != nil {
+		ctx.JSON(400, gin.H{
+			"error": "already running",
+		})
+		return
+	}
+
 	err := e.configurer.InitPath()
 	if err != nil {
 		ctx.JSON(400, gin.H{
@@ -85,10 +95,13 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 		return
 	}
 
+	e.cmd = cmd
+
 	time.Sleep(time.Second * 20)
 
 	ctx.JSON(200, gin.H{
-		"pid": cmd.Process.Pid,
+		"pid":  cmd.Process.Pid,
+		"port": e.port,
 	})
 
 }
@@ -139,9 +152,10 @@ func (e *EbrowserApp) statusPage(ctx *gin.Context) {
 	pp.Println("status/4")
 
 	ctx.JSON(200, gin.H{
-		"is_running": true,
-		"port":       e.port,
-		"status":     "ok",
+		"is_running":  true,
+		"port":        msg.Port,
+		"status":      "ok",
+		"working_dir": e.configurer.BasePath,
 	})
 
 }
