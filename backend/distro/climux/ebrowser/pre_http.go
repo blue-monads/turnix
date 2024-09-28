@@ -104,6 +104,15 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 		"port": e.port,
 	})
 
+	go func() {
+		e.cmd.Wait()
+
+		e.cLock.Lock()
+		defer e.cLock.Unlock()
+		e.cmd = nil
+
+	}()
+
 }
 
 func (e *EbrowserApp) statusPage(ctx *gin.Context) {
