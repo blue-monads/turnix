@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"time"
 
 	"github.com/bornjre/turnix/backend/app/server"
 	"github.com/bornjre/turnix/backend/app/server/assets"
@@ -83,6 +84,8 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 		})
 		return
 	}
+
+	time.Sleep(time.Second * 20)
 
 	ctx.JSON(200, gin.H{
 		"pid": cmd.Process.Pid,

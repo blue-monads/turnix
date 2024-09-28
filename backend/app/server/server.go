@@ -100,6 +100,10 @@ func (s *Server) listenUnixSocket(port string) error {
 
 	pp.Println("@listen_unix_socket", s.localSocket)
 
+	// delete old socket
+
+	os.Remove(s.localSocket)
+
 	l, err := net.Listen("unix", s.localSocket)
 	if err != nil {
 		log.Println("listen_unix_socket error:", err.Error())
