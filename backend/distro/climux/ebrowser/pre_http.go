@@ -92,9 +92,11 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 
 func (e *EbrowserApp) statusPage(ctx *gin.Context) {
 
-	pp.Println("status/1", e.config)
+	localSocket := path.Join(e.configurer.BasePath, e.config.LocalSocket)
 
-	conn, err := net.Dial("unix", e.config.LocalSocket)
+	pp.Println("status/1", localSocket)
+
+	conn, err := net.Dial("unix", localSocket)
 	pp.Println("status/1.5")
 
 	if err != nil {
