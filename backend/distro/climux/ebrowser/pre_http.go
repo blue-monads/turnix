@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path"
 
 	"github.com/bornjre/turnix/backend/app/server"
 	"github.com/bornjre/turnix/backend/app/server/assets"
@@ -68,8 +69,9 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 	cmd.Env = append(cmd.Env, os.Environ()...)
 	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_MASTER_SECRET=%s", e.config.MasterKey))
 	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_HTTP_PORT=:%d", e.config.HttpServerPort))
-	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_LOCAL_SOCKET=%s", e.config.LocalSocket))
-	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_DATABASE_FILE=%s", e.config.DatabaseFile))
+
+	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_LOCAL_SOCKET=%s", path.Join(e.configurer.BasePath, e.config.LocalSocket)))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_DATABASE_FILE=%s", path.Join(e.configurer.BasePath, e.config.DatabaseFile)))
 
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

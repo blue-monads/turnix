@@ -1,6 +1,7 @@
 package climux
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
@@ -78,7 +79,7 @@ type PeerAddr struct {
 type ConfigModel struct {
 	HttpServerPort     int                  `json:"http_server_port,omitempty" toml:"http_server_port"`
 	MeshPort           int                  `json:"mesh_port,omitempty" toml:"mesh_port"`
-	MeshKey            string               `json:"mesh_key,omitempty" toml:"mesh_port"`
+	MeshKey            string               `json:"mesh_key,omitempty" toml:"mesh_key"`
 	AllowTunnelAnyPort bool                 `json:"allow_tunnel_any_port,omitempty" toml:"allow_tunnel_any_port"`
 	StaticAddrs        map[string]*PeerAddr `json:"static_addrs,omitempty" toml:"static_addrs"`
 	StaticRelays       map[string]*PeerAddr `json:"static_relays,omitempty" toml:"static_relays"`
@@ -89,8 +90,9 @@ type ConfigModel struct {
 }
 
 type Configued struct {
-	BasePath string
-	config   *ConfigModel
+	BasePath     string
+	config       *ConfigModel
+	readFromFile bool
 }
 
 func NewConfigued(basepath string) *Configued {
@@ -134,6 +136,9 @@ func (c *Configued) init() error {
 		if err != nil {
 			return err
 		}
+
+		c.readFromFile = true
+
 	} else {
 		c.config = &ConfigModel{}
 	}
@@ -149,11 +154,11 @@ func (c *Configued) init() error {
 	}
 
 	if c.config.LocalSocket == "" {
-		c.config.LocalSocket = path.Join(c.BasePath, "/local.sock")
+		c.config.LocalSocket = "./local.sock"
 	}
 
 	if c.config.DatabaseFile == "" {
-		c.config.DatabaseFile = path.Join(c.BasePath, "/data.db")
+		c.config.DatabaseFile = "./data.db"
 	}
 
 	pp.Println("init/5")
@@ -193,7 +198,24 @@ func (c *Configued) GetConfig() *ConfigModel {
 }
 
 func (c *Configued) InitPath() error {
-	return os.MkdirAll(c.BasePath, os.ModePerm)
+	err := os.MkdirAll(c.BasePath, os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	if c.readFromFile {
+		return nil
+	}
+
+	buf := bytes.Buffer{}
+	te := toml.NewEncoder(&buf)
+
+	err = te.Encode(c.config)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(path.Join(c.BasePath, "config.toml"), buf.Bytes(), 0600)
 }
 
 func isPortUsed(port int) bool {
