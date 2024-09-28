@@ -2,9 +2,9 @@
 CREATE TABLE IF NOT EXISTS GlobalConfig (
   id INTEGER PRIMARY KEY, 
   key TEXT NOT NULL DEFAULT '', 
-  group TEXT NOT NULL DEFAULT '',
+  group_name TEXT NOT NULL DEFAULT '',
   value TEXT NOT NULL DEFAULT '',
-  unique(group, key)
+  unique(group_name, key)
 );
 
 
