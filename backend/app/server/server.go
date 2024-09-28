@@ -58,19 +58,22 @@ func New(opts Options) *Server {
 	}
 
 	return &Server{
-		db:         opts.DB,
-		signer:     opts.Signer,
-		rootLogger: zerolog.New(os.Stdout).With().Str("service", "server").Logger(),
-		projects:   opts.ProjectBuilders,
-		globalJS:   out,
-		cAuth:      opts.Controller.GetAuthController(),
-		cProject:   opts.Controller.GetProjectController(),
-		cSelf:      opts.Controller.GetSelfController(),
-		cCommon:    opts.Controller.GetCommonController(),
+		db:          opts.DB,
+		signer:      opts.Signer,
+		rootLogger:  zerolog.New(os.Stdout).With().Str("service", "server").Logger(),
+		projects:    opts.ProjectBuilders,
+		globalJS:    out,
+		cAuth:       opts.Controller.GetAuthController(),
+		cProject:    opts.Controller.GetProjectController(),
+		cSelf:       opts.Controller.GetSelfController(),
+		cCommon:     opts.Controller.GetCommonController(),
+		localSocket: opts.LocalSocket,
 	}
 }
 
 func (a *Server) Start(port string) error {
+
+	a.listenUnixSocket(port)
 
 	r := gin.Default()
 
@@ -86,8 +89,6 @@ func (a *Server) Start(port string) error {
 
 	}()
 
-	go a.listenUnixSocket(port)
-
 	return r.Run(port)
 }
 
@@ -97,8 +98,11 @@ type LocalStatus struct {
 
 func (s *Server) listenUnixSocket(port string) error {
 
+	pp.Println("@listen_unix_socket", s.localSocket)
+
 	l, err := net.Listen("unix", s.localSocket)
 	if err != nil {
+		log.Println("listen_unix_socket error:", err.Error())
 		return err
 	}
 
