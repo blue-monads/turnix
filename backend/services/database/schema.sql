@@ -1,3 +1,13 @@
+
+CREATE TABLE IF NOT EXISTS GlobalConfig (
+  id INTEGER PRIMARY KEY, 
+  key TEXT NOT NULL DEFAULT '', 
+  group TEXT NOT NULL DEFAULT '',
+  value TEXT NOT NULL DEFAULT '',
+  unique(group, key)
+);
+
+
 CREATE TABLE IF NOT EXISTS Users (
   id INTEGER PRIMARY KEY, 
   username TEXT,
