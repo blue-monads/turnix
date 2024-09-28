@@ -13,6 +13,7 @@ import (
 	"github.com/bornjre/turnix/backend/app/server/assets"
 	xutils "github.com/bornjre/turnix/backend/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/k0kubun/pp"
 )
 
 func (e *EbrowserApp) runPreHttpServer() {
@@ -29,7 +30,7 @@ func (e *EbrowserApp) runPreHttpServer() {
 
 	eapi := engine.Group("/z/eapi")
 
-	eapi.GET("/status", e.status)
+	eapi.GET("/status", e.statusPage)
 	eapi.POST("/start", e.startInstance)
 
 	port, err := xutils.GetFreePort()
@@ -56,6 +57,8 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 
 	cmd := exec.Command(selfbinary, "node", fmt.Sprintf("--config-file=%s", "fixme.toml"), "actual-start")
 	cmd.Env = append(cmd.Env, os.Environ()...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
 	err = cmd.Start()
 	if err != nil {
@@ -71,8 +74,13 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 
 }
 
-func (e *EbrowserApp) status(ctx *gin.Context) {
+func (e *EbrowserApp) statusPage(ctx *gin.Context) {
+
+	pp.Println("status/1", e.config)
+
 	conn, err := net.Dial("unix", e.config.LocalSocket)
+	pp.Println("status/1.5")
+
 	if err != nil {
 		ctx.JSON(200, gin.H{
 			"is_running": false,
@@ -80,6 +88,8 @@ func (e *EbrowserApp) status(ctx *gin.Context) {
 		})
 		return
 	}
+
+	pp.Println("status/2")
 
 	defer conn.Close()
 
@@ -92,6 +102,8 @@ func (e *EbrowserApp) status(ctx *gin.Context) {
 		return
 	}
 
+	pp.Println("status/3")
+
 	msg := server.LocalStatus{}
 
 	err = json.Unmarshal(out, &msg)
@@ -102,6 +114,8 @@ func (e *EbrowserApp) status(ctx *gin.Context) {
 		})
 		return
 	}
+
+	pp.Println("status/4")
 
 	ctx.JSON(200, gin.H{
 		"is_running": true,

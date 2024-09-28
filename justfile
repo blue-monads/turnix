@@ -14,4 +14,4 @@ build:
 	go build -v -o tmp/turnix ./main.go
 
 run_cli:
-	FRONTEND_DEV_SERVER="http://localhost:5173" go run main.go
+	cd tmp && FRONTEND_DEV_SERVER="http://localhost:5173"  go run ../main.go 

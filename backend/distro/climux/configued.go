@@ -2,6 +2,7 @@ package climux
 
 import (
 	"crypto/sha256"
+	"encoding/base64"
 	"fmt"
 	"net"
 	"os"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/adrg/xdg"
+	"github.com/k0kubun/pp"
 
 	xutils "github.com/bornjre/turnix/backend/utils"
 )
@@ -40,12 +42,10 @@ func init() {
 	_, err = os.Stat(secretFile)
 	if err != nil {
 		// genrate random secret base
-		secret, err := xutils.GenerateRandomString(32)
+		secret, err := xutils.GenerateRandomString(128)
 		if err != nil {
 			panic(err)
 		}
-
-		secret = secret + "-" + string(sha256.New().Sum([]byte(secret)))
 
 		err = os.WriteFile(secretFile, []byte(secret), 0600)
 		if err != nil {
@@ -61,7 +61,7 @@ func init() {
 	sha := sha256.New()
 	sha.Write(sout)
 
-	derivedSecret = string(sha.Sum([]byte(wd)))
+	derivedSecret = base64.StdEncoding.EncodeToString(sha.Sum([]byte(wd)))
 
 }
 
@@ -94,36 +94,52 @@ func NewConfigued(basepath string) *Configued {
 		config:   nil,
 	}
 
+	err := c.init()
+	if err != nil {
+		pp.Println("config init error", err)
+		panic(err)
+	}
+
 	return c
 }
 
 func (c *Configued) init() error {
+	pp.Println("init/1")
+
 	wd, err := os.Getwd()
 	if err != nil {
 		return err
 	}
 
+	pp.Println("init/2")
+
 	if c.BasePath == "" {
 		c.BasePath = path.Join(wd, ".turnix-data")
 	}
 
+	pp.Println("init/3")
+
 	configPath := c.BasePath + "/config.toml"
 
 	_, err = os.Stat(configPath)
-	if err != nil {
-		return err
+	if err == nil {
+		c.config = &ConfigModel{}
+
+		_, err = toml.DecodeFile(configPath, &c.config)
+		if err != nil {
+			return err
+		}
+	} else {
+		c.config = &ConfigModel{}
 	}
 
-	c.config = &ConfigModel{}
-
-	_, err = toml.DecodeFile(configPath, &c.config)
-	if err != nil {
-		return err
-	}
+	pp.Println("init/4")
 
 	if c.config.MeshKey == "" {
 		c.config.MeshKey = derivedSecret
 	}
+
+	pp.Println("init/5")
 
 	if c.config.MeshPort == 0 {
 		if !isPortUsed(7704) {
@@ -131,11 +147,15 @@ func (c *Configued) init() error {
 		}
 	}
 
+	pp.Println("init/6")
+
 	if c.config.HttpServerPort == 0 {
 		if !isPortUsed(7703) {
 			c.config.HttpServerPort = 7703
 		}
 	}
+
+	pp.Println("init/7")
 
 	if c.config.NodeCtrlKey == "" {
 

@@ -10,6 +10,8 @@ export interface Status {
 
 export const buildApi = async  (base: string) => {
 
+    console.log("buildApi", base);
+
     const client = axios.create({
         baseURL: base,
         timeout: 10000,
@@ -23,6 +25,12 @@ export const buildApi = async  (base: string) => {
         return await client.get<Status>("/z/eapi/status")
     }
 
+    const startInstance = async () => {
+        return await client.post("/z/eapi/start", {})
+    }
 
-    return { getStatus }
+
+    return { getStatus, startInstance }
 }
+
+export type StartAPI = Awaited< ReturnType<typeof buildApi>>

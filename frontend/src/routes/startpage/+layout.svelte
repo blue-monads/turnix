@@ -2,6 +2,8 @@
     import { page } from "$app/stores";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { onMount } from "svelte";
+    import { buildApi, type StartAPI } from "./startAPI";
+    import Api from "./api.svelte";
     const pid = $page.params["pid"];
 
     let active = true;
@@ -36,6 +38,12 @@
             console.log("@bang/bang");
             console.log(name, data);
         };
+    });
+
+    let api: StartAPI;
+
+    buildApi(location.origin).then((_api) => {
+        api = _api;
     });
 </script>
 
@@ -97,6 +105,10 @@
     {/if}
 
     <main class="grow w-full h-screen overflow-auto">
-        <slot />
+        {#if api}
+            <Api {api}>
+                <slot />
+            </Api>
+        {/if}
     </main>
 </div>
