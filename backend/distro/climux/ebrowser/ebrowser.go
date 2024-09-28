@@ -16,11 +16,12 @@ import (
 // p2p-eproxy
 
 type EbrowserApp struct {
-	webview  webview.WebView
-	clictx   climux.Context
-	port     int
-	apiToken string
-	config   *climux.ConfigModel
+	webview    webview.WebView
+	clictx     climux.Context
+	port       int
+	apiToken   string
+	config     *climux.ConfigModel
+	configurer *climux.Configued
 }
 
 func New(clictx climux.Context) *EbrowserApp {
@@ -28,14 +29,15 @@ func New(clictx climux.Context) *EbrowserApp {
 	w := webview.New(true)
 	w.SetSize(900, 700, webview.HintNone)
 
-	config := climux.NewConfigued("")
+	c := climux.NewConfigued("")
 
 	return &EbrowserApp{
-		webview:  w,
-		clictx:   clictx,
-		port:     0,
-		apiToken: "",
-		config:   config.GetConfig(),
+		webview:    w,
+		clictx:     clictx,
+		port:       0,
+		apiToken:   "",
+		config:     c.GetConfig(),
+		configurer: c,
 	}
 }
 

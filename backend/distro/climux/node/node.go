@@ -35,10 +35,16 @@ func RunNode(cctx climux.Context) error {
 		return errors.New("TURNIX_LOCAL_SOCKET not set")
 	}
 
+	databaseFile := os.Getenv("TURNIX_DATABASE_FILE")
+	if databaseFile == "" {
+		return errors.New("TURNIX_DATABASE_FILE not set")
+	}
+
 	app, err := distro.NewAppWithOptions(distro.Options{
 		MasterSecret: masterSecret,
 		HttpPort:     httpPort,
 		LocalSocket:  localSocket,
+		DatabaseFile: databaseFile,
 	})
 
 	if err != nil {

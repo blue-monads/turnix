@@ -85,6 +85,7 @@ type ConfigModel struct {
 	NodeCtrlKey        string               `json:"node_ctrl_key,omitempty" toml:"node_ctrl_key"`
 	LocalSocket        string               `json:"local_socket,omitempty" toml:"local_socket"`
 	MasterKey          string               `json:"master_key,omitempty" toml:"master_key"`
+	DatabaseFile       string               `json:"database_file,omitempty" toml:"database_file"`
 }
 
 type Configued struct {
@@ -151,6 +152,10 @@ func (c *Configued) init() error {
 		c.config.LocalSocket = path.Join(c.BasePath, "/local.sock")
 	}
 
+	if c.config.DatabaseFile == "" {
+		c.config.DatabaseFile = path.Join(c.BasePath, "/data.db")
+	}
+
 	pp.Println("init/5")
 
 	if c.config.MeshPort == 0 {
@@ -185,6 +190,10 @@ func (c *Configued) init() error {
 
 func (c *Configued) GetConfig() *ConfigModel {
 	return c.config
+}
+
+func (c *Configued) InitPath() error {
+	return os.MkdirAll(c.BasePath, os.ModePerm)
 }
 
 func isPortUsed(port int) bool {

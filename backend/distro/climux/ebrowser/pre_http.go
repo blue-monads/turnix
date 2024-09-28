@@ -48,6 +48,15 @@ func (e *EbrowserApp) runPreHttpServer() {
 }
 
 func (e *EbrowserApp) startInstance(ctx *gin.Context) {
+
+	err := e.configurer.InitPath()
+	if err != nil {
+		ctx.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	selfbinary, err := os.Executable()
 	if err != nil {
 		ctx.JSON(400, gin.H{
@@ -60,6 +69,8 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_MASTER_SECRET=%s", e.config.MasterKey))
 	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_HTTP_PORT=:%d", e.config.HttpServerPort))
 	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_LOCAL_SOCKET=%s", e.config.LocalSocket))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("TURNIX_DATABASE_FILE=%s", e.config.DatabaseFile))
+
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 

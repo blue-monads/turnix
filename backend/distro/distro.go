@@ -12,6 +12,7 @@ type Options struct {
 	MasterSecret string
 	HttpPort     string
 	LocalSocket  string
+	DatabaseFile string
 }
 
 type DistroApp struct {
@@ -23,6 +24,7 @@ var DefaultOption = Options{
 	MasterSecret: "A_long_HARD_Token",
 	HttpPort:     ":7703",
 	LocalSocket:  "/tmp/turnix.sock",
+	DatabaseFile: "./data.db",
 }
 
 func NewApp() (*DistroApp, error) {
@@ -31,7 +33,7 @@ func NewApp() (*DistroApp, error) {
 
 func NewAppWithOptions(opts Options) (*DistroApp, error) {
 
-	db, err := database.NewDB()
+	db, err := database.NewDB(opts.DatabaseFile)
 	if err != nil {
 		return nil, err
 	}
