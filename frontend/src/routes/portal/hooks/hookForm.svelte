@@ -17,12 +17,6 @@
 
 
 
-    let run_as_type: "specific_user" | "context_user" | "no_user" =
-        $state(runas_user_id === -1
-            ? "no_user"
-            : runas_user_id === 0
-              ? "context_user"
-              : "specific_user");
 
     interface Props {
         id?: number;
@@ -49,6 +43,14 @@
         name = $bindable(""),
         onSave = async (data: Record<string, any>) => {}
     }: Props = $props();
+
+    let run_as_type: "specific_user" | "context_user" | "no_user" =
+        $state(runas_user_id === -1
+            ? "no_user"
+            : runas_user_id === 0
+              ? "context_user"
+              : "specific_user");
+
 
     const ptype = $params["ptype"];
 
