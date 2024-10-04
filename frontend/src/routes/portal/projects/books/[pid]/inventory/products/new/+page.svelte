@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { preventDefault } from 'svelte/legacy';
+
     import { NewBookAPI, type Catagory } from "$lib/projects/books";
     import { getContext } from "svelte";
     import type { RootAPI } from "$lib/api";
@@ -12,14 +14,14 @@
 
     let message = "";
 
-    let name = "";
-    let info = "";
-    let catid = 0;
-    let price = 0;
-    let variant_id = "";
-    let stock_count = 0;
+    let name = $state("");
+    let info = $state("");
+    let catid = $state(0);
+    let price = $state(0);
+    let variant_id = $state("");
+    let stock_count = $state(0);
 
-    let allCatagories: Catagory[] = [];
+    let allCatagories: Catagory[] = $state([]);
 
     const load = async () => {
         const resp = await api.listCatagories(pid);
@@ -49,7 +51,7 @@
     };
 </script>
 
-<form class="p-2" on:submit|preventDefault={submit}>
+<form class="p-2" onsubmit={preventDefault(submit)}>
     <div class="card">
         <header class="card-header">
             <h4 class="h4">Add Product</h4>

@@ -14,9 +14,9 @@
   const api = NewBookAPI(getContext("__api__") as RootAPI);
   const store = getModalStore();
 
-  let loading = true;
-  let data: TxnLine[] = [];
-  let accountsIndex: Record<number, string> = {};
+  let loading = $state(true);
+  let data: TxnLine[] = $state([]);
+  let accountsIndex: Record<number, string> = $state({});
 
   const load = async () => {
     const rresp = await api.listAccount(pid);

@@ -13,7 +13,7 @@
 
   const api = NewUnloopAPI(getContext("__api__") as RootAPI);
 
-  let datas: any[] = [];
+  let datas: any[] = $state([]);
 
   const load = async () => {
     const resp = await api.listTemplates(pid);

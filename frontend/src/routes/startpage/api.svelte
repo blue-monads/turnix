@@ -1,11 +1,16 @@
 <script lang="ts">
     import { setContext } from "svelte";
 
-    export let api;
+    interface Props {
+        api: any;
+        children?: import('svelte').Snippet;
+    }
+
+    let { api, children }: Props = $props();
 
     setContext("__start_api__", api);
 </script>
 
 {#if api}
-    <slot />
+    {@render children?.()}
 {/if}

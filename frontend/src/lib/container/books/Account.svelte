@@ -1,10 +1,22 @@
 <script lang="ts">
-  export let name = "";
-  export let acc_type = "revenue";
-  export let info = "";
-  export let edit = false;
+  import { preventDefault } from 'svelte/legacy';
 
-  export let onChange: Function;
+
+  interface Props {
+    name?: string;
+    acc_type?: string;
+    info?: string;
+    edit?: boolean;
+    onChange: Function;
+  }
+
+  let {
+    name = $bindable(""),
+    acc_type = $bindable("revenue"),
+    info = $bindable(""),
+    edit = false,
+    onChange
+  }: Props = $props();
 
   const ACCOUNT_TYPES = {
     expenses: "Expenses",
@@ -17,13 +29,13 @@
 
 <form
   class="p-2"
-  on:submit|preventDefault={() => {
+  onsubmit={preventDefault(() => {
     onChange({
       name,
       acc_type,
       info,
     });
-  }}
+  })}
 >
   <div class="card">
     <header class="card-header">

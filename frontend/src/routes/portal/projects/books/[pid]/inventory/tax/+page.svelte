@@ -11,7 +11,7 @@
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let taxes: any[] = [];
+    let taxes: any[] = $state([]);
     let loading = true;
 
     const load = async () => {

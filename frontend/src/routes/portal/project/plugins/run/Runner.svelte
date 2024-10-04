@@ -1,10 +1,14 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
 
-    export let client_code = ``;
+    interface Props {
+        client_code?: any;
+    }
+
+    let { client_code = `` }: Props = $props();
 
     
-    let iframe: HTMLIFrameElement;
+    let iframe: HTMLIFrameElement = $state();
 
     interface Message {
         type: "plugin_ipc" | "ping";
@@ -13,7 +17,7 @@
         msgId: number;
     }
 
-    let port: MessagePort;
+    let port: MessagePort = $state();
 
     const onFrameMessage = async (ev: MessageEvent) => {
         const data = ev.data as Message;
@@ -42,7 +46,7 @@
 
 <div class="card p-2 h-full w-full">
     <iframe
-        on:load={(ev) => {
+        onload={(ev) => {
             try {
                 let chan = new MessageChannel();
                 chan.port1.onmessage = onFrameMessage;

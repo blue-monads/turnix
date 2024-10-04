@@ -12,7 +12,7 @@
     const tid = $params["tid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let taxes: ProductTax[] = [];
+    let taxes: ProductTax[] = $state([]);
     let loading = true;
 
     const load = async () => {

@@ -2,7 +2,7 @@
     import { RadioGroup, RadioItem } from "@skeletonlabs/skeleton";
     import FileListings from "../self/files/FileListings.svelte";
 
-    let value = 0;
+    let value = $state(0);
 </script>
 
 <div class="w-modal-wide bg-white p-4">

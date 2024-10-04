@@ -11,8 +11,8 @@
 
     const api = getContext("__api__") as RootAPI;
 
-    let data = {};
-    let loading = true;
+    let data = $state({});
+    let loading = $state(true);
 
     const load = async () => {
         loading = true;

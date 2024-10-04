@@ -8,8 +8,8 @@
 
   const modalStore = getModalStore();
 
-  let datas: Record<string, any>[] = [];
-  let loading = true;
+  let datas: Record<string, any>[] = $state([]);
+  let loading = $state(true);
 
   const load = async () => {
     let api: RootAPI = $modalStore[0].meta["api"];
@@ -46,7 +46,7 @@
         {@const icon = data["icon"]}
         <a
           class="logo-item"
-          on:click={() => {
+          onclick={() => {
             modalStore.close();
           }}
           href="/z/pages/portal/project/new?ptype={data['ptype']}"

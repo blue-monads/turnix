@@ -19,13 +19,13 @@
     import type { RootAPI } from "$lib/api";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
-    let iframe: HTMLIFrameElement;
+    let iframe: HTMLIFrameElement = $state();
 
-    let tabSet: number = 0;
+    let tabSet: number = $state(0);
     let previewTabSet: number = 0;
-    let sqlCode = sampleCode.sqlCode;
-    let htmlCode = samplePreview;
-    let savedHtmlCode = "";
+    let sqlCode = $state(sampleCode.sqlCode);
+    let htmlCode = $state(samplePreview);
+    let savedHtmlCode = $state("");
 
     const pid = $page.params["pid"];
 
@@ -39,7 +39,7 @@
         msgId: number;
     }
 
-    let port: MessagePort;
+    let port: MessagePort = $state();
 
     const onFrameMessage = async (ev: MessageEvent) => {
         const data = ev.data as Message;
@@ -96,7 +96,7 @@
     <svelte:fragment slot="trail">
         <button
             class="btn variant-filled btn-sm"
-            on:click={() => {
+            onclick={() => {
                 savedHtmlCode = htmlCode;
             }}
         >
@@ -106,7 +106,7 @@
 
         <button
             class="btn variant-filled-secondary btn-sm"
-            on:click={() => {
+            onclick={() => {
                 iframe.contentWindow?.print();
             }}
         >
@@ -147,7 +147,7 @@
     <div class="flex-1 w-full md:w-1/2 border border-slate-50 h-1/2 md:h-full p-2">
         <div class="card p-2 h-full w-full">
             <iframe
-                on:load={(ev) => {
+                onload={(ev) => {
                     try {
                         let chan = new MessageChannel();
                         chan.port1.onmessage = onFrameMessage;

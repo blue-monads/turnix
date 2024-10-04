@@ -10,9 +10,13 @@
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
   const api = getContext("__api__") as RootAPI;
-  export let ptype: string | undefined = undefined
+  interface Props {
+    ptype?: string | undefined;
+  }
 
-  let projects: any[] = [];
+  let { ptype = undefined }: Props = $props();
+
+  let projects: any[] = $state([]);
 
   const load = async () => {
     const resp = await api.listProjects(ptype);
@@ -56,7 +60,7 @@
         </a>
 
         <button
-          on:click={() => {
+          onclick={() => {
             store.trigger({
               type: "component",
               component: "project_options",

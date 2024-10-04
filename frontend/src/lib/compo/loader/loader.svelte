@@ -1,5 +1,6 @@
 <script>
-    export let classes = "w-screen";
+  /** @type {{classes?: string}} */
+  let { classes = "w-screen" } = $props();
   </script>
   
   <div class="h-40 mt-14 {classes}">

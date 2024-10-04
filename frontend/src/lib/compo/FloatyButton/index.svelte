@@ -1,11 +1,15 @@
 <script lang="ts">
-    export let handler: Function;
+    interface Props {
+        handler: Function;
+    }
+
+    let { handler }: Props = $props();
 </script>
 
 <div class="fixed bottom-5 right-5">
     <button
         class="btn-icon variant-filled bg-primary-hover-token"
-        on:click={() => {
+        onclick={() => {
             handler && handler()
         }}
     >

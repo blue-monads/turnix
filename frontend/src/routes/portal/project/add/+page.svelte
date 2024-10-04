@@ -6,7 +6,7 @@
 
     const api = getContext("__api__") as RootAPI;
 
-    let message = "";
+    let message = $state("");
 </script>
 
 <AutoForm

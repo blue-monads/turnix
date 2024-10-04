@@ -6,7 +6,7 @@
 
   const api = getContext("__api__") as RootAPI;
 
-  let messages: Record<string, any>[] = [];
+  let messages: Record<string, any>[] = $state([]);
 
   const load = async () => {
     const resp = await api.listUserMessages();
@@ -32,7 +32,7 @@
     </button>
     <button 
     
-    on:click={load}
+    onclick={load}
     class="btn btn-sm variant-filled-secondary">
       <SvgIcon className="w-4 h-4" name="arrow-path" />
       refresh

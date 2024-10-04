@@ -19,6 +19,11 @@
   import OverAllTaxPicker from "./portal/projects/books/[pid]/sales/new/sub/OverAllTaxPicker.svelte";
   import OverAllDiscountPicker from "./portal/projects/books/[pid]/sales/new/sub/OverAllDiscountPicker.svelte";
   import FilePreviewDialog from "./portal/self/files/preview/FilePreviewDialog.svelte";
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
+
+  let { children }: Props = $props();
 
   initializeStores();
 
@@ -45,4 +50,4 @@
 
 <Modal components={modalRegistry} />
 
-<slot />
+{@render children?.()}

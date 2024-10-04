@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import type { BooksAPI, Contact } from "$lib/projects/books";
     import type { NewSaleLine, SaleData } from "./sub/sales";
@@ -11,24 +13,46 @@
 
     const store = getModalStore();
 
-    export let pid: number;
 
     // data fields
-    export let title = "";
-    export let notes = "";
-    export let client_id = 0;
-    export let client_name = "";
-    export let total_item_price = 0;
-    export let total_item_tax_amount = 0;
-    export let total_item_discount_amount = 0;
-    export let sub_total = 0;
-    export let overall_discount_amount = 0;
-    export let overall_tax_amount = 0;
-    export let total = 0;
-    export let sales_date = new Date().toISOString().slice(0, 16);
 
     // extra data
-    export let lines: NewSaleLine[] = [
+
+    interface Props {
+        pid: number;
+        title?: string;
+        notes?: string;
+        client_id?: number;
+        client_name?: string;
+        total_item_price?: number;
+        total_item_tax_amount?: number;
+        total_item_discount_amount?: number;
+        sub_total?: number;
+        overall_discount_amount?: number;
+        overall_tax_amount?: number;
+        total?: number;
+        sales_date?: any;
+        lines?: NewSaleLine[];
+        contactsNameIndex?: Record<number, string>;
+        submit: (data: SaleData) => Promise<string>;
+        api: BooksAPI;
+    }
+
+    let {
+        pid,
+        title = $bindable(""),
+        notes = $bindable(""),
+        client_id = $bindable(0),
+        client_name = "",
+        total_item_price = $bindable(0),
+        total_item_tax_amount = $bindable(0),
+        total_item_discount_amount = $bindable(0),
+        sub_total = $bindable(0),
+        overall_discount_amount = $bindable(0),
+        overall_tax_amount = $bindable(0),
+        total = $bindable(0),
+        sales_date = $bindable(new Date().toISOString().slice(0, 16)),
+        lines = $bindable([
         // {
         //     info: "test",
         //     product_id: 1,
@@ -39,19 +63,19 @@
         //     discount_amount: 4,
         //     total_amount: 84,
         // },
-    ];
+    ]),
+        contactsNameIndex = {},
+        submit,
+        api
+    }: Props = $props();
 
-    export let contactsNameIndex: Record<number, string> = {};
-    export let submit:  (data: SaleData) => Promise<string>;
-    export let api: BooksAPI;
+    let mode = $state("invoice");
+    let message = $state("")
 
-    let mode = "invoice";
-    let message = ""
+    let overall_tax_percentage = $state(0);
+    let overall_discount_percentage = $state(0);
 
-    let overall_tax_percentage = 0;
-    let overall_discount_percentage = 0;
-
-    $: {
+    run(() => {
         total_item_price = lines.reduce((acc, item) => {
             return acc + item.amount * item.qty;
         }, 0);
@@ -73,7 +97,7 @@
             (overall_discount_amount / sub_total) * 100;
 
         total = sub_total + overall_tax_amount - overall_discount_amount;
-    }
+    });
 
     const clientPicker = () => {
         store.trigger({
@@ -184,7 +208,7 @@
                                 >{contactsNameIndex[client_id] || ""}
                             </span>
 
-                            <button on:click={clientPicker}>
+                            <button onclick={clientPicker}>
                                 <SvgIcon
                                     name="plus"
                                     className="w-4 h-4 inline-block align-middle"
@@ -279,7 +303,7 @@
                                 >
                                     <button
                                         class="hover:underline text-warning-800 text-xs"
-                                        on:click={() => {
+                                        onclick={() => {
                                             lines.splice(index, 1);
                                             lines = lines;
                                         }}
@@ -295,7 +319,7 @@
             <div class="flex justify-start p-2">
                 <button
                     class="btn btn-sm variant-filled"
-                    on:click={salesPicker}
+                    onclick={salesPicker}
                 >
                     <SvgIcon
                         name="plus"
@@ -368,7 +392,7 @@
                                 >
                                     <button
                                         class="underline"
-                                        on:click={onSetOverAllTax}
+                                        onclick={onSetOverAllTax}
                                     >
                                         <span>
                                             <strong>
@@ -396,7 +420,7 @@
                                 >
                                     <button
                                         class="underline"
-                                        on:click={onSetOverAllDiscount}
+                                        onclick={onSetOverAllDiscount}
                                     >
                                         <span>
                                             <strong>
@@ -440,7 +464,7 @@
             <button
                 disabled={lines.length === 0 || !client_id}
                 class="btn variant-filled"
-                on:click={async () => {
+                onclick={async () => {
 
                     const resp = await submit({
                         sale: {

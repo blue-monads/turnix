@@ -10,9 +10,13 @@
 
     const store = getModalStore();
 
-    export let pid: number;
-    export let salesData: SalesData;
-    export let contactsNameIndex: Record<number, string> = {};
+    interface Props {
+        pid: number;
+        salesData: SalesData;
+        contactsNameIndex?: Record<number, string>;
+    }
+
+    let { pid, salesData, contactsNameIndex = {} }: Props = $props();
 
     // export let api: BooksAPI;
 
@@ -264,7 +268,7 @@
             </div>
         </section>
         <footer class="card-footer flex justify-end">
-            <button class="btn variant-soft-error" on:click={() => {}}>
+            <button class="btn variant-soft-error" onclick={() => {}}>
                 delete
             </button>
         </footer>

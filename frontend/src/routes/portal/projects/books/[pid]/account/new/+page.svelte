@@ -13,7 +13,7 @@
 
   const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-  let loading = false;
+  let loading = $state(false);
   const onChange = async (data: Record<string, any>) => {
     loading = true;
 

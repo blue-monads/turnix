@@ -1,9 +1,11 @@
 <script>
     import { page } from "$app/stores";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+    /** @type {{children?: import('svelte').Snippet}} */
+    let { children } = $props();
     const pid = $page.params["pid"];
 
-    let active = true;
+    let active = $state(true);
 
     const sideBarList = [
         {
@@ -65,7 +67,7 @@
         },
     ];
 
-    $: sidebarKey = $page.url.pathname.split("/").at(7);
+    let sidebarKey = $derived($page.url.pathname.split("/").at(7));
 
 </script>
 
@@ -100,7 +102,7 @@
     <div class="absolute md:bottom-8">
         <button
             class=" rounded border-2 bg-slate-100 p-1"
-            on:click={() => {
+            onclick={() => {
                 active = !active;
             }}
         >
@@ -118,6 +120,6 @@
     </div>
 
     <main class="grow w-full h-screen overflow-auto">
-        <slot />
+        {@render children?.()}
     </main>
 </div>

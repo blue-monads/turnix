@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { preventDefault, stopPropagation } from 'svelte/legacy';
+
     import { createEventDispatcher, getContext, onMount } from "svelte";
     import type { File, RootAPI } from "$lib/api";
     import { FolderIcon, Loader } from "$lib/compo";
@@ -7,11 +9,21 @@
     import { goto } from "$app/navigation";
     import { getModalStore } from "@skeletonlabs/skeleton";
 
-    export let files: File[] = [];
-    export let loading = false;
-    export let baseUrl = "/z/pages/portal/self/files";
-    export let path = "";
-    export let selected: string;
+    interface Props {
+        files?: File[];
+        loading?: boolean;
+        baseUrl?: string;
+        path?: string;
+        selected: string;
+    }
+
+    let {
+        files = [],
+        loading = false,
+        baseUrl = "/z/pages/portal/self/files",
+        path = "",
+        selected
+    }: Props = $props();
 
     let api = getContext("__api__") as RootAPI;
 
@@ -43,8 +55,8 @@
         { name: "delete", icon: "trash" },
     ];
 
-    let isActive = false;
-    let activeFileId = 0;
+    let isActive = $state(false);
+    let activeFileId = $state(0);
 
     const handler = (e: any) => {
         isActive = false;
@@ -99,8 +111,8 @@
             {:else}
                 {#each files as row, i}
                     <tr
-                        on:dblclick={() => dispatcher("open_item", row)}
-                        on:click={() => dispatcher("select_item", row)}
+                        ondblclick={() => dispatcher("open_item", row)}
+                        onclick={() => dispatcher("select_item", row)}
                         class="cursor-pointer hover:bg-gray-700 {selected ===
                         row.name
                             ? 'variant-outline-primary'
@@ -115,7 +127,7 @@
                             <button
                                 class="mr-1 text-indigo-500"
                                 type="button"
-                                on:click|preventDefault={expore(row)}
+                                onclick={preventDefault(expore(row))}
                             >
                                 {#if row.is_folder}
                                     <FolderIcon {size} />
@@ -140,7 +152,7 @@
                             {#if !isActive || activeFileId === row.id}
                                 {#if !row.is_folder}
                                     <button
-                                        on:click={() => previewFile(row)}
+                                        onclick={() => previewFile(row)}
                                         class="btn btn-sm variant-filled"
                                     >
                                         <SvgIcon
@@ -151,14 +163,14 @@
                                 {/if}
 
                                 <button
-                                    on:click|stopPropagation={() => {
+                                    onclick={stopPropagation(() => {
                                         isActive = true;
                                         activeFileId = row.id;
                                         console.log(
                                             "activeFileId",
                                             activeFileId,
                                         );
-                                    }}
+                                    })}
                                     class="btn btn-sm variant-filled-secondary relative group transition-all duration-200 focus:overflow-visible overflow-hidden"
                                 >
                                     <SvgIcon
@@ -171,12 +183,12 @@
                                     >
                                         {#each row.is_folder ? folderActions : fileActions as action}
                                             <button
-                                                on:click|stopPropagation={() => {
+                                                onclick={stopPropagation(() => {
                                                     dispatcher("action", {
                                                         action,
                                                         row,
                                                     });
-                                                }}
+                                                })}
                                                 class="flex gap-1 justify-start items-center p-1 rounded-lg hover:bg-white hover:text-secondary-600"
                                             >
                                                 <SvgIcon

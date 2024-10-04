@@ -9,7 +9,7 @@
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let message = "";
+    let message = $state("");
 
     const submit = async (data: Record<string, any>) => {
         const resp = await api.addCatagory(pid, {

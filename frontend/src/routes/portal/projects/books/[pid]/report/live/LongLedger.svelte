@@ -20,7 +20,11 @@
         lines: ReportLongLedger[];
     }
 
-    export let data: ReportLongLedger[];
+    interface Props {
+        data: ReportLongLedger[];
+    }
+
+    let { data }: Props = $props();
 
     const format = (rawData: ReportLongLedger[]) => {
         let groupedLedger: Record<number, LedgerGroup> = {};
@@ -48,7 +52,7 @@
         return groupedLedger;
     };
 
-    $: grouped = format(data);
+    let grouped = $derived(format(data));
 
 </script>
 

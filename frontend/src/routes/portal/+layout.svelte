@@ -25,9 +25,14 @@
   import { RootAPI } from "$lib/api/api";
   import ContextThis from "./contextThis.svelte";
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
+
+  let { children }: Props = $props();
 
   let currentTile = "";
-  let showMobileModal = false;
+  let showMobileModal = $state(false);
   const drawer = getDrawerStore();
 
   let sibarItems: Record<string, any>[] = [
@@ -65,7 +70,7 @@
     icon: "code-bracket-square",
   });
 
-  let api: RootAPI;
+  let api: RootAPI = $state();
 
   const load = () => {
     // @ts-ignore
@@ -106,7 +111,7 @@
       <div class="h-full bg-white rounded p-5">
         <div class="absolute right-4">
           <button
-            on:click={toggle}
+            onclick={toggle}
             aria-label="close menu modal"
             class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 cursor-pointer rounded border mr-2"
           >
@@ -118,7 +123,7 @@
           {#each sibarItems as item, index}
             <li class="border rounded">
               <a
-                on:click={toggle}
+                onclick={toggle}
                 class="h-12 pl-24  flex justify-start items-center w-full text-gray-700 focus:text-primary-600 hover:text-primary-800 uppercase gap-2"
                 href={item["link"]}
               >
@@ -139,14 +144,14 @@
     class="flex flex-row md:hidden justify-between bg-surface-100-800-token"
   >
     <div class="flex p-1">
-      <button on:click={toggle}>
+      <button onclick={toggle}>
         <SvgIcon name="bars-3" className="w-6 h-6" />
       </button>
     </div>
 
     <div class="flex gap-4 p-1">
       <button
-        on:click={() => {
+        onclick={() => {
           drawer.open(drawerSettings);
         }}
         class="flex flex-col justify-center items-center rounded-full bg-secondary-100 hover:bg-secondary-200 p-2"
@@ -195,7 +200,7 @@
 
       <div slot="trail" class="mb-4 p-2">
         <button
-          on:click={() => {
+          onclick={() => {
             drawer.open(drawerSettings);
           }}
           class="flex flex-col justify-center items-center rounded-full bg-secondary-100 hover:bg-secondary-200 p-2"
@@ -209,7 +214,7 @@
   <div class="h-[calc(100vh-4rem)] md:h-screen">
     <ContextThis {api}>
       <svelte:fragment>
-        <slot />
+        {@render children?.()}
       </svelte:fragment>
     </ContextThis>
   </div>

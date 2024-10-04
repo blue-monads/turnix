@@ -14,10 +14,10 @@
     const rootApi = getContext("__api__") as RootAPI;
     const api = NewBookAPI(rootApi);
 
-    let loading = false;
+    let loading = $state(false);
 
-    let file: FileList | null = null;
-    let importAsNewTxn = false;
+    let file: FileList | null = $state(null);
+    let importAsNewTxn = $state(false);
 </script>
 
 {#if loading}
@@ -47,7 +47,7 @@
                 <button
                     disabled={!file}
                     class="btn btn-sm variant-filled"
-                    on:click={async () => {
+                    onclick={async () => {
                         if (!file) {
                             return;
                         }

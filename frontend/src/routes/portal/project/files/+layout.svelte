@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import { getContext } from "svelte";
     import { params } from "$lib/params";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
@@ -6,6 +8,11 @@
     import { getModalStore } from "@skeletonlabs/skeleton";
     import { page } from "$app/stores";
     import type { RootAPI } from "$lib/api";
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
 
     const pid = $page.params["pid"];
 
@@ -13,10 +20,13 @@
 
     const api = getContext("__api__") as RootAPI;
 
-    $: _paths = ($params["folder"] || "").split("/");
-    $: __filename = $params["filename"];
+    let _paths = $derived(($params["folder"] || "").split("/"));
+    let __filename = $derived($params["filename"]);
 
-    $: __epoch = 1;
+    let __epoch;
+    run(() => {
+        __epoch = 1;
+    });
 
     const complete_new_folder = async (name: string) => {
         await api.addProjectFolder(pid, name, $params["folder"]);
@@ -44,7 +54,7 @@
 
                 <button
                     class="btn btn-sm variant-filled-primary"
-                    on:click={() => {
+                    onclick={() => {
                         store.trigger({
                             type: "component",
                             component: "new_folder_panel",
@@ -96,7 +106,7 @@
 <div class="px-2 h-full">
     <div class="card p-2 h-full">
         {#key __epoch}
-            <slot />
+            {@render children?.()}
         {/key}
     </div>
 </div>

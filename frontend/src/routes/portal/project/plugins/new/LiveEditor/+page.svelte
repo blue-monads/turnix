@@ -21,10 +21,10 @@
     import { params } from "$lib/params";
     import Runner from "../../run/Runner.svelte";
 
-    let tabSet: number = 0;
-    let serverCode = sampleJs;
-    let clientCode = sampleHtml;
-    let savedClientCode = "";
+    let tabSet: number = $state(0);
+    let serverCode = $state(sampleJs);
+    let clientCode = $state(sampleHtml);
+    let savedClientCode = $state("");
 
     const pid = $params["pid"];
 
@@ -68,7 +68,7 @@
     <svelte:fragment slot="trail">
         <button
             class="btn variant-filled btn-sm"
-            on:click={() => {
+            onclick={() => {
                 savedClientCode = clientCode;
 
             }}

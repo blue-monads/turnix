@@ -2,9 +2,13 @@
  
   import SvgIcon from "../icons/SvgIcon.svelte";
 
-  export let onClick: Function;
-  export let name = "";
-  let loading = false;
+  interface Props {
+    onClick: Function;
+    name?: string;
+  }
+
+  let { onClick, name = "" }: Props = $props();
+  let loading = $state(false);
 
   const handler = async () => {
     loading = true;
@@ -17,7 +21,7 @@
 </script>
 
 <button
-  on:click={handler}
+  onclick={handler}
   class="btn btn-sm variant-filled"
 >
   {#if loading}

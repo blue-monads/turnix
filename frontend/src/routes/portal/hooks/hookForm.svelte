@@ -15,32 +15,47 @@
     import { autocompletion } from "@codemirror/autocomplete";
     import { code, completionObject } from "./code";
 
-    export let id = 0;
-    export let hook_code = code;
-    export let runas_user_id = -1;
-    export let hook_type = "webhook";
-    export let target = "";
 
-    export let envs = "{}";
-    export let extrameta = "{}";
-    export let event = "";
-    export let name = "";
 
     let run_as_type: "specific_user" | "context_user" | "no_user" =
-        runas_user_id === -1
+        $state(runas_user_id === -1
             ? "no_user"
             : runas_user_id === 0
               ? "context_user"
-              : "specific_user";
+              : "specific_user");
 
-    export let onSave = async (data: Record<string, any>) => {};
+    interface Props {
+        id?: number;
+        hook_code?: any;
+        runas_user_id?: any;
+        hook_type?: string;
+        target?: string;
+        envs?: string;
+        extrameta?: string;
+        event?: string;
+        name?: string;
+        onSave?: any;
+    }
+
+    let {
+        id = 0,
+        hook_code = $bindable(code),
+        runas_user_id = $bindable(-1),
+        hook_type = $bindable("webhook"),
+        target = $bindable(""),
+        envs = $bindable("{}"),
+        extrameta = $bindable("{}"),
+        event = $bindable(""),
+        name = $bindable(""),
+        onSave = async (data: Record<string, any>) => {}
+    }: Props = $props();
 
     const ptype = $params["ptype"];
 
     const api = getContext("__api__") as RootAPI;
 
-    let data: ProjectDef;
-    let loading = true;
+    let data: ProjectDef = $state();
+    let loading = $state(true);
 
     let usersIndex: Record<number, string> = {};
 
@@ -139,7 +154,7 @@
                 </label>
 
                 {#if hook_type === "script"}
-                    <!-- svelte-ignore a11y-label-has-associated-control -->
+                    <!-- svelte-ignore a11y_label_has_associated_control -->
                     <label class="label">
                         <span>Script Code</span>
                         <div class="p-1 rounded border bg-white max-h-screen">
@@ -186,7 +201,7 @@
                     </label>
                 {/if}
 
-                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <!-- svelte-ignore a11y_label_has_associated_control -->
                 <div class="label">
                     <span>Extrameta</span>
                     <KvEditor
@@ -195,7 +210,7 @@
                     />
                 </div>
 
-                <!-- svelte-ignore a11y-label-has-associated-control -->
+                <!-- svelte-ignore a11y_label_has_associated_control -->
                 <div class="label">
                     <span>Env Vars</span>
                     <KvEditor
@@ -209,7 +224,7 @@
             <footer class="card-footer flex justify-end">
                 <button
                     class="btn btn-sm variant-filled"
-                    on:click={async () => {
+                    onclick={async () => {
                         loading = true;
                         if (run_as_type === "context_user") {
                             runas_user_id = 0;

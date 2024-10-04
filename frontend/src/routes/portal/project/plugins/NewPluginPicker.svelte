@@ -46,7 +46,7 @@
                     <a
                         href={pluginSource.link}
                         class="btn btn-sm variant-filled"
-                        on:click={() => {
+                        onclick={() => {
                             store.close();
                         }}
                     >

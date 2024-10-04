@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
     import type { RootAPI } from "$lib/api";
 
     import { NewBookAPI, type Account } from "$lib/projects/books";
@@ -15,8 +17,8 @@
   
     const api = NewBookAPI(getContext("__api__") as RootAPI);
   
-    let loading = true;
-    let data: Account | null = null;
+    let loading = $state(true);
+    let data: Account | null = $state(null);
 
     const onChange = async (data: Record<string, any>) => {
         loading = true;
@@ -41,9 +43,9 @@
     load()
 
 
-    $: {
+    run(() => {
         console.log("@aid", $params)
-    }
+    });
      
 
   </script>

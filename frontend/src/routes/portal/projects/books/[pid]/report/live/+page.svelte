@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
   import { NewBookAPI } from "$lib/projects/books";
   import { getContext } from "svelte";
@@ -13,12 +15,12 @@
   const store = getModalStore();
   const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-  let generating = false;
+  let generating = $state(false);
   let template_id = 0;
-  let report_type = "short_ledger";
+  let report_type = $state("short_ledger");
 
-  let current_report_type = report_type;
-  let data: any;
+  let current_report_type = $state(report_type);
+  let data: any = $state();
 
   const load = async () => {};
 
@@ -44,11 +46,11 @@
     generating = false;
   };
 
-  $: report_type_invalid = report_type === "custom" && template_id === 0;
+  let report_type_invalid = $derived(report_type === "custom" && template_id === 0);
 
-  $: {
+  run(() => {
     console.log("@data/2", data);
-  }
+  });
 </script>
 
 <AppBar>
@@ -99,7 +101,7 @@
       <div>
         <button
           disabled={generating || report_type_invalid}
-          on:click={onGenerate}
+          onclick={onGenerate}
           class="btn btn-sm variant-filled disabled:variant-ghost disabled:text-slate-800"
         >
           <SvgIcon className="h-4 w-4" name="bolt" />

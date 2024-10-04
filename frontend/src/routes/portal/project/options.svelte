@@ -8,7 +8,7 @@
   const modalStore = getModalStore();
 
   let datas = [];
-  let loading = true;
+  let loading = $state(true);
 
   const load = async () => {
     let api: RootAPI = $modalStore[0].meta["api"];
@@ -45,7 +45,7 @@
     <div class="logo-cloud flex flex-col gap-1 border p-2">
       <a
         class="logo-item"
-        on:click={() => {
+        onclick={() => {
           modalStore.close();
         }}
         href="/z/pages/portal/projects/{['ptype']}?pid={data['id']}"
@@ -55,7 +55,7 @@
       </a>
       <a
         class="logo-item"
-        on:click={() => {
+        onclick={() => {
           modalStore.close();
         }}
         href={`/z/pages/portal/project/files/${data["id"]}`}
@@ -66,7 +66,7 @@
 
       <a
         class="logo-item"
-        on:click={() => {
+        onclick={() => {
           modalStore.close();
         }}
         href={`/z/pages/portal/project/plugins?pid=${data["id"]}`}
@@ -77,7 +77,7 @@
 
       <a
         class="logo-item"
-        on:click={() => {
+        onclick={() => {
           modalStore.close();
         }}
         href={`/z/pages/portal/project/users?pid=${data["id"]}`}
@@ -90,7 +90,7 @@
 
       <a
         class="logo-item"
-        on:click={() => {
+        onclick={() => {
           modalStore.close();
         }}
         href={`/z/pages/portal/hooks?ptype=${data["ptype"]}&pid=${data["id"]}`}
@@ -101,7 +101,7 @@
 
       <a
         class="logo-item"
-        on:click={() => {
+        onclick={() => {
           modalStore.close();
         }}
         href="/z/pages/portal/projects"

@@ -2,23 +2,35 @@
   import SvgIcon from "../icons/SvgIcon.svelte";
   import Dropdown from "./_dropdown.svelte";
 
-  export let actions: {
+
+  interface Props {
+    actions?: {
     Action:  (id: any, data: any) => Promise<void> | void;
     Class?: string;
     icon?: string;
     Name: string;
-  }[] = [];
-  export let key_names: any = [];
-  export let datas: any = [];
-  export let action_key = "";
-  export let color: any[] = [];
-  export let show_drop = false;
+  }[];
+    key_names?: any;
+    datas?: any;
+    action_key?: string;
+    color?: any[];
+    show_drop?: boolean;
+    hashSeed?: number;
+  }
 
-  export let hashSeed = 65
+  let {
+    actions = [],
+    key_names = [],
+    datas = [],
+    action_key = "",
+    color = [],
+    show_drop = false,
+    hashSeed = 65
+  }: Props = $props();
 
 
-  let extern_actions: any[] = [];
-  let drop_actions: any[] = [];
+  let extern_actions: any[] = $state([]);
+  let drop_actions: any[] = $state([]);
   if (!show_drop) {
     extern_actions = actions;
   } else {
@@ -78,7 +90,7 @@
               {#each extern_actions as action}
                 {@const icon = actions["icon"]}
                 <button
-                  on:click={() => action.Action(data[action_key], data)}
+                  onclick={() => action.Action(data[action_key], data)}
                   class="flex m-1 text-white transform hover:scale-110 btn btn-sm {action.Class ||
                     'bg-blue-400'}"
                 >
@@ -94,7 +106,7 @@
                 <Dropdown>
                   {#each drop_actions as action}
                     <button
-                      on:click={() => {
+                      onclick={() => {
                         action.Action(data[action_key], data);
                       }}
                       class="flex justify-between rounded-sm px-4 py-2 text-sm capitalize text-gray-700 hover:bg-blue-500 hover:text-white"

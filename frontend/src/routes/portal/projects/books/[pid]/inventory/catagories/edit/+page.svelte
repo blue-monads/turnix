@@ -12,9 +12,9 @@
     const cid = $params["cid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let message = "";
-    let data: any;
-    let loading = true;
+    let message = $state("");
+    let data: any = $state();
+    let loading = $state(true);
 
     const load = async () => {
         loading = true;

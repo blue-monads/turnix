@@ -7,7 +7,11 @@
         acc_type: string;
     }
 
-    export let data: ReportLedgerShort[];
+    interface Props {
+        data: ReportLedgerShort[];
+    }
+
+    let { data }: Props = $props();
 </script>
 
 <div class="table-container h-[calc(100vh-14rem)] overflow-y-auto">

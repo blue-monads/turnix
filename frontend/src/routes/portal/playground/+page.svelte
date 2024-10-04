@@ -15,7 +15,7 @@
 <h4 class="h4">Playground</h4>
 
 <button
-  on:click={() => {
+  onclick={() => {
     store.trigger({
       type: "component",
       component: "file_picker",

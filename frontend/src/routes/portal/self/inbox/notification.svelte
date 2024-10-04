@@ -7,7 +7,7 @@
 
     const getRootAPI = $drawer["meta"].getRootAPI as () => RootAPI;
 
-    let messages: Record<string, any>[] = [];
+    let messages: Record<string, any>[] = $state([]);
 
     const load = async () => {
         const api = getRootAPI();
@@ -25,7 +25,7 @@
 
 <div class="w-full h-full relative">
     <button
-        on:click={() => {
+        onclick={() => {
             drawer.close();
         }}
         class="absolute top-2 right-6 h-4 w-4 rounded border"
@@ -53,7 +53,7 @@
     <div class="flex justify-end p-2 gap-2">
         <a 
         
-        on:click={() => {
+        onclick={() => {
             drawer.close();
         }}
         href="/z/pages/portal/self/inbox" 

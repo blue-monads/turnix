@@ -2,9 +2,13 @@
   import { formatCurrency } from "$lib/utils";
   import type { TxnLine } from "./txntype";
 
-  export let lineData: TxnLine[] = [];
-  export let accountsIndex: Record<number, string>;
-  export let pid: string;
+  interface Props {
+    lineData?: TxnLine[];
+    accountsIndex: Record<number, string>;
+    pid: string;
+  }
+
+  let { lineData = [], accountsIndex, pid }: Props = $props();
 
   console.log("@lines", lineData);
 </script>

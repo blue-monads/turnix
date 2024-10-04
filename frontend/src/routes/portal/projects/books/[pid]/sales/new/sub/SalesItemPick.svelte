@@ -4,17 +4,21 @@
     import type { NewSaleLine } from "./sales";
 
     import { getModalStore } from "@skeletonlabs/skeleton";
-    export let parent: any;
+    interface Props {
+        parent: any;
+    }
+
+    let { parent }: Props = $props();
 
     const store = getModalStore();
-    let mode: "loading" | "pick_product" | "set_quantity" = "pick_product";
-    let info = "";
-    let qty = 1;
-    let amount = 0;
-    let product_id: number;
-    let price = 0; // original price
+    let mode: "loading" | "pick_product" | "set_quantity" = $state("pick_product");
+    let info = $state("");
+    let qty = $state(1);
+    let amount = $state(0);
+    let product_id: number = $state();
+    let price = $state(0); // original price
 
-    let data: object[] = $store[0].meta["data"] || [];
+    let data: object[] = $state($store[0].meta["data"] || []);
 
     const loadData = async () => {
 
@@ -127,7 +131,7 @@
             </section>
 
             <footer class="card-footer flex justify-end">
-                <button class="btn variant-filled" on:click={onSubmit}>
+                <button class="btn variant-filled" onclick={onSubmit}>
                     save
                 </button>
             </footer>

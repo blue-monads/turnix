@@ -3,13 +3,17 @@
     import { buildApi, type StartAPI } from "../startAPI";
     import { getContext } from "svelte";
 
-    export let isHomePage = true;
+    interface Props {
+        isHomePage?: boolean;
+    }
+
+    let { isHomePage = true }: Props = $props();
 
     const api = getContext("__start_api__") as StartAPI;
 
-    let isInstanceRunning = false;
-    let workingDir = "";
-    let loading = true;
+    let isInstanceRunning = $state(false);
+    let workingDir = $state("");
+    let loading = $state(true);
     let port = "";
 
     const load = async () => {
@@ -62,7 +66,7 @@
         </p>
 
         <div class="flex gap-2">
-            <button class="btn variant-soft-primary" on:click={localNavigate}>
+            <button class="btn variant-soft-primary" onclick={localNavigate}>
                 Explore
             </button>
             {#if !isHomePage}
@@ -89,7 +93,7 @@
         <div class="flex gap-2">
             <button
                 class="btn variant-filled"
-                on:click={async () => {
+                onclick={async () => {
                     loading = true;
 
                     await api.startInstance();

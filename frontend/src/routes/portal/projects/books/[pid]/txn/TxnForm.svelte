@@ -10,15 +10,17 @@
 
     import { page } from "$app/stores";
 
-    export let onSubmit: Function;
+    interface Props { [key: string]: any }
+
+    let { onSubmit, ...rest }: Props = $props();
 
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
     const store = getModalStore();
 
-    let loading = true;
-    let accountsIndex: Record<number, string> = {};
-    let accounts: Account[] = [];
+    let loading = $state(true);
+    let accountsIndex: Record<number, string> = $state({});
+    let accounts: Account[] = $state([]);
 
     const load = async () => {
         loading = true;
@@ -59,6 +61,6 @@
                 });
             });
         }}
-        {...$$restProps}
+        {...rest}
     />
 {/if}

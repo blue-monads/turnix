@@ -12,11 +12,11 @@
     const id = $params["prid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let message = "";
-    let data: any;
-    let loading = true;
+    let message = $state("");
+    let data: any = $state();
+    let loading = $state(true);
 
-    let allCatagories: Catagory[] = [];
+    let allCatagories: Catagory[] = $state([]);
 
     const load = async () => {
         loading = true;
@@ -83,7 +83,7 @@
                         class="input p-1"
                         type="text"
                         placeholder="Input"
-                        on:change={setValueText("name")}
+                        onchange={setValueText("name")}
                     />
                 </label>
 
@@ -93,7 +93,7 @@
                     <select 
                         value={data.catagory_id} 
                         class="select" 
-                        on:change={setValueNumber("catagory_id")}
+                        onchange={setValueNumber("catagory_id")}
                         >
                         {#each allCatagories as catagory}
                             <option value={catagory.id}>{catagory.name}</option>
@@ -107,7 +107,7 @@
                         type="text"
                         name="variant_id"
                         value={data.variant_id}
-                        on:change={setValueNumber("variant_id")}
+                        onchange={setValueNumber("variant_id")}
                         class="input p-1"
                         placeholder="LARGE XL"
                     />
@@ -130,7 +130,7 @@
                     <input
                         id="price"
                         value={data.price}
-                        on:change={setValueNumber("price")}
+                        onchange={setValueNumber("price")}
                         class="input p-1"
                         type="number"
                         placeholder="Input"
@@ -142,7 +142,7 @@
                     <input
                         id="stock_count"
                         value={data.stock_count}
-                        on:change={setValueNumber("stock_count")}
+                        onchange={setValueNumber("stock_count")}
                         class="input p-1"
                         type="number"
                         placeholder="Input"
@@ -154,7 +154,7 @@
                     <textarea
                         value={data.info}
                         class="textarea p-1"
-                        on:change={setValueText("info")}
+                        onchange={setValueText("info")}
                         rows="4"
                         placeholder={"information about account"}
                     />
@@ -163,7 +163,7 @@
             <footer class="card-footer flex justify-end">
                 <button
                     class="btn variant-filled"
-                    on:click={() => {
+                    onclick={() => {
                         submit({ ...data });
                     }}
                 >
