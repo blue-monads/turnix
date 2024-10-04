@@ -22,7 +22,7 @@
         loading = false,
         baseUrl = "/z/pages/portal/self/files",
         path = "",
-        selected
+        selected = $bindable()
     }: Props = $props();
 
     let api = getContext("__api__") as RootAPI;
