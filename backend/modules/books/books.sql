@@ -20,7 +20,7 @@ create table __project__Transactions(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
-    txn_type TEXT NOT NULL DEFAULT 'normal',
+    txn_type TEXT NOT NULL DEFAULT 'normal', -- manual, sales, stockin
     reference_id TEXT NOT NULL DEFAULT '',
     attachments TEXT NOT NULL DEFAULT '',
     created_by INTEGER NOT NULL,
@@ -28,6 +28,7 @@ create table __project__Transactions(
     txn_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_editable BOOLEAN NOT NULL DEFAULT FALSE,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -41,8 +42,8 @@ create table __project__TransactionLines(
     updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    linked_sales_id INTEGER,
-    linked_stockin_id INTEGER
+    linked_sales_id INTEGER NOT NULL DEFAULT 0,
+    linked_stockin_id INTEGER NOT NULL DEFAULT 0
 );
 
 create table __project__ReportTemplates(
@@ -272,5 +273,5 @@ create table __project__Scrachpads(
     updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    linked_client_id INTEGER
+    linked_client_id INTEGER NOT NULL DEFAULT 0
 );
