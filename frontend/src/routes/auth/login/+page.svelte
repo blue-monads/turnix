@@ -21,7 +21,7 @@
 </script>
 
 <div class="flex justify-center items-center">
-    <div class="card bg-initial card-hover overflow-hidden variant-ringed">
+    <div class="card bg-initial overflow-hidden hover:variant-ringed">
         <header></header>
 
         <div class="p-4 space-y-4">
