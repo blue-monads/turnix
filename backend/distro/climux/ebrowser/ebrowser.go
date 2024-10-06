@@ -65,5 +65,14 @@ func (e *EbrowserApp) __BindEbrowserRPC(name string, opts map[string]string) {
 }
 
 func (e *EbrowserApp) Close() {
+
+	e.cLock.Lock()
+	defer e.cLock.Unlock()
+
+	if e.cmd != nil {
+		e.cmd.Process.Kill()
+		e.cmd = nil
+	}
+
 	e.webview.Destroy()
 }

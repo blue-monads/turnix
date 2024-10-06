@@ -15,6 +15,8 @@ func init() {
 
 			ebApp := New(ctx)
 
+			defer ebApp.Close()
+
 			go ebApp.runPreHttpServer()
 
 			time.Sleep(time.Second * 1)
