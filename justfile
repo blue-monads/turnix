@@ -20,5 +20,8 @@ build_frontend:
 build_backend:
 	go build -v -o tmp/turnix ./main.go
 
+copy_binary:
+	cp tmp/turnix ~/go/bin
+
 run_cli:
 	cd tmp && FRONTEND_DEV_SERVER="http://localhost:5173"  go run ../main.go 
