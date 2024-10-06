@@ -2,7 +2,7 @@
 -- ACCOUNTING 
 
 create table __project__Accounts(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL DEFAULT '',
     info TEXT NOT NULL DEFAULT '',
     acc_type TEXT NOT NULL DEFAULT '',
@@ -17,7 +17,7 @@ create table __project__Accounts(
 );
 
 create table __project__Transactions(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
     txn_type TEXT NOT NULL DEFAULT 'normal',
@@ -32,7 +32,7 @@ create table __project__Transactions(
 );
 
 create table __project__TransactionLines(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     account_id INTEGER NOT NULL,
     txn_id INTEGER NULL,
     debit_amount INTEGER NOT NULL DEFAULT 0,
@@ -46,7 +46,7 @@ create table __project__TransactionLines(
 );
 
 create table __project__ReportTemplates(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL DEFAULT '',
     input_options JSON NOT NULL DEFAULT '{}',
     output_options JSON NOT NULL DEFAULT '{}',
@@ -54,7 +54,7 @@ create table __project__ReportTemplates(
     filter_script TEXT NULL DEFAULT ''
 );
 create table __project__Reports(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     template_id INTEGER NOT NULL DEFAULT 0,
     report_type TEXT NOT NULL DEFAULT 'custom',
     result JSON NOT NULL DEFAULT '{}',
@@ -71,7 +71,7 @@ create table __project__Reports(
 
 -- z_1_Estimates
 create table __project__Estimates(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
     attachments TEXT NOT NULL DEFAULT '',
@@ -86,7 +86,7 @@ create table __project__Estimates(
 );
 
 create table __project__EstimateLines(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     info TEXT NOT NULL DEFAULT '',
     qty INTEGER NOT NULL DEFAULT 0,    
     estimate_id INTEGER NOT NULL,
@@ -104,7 +104,7 @@ create table __project__EstimateLines(
 -- INVENTORY
 
 create table __project__Catagories(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL DEFAULT '',
     info TEXT NOT NULL DEFAULT '',
     product_class TEXT NOT NULL DEFAULT 'physical_item', -- physical_item, service, digital_item        
@@ -119,7 +119,7 @@ create table __project__Catagories(
 
 
 create table __project__Products(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL DEFAULT '',
     info TEXT NOT NULL DEFAULT '',
     variant_id TEXT NOT NULL DEFAULT '',
@@ -139,7 +139,7 @@ create table __project__Products(
 
 
 create table __project__ProductStockIn(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     info TEXT NOT NULL DEFAULT '',
     amount INTEGER NOT NULL DEFAULT 0,
     vendor_id INTEGER NOT NULL DEFAULT 0,
@@ -150,7 +150,7 @@ create table __project__ProductStockIn(
 );
 
 create table __project__ProductStockInLines(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     info TEXT NOT NULL DEFAULT '',
     product_stockin_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
@@ -166,7 +166,7 @@ create table __project__ProductStockInLines(
 -- SALES
 
 create table __project__Sales(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL DEFAULT '',
     client_id INTEGER NOT NULL DEFAULT 0,
     client_name TEXT NOT NULL DEFAULT '',
@@ -198,7 +198,7 @@ create table __project__Sales(
 
 
 create table __project__SalesLines(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     info TEXT NOT NULL DEFAULT '',
     qty INTEGER NOT NULL DEFAULT 0,    
     sale_id INTEGER NOT NULL,
@@ -217,7 +217,7 @@ create table __project__SalesLines(
 
 
 create table __project__Tax(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL DEFAULT '',
     ttype TEXT NOT NULL DEFAULT 'item_percent', -- item_percent, category_percent
     info TEXT NOT NULL DEFAULT '',
@@ -232,7 +232,7 @@ create table __project__Tax(
 
 
 create table __project__ProductTaxes(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     catagory_id INTEGER NOT NULL DEFAULT 0,
     product_id INTEGER NOT NULL DEFAULT 0,
     tax_id INTEGER NOT NULL,
@@ -244,7 +244,7 @@ create table __project__ProductTaxes(
 
 
 create table __project__Contacts(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL DEFAULT '',
     ctype TEXT NOT NULL DEFAULT 'vendor', -- vendor, client
     info TEXT NOT NULL DEFAULT '',
@@ -263,7 +263,7 @@ create table __project__Contacts(
 );
 
 create table __project__Scrachpads(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
     jtype TEXT NOT NULL DEFAULT 'normal',
