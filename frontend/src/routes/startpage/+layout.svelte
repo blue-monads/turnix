@@ -28,6 +28,21 @@
             icon: "rss",
             key: "peers",
         },
+
+        {
+            name: "Extend",
+            link: "/z/pages/startpage/extend",
+            icon: "puzzle-piece",
+            key: "extend",
+        },
+
+        {
+            name: "Easy Share",
+            link: "/z/pages/startpage/share",
+            icon: "share",
+            key: "share",
+        },
+
         {
             name: "Setting",
             link: "/z/pages/startpage/setting",
