@@ -1,4 +1,5 @@
-
+default:
+	just --list
 start_dev_frontend:
 	cd frontend && npm run dev
 start_dev_backend:
@@ -11,6 +12,12 @@ play:
 
 build:
 	cd frontend && npm run build
+	go build -v -o tmp/turnix ./main.go
+
+build_frontend:
+	cd frontend && npm run build
+
+build_backend:
 	go build -v -o tmp/turnix ./main.go
 
 run_cli:
