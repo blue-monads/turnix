@@ -45,10 +45,10 @@
 <div class="flex items-center justify-center min-h-screen flex-col gap-4 pt-20">
     {#if loading}
         <div
-            class="flex items-center justify-center min-h-screen flex-col gap-4 pt-20"
+            class="flex items-center justify-center h-96 flex-col gap-4"
         >
             <div
-                class="flex items-center justify-center min-h-screen flex-col gap-4 pt-20"
+                class="flex items-center justify-center flex-col gap-4"
             >
                 <h2 class="h2">Loading...</h2>
             </div>
