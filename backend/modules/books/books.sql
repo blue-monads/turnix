@@ -23,8 +23,8 @@ create table __project__Transactions(
     txn_type TEXT NOT NULL DEFAULT 'normal',
     reference_id TEXT NOT NULL DEFAULT '',
     attachments TEXT NOT NULL DEFAULT '',
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     txn_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -37,8 +37,8 @@ create table __project__TransactionLines(
     txn_id INTEGER NULL,
     debit_amount INTEGER NOT NULL DEFAULT 0,
     credit_amount INTEGER NOT NULL DEFAULT 0,
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     linked_sales_id INTEGER,
@@ -58,8 +58,8 @@ create table __project__Reports(
     template_id INTEGER NOT NULL DEFAULT 0,
     report_type TEXT NOT NULL DEFAULT 'custom',
     result JSON NOT NULL DEFAULT '{}',
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
@@ -78,8 +78,8 @@ create table __project__Estimates(
     tax_id INTEGER NOT NULL DEFAULT 0,
     sub_total INTEGER NOT NULL DEFAULT 0,
     total INTEGER NOT NULL DEFAULT 0,
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
@@ -92,8 +92,8 @@ create table __project__EstimateLines(
     estimate_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL DEFAULT 0,
     amount INTEGER NOT NULL DEFAULT 0,
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -110,8 +110,8 @@ create table __project__Catagories(
     product_class TEXT NOT NULL DEFAULT 'physical_item', -- physical_item, service, digital_item        
     parent_id INTEGER NOT NULL DEFAULT 0,
     image TEXT NOT NULL DEFAULT '',
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
@@ -130,8 +130,8 @@ create table __project__Products(
     alt_images TEXT NOT NULL DEFAULT '',
     epoch INTEGER NOT NULL DEFAULT 0, -- optimistic counter for stock count
     stock_count INTEGER NOT NULL DEFAULT 0, 
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
@@ -143,8 +143,8 @@ create table __project__ProductStockIn(
     info TEXT NOT NULL DEFAULT '',
     amount INTEGER NOT NULL DEFAULT 0,
     vendor_id INTEGER NOT NULL DEFAULT 0,
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -156,8 +156,8 @@ create table __project__ProductStockInLines(
     product_id INTEGER NOT NULL,
     qty INTEGER NOT NULL DEFAULT 0,
     amount INTEGER NOT NULL DEFAULT 0,
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -184,8 +184,8 @@ create table __project__Sales(
     overall_tax_amount INTEGER NOT NULL DEFAULT 0,
     
     total INTEGER NOT NULL DEFAULT 0, -- sub_total +  overall_discount_amount - overall_discount_amount
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,    
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,    
     sales_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -209,8 +209,8 @@ create table __project__SalesLines(
     discount_amount INTEGER NOT NULL DEFAULT 0,
 
     total_amount INTEGER NOT NULL DEFAULT 0, -- total_amount = item_price + item_tax_amount - discount_amount
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -223,8 +223,8 @@ create table __project__Tax(
     info TEXT NOT NULL DEFAULT '',
     rate INTEGER NOT NULL DEFAULT 0,
     strict BOOLEAN NOT NULL DEFAULT FALSE,
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
@@ -236,8 +236,8 @@ create table __project__ProductTaxes(
     catagory_id INTEGER NOT NULL DEFAULT 0,
     product_id INTEGER NOT NULL DEFAULT 0,
     tax_id INTEGER NOT NULL,
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -255,8 +255,8 @@ create table __project__Contacts(
     address TEXT NOT NULL DEFAULT '',    
     address2 TEXT NOT NULL DEFAULT '',
     address3 TEXT NOT NULL DEFAULT '',
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
@@ -268,8 +268,8 @@ create table __project__Scrachpads(
     notes TEXT NOT NULL DEFAULT '',
     jtype TEXT NOT NULL DEFAULT 'normal',
     attachments TEXT NOT NULL DEFAULT '',
-    created_by INTEGER NULL,
-    updated_by INTEGER NULL,
+    created_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     linked_client_id INTEGER
