@@ -2,6 +2,7 @@
     import { AppBar } from "@skeletonlabs/skeleton";
     import { buildApi, type StartAPI } from "../startAPI";
     import { getContext } from "svelte";
+    import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
     interface Props {
         isHomePage?: boolean;
@@ -101,6 +102,7 @@
                     load();
                 }}
             >
+            <SvgIcon className="h-4 w-4" name="bolt" />
                 Start
             </button>
             {#if !isHomePage}
