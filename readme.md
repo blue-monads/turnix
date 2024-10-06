@@ -22,6 +22,7 @@ Platform for apps.
 - project logs
 - force reload project
 - project binding handle { log, logProject }
+- make sidebar buildable seprerately so it can be mounted in external apps
 
 ## control plane
 
