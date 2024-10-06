@@ -34,6 +34,4 @@ func init() {
 		},
 	})
 
-	climux.DefaultCLI = "ebrowser"
-
 }
