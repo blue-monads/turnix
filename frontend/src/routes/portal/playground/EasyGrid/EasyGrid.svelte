@@ -2,19 +2,49 @@
     import type { GridOptions } from "./easyTypes";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
-    let { columns = [], onLoad, actions }: GridOptions = $props();
+    let { columns = [], onLoad, actions, key }: GridOptions = $props();
 
     let datas = $state([]);
 
-    let sortMode:  "asc" | "desc" = "asc";
-    let sortKey: string = "";
+    let sortMode: "asc" | "desc" = $state("asc");
+    let sortKey: string = $state("");
+    let minId: number = $state(0);
+    let maxId: number = $state(0);
 
-    $effect(() => {
-        datas = onLoad({
-            loadType: "initial",
+    const loadData = async (loadType: "next" | "initial" | "previous") => {
+        const nextDatas = await onLoad({
+            loadType,
             orderBy: sortKey,
             orderDirection: sortMode,
+            minId: minId,
+            maxId: maxId,
         });
+
+        let nextMinId = 0;
+        let nextMaxId = 0;
+
+        if (nextDatas.length > 0) {
+            let first = nextDatas[0][key];
+            nextMaxId = first;
+            nextMinId = first;
+
+            nextDatas.forEach((item) => {
+                const currItem = item[key];
+
+                if (currItem < minId) {
+                    nextMinId = item.id;
+                } else if (currItem > maxId) {
+                    nextMaxId = item.id;
+                }
+            });
+        }
+
+        minId = nextMinId;
+        maxId = nextMaxId;
+    };
+
+    $effect(() => {
+        loadData("initial");
     });
 </script>
 
@@ -26,12 +56,47 @@
                     <th class="px-2 py-1"
                         >{column.title}
 
-                        <button class="mt-4">
-                            <SvgIcon
-                                name="chevron-up-down"
-                                className="h-4 w-4"
-                            />
-                        </button>
+                        <div class="mt-4">
+                            {#if column.key === sortKey}
+                                {#if sortMode === "asc"}
+                                    <button
+                                        onclick={() => {
+                                            sortKey = column.key;
+                                            sortMode = "desc";
+                                        }}
+                                    >
+                                        <SvgIcon
+                                            name="chevron-up"
+                                            className="h-4 w-4"
+                                        />
+                                    </button>
+                                {:else}
+                                    <button
+                                        onclick={() => {
+                                            sortKey = "";
+                                            sortMode = "asc";
+                                        }}
+                                    >
+                                        <SvgIcon
+                                            name="chevron-down"
+                                            className="h-4 w-4"
+                                        />
+                                    </button>
+                                {/if}
+                            {:else}
+                                <button
+                                    onclick={() => {
+                                        sortKey = column.key;
+                                        sortMode = "asc";
+                                    }}
+                                >
+                                    <SvgIcon
+                                        name="chevron-up-down"
+                                        className="h-4 w-4"
+                                    />
+                                </button>
+                            {/if}
+                        </div>
                     </th>
                 {/each}
 
@@ -89,11 +154,21 @@
         </select>
 
         <div class="flex gap-2">
-            <button class="btn btn-sm bg-gray-100">
+            <button
+                class="btn btn-sm bg-gray-100"
+                onCLick={async () => {
+                    loadData("previous");
+                }}
+            >
                 <SvgIcon className="h-4 w-4" name="chevron-left" />
             </button>
 
-            <button class="btn btn-sm bg-gray-100">
+            <button
+                class="btn btn-sm bg-gray-100"
+                onCLick={async () => {
+                    loadData("next");
+                }}
+            >
                 <SvgIcon className="h-4 w-4" name="chevron-right" />
             </button>
         </div>
