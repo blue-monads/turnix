@@ -5,6 +5,7 @@ export interface GridOptions {
     onLoad: LoaderFunc
     actions?: Action[]
     key: string
+    enableSort?: boolean
 }
 
 export type LoaderFunc = (params: LoaderParams) => Promise<Record<string, any>[]> 
@@ -33,6 +34,7 @@ export interface Column {
     key: string
     renderer?: RendererType
     rendererOptions?: Record<string, any>
+    enableSort?: boolean
 }
 
 

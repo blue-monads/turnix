@@ -2,7 +2,7 @@
     import type { GridOptions } from "./easyTypes";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
-    let { columns = [], onLoad, actions, key }: GridOptions = $props();
+    let { columns = [], onLoad, actions, key, enableSort }: GridOptions = $props();
 
     let datas = $state([]);
 
@@ -39,10 +39,12 @@
                     nextMaxId = item.id;
                 }
             });
-        }
+        }        
 
         minId = nextMinId;
         maxId = nextMaxId;
+
+        datas = nextDatas;
     };
 
     $effect(() => {
@@ -60,6 +62,11 @@
                             <button
                                 class="flex gap-1"
                                 onclick={() => {
+                                    if (!enableSort || !column.enableSort) {
+                                        return;
+                                    }
+
+
                                     if (sortKey === column.key) {
                                         if (sortMode === "asc") {
                                             sortMode = "desc";
@@ -70,9 +77,6 @@
                                         sortKey = column.key;
                                         sortMode = "asc";
                                     }
-
-                                    sortKey = column.key;
-                                    sortMode = "asc";
                                 }}
                             >
                                 <span>
