@@ -5,11 +5,10 @@
 
   interface Props {
     actions?: {
-    Action:  (id: any, data: any) => Promise<void> | void;
-    Class?: string;
-    icon?: string;
-    Name: string;
-  }[];
+        Action:  (id: any, data: any) => Promise<void> | void;
+        Class?: string;
+        icon?: string;
+        Name: string;}[];
     key_names?: any;
     datas?: any;
     action_key?: string;
