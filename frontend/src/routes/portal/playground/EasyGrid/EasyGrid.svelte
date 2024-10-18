@@ -11,6 +11,8 @@
     let minId: number = $state(0);
     let maxId: number = $state(0);
 
+    let filterModels: Record<string, any> = $state({});
+
     const loadData = async (loadType: "next" | "initial" | "previous") => {
         const nextDatas = await onLoad({
             loadType,
@@ -53,49 +55,53 @@
         <thead>
             <tr class="rounded-lg text-sm font-medium text-gray-700 text-left">
                 {#each columns as column}
-                    <th class="px-2 py-1"
-                        >{column.title}
-
-                        <div class="mt-4">
-                            {#if column.key === sortKey}
-                                {#if sortMode === "asc"}
-                                    <button
-                                        onclick={() => {
-                                            sortKey = column.key;
+                    <th class="px-2 py-1">
+                        <div class="flex gap-2">
+                            <button
+                                class="flex gap-1"
+                                onclick={() => {
+                                    if (sortKey === column.key) {
+                                        if (sortMode === "asc") {
                                             sortMode = "desc";
-                                        }}
-                                    >
+                                        } else {
+                                            sortKey = "";
+                                        }
+                                    } else {
+                                        sortKey = column.key;
+                                        sortMode = "asc";
+                                    }
+
+                                    sortKey = column.key;
+                                    sortMode = "asc";
+                                }}
+                            >
+                                <span>
+                                    {column.title}
+                                </span>
+
+                                {#if column.key === sortKey}
+                                    {#if sortMode === "asc"}
                                         <SvgIcon
                                             name="chevron-up"
                                             className="h-4 w-4"
                                         />
-                                    </button>
-                                {:else}
-                                    <button
-                                        onclick={() => {
-                                            sortKey = "";
-                                            sortMode = "asc";
-                                        }}
-                                    >
+                                    {:else}
                                         <SvgIcon
                                             name="chevron-down"
                                             className="h-4 w-4"
                                         />
-                                    </button>
+                                    {/if}
                                 {/if}
-                            {:else}
-                                <button
-                                    onclick={() => {
-                                        sortKey = column.key;
-                                        sortMode = "asc";
-                                    }}
-                                >
+                            </button>
+
+                            <div>
+                                <button onclick={() => {}}>
                                     <SvgIcon
-                                        name="chevron-up-down"
+                                        name="bars-3-bottom-right"
                                         className="h-4 w-4"
                                     />
                                 </button>
-                            {/if}
+                            </div>
                         </div>
                     </th>
                 {/each}
