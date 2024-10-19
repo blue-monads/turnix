@@ -182,8 +182,8 @@
                                     style="top: {filterPanelPosition.top}; left: {filterPanelPosition.left};"
                                 >
                                     <FilterPanel
-                                        operator={filterModels[column.key]?.operator}
-                                        value={filterModels[column.key]?.value}
+                                        operator={filterModels[activeFilter]?.operator}
+                                        value={filterModels[activeFilter]?.value}
                                         closeFilter={closeFilterPanel}
                                         clearFilter={() => {
                                             filterModels[activeFilter] = null;
