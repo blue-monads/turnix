@@ -118,6 +118,7 @@
         <thead>
             <tr class="rounded-lg text-sm font-medium text-gray-700 text-left">
                 {#each columns as column}
+
                     <th class="px-2 py-1">
                         <div class="flex gap-2">
                             <button
@@ -160,7 +161,9 @@
 
                             <div>
                                 <button
+                                    class="rounded p-0.5 {filterModels[column.key] ? 'bg-blue-100' : ''}"
                                     onclick={(event) => {
+                                        console.log("@col/ev", column);
                                         event.stopPropagation();
                                         toggleFilterPanel(column, event);
                                     }}
@@ -179,22 +182,30 @@
                                     style="top: {filterPanelPosition.top}; left: {filterPanelPosition.left};"
                                 >
                                     <FilterPanel
-                                        operator={filterModels[column.key]
-                                            ?.operator}
+                                        operator={filterModels[column.key]?.operator}
                                         value={filterModels[column.key]?.value}
                                         closeFilter={closeFilterPanel}
+                                        clearFilter={() => {
+                                            filterModels[activeFilter] = null;
+                                            closeFilterPanel();
+                                        }}
+                                        column={columns.find(col => col.key === activeFilter)}
                                         applyFilter={(opval) => {
-                                            const filterModel =
-                                                filterModels[column.key] || {};
-                                            filterModels[column.key] = {
-                                                key: column.key,
+                                            const col = opval.column;
+                                            console.log("@col", col);
+
+                                            const filterModel = filterModels[col.key] || {};
+                                            filterModels[col.key] = {
+                                                key: col.key,
                                                 fiterType:
-                                                    column.type || "text",
+                                                col.type || "text",
                                                 ...filterModel,
                                                 ...opval,
                                             };
 
                                             loadData("initial");
+
+                                            console.log($state.snapshot(filterModels));
 
                                             closeFilterPanel();
                                         }}
