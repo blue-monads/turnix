@@ -10,8 +10,6 @@
         value,
     } = $props();
 
-    // let stateOperator = $state( operator ||"equal");
-    // let stateValue = $state(value || "");
 </script>
 
 <div class="flex flex-col gap-2 text-xs">

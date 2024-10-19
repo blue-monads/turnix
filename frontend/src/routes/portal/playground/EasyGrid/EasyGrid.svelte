@@ -26,7 +26,7 @@
 
     let filterPanelRef: HTMLDivElement;
 
-    const hashSeed: number = 74.1
+    const hashSeed: number = 74
 
     const hashCode = ( str: string) => {
         let hash = hashSeed;
@@ -133,7 +133,7 @@
                             <button
                                 class="flex gap-1"
                                 onclick={() => {
-                                    if (!enableSort || !column.enableSort) {
+                                    if (!enableSort || column.disableSort) {
                                         return;
                                     }
 
@@ -156,12 +156,12 @@
                                 {#if column.key === sortKey}
                                     {#if sortMode === "asc"}
                                         <SvgIcon
-                                            name="chevron-up"
+                                            name="chevron-down"
                                             className="h-4 w-4"
                                         />
                                     {:else}
                                         <SvgIcon
-                                            name="chevron-down"
+                                            name="chevron-up"
                                             className="h-4 w-4"
                                         />
                                     {/if}

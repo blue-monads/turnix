@@ -12,25 +12,21 @@
     { name: "download", icon: "arrow-down-on-square" },
     { name: "delete", icon: "trash" },
   ];
-
 </script>
-
-
 
 <div class="flex flex-col p-4">
   <EasyGrid
-  columns={[
-    { title: "Name", key: "name" },
-    { title: "Info", key: "info" },
-    { title: "Type", key: "acc_type", rendererOptions: { autoColor: true } },
-    { title: "Created At", key: "created_at" },
-  ]}
-  onLoad={(params) => {
-    console.log("@load", params);
+    enableSort={true}
+    columns={[
+      { title: "Name", key: "name" },
+      { title: "Info", key: "info" },
+      { title: "Type", key: "acc_type", rendererOptions: { autoColor: true } },
+      { title: "Created At", key: "created_at" },
+    ]}
+    onLoad={(params) => {
+      console.log("@load", params);
 
-    return sampleData;
-  }}
-/>
-
+      return sampleData;
+    }}
+  />
 </div>
-

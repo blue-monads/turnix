@@ -77,7 +77,7 @@ export interface Column {
     type?: ValueType
     renderer?: RendererType
     rendererOptions?: Record<string, any>
-    enableSort?: boolean
+    disableSort?: boolean
 
     cssClasses?: string
     styles?: Record<string, any>
