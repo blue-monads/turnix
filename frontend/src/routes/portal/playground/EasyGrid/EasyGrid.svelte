@@ -55,6 +55,7 @@
 
     const closeFilterPanel = () => {
         activeFilter = null;
+        filterPanelPosition = { top: 0, left: 0 };
     };
 
     const loadData = async (loadType: "next" | "initial" | "previous") => {
@@ -90,11 +91,25 @@
         minId = nextMinId;
         maxId = nextMaxId;
         datas = nextDatas;
-        // loading = false;
+        loading = false;
     };
 
     $effect(() => {
         loadData("initial");
+    });
+
+    $effect(() => {
+        const handleClickOutside = (event) => {
+            if (filterPanelRef && !filterPanelRef.contains(event.target)) {
+                closeFilterPanel();
+            }
+        };
+
+        document.addEventListener("click", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("click", handleClickOutside);
+        };
     });
 </script>
 
@@ -146,6 +161,7 @@
                             <div>
                                 <button
                                     onclick={(event) => {
+                                        event.stopPropagation();
                                         toggleFilterPanel(column, event);
                                     }}
                                 >
@@ -177,6 +193,8 @@
                                                 ...filterModel,
                                                 ...opval,
                                             };
+
+                                            loadData("initial");
 
                                             closeFilterPanel();
                                         }}
