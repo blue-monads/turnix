@@ -2,7 +2,13 @@
     import type { GridOptions } from "./easyTypes";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
-    let { columns = [], onLoad, actions, key, enableSort }: GridOptions = $props();
+    let {
+        columns = [],
+        onLoad,
+        actions,
+        key,
+        enableSort,
+    }: GridOptions = $props();
 
     let datas = $state([]);
 
@@ -12,6 +18,42 @@
     let maxId: number = $state(0);
 
     let filterModels: Record<string, any> = $state({});
+
+    let activeFilter = $state(null);
+    let filterPanelPosition = $state({ top: 0, left: 0 });
+
+    let filterPanelRef: HTMLDivElement;
+
+    const toggleFilter = (column, event) => {
+        if (activeFilter === column.key) {
+            activeFilter = null;
+        } else {
+            activeFilter = column.key;
+            setTimeout(() => {
+                if (filterPanelRef) {
+                    const rect = event.target.getBoundingClientRect();
+                    const panelRect = filterPanelRef.getBoundingClientRect();
+
+                    let left = rect.left + window.scrollX;
+                    const rightEdge = left + panelRect.width;
+                    const viewportWidth = window.innerWidth;
+
+                    if (rightEdge > viewportWidth) {
+                        left = Math.max(0, viewportWidth - panelRect.width);
+                    }
+
+                    filterPanelPosition = {
+                        top: `${rect.bottom + window.scrollY}px`,
+                        left: `${left}px`,
+                    };
+                }
+            }, 0);
+        }
+    };
+
+    const closeFilter = () => {
+        activeFilter = null;
+    };
 
     const loadData = async (loadType: "next" | "initial" | "previous") => {
         const nextDatas = await onLoad({
@@ -39,7 +81,7 @@
                     nextMaxId = item.id;
                 }
             });
-        }        
+        }
 
         minId = nextMinId;
         maxId = nextMaxId;
@@ -53,7 +95,7 @@
 </script>
 
 <div class="p-1 overflow-auto card">
-    <table class="table-auto border-collapse w-full">
+    <table class="table-auto border-collapse w-full relative">
         <thead>
             <tr class="rounded-lg text-sm font-medium text-gray-700 text-left">
                 {#each columns as column}
@@ -65,7 +107,6 @@
                                     if (!enableSort || !column.enableSort) {
                                         return;
                                     }
-
 
                                     if (sortKey === column.key) {
                                         if (sortMode === "asc") {
@@ -99,13 +140,30 @@
                             </button>
 
                             <div>
-                                <button onclick={() => {}}>
+                                <button
+                                    onclick={(event) => {
+                                        toggleFilter(column, event);
+                                    }}
+                                >
                                     <SvgIcon
                                         name="bars-3-bottom-right"
                                         className="h-4 w-4"
                                     />
                                 </button>
                             </div>
+
+                            {#if activeFilter}
+                                <div
+                                    bind:this={filterPanelRef}
+                                    class="fixed rounded bg-white shadow-lg z-10 min-w-64 resize"
+                                    style="top: {filterPanelPosition.top}; left: {filterPanelPosition.left};"
+                                >
+                                    <h3>
+                                        Filter PLACEHOLDER
+                                    </h3>
+
+                                </div>
+                            {/if}
                         </div>
                     </th>
                 {/each}

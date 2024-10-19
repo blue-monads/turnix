@@ -29,12 +29,41 @@ export interface LoaderParams {
 }
 
 
+export interface FilterModel {
+    key: string
+    fiterType: "string" | "number" | "date" | "boolean"
+    operator: OperatorType
+    value: string
+}
+
+export type OperatorType = 
+    "equal" | 
+    "not_equal" | 
+    "contains" | 
+    "not_contains" | 
+    "starts_with" | 
+    "ends_with" | 
+    "is_null" | 
+    "is_not_null" |
+    "between" | 
+    "not_between" | 
+    "greater_than" | 
+    "less_than" | 
+    "greater_than_or_equal" | 
+    "less_than_or_equal"
+
+
 export interface Column {
     title?: string
     key: string
     renderer?: RendererType
     rendererOptions?: Record<string, any>
     enableSort?: boolean
+
+    cssClasses?: string
+    styles?: Record<string, any>
+    minWidth?: string
+    maxWidth?: string
 }
 
 
