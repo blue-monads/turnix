@@ -13,7 +13,7 @@
 
 </script>
 
-<div class="flex flex-col gap-2">
+<div class="flex flex-col gap-2 text-xs">
     <select
         bind:value={operator} 
         class="p-2">
