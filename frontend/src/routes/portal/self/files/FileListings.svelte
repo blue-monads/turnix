@@ -1,6 +1,5 @@
 <script lang="ts">
     import { preventDefault, stopPropagation } from 'svelte/legacy';
-
     import { createEventDispatcher, getContext, onMount } from "svelte";
     import type { File, RootAPI } from "$lib/api";
     import { FolderIcon, Loader } from "$lib/compo";
@@ -57,13 +56,14 @@
 
     let isActive = $state(false);
     let activeFileId = $state(0);
+    let dropdownPosition = $state({ top: 0, left: 0 });
 
     const handler = (e: any) => {
         isActive = false;
         activeFileId = 0;
     };
 
-    onMount(() => {
+    $effect(() => {
         document.addEventListener("click", handler);
 
         return () => {
@@ -91,6 +91,18 @@
                 filename: row.name,
             },
         });
+    };
+
+    const toggleDropdown = (event: MouseEvent, row: File) => {
+        event.stopPropagation();
+        const button = event.currentTarget as HTMLButtonElement;
+        const rect = button.getBoundingClientRect();
+        dropdownPosition = {
+            top: rect.bottom + window.scrollY,
+            left: rect.left + window.scrollX - 5
+        };
+        isActive = !isActive || activeFileId !== row.id;
+        activeFileId = isActive ? row.id : 0;
     };
 </script>
 
@@ -149,58 +161,52 @@
                             {/if}
                         </td>
                         <td>
-                            {#if !isActive || activeFileId === row.id}
-                                {#if !row.is_folder}
-                                    <button
-                                        onclick={() => previewFile(row)}
-                                        class="btn btn-sm variant-filled"
-                                    >
-                                        <SvgIcon
-                                            name="eye"
-                                            className="w-4 h-4"
-                                        />
-                                    </button>
-                                {/if}
-
+                            {#if !row.is_folder}
                                 <button
-                                    onclick={stopPropagation(() => {
-                                        isActive = true;
-                                        activeFileId = row.id;
-                                        console.log(
-                                            "activeFileId",
-                                            activeFileId,
-                                        );
-                                    })}
-                                    class="btn btn-sm variant-filled-secondary relative group transition-all duration-200 focus:overflow-visible overflow-hidden"
+                                    onclick={() => previewFile(row)}
+                                    class="btn btn-sm variant-filled"
                                 >
                                     <SvgIcon
-                                        name="bars-3"
+                                        name="eye"
                                         className="w-4 h-4"
                                     />
-
-                                    <div
-                                        class="absolute shadow-lg top-8 -left-16 w-28 h-max p-1 border border-zinc-200 rounded-lg flex flex-col gap-2 variant-filled"
-                                    >
-                                        {#each row.is_folder ? folderActions : fileActions as action}
-                                            <button
-                                                onclick={stopPropagation(() => {
-                                                    dispatcher("action", {
-                                                        action,
-                                                        row,
-                                                    });
-                                                })}
-                                                class="flex gap-1 justify-start items-center p-1 rounded-lg hover:bg-white hover:text-secondary-600"
-                                            >
-                                                <SvgIcon
-                                                    name={action.icon}
-                                                    className="w-4 h-4"
-                                                />
-
-                                                <p>{action.name}</p>
-                                            </button>
-                                        {/each}
-                                    </div>
                                 </button>
+                            {/if}
+
+                            <button
+                                onclick={(e) => toggleDropdown(e, row)}
+                                class="btn btn-sm variant-filled-secondary relative group transition-all duration-200 focus:overflow-visible overflow-hidden"
+                            >
+                                <SvgIcon
+                                    name="bars-3"
+                                    className="w-4 h-4"
+                                />
+                            </button>
+
+                            {#if isActive && activeFileId === row.id}
+                                <div
+                                    class="fixed z-10 shadow-lg w-28 h-max p-1 border border-zinc-200 rounded-lg flex flex-col gap-2 variant-filled"
+                                    style="top: {dropdownPosition.top}px; left: {dropdownPosition.left}px;"
+                                >
+                                    {#each row.is_folder ? folderActions : fileActions as action}
+                                        <button
+                                            onclick={stopPropagation(() => {
+                                                dispatcher("action", {
+                                                    action,
+                                                    row,
+                                                });
+                                            })}
+                                            class="flex gap-1 justify-start items-center p-1 rounded-lg hover:bg-white hover:text-secondary-600"
+                                        >
+                                            <SvgIcon
+                                                name={action.icon}
+                                                className="w-4 h-4"
+                                            />
+
+                                            <p>{action.name}</p>
+                                        </button>
+                                    {/each}
+                                </div>
                             {/if}
                         </td>
                     </tr>
