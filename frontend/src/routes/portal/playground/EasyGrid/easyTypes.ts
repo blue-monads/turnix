@@ -23,7 +23,7 @@ export interface LoaderParams {
     maxId?: number
     minId?: number
     activeColumns: string[]
-    filterModels: Record<string, any>
+    filterModels: Record<string, FilterModel>
     orderBy?: string
     orderDirection?: "asc" | "desc"
 }

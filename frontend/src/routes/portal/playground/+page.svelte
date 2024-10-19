@@ -22,10 +22,12 @@
   columns={[
     { title: "Name", key: "name" },
     { title: "Info", key: "info" },
-    { title: "Type", key: "acc_type" },
+    { title: "Type", key: "acc_type", rendererOptions: { autoColor: true } },
     { title: "Created At", key: "created_at" },
   ]}
   onLoad={(params) => {
+    console.log("@load", params);
+
     return sampleData;
   }}
 />

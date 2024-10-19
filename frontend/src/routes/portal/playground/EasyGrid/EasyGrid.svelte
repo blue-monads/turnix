@@ -14,7 +14,7 @@
     let datas = $state([]);
 
     let sortMode: "asc" | "desc" = $state("asc");
-    let sortKey: string = $state("");
+    let sortKey: string = $state(undefined);
     let minId: number = $state(0);
     let maxId: number = $state(0);
     let loading = $state(false);
@@ -26,6 +26,15 @@
 
     let filterPanelRef: HTMLDivElement;
 
+    const hashSeed: number = 74.1
+
+    const hashCode = ( str: string) => {
+        let hash = hashSeed;
+        for (var i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return hash;
+    };
     const toggleFilterPanel = (column, event) => {
         if (activeFilter === column.key) {
             activeFilter = null;
@@ -236,10 +245,33 @@
                         class="hover:bg-gray-100 border-b border-gray-200 py-10 text-gray-700"
                     >
                         {#each columns as column}
+                        {@const dataValue = data[column.key]}
                             <td class="px-2 py-2">
-                                <span class="p-1 rounded-lg"
-                                    >{data[column.key] || ""}
-                                </span>
+                                
+                                  {#if dataValue }
+                                     <span 
+                                    class="p-1 rounded-lg {column.cssClasses || ""}"
+                                    style={`background-color: ${column.rendererOptions?.autoColor ? `hsl(${hashCode(dataValue) % 360}, 100%, 80%)` : ""}`}
+                                
+                                >
+                                        {#if column.type === "date" && dataValue }
+                                            {new Date(dataValue).toLocaleDateString()}
+                                        {:else if column.type === "number"}
+                                            <span class="pill">{dataValue}</span>                                        
+                                        {:else if columns.type === "lookup" && columns.rendererOptions?.mappings} 
+                                            {columns.rendererOptions.mappings[dataValue] || ""}
+                                        {:else}
+                                            {data[column.key] || ""}
+                                        {/if}
+
+                                    </span>
+                                     {/if}
+                                    
+                        
+
+
+
+
                             </td>
 
                             {#if actions}
