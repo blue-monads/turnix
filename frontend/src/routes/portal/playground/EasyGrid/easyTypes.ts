@@ -31,31 +31,50 @@ export interface LoaderParams {
 
 export interface FilterModel {
     key: string
-    fiterType: "string" | "number" | "date" | "boolean"
+    fiterType: ValueType
     operator: OperatorType
     value: string
 }
 
-export type OperatorType = 
-    "equal" | 
-    "not_equal" | 
-    "contains" | 
-    "not_contains" | 
-    "starts_with" | 
-    "ends_with" | 
-    "is_null" | 
-    "is_not_null" |
-    "between" | 
-    "not_between" | 
-    "greater_than" | 
-    "less_than" | 
-    "greater_than_or_equal" | 
-    "less_than_or_equal"
+export interface OperatorValue {
+    operator: OperatorType
+    value: string
+}
+
+
+const OPERATORS_MAP = {
+    "equal": "equal",
+    "not_equal": "not_equal",
+    "contains": "contains",
+    "not_contains": "not_contains",
+    "starts_with": "starts_with",
+    "ends_with": "ends_with",
+    "is_null": "is_null",
+    "is_not_null": "is_not_null",
+    "between": "between",
+    "not_between": "not_between",
+    "greater_than": "greater_than",
+    "less_than": "less_than",
+    "greater_than_or_equal": "greater_than_or_equal",
+    "less_than_or_equal": "less_than_or_equal",
+}
+
+export const OPERATORS = Object.keys(OPERATORS_MAP);
+
+export type OperatorType = keyof typeof OPERATORS_MAP;
+
+
+export type ValueType = 
+    "string" | 
+    "number" | 
+    "date" | 
+    "boolean"
 
 
 export interface Column {
     title?: string
     key: string
+    type?: ValueType
     renderer?: RendererType
     rendererOptions?: Record<string, any>
     enableSort?: boolean

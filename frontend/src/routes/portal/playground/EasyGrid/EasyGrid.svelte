@@ -1,6 +1,7 @@
 <script lang="ts">
-    import type { GridOptions } from "./easyTypes";
+    import type { GridOptions, OperatorValue, FilterModel } from "./easyTypes";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+    import FilterPanel from "./FilterPanel.svelte";
 
     let {
         columns = [],
@@ -16,15 +17,16 @@
     let sortKey: string = $state("");
     let minId: number = $state(0);
     let maxId: number = $state(0);
+    let loading = $state(false);
 
-    let filterModels: Record<string, any> = $state({});
+    let filterModels: Record<string, FilterModel> = $state({});
 
     let activeFilter = $state(null);
     let filterPanelPosition = $state({ top: 0, left: 0 });
 
     let filterPanelRef: HTMLDivElement;
 
-    const toggleFilter = (column, event) => {
+    const toggleFilterPanel = (column, event) => {
         if (activeFilter === column.key) {
             activeFilter = null;
         } else {
@@ -51,11 +53,13 @@
         }
     };
 
-    const closeFilter = () => {
+    const closeFilterPanel = () => {
         activeFilter = null;
     };
 
     const loadData = async (loadType: "next" | "initial" | "previous") => {
+        loading = true;
+
         const nextDatas = await onLoad({
             loadType,
             orderBy: sortKey,
@@ -85,8 +89,8 @@
 
         minId = nextMinId;
         maxId = nextMaxId;
-
         datas = nextDatas;
+        // loading = false;
     };
 
     $effect(() => {
@@ -142,7 +146,7 @@
                             <div>
                                 <button
                                     onclick={(event) => {
-                                        toggleFilter(column, event);
+                                        toggleFilterPanel(column, event);
                                     }}
                                 >
                                     <SvgIcon
@@ -155,13 +159,28 @@
                             {#if activeFilter}
                                 <div
                                     bind:this={filterPanelRef}
-                                    class="fixed rounded bg-white shadow-lg z-10 min-w-64 resize"
+                                    class="fixed rounded bg-white shadow-lg z-10 min-w-64 resize p-2 border-b"
                                     style="top: {filterPanelPosition.top}; left: {filterPanelPosition.left};"
                                 >
-                                    <h3>
-                                        Filter PLACEHOLDER
-                                    </h3>
+                                    <FilterPanel
+                                        operator={filterModels[column.key]
+                                            ?.operator}
+                                        value={filterModels[column.key]?.value}
+                                        closeFilter={closeFilterPanel}
+                                        applyFilter={(opval) => {
+                                            const filterModel =
+                                                filterModels[column.key] || {};
+                                            filterModels[column.key] = {
+                                                key: column.key,
+                                                fiterType:
+                                                    column.type || "text",
+                                                ...filterModel,
+                                                ...opval,
+                                            };
 
+                                            closeFilterPanel();
+                                        }}
+                                    />
                                 </div>
                             {/if}
                         </div>
@@ -174,71 +193,84 @@
             </tr>
         </thead>
         <tbody class="text-sm font-normal text-gray-700">
-            {#each datas as data}
+            {#if loading}
                 <tr
                     class="hover:bg-gray-100 border-b border-gray-200 py-10 text-gray-700"
                 >
-                    {#each columns as column}
-                        <td class="px-2 py-2">
-                            <span class="p-1 rounded-lg"
-                                >{data[column.key] || ""}
-                            </span>
-                        </td>
-
-                        {#if actions}
-                            <td class="px-2 py-2 flex flex-row">
-                                {#each actions as action}
-                                    <button
-                                        onclick={() =>
-                                            action.action(
-                                                data[action.name],
-                                                data
-                                            )}
-                                        class="flex m-1 text-white transform hover:scale-110 btn btn-sm {action.Class ||
-                                            'bg-blue-400'}"
-                                    >
-                                        {#if action.icon}
-                                            <SvgIcon
-                                                name={action.icon}
-                                                className="h-5 w-5"
-                                            />
-                                        {/if}
-
-                                        {action.name}</button
-                                    >
-                                {/each}
-                            </td>
-                        {/if}
-                    {/each}
+                    <td colspan={columns.length} class="px-2 py-2">
+                        <span class="p-1 rounded-lg">Loading...</span>
+                    </td>
                 </tr>
-            {/each}
+            {:else}
+                {#each datas as data}
+                    <tr
+                        class="hover:bg-gray-100 border-b border-gray-200 py-10 text-gray-700"
+                    >
+                        {#each columns as column}
+                            <td class="px-2 py-2">
+                                <span class="p-1 rounded-lg"
+                                    >{data[column.key] || ""}
+                                </span>
+                            </td>
+
+                            {#if actions}
+                                <td class="px-2 py-2 flex flex-row">
+                                    {#each actions as action}
+                                        <button
+                                            onclick={() =>
+                                                action.action(
+                                                    data[action.name],
+                                                    data
+                                                )}
+                                            class="flex m-1 text-white transform hover:scale-110 btn btn-sm {action.Class ||
+                                                'bg-blue-400'}"
+                                        >
+                                            {#if action.icon}
+                                                <SvgIcon
+                                                    name={action.icon}
+                                                    className="h-5 w-5"
+                                                />
+                                            {/if}
+
+                                            {action.name}</button
+                                        >
+                                    {/each}
+                                </td>
+                            {/if}
+                        {/each}
+                    </tr>
+                {/each}
+            {/if}
         </tbody>
     </table>
-    <div class="flex justify-end gap-2">
-        <select class="rounded w-20 border-gray-300 border pl-2">
-            <option>10</option>
-            <option>20</option>
-            <option>50</option>
-        </select>
 
-        <div class="flex gap-2">
-            <button
-                class="btn btn-sm bg-gray-100"
-                onCLick={async () => {
-                    loadData("previous");
-                }}
-            >
-                <SvgIcon className="h-4 w-4" name="chevron-left" />
-            </button>
+    {#if !loading}
+        <div class="flex justify-end gap-2">
+            <select class="rounded w-20 border-gray-300 border pl-2">
+                <option>10</option>
+                <option>20</option>
+                <option>50</option>
+            </select>
 
-            <button
-                class="btn btn-sm bg-gray-100"
-                onCLick={async () => {
-                    loadData("next");
-                }}
-            >
-                <SvgIcon className="h-4 w-4" name="chevron-right" />
-            </button>
+            <div class="flex gap-2">
+                <button
+                    class="btn btn-sm bg-gray-100"
+                    onCLick={async () => {
+                        loadData("previous");
+                    }}
+                >
+                    <SvgIcon className="h-4 w-4" name="chevron-left" />
+                </button>
+
+                <button
+                    class="btn btn-sm bg-gray-100"
+                    onCLick={async () => {
+                        loadData("next");
+                    }}
+                >
+                    <SvgIcon className="h-4 w-4" name="chevron-right" />
+                </button>
+            </div>
         </div>
-    </div>
+    {/if}
 </div>
