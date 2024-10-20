@@ -288,3 +288,16 @@ type Contact struct {
 	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
 	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
 }
+
+type Notepad struct {
+	ID           int64      `json:"id" db:"id,omitempty"`
+	Title        string     `json:"title" db:"title"`
+	Notes        string     `json:"notes" db:"notes"`
+	JType        string     `json:"jtype" db:"jtype"`
+	Attachments  string     `json:"attachments" db:"attachments"`
+	CreatedBy    int64      `json:"created_by" db:"created_by"`
+	UpdatedBy    int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt    *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt    *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	LinkedClient int64      `json:"linked_client_id" db:"linked_client_id"`
+}
