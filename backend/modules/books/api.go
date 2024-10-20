@@ -163,7 +163,7 @@ func (b *BookModule) listTxn(ctx xtypes.ContextPlus) (any, error) {
 func (b *BookModule) listTxnWithLines(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	offset, _ := strconv.ParseInt(ctx.Http.Param("offset"), 10, 64)
+	offset, _ := strconv.ParseInt(ctx.Http.Query("offset"), 10, 64)
 
 	return b.dbOpts.ListTxnWithLines(pid, ctx.Claim.UserId, offset)
 }

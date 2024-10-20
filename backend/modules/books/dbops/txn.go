@@ -121,6 +121,8 @@ type TxnRecords struct {
 
 func (b *DbOps) ListTxnWithLines(pid, uid, offset int64) (*TxnRecords, error) {
 
+	pp.Println("ListTxnWithLines", pid, uid, offset)
+
 	err := b.userHasScope(pid, uid, "read")
 	if err != nil {
 		return nil, err
@@ -137,6 +139,8 @@ func (b *DbOps) ListTxnWithLines(pid, uid, offset int64) (*TxnRecords, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	pp.Println("@record", record)
 
 	lineTable := b.txnLineTable(pid)
 
@@ -166,7 +170,7 @@ func (b *DbOps) ListAccountTxnWithLines(pid, uid, accId, offset int64) (*TxnReco
 
 	driver := b.db.GetSession().Driver().(*sql.DB)
 
-	stmt, err := driver.Prepare(fmt.Sprintf(`	
+	qstmt := fmt.Sprintf(`	
 	SELECT
 		t1.id AS first_id, t1.account_id AS first_account_id,
 		t1.debit_amount AS first_debit_amount, t1.credit_amount AS first_credit_amount,
@@ -186,11 +190,15 @@ func (b *DbOps) ListAccountTxnWithLines(pid, uid, accId, offset int64) (*TxnReco
 		z_%d_Transactions t ON t.id = t1.txn_id
 	WHERE
 		t1.account_id = ? AND t1.txn_id = t2.txn_id AND t2.account_id <> ? and t.is_deleted = FALSE and t.id > ? ORDER BY t.id LIMIT 100;
-		`, pid, pid, pid))
+		`, pid, pid, pid)
+
+	stmt, err := driver.Prepare(qstmt)
 
 	if err != nil {
 		return nil, err
 	}
+
+	pp.Println(`@stmt`, qstmt)
 
 	rows, err := stmt.Query(accId, accId, offset)
 	if err != nil {
