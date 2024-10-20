@@ -26,6 +26,8 @@ export interface LoaderParams {
     filterModels: Record<string, FilterModel>
     orderBy?: string
     orderDirection?: "asc" | "desc"
+    pageId?: number
+    pageSize?: number
 }
 
 
@@ -33,7 +35,7 @@ export interface FilterModel {
     key: string
     fiterType: ValueType
     operator: OperatorType
-    value: string
+    value: string[]
 }
 
 export interface OperatorValue {
