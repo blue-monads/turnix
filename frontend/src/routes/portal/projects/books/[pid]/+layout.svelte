@@ -54,10 +54,10 @@
         },
 
         {
-            name: "Scratchpads",
-            link: `/z/pages/portal/projects/books/${pid}/scratchpad`,
+            name: "Notepad",
+            link: `/z/pages/portal/projects/books/${pid}/notepad`,
             icon: "book-open",
-            key: "scratchpad",
+            key: "notepad",
         },
         {
             name: "Settings",
