@@ -2,6 +2,7 @@
     import type { GridOptions, OperatorValue, FilterModel } from "./easyTypes";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import FilterPanel from "./FilterPanel.svelte";
+import { login } from "$lib/api/auth";
 
     let {
         columns = [],
@@ -20,6 +21,7 @@
     let maxId: number = $state(0);
     let loading = $state(false);
     let sidePanelMode: "none" | "columns" | "filters" | "charts" = $state("none");
+    let recordLoadCount = $state(25);
 
     let filterModels: Record<string, FilterModel[]> = $state({});
     let enabledColumns: string[] = $state(columns.map(col => col.key));
@@ -89,6 +91,7 @@
             activeColumns,
             minId: minId,            
             maxId: maxId,
+            pageSize: recordLoadCount,
         });
 
         
@@ -419,10 +422,21 @@
                 <SvgIcon className="h-4 w-4" name="arrow-path" />
             </button>
 
-            <select class="rounded w-20 border-gray-300 border pl-2">
-                <option>10</option>
-                <option>20</option>
-                <option>50</option>
+            <select 
+                class="rounded w-20 border-gray-300 border pl-2"
+                value={recordLoadCount + ""}
+                onchange={(ev) => {
+                    recordLoadCount = Number(ev.target.value);
+                    needsReload = true;
+                    console.log("@ev", ev.target.value);
+                    console.log($state.snapshot(recordLoadCount));
+                }}
+                
+                >
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="250">250</option>
             </select>
 
             <div class="flex gap-2">
