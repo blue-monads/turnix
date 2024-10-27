@@ -3,12 +3,6 @@
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import FilterPanel from "./FilterPanel.svelte";
 
-    const handleRef = {
-        "reload": () => loadData("initial"),
-        "next": () => loadData("next"),
-        "previous": () => loadData("previous"),
-    }
-
 
 
     let {
@@ -17,7 +11,7 @@
         actions,
         key,
         enableSort,
-        handle = $bindable(handleRef),
+        handle = $bindable(),
         enableSidebar = false
     }: GridOptions = $props();
 
@@ -43,7 +37,11 @@
 
     const hashSeed: number = 74
 
-    
+    handle = {
+        "reload": () => loadData("initial"),
+        "next": () => loadData("next"),
+        "previous": () => loadData("previous"),
+    }
 
 
     const hashCode = ( str: string) => {

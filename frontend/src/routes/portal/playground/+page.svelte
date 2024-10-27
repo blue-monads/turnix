@@ -3,6 +3,7 @@
   import { getModalStore } from "@skeletonlabs/skeleton";
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
   import EasyGrid from "./EasyGrid/EasyGrid.svelte";
+  import type { GridHandle } from "./EasyGrid/easyTypes";
   import sampleData from "./EasyGrid/sample";
 
   const store = getModalStore();
@@ -12,12 +13,14 @@
     { name: "download", icon: "arrow-down-on-square" },
     { name: "delete", icon: "trash" },
   ];
+  let handle: GridHandle = $state();
 </script>
 
 <div class="flex flex-col p-4">
   <EasyGrid
     enableSort={true}
     enableSidebar={true}
+    bind:handle
     columns={[
       { title: "Name", key: "name" },
       { title: "Info", key: "info" },
@@ -31,3 +34,6 @@
     }}
   />
 </div>
+
+
+<button class="btn btn-sm variant-filled" onclick={handle.reload}>Reload</button>
