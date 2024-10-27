@@ -16,7 +16,8 @@
         enableStartAutoLoad = true,
         enableSidebar = false,
         enablePagination = true,
-        enableFilter = true
+        enableFilter = true,
+        initialData
     }: GridOptions = $props();
 
     let datas = $state([]);
@@ -107,8 +108,13 @@
             nextDatas = [];
         }
 
-        
+        setData(nextDatas);
+        loading = false;
+        loadedColumns = activeColumns;
 
+    };
+
+    const setData = (nextDatas: Record<string, any>[]) => {
         let nextMinId = 0;
         let nextMaxId = 0;
 
@@ -130,18 +136,16 @@
             });
         }
 
-        loadedColumns = activeColumns;
-
         minId = nextMinId;
         maxId = nextMaxId;
         datas = nextDatas;
-        loading = false;
-    };
+    }
 
     if (enableStartAutoLoad) {
         loadData("initial");
     } else {
         loadedColumns = $state.snapshot(enabledColumns);
+        setData(initialData || []);
     }
 
     $effect(() => {

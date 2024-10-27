@@ -12,6 +12,7 @@ export interface GridOptions {
     enablePagination?: boolean
     enableFilter?: boolean
     handle?: GridHandle
+    initialData?: Record<string, any>[]
 }
 
 

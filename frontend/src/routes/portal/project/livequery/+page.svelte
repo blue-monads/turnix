@@ -6,12 +6,9 @@
         TabGroup,
     } from "@skeletonlabs/skeleton";
     import CodeMirror from "svelte-codemirror-editor";
-    import { html } from "@codemirror/lang-html";
     import {
-        javascript,
-        localCompletionSource,
-        scopeCompletionSource,
-    } from "@codemirror/lang-javascript";
+        sql, SQLite
+    } from "@codemirror/lang-sql";
     import { autocompletion } from "@codemirror/autocomplete";
     import { NewBookAPI } from "$lib/projects/books";
     import { getContext } from "svelte";
@@ -75,7 +72,9 @@
         <CodeMirror
             bind:value={serverCode}
             extensions={[]}
-            lang={javascript()}
+            lang={sql({
+                dialect: SQLite,
+            })}
         />
     </div>
 
@@ -117,6 +116,7 @@
                                     enableSidebar={false}
                                     enableSort={false}
                                     enableFilter={false}
+                                    initialData={lastData}
                                     onLoad={async (params) => {
                                         if (!serverCode) {
                                             return [];
@@ -146,7 +146,6 @@
                             {/key}
                         {:else if tabSet === 1}
                             <EasyGrid
-                                enableStartAutoLoad={false}
                                 columns={[
                                     {
                                         title: "SQL Name",
