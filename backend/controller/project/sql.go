@@ -113,3 +113,7 @@ func (a *ProjectController) RunQuerySQL(userId int64, pid int64, input, name str
 
 	return a.db.RunProjectSQLQuery(pid, queryContent, data)
 }
+
+func (a *ProjectController) ListProjectTables(userId int64, pid int64) ([]string, error) {
+	return a.db.ListProjectTables(pid)
+}

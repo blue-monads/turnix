@@ -189,6 +189,10 @@ export class RootAPI {
         return this.client.post(`/project/${pid}/sqlexec`, data)
     }
 
+    listProjectTables = (pid: string) => {
+        return this.client.get<string[]>(`/project/${pid}/tables`)
+    }
+
 
     // project files
 

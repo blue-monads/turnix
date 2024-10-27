@@ -235,6 +235,12 @@ func (a *Server) runProjectSQL(claim *signer.AccessClaim, ctx *gin.Context) (any
 	return res, err
 }
 
+func (a *Server) listProjectTables(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+
+	return a.cProject.ListProjectTables(claim.UserId, pid)
+}
+
 // plugins
 func (a *Server) listProjectPlugins(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 

@@ -91,6 +91,30 @@ func (d *DB) RunProjectSQLQuery(pid int64, query string, data []any) ([]map[stri
 
 }
 
+func (d *DB) ListProjectTables(pid int64) ([]string, error) {
+
+	result := make([]string, 0)
+
+	rows, err := d.sess.SQL().Query(fmt.Sprintf(`SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%%' and name like 'z_%d_%%'`, pid))
+	if err != nil {
+		return nil, err
+	}
+
+	prefix := fmt.Sprintf("z_%d_", pid)
+
+	for rows.Next() {
+		var name string
+		err := rows.Scan(&name)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, strings.TrimLeft(name, prefix))
+	}
+
+	return result, nil
+}
+
 func (d *DB) ListThirdPartyProjects(userid int64, ptype string) ([]models.Project, error) {
 
 	cond := db.Cond{
