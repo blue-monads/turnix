@@ -9,7 +9,7 @@
         actions,
         key,
         enableSort,
-        enableSidebar = true
+        enableSidebar = false
     }: GridOptions = $props();
 
     let datas = $state([]);
@@ -25,6 +25,7 @@
 
     let activeFilter = $state(null);
     let filterPanelPosition = $state({ top: 0, left: 0 });
+    let needsReload = $state(false);
 
     let filterPanelRef: HTMLDivElement;
 
@@ -75,6 +76,8 @@
     const loadData = async (loadType: "next" | "initial" | "previous") => {
         loading = true;
 
+        needsReload = false;
+
         const nextDatas = await onLoad({
             loadType,
             orderBy: sortKey,
@@ -109,9 +112,7 @@
         loading = false;
     };
 
-    $effect(() => {
-        loadData("initial");
-    });
+    loadData("initial");
 
     $effect(() => {
         const handleClickOutside = (event) => {
@@ -219,6 +220,7 @@
                                                 closeFilter={closeFilterPanel}
                                                 clearFilter={() => {
                                                     filterModels[activeFilter] = null;
+                                                    needsReload = true;
                                                     closeFilterPanel();
                                                 }}
                                                 column={columns.find(col => col.key === activeFilter)}
@@ -226,7 +228,7 @@
 
                                                     filterModels[column.key] = filters;
 
-                                                    loadData("initial");
+                                                    needsReload = true;
 
                                                     console.log($state.snapshot(filterModels));
 
@@ -364,6 +366,16 @@
 
     {#if !loading}
         <div class="flex justify-end gap-2">
+
+            <button 
+                class="btn btn-sm  { needsReload ? 'bg-blue-200' : 'bg-gray-50'}"
+                onclick={async () => {
+                    loadData("initial");
+                }}
+                >
+                <SvgIcon className="h-4 w-4" name="arrow-path" />
+            </button>
+
             <select class="rounded w-20 border-gray-300 border pl-2">
                 <option>10</option>
                 <option>20</option>
