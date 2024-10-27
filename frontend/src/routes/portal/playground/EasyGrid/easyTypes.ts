@@ -10,6 +10,7 @@ export interface GridOptions {
     enableSort?: boolean
     enableSidebar?: boolean
     enablePagination?: boolean
+    enableFilter?: boolean
     handle?: GridHandle
 }
 

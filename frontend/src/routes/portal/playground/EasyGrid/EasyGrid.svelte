@@ -15,7 +15,8 @@
         handle = $bindable(),
         enableStartAutoLoad = true,
         enableSidebar = false,
-        enablePagination = true
+        enablePagination = true,
+        enableFilter = true
     }: GridOptions = $props();
 
     let datas = $state([]);
@@ -227,27 +228,32 @@
                                             {/if}
                                         </button>
 
-                                        <div>
-                                            <button
-                                                class="rounded p-0.5 relative {filterModels[column.key] ? 'bg-blue-100' : ''}"
-                                                onclick={(event) => {
-                                                    console.log("@col/ev", column);
-                                                    event.stopPropagation();
-                                                    toggleFilterPanel(column, event);
-                                                }}
-                                            >
 
-                                            {#if filterModels[column.key]}
-                                                <span class="rounded-full absolute top-1 -right-1 w-2 h-2 bg-blue-400 shadow"></span>
-                                            {/if}
+                                        {#if enableFilter}
+                                            <div>
+                                                <button
+                                                    class="rounded p-0.5 relative {filterModels[column.key] ? 'bg-blue-100' : ''}"
+                                                    onclick={(event) => {
+                                                        console.log("@col/ev", column);
+                                                        event.stopPropagation();
+                                                        toggleFilterPanel(column, event);
+                                                    }}
+                                                >
+
+                                                {#if filterModels[column.key]}
+                                                    <span class="rounded-full absolute top-1 -right-1 w-2 h-2 bg-blue-400 shadow"></span>
+                                                {/if}
 
 
-                                                <SvgIcon
-                                                    name="bars-3-bottom-right"
-                                                    className="h-4 w-4"
-                                                />
-                                            </button>
-                                        </div>
+                                                    <SvgIcon
+                                                        name="bars-3-bottom-right"
+                                                        className="h-4 w-4"
+                                                    />
+                                                </button>
+                                            </div>
+                                        {/if}
+
+
 
                                         {#if activeFilter}
                                             <div
