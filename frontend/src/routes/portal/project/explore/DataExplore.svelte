@@ -20,8 +20,10 @@
     const rootApi = getContext("__api__") as RootAPI;
 
     let columns = $state([]);
+    let loading = $state(true);
 
     const load = async () => {
+        loading = true;
         const resp = await rootApi.listProjectTableColumns(pid, table);
         if (resp.status !== 200) {
             return;
@@ -34,18 +36,31 @@
                 type: "text",
             };
         });
+
+        loading = false;
+
+        // autoQueryProjectTable
     };
 
     load();
-
 </script>
 
-<EasyGrid
-    {columns}
-    enablePagination={true}
-    enableSidebar={true}
-    enableSort={true}
-    onLoad={(params) => {
-        return [];
-    }}
-/>
+{#if !loading}
+    <EasyGrid
+        key={"id"}
+        {columns}
+        enablePagination={true}
+        enableSidebar={true}
+        enableSort={true}
+        onLoad={async (params) => {
+            const  resp = await rootApi.autoQueryProjectTable(pid, table, params);  
+            if (resp.status !== 200) {
+                return [];
+            }
+
+            console.log("@resp", resp.data);
+
+            return resp.data;
+        }}
+    />
+{/if}

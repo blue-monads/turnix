@@ -205,6 +205,12 @@ export class RootAPI {
         return this.client.get<TableColumn[]>(`/project/${pid}/tables/${table}/columns`)
     }
 
+    // 	apiv1.POST("/project/:pid/autoquery", a.accessMiddleware(a.autoQueryProjectTable))
+
+    autoQueryProjectTable = (pid: string, table: string, data: any) => {
+        return this.client.post(`/project/${pid}/autoquery?table=${table}`, data)
+    }
+
     // project files
 
     listProjectFiles = (pid: string, path?: string) => {

@@ -89,7 +89,7 @@
         needsReload = false;
         let activeColumns = $state.snapshot(enabledColumns)
 
-        const nextDatas = await onLoad({
+        let nextDatas = await onLoad({
             loadType,
             orderBy: sortKey,
             orderDirection: sortMode,
@@ -97,8 +97,12 @@
             activeColumns,
             minId: minId,            
             maxId: maxId,
-            pageSize: recordLoadCount,
+            pageSize: 5 //recordLoadCount,
         });
+
+        if (!nextDatas) {
+            nextDatas = [];
+        }
 
         
 
@@ -114,9 +118,11 @@
                 const currItem = item[key];
 
                 if (currItem < minId) {
-                    nextMinId = item.id;
-                } else if (currItem > maxId) {
-                    nextMaxId = item.id;
+                    nextMinId = currItem;
+                } 
+                
+                if (currItem > maxId) {
+                    nextMaxId = currItem;
                 }
             });
         }
@@ -156,9 +162,9 @@
 
 </script>
 
-<div class="p-1 overflow-auto card">
+<div class="p-1 card">
     <div class="flex">
-        <div class="flex-1 min-h-32"> 
+        <div class="flex-1 min-h-32 overflow-auto"> 
             
         {#if columns.length === 0 || (datas.length === 0 && !loading)}
             <div class="flex justify-center items-center h-full">
@@ -169,7 +175,7 @@
                 <span class="text-gray-500">Loading...</span>
             </div>
         {:else}            
-            <table class="table-auto border-collapse w-full relative ">
+            <table class="table-auto border-collapse relative ">
                 <thead>
                     <tr class="rounded-lg text-sm font-medium text-gray-700 text-left">
                         {#each columns as column}

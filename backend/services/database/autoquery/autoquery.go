@@ -58,12 +58,12 @@ func (qb *Builder) buildWhereClause() (string, []any) {
 	}
 
 	if qb.Params.OrderBy == "" {
-		if qb.Params.LoadType != "next" {
-			conditions = append(conditions, "id < ?")
+		if qb.Params.LoadType != "previous" {
+			conditions = append(conditions, "id > ?")
 			args = append(args, qb.Params.MaxId)
 		} else {
-			conditions = append(conditions, "id > ?")
-			args = append(args, qb.Params.MinId)
+			conditions = append(conditions, "id < ?")
+			args = append(args, qb.Params.MaxId)
 		}
 	}
 
