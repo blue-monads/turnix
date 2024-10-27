@@ -41,3 +41,11 @@ AppTroll => Real everything app
 
 - turnix port -> app 7703, libp2p 7704
 
+
+
+// PluginLiveEditor
+// LiveQueryEditor
+// LiveDataExplorer
+
+// LiveReportEditor
+// SavedReport
