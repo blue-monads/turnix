@@ -21,7 +21,7 @@
     let loading = $state(false);
     let sidePanelMode: "none" | "columns" | "filters" | "charts" = $state("none");
 
-    let filterModels: Record<string, FilterModel> = $state({});
+    let filterModels: Record<string, FilterModel[]> = $state({});
 
     let activeFilter = $state(null);
     let filterPanelPosition = $state({ top: 0, left: 0 });
@@ -79,6 +79,7 @@
             loadType,
             orderBy: sortKey,
             orderDirection: sortMode,
+            filterModels: $state.snapshot(filterModels),
             minId: minId,
             maxId: maxId,
         });
@@ -214,26 +215,16 @@
                                             style="top: {filterPanelPosition.top}; left: {filterPanelPosition.left};"
                                         >
                                             <FilterPanel
-                                                operator={filterModels[activeFilter]?.operator}
-                                                value={filterModels[activeFilter]?.value}
+                                                currentFilterModel={filterModels[activeFilter]}
                                                 closeFilter={closeFilterPanel}
                                                 clearFilter={() => {
                                                     filterModels[activeFilter] = null;
                                                     closeFilterPanel();
                                                 }}
                                                 column={columns.find(col => col.key === activeFilter)}
-                                                applyFilter={(opval) => {
-                                                    const col = opval.column;
-                                                    console.log("@col", col);
+                                                applyFilter={(column, filters) => {
 
-                                                    const filterModel = filterModels[col.key] || {};
-                                                    filterModels[col.key] = {
-                                                        key: col.key,
-                                                        fiterType:
-                                                        col.type || "text",
-                                                        ...filterModel,
-                                                        ...opval,
-                                                    };
+                                                    filterModels[column.key] = filters;
 
                                                     loadData("initial");
 

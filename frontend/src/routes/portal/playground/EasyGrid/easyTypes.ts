@@ -24,7 +24,7 @@ export interface LoaderParams {
     maxId?: number
     minId?: number
     activeColumns: string[]
-    filterModels: Record<string, FilterModel>
+    filterModels: Record<string, FilterModel[]>
     orderBy?: string
     orderDirection?: "asc" | "desc"
     pageId?: number
@@ -33,7 +33,6 @@ export interface LoaderParams {
 
 
 export interface FilterModel {
-    key: string
     fiterType: ValueType
     operator: OperatorType
     value: string[]
@@ -45,22 +44,26 @@ export interface OperatorValue {
 }
 
 
-const OPERATORS_MAP = {
-    "equal": "equal",
-    "not_equal": "not_equal",
-    "contains": "contains",
-    "not_contains": "not_contains",
-    "starts_with": "starts_with",
-    "ends_with": "ends_with",
-    "is_null": "is_null",
-    "is_not_null": "is_not_null",
-    "between": "between",
-    "not_between": "not_between",
-    "greater_than": "greater_than",
-    "less_than": "less_than",
-    "greater_than_or_equal": "greater_than_or_equal",
-    "less_than_or_equal": "less_than_or_equal",
-}
+type OperatorInputType = "novalue" | "value" | "range"
+
+type OperatorMapValue = [OperatorInputType]
+
+const OPERATORS_MAP= {
+    "equal": ["value"] as OperatorMapValue,
+    "not_equal": ["value"] as OperatorMapValue,
+    "contains": ["value"] as OperatorMapValue,
+    "not_contains": ["value"] as OperatorMapValue,
+    "starts_with": ["value"] as OperatorMapValue,
+    "ends_with": ["value"] as OperatorMapValue,
+    "is_null": ["novalue"] as OperatorMapValue,
+    "is_not_null": ["novalue"] as OperatorMapValue,
+    "between": ["range"] as OperatorMapValue,
+    "not_between": ["range"] as OperatorMapValue,
+    "greater_than": ["value"] as OperatorMapValue,
+    "less_than": ["value"] as OperatorMapValue,
+    "greater_than_or_equal": ["value"] as OperatorMapValue,
+    "less_than_or_equal": ["value"] as OperatorMapValue,
+} as const;
 
 export const OPERATORS = Object.keys(OPERATORS_MAP);
 
