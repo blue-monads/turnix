@@ -2,7 +2,14 @@
     import type { GridOptions, OperatorValue, FilterModel } from "./easyTypes";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import FilterPanel from "./FilterPanel.svelte";
-import { login } from "$lib/api/auth";
+
+    const handleRef = {
+        "reload": () => loadData("initial"),
+        "next": () => loadData("next"),
+        "previous": () => loadData("previous"),
+    }
+
+
 
     let {
         columns = [],
@@ -10,6 +17,7 @@ import { login } from "$lib/api/auth";
         actions,
         key,
         enableSort,
+        handle = $bindable(handleRef),
         enableSidebar = false
     }: GridOptions = $props();
 
@@ -34,7 +42,6 @@ import { login } from "$lib/api/auth";
     let filterPanelRef: HTMLDivElement;
 
     const hashSeed: number = 74
-
 
     
 

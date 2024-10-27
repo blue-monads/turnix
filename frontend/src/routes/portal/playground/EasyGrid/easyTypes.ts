@@ -7,6 +7,14 @@ export interface GridOptions {
     key: string
     enableSort?: boolean
     enableSidebar?: boolean
+    handle?: GridHandle
+}
+
+
+export interface GridHandle {
+    reload: () => void
+    next: () => void
+    previous: () => void
 }
 
 export type LoaderFunc = (params: LoaderParams) => Promise<Record<string, any>[]> 
