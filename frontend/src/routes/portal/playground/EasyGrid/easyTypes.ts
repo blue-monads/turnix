@@ -6,6 +6,7 @@ export interface GridOptions {
     actions?: Action[]
     key: string
     enableSort?: boolean
+    enableSidebar?: boolean
 }
 
 export type LoaderFunc = (params: LoaderParams) => Promise<Record<string, any>[]> 
