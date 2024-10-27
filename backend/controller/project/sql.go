@@ -91,6 +91,15 @@ func prevenSQLEscape(prefix string, input string) error {
 
 }
 
+func (a *ProjectController) RunQuerySQL2(userId int64, pid int64, qstr string, data []any) ([]map[string]any, error) {
+	err := prevenSQLEscape("__project__", qstr)
+	if err != nil {
+		return nil, err
+	}
+
+	return a.db.RunProjectSQLQuery(pid, qstr, data)
+}
+
 func (a *ProjectController) RunQuerySQL(userId int64, pid int64, input, name string, data []any) ([]map[string]any, error) {
 
 	queries := splitQueries(input)

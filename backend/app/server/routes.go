@@ -102,6 +102,7 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 	apiv1.DELETE("/project/:pid/files/:id", a.accessMiddleware(a.removeProjectFile))
 
 	apiv1.POST("/project/:pid/sqlexec", a.accessMiddleware(a.runProjectSQL))
+	apiv1.POST("/project/:pid/sqlexec2", a.accessMiddleware(a.runProjectSQL2))
 	apiv1.GET("/project/:pid/tables", a.accessMiddleware(a.listProjectTables))
 	apiv1.GET("/project/:pid/tables/:table/columns", a.accessMiddleware(a.listProjectTableColumns))
 	apiv1.POST("/project/:pid/autoquery", a.accessMiddleware(a.autoQueryProjectTable))

@@ -196,6 +196,11 @@ export class RootAPI {
         return this.client.post(`/project/${pid}/sqlexec`, data)
     }
 
+    runProjectSQL2 = (pid: string, data: { qstr: string, data: any[] }) => {
+        return this.client.post(`/project/${pid}/sqlexec2`, data)
+    }
+
+
     listProjectTables = (pid: string) => {
         return this.client.get<string[]>(`/project/${pid}/tables`)
     }

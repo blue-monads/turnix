@@ -236,6 +236,28 @@ func (a *Server) runProjectSQL(claim *signer.AccessClaim, ctx *gin.Context) (any
 	return res, err
 }
 
+type ProjectSQLExec2 struct {
+	QStr string `json:"qstr"`
+	Data []any  `json:"data"`
+}
+
+func (a *Server) runProjectSQL2(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+
+	data := ProjectSQLExec2{}
+	err := ctx.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := a.cProject.RunQuerySQL2(claim.UserId, pid, data.QStr, data.Data)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
+}
+
 func (a *Server) listProjectTables(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
 

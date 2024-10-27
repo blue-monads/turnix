@@ -22,8 +22,7 @@
     import type { GridHandle } from "../../playground/EasyGrid/easyTypes";
 
     let tabSet: number = $state(0);
-    let serverCode = $state("");
-
+    let serverCode = $state("select * from __project__Accounts;");
 
     const pid = $params["pid"];
 
@@ -40,6 +39,35 @@
     let handle: GridHandle = $state();
 
     // export type RendererType = "text" | "date" | "number" | "currency" | "autocolor" | "relativedate" | "lookup" | string
+
+    const inferColumnMapping = (data: Record<string, any>[]) => {
+        const first = data.at(0);
+        if (!first) {
+            return;
+        }
+
+        columnMappings = Object.keys(first).map((key) => ({
+            sqlName: key,
+            gridName: key,
+            rendererType: "text",
+        }));
+    };
+
+    const finalCoumns = $derived(
+        columnMappings.map((cm) => {
+            return {
+                title: cm.gridName,
+                key: cm.sqlName,
+                type: "text",
+                rendererType: cm.rendererType,
+            };
+        })
+    );
+
+    $effect(() => {
+        console.log("@columnMappings", $state.snapshot(columnMappings));
+        console.log("@finalCoumns", $state.snapshot(finalCoumns));
+    });
 </script>
 
 <div class="flex flex-col w-full h-[94vh] p-2">
@@ -70,7 +98,6 @@
                             console.log("@handle", handle);
 
                             handle.reload();
-
                         }}
                     >
                         <SvgIcon className="w-4 h-4 mt-1" name="play" />
@@ -79,29 +106,44 @@
                 </div>
 
                 <svelte:fragment slot="panel">
-                    <div class="max-h-[40vh] md:max-h-[90vh] overflow-auto">
+                    <div class="min-h-20 overflow-auto">
                         {#if tabSet === 0}
-                            <EasyGrid
-                                bind:handle
-                                columns={[]}
-                                enableStartAutoLoad={false}
-                                enablePagination={false}
-                                enableSidebar={false}
-                                enableSort={false}
-                                onLoad={async (params) => {
-                                    if (!serverCode) {
-                                        return [];
-                                    }
+                            {#key finalCoumns}
+                                <EasyGrid
+                                    bind:handle
+                                    columns={finalCoumns}
+                                    enableStartAutoLoad={false}
+                                    enablePagination={false}
+                                    enableSidebar={false}
+                                    enableSort={false}
+                                    enableFilter={false}
+                                    onLoad={async (params) => {
+                                        if (!serverCode) {
+                                            return [];
+                                        }
 
-                                    const resp = await rootApi.runProjectSQL(pid, serverCode);
-                                    if (resp.status !== 200) {
-                                        return [];
-                                    }
+                                        const resp = await rootApi.runProjectSQL2(
+                                            pid,
+                                            {
+                                                qstr: serverCode,
+                                                data: [],
+                                            }
+                                        );
 
-                                    lastData = resp.data;
-                                    return lastData;
-                                }}
-                            />
+                                        if (resp.status !== 200) {
+                                            return [];
+                                        }
+
+                                        if (finalCoumns.length === 0) {
+                                            inferColumnMapping(resp.data);
+                                        }
+
+
+                                        lastData = resp.data;
+                                        return lastData;
+                                    }}
+                                />
+                            {/key}
                         {:else if tabSet === 1}
                             <EasyGrid
                                 enableStartAutoLoad={false}
@@ -147,14 +189,9 @@
                                     },
                                     {
                                         name: "Infer",
-                                        action: () => {
-
-
-                                        },
+                                        action: () => {},
                                     },
                                 ]}
-
-
                             />
                         {/if}
                     </div>
