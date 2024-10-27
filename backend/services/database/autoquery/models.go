@@ -1,19 +1,18 @@
 package autoquery
 
 type LoaderParams struct {
-	LoadType       string                 `json:"loadType"`
-	MaxId          int                    `json:"maxId"`
-	MinId          int                    `json:"minId"`
-	ActiveColumns  []string               `json:"activeColumns"`
-	FilterModels   map[string]FilterModel `json:"filterModels"`
-	OrderBy        string                 `json:"orderBy"`
-	OrderDirection string                 `json:"orderDirection"`
-	PageId         int                    `json:"pageId"`
-	PageSize       int                    `json:"pageSize"`
+	LoadType       string                   `json:"loadType"`
+	MaxId          int                      `json:"maxId"`
+	MinId          int                      `json:"minId"`
+	ActiveColumns  []string                 `json:"activeColumns"`
+	FilterModels   map[string][]FilterModel `json:"filterModels"`
+	OrderBy        string                   `json:"orderBy"`
+	OrderDirection string                   `json:"orderDirection"`
+	PageId         int                      `json:"pageId"`
+	PageSize       int                      `json:"pageSize"`
 }
 
 type FilterModel struct {
-	Key        string   `json:"key"`
 	FilterType string   `json:"filterType"`
 	Operator   string   `json:"operator"`
 	Value      []string `json:"value"`

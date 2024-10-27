@@ -45,12 +45,16 @@ func (qb *Builder) buildWhereClause() (string, []any) {
 	var conditions []string
 	var args []any
 
-	for _, filter := range qb.Params.FilterModels {
-		condition, filterArgs := qb.buildFilterCondition(filter)
-		if condition != "" {
-			conditions = append(conditions, condition)
-			args = append(args, filterArgs...)
+	for colKey, filters := range qb.Params.FilterModels {
+		for _, filter := range filters {
+			condition, filterArgs := qb.buildFilterCondition(colKey, filter)
+			if condition != "" {
+				conditions = append(conditions, condition)
+				args = append(args, filterArgs...)
+			}
+
 		}
+
 	}
 
 	if qb.Params.OrderBy == "" {
@@ -66,36 +70,36 @@ func (qb *Builder) buildWhereClause() (string, []any) {
 	return strings.Join(conditions, " AND "), args
 }
 
-func (qb *Builder) buildFilterCondition(filter FilterModel) (string, []any) {
+func (qb *Builder) buildFilterCondition(column string, filter FilterModel) (string, []any) {
 	switch filter.Operator {
 	case OperatorEqual:
-		return fmt.Sprintf("%s = ?", filter.Key), []any{filter.Value}
+		return fmt.Sprintf("%s = ?", column), []any{filter.Value}
 	case OperatorNotEqual:
-		return fmt.Sprintf("%s != ?", filter.Key), []any{filter.Value}
+		return fmt.Sprintf("%s != ?", column), []any{filter.Value}
 	case OperatorContains:
-		return fmt.Sprintf("%s LIKE ?", filter.Key), []any{"%" + filter.Value[0] + "%"}
+		return fmt.Sprintf("%s LIKE ?", column), []any{"%" + filter.Value[0] + "%"}
 	case OperatorNotContains:
-		return fmt.Sprintf("%s NOT LIKE ?", filter.Key), []any{"%" + filter.Value[0] + "%"}
+		return fmt.Sprintf("%s NOT LIKE ?", column), []any{"%" + filter.Value[0] + "%"}
 	case OperatorStartsWith:
-		return fmt.Sprintf("%s LIKE ?", filter.Key), []any{filter.Value[0] + "%"}
+		return fmt.Sprintf("%s LIKE ?", column), []any{filter.Value[0] + "%"}
 	case OperatorEndsWith:
-		return fmt.Sprintf("%s LIKE ?", filter.Key), []any{"%" + filter.Value[0]}
+		return fmt.Sprintf("%s LIKE ?", column), []any{"%" + filter.Value[0]}
 	case OperatorIsNull:
-		return fmt.Sprintf("%s IS NULL", filter.Key), nil
+		return fmt.Sprintf("%s IS NULL", column), nil
 	case OperatorIsNotNull:
-		return fmt.Sprintf("%s IS NOT NULL", filter.Key), nil
+		return fmt.Sprintf("%s IS NOT NULL", column), nil
 	case OperatorBetween:
-		return fmt.Sprintf("%s BETWEEN ? AND ?", filter.Key), []any{filter.Value[0], filter.Value[1]}
+		return fmt.Sprintf("%s BETWEEN ? AND ?", column), []any{filter.Value[0], filter.Value[1]}
 	case OperatorNotBetween:
-		return fmt.Sprintf("%s NOT BETWEEN ? AND ?", filter.Key), []any{filter.Value[0], filter.Value[1]}
+		return fmt.Sprintf("%s NOT BETWEEN ? AND ?", column), []any{filter.Value[0], filter.Value[1]}
 	case OperatorGreaterThan:
-		return fmt.Sprintf("%s > ?", filter.Key), []any{filter.Value}
+		return fmt.Sprintf("%s > ?", column), []any{filter.Value}
 	case OperatorLessThan:
-		return fmt.Sprintf("%s < ?", filter.Key), []any{filter.Value}
+		return fmt.Sprintf("%s < ?", column), []any{filter.Value}
 	case OperatorGreaterThanOrEqual:
-		return fmt.Sprintf("%s >= ?", filter.Key), []any{filter.Value}
+		return fmt.Sprintf("%s >= ?", column), []any{filter.Value}
 	case OperatorLessThanOrEqual:
-		return fmt.Sprintf("%s <= ?", filter.Key), []any{filter.Value}
+		return fmt.Sprintf("%s <= ?", column), []any{filter.Value}
 	}
 
 	return "", nil
