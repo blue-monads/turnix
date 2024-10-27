@@ -22,6 +22,8 @@
     let sidePanelMode: "none" | "columns" | "filters" | "charts" = $state("none");
 
     let filterModels: Record<string, FilterModel[]> = $state({});
+    let enabledColumns: string[] = $state(columns.map(col => col.key));
+    let loadedColumns: string[] = $state([]);
 
     let activeFilter = $state(null);
     let filterPanelPosition = $state({ top: 0, left: 0 });
@@ -30,6 +32,7 @@
     let filterPanelRef: HTMLDivElement;
 
     const hashSeed: number = 74
+
 
     
 
@@ -75,17 +78,20 @@
 
     const loadData = async (loadType: "next" | "initial" | "previous") => {
         loading = true;
-
         needsReload = false;
+        let activeColumns = $state.snapshot(enabledColumns)
 
         const nextDatas = await onLoad({
             loadType,
             orderBy: sortKey,
             orderDirection: sortMode,
             filterModels: $state.snapshot(filterModels),
-            minId: minId,
+            activeColumns,
+            minId: minId,            
             maxId: maxId,
         });
+
+        
 
         let nextMinId = 0;
         let nextMaxId = 0;
@@ -105,6 +111,8 @@
                 }
             });
         }
+
+        loadedColumns = activeColumns;
 
         minId = nextMinId;
         maxId = nextMaxId;
@@ -147,98 +155,100 @@
                     <tr class="rounded-lg text-sm font-medium text-gray-700 text-left">
                         {#each columns as column}
 
-                            <th class="px-2 py-1">
-                                <div class="flex gap-2">
-                                    <button
-                                        class="flex gap-1"
-                                        onclick={() => {
-                                            if (!enableSort || column.disableSort) {
-                                                return;
-                                            }
-
-                                            if (sortKey === column.key) {
-                                                if (sortMode === "asc") {
-                                                    sortMode = "desc";
-                                                } else {
-                                                    sortKey = "";
-                                                }
-                                            } else {
-                                                sortKey = column.key;
-                                                sortMode = "asc";
-                                            }
-                                        }}
-                                    >
-                                        <span>
-                                            {column.title}
-                                        </span>
-
-                                        {#if column.key === sortKey}
-                                            {#if sortMode === "asc"}
-                                                <SvgIcon
-                                                    name="chevron-down"
-                                                    className="h-4 w-4"
-                                                />
-                                            {:else}
-                                                <SvgIcon
-                                                    name="chevron-up"
-                                                    className="h-4 w-4"
-                                                />
-                                            {/if}
-                                        {/if}
-                                    </button>
-
-                                    <div>
+                            {#if loadedColumns.includes(column.key) && enabledColumns.includes(column.key)}
+                                <th class="px-2 py-1">
+                                    <div class="flex gap-2">
                                         <button
-                                            class="rounded p-0.5 relative {filterModels[column.key] ? 'bg-blue-100' : ''}"
-                                            onclick={(event) => {
-                                                console.log("@col/ev", column);
-                                                event.stopPropagation();
-                                                toggleFilterPanel(column, event);
+                                            class="flex gap-1"
+                                            onclick={() => {
+                                                if (!enableSort || column.disableSort) {
+                                                    return;
+                                                }
+
+                                                if (sortKey === column.key) {
+                                                    if (sortMode === "asc") {
+                                                        sortMode = "desc";
+                                                    } else {
+                                                        sortKey = "";
+                                                    }
+                                                } else {
+                                                    sortKey = column.key;
+                                                    sortMode = "asc";
+                                                }
                                             }}
                                         >
+                                            <span>
+                                                {column.title}
+                                            </span>
 
-                                        {#if filterModels[column.key]}
-                                            <span class="rounded-full absolute top-1 -right-1 w-2 h-2 bg-blue-400 shadow"></span>
-                                        {/if}
-
-
-                                            <SvgIcon
-                                                name="bars-3-bottom-right"
-                                                className="h-4 w-4"
-                                            />
+                                            {#if column.key === sortKey}
+                                                {#if sortMode === "asc"}
+                                                    <SvgIcon
+                                                        name="chevron-down"
+                                                        className="h-4 w-4"
+                                                    />
+                                                {:else}
+                                                    <SvgIcon
+                                                        name="chevron-up"
+                                                        className="h-4 w-4"
+                                                    />
+                                                {/if}
+                                            {/if}
                                         </button>
-                                    </div>
 
-                                    {#if activeFilter}
-                                        <div
-                                            bind:this={filterPanelRef}
-                                            class="fixed rounded bg-white shadow-lg z-10 min-w-64 resize p-2 border-b"
-                                            style="top: {filterPanelPosition.top}; left: {filterPanelPosition.left};"
-                                        >
-                                            <FilterPanel
-                                                currentFilterModel={filterModels[activeFilter]}
-                                                closeFilter={closeFilterPanel}
-                                                clearFilter={() => {
-                                                    filterModels[activeFilter] = null;
-                                                    needsReload = true;
-                                                    closeFilterPanel();
+                                        <div>
+                                            <button
+                                                class="rounded p-0.5 relative {filterModels[column.key] ? 'bg-blue-100' : ''}"
+                                                onclick={(event) => {
+                                                    console.log("@col/ev", column);
+                                                    event.stopPropagation();
+                                                    toggleFilterPanel(column, event);
                                                 }}
-                                                column={columns.find(col => col.key === activeFilter)}
-                                                applyFilter={(column, filters) => {
+                                            >
 
-                                                    filterModels[column.key] = filters;
+                                            {#if filterModels[column.key]}
+                                                <span class="rounded-full absolute top-1 -right-1 w-2 h-2 bg-blue-400 shadow"></span>
+                                            {/if}
 
-                                                    needsReload = true;
 
-                                                    console.log($state.snapshot(filterModels));
-
-                                                    closeFilterPanel();
-                                                }}
-                                            />
+                                                <SvgIcon
+                                                    name="bars-3-bottom-right"
+                                                    className="h-4 w-4"
+                                                />
+                                            </button>
                                         </div>
-                                    {/if}
-                                </div>
-                            </th>
+
+                                        {#if activeFilter}
+                                            <div
+                                                bind:this={filterPanelRef}
+                                                class="fixed rounded bg-white shadow-lg z-10 min-w-64 resize p-2 border-b"
+                                                style="top: {filterPanelPosition.top}; left: {filterPanelPosition.left};"
+                                            >
+                                                <FilterPanel
+                                                    currentFilterModel={filterModels[activeFilter]}
+                                                    closeFilter={closeFilterPanel}
+                                                    clearFilter={() => {
+                                                        filterModels[activeFilter] = null;
+                                                        needsReload = true;
+                                                        closeFilterPanel();
+                                                    }}
+                                                    column={columns.find(col => col.key === activeFilter)}
+                                                    applyFilter={(column, filters) => {
+
+                                                        filterModels[column.key] = filters;
+
+                                                        needsReload = true;
+
+                                                        console.log($state.snapshot(filterModels));
+
+                                                        closeFilterPanel();
+                                                    }}
+                                                />
+                                            </div>
+                                        {/if}
+                                    </div>
+                                </th>
+                            {/if}
                         {/each}
 
                         {#if actions}
@@ -262,6 +272,10 @@
                             >
                                 {#each columns as column}
                                 {@const dataValue = data[column.key]}
+
+
+                                {#if loadedColumns.includes(column.key) && enabledColumns.includes(column.key)}
+
                                     <td class="px-2 py-2">
                                         
                                         {#if dataValue }
@@ -314,6 +328,8 @@
                                             {/each}
                                         </td>
                                     {/if}
+
+                                    {/if}
                                 {/each}
                             </tr>
                         {/each}
@@ -323,9 +339,36 @@
         </div>
 
         {#if enableSidebar} 
-            {#if sidePanelMode === "columns"}
+            {#if sidePanelMode != "none"}
                 <div class="flex min-w-60 flex-col border-l border-gray-200 p-1 resize-x overflow-auto">
-                    i am sidebar 
+
+                    {#if sidePanelMode === "columns"}
+                        <div class="flex flex-col gap-2 p-2">
+                            {#each columns as column}
+                                <div class="flex">
+                                    <label class="flex items-center gap-2">
+                                        <input 
+                                        type="checkbox" 
+                                        checked={enabledColumns.includes(column.key)} 
+                                        class="h-4 w-4 border-gray-300 rounded"
+                                        onchange={() => {
+                                            if (enabledColumns.includes(column.key)) {
+                                                enabledColumns = enabledColumns.filter(col => col !== column.key);
+                                            } else {
+                                                enabledColumns = [...enabledColumns, column.key];
+                                                if (!loadedColumns.includes(column.key)) {
+                                                    needsReload = true;
+                                                }
+                                            }
+                                        }}                                        
+                                        >
+                                        <span>{column.title}</span>
+                                    </label>                                    
+                                </div>
+                            {/each}
+                        </div>
+                    {/if}
+
                 </div>
             {/if}
 
@@ -339,7 +382,7 @@
                             Columns
                         </button>
 
-                        <button
+                        <!-- <button
                         class="hover:bg-gray-50 px-1"
                         onclick={sidebarToggle("columns")}
                     
@@ -352,7 +395,7 @@
                     
                         >
                             Charts
-                        </button>
+                        </button> -->
                         
                     </div>
                 </div>

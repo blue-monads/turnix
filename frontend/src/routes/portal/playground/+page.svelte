@@ -17,6 +17,7 @@
 <div class="flex flex-col p-4">
   <EasyGrid
     enableSort={true}
+    enableSidebar={true}
     columns={[
       { title: "Name", key: "name" },
       { title: "Info", key: "info" },
