@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/bornjre/turnix/backend/xtypes/models"
 	"github.com/k0kubun/pp"
 	"github.com/rqlite/sql"
 )
@@ -116,4 +117,8 @@ func (a *ProjectController) RunQuerySQL(userId int64, pid int64, input, name str
 
 func (a *ProjectController) ListProjectTables(userId int64, pid int64) ([]string, error) {
 	return a.db.ListProjectTables(pid)
+}
+
+func (a *ProjectController) ListProjectTableColumns(userId int64, pid int64, table string) ([]models.TableColumn, error) {
+	return a.db.ListProjectTableColumns(pid, table)
 }

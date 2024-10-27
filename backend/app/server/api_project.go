@@ -241,6 +241,13 @@ func (a *Server) listProjectTables(claim *signer.AccessClaim, ctx *gin.Context) 
 	return a.cProject.ListProjectTables(claim.UserId, pid)
 }
 
+func (a *Server) listProjectTableColumns(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	table := ctx.Param("table")
+
+	return a.cProject.ListProjectTableColumns(claim.UserId, pid, table)
+}
+
 // plugins
 func (a *Server) listProjectPlugins(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 

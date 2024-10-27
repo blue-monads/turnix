@@ -75,3 +75,12 @@ type ProjectConfig struct {
 	Value     string `json:"value" db:"value"`
 	ProjectID int64  `json:"project_id" db:"project_id"`
 }
+
+type TableColumn struct {
+	Cid          int64  `json:"id" db:"id,omitempty"`
+	Name         string `json:"name"`
+	Type         string `json:"type"`
+	NotNull      bool   `json:"not_null"`
+	DefaultValue string `json:"default_value"`
+	PrimaryKey   bool   `json:"primary_key"`
+}

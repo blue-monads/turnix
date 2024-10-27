@@ -115,6 +115,52 @@ func (d *DB) ListProjectTables(pid int64) ([]string, error) {
 	return result, nil
 }
 
+/*
+
+cid	name	type	notnull	dflt_value	pk
+
+*/
+
+func (d *DB) ListProjectTableColumns(pid int64, table string) ([]models.TableColumn, error) {
+
+	result := make([]models.TableColumn, 0)
+
+	finalTableName := fmt.Sprintf("z_%d_%s", pid, table)
+
+	rows, err := d.sess.SQL().Query(fmt.Sprintf(`SELECT * FROM pragma_table_info('%s')`, finalTableName))
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var cid int64
+		var name string
+		var typeName string
+		var notNull int
+		var defaultValue *string
+		var primaryKey int
+		err := rows.Scan(&cid, &name, &typeName, &notNull, &defaultValue, &primaryKey)
+		if err != nil {
+			return nil, err
+		}
+		var defaultValueActual string
+		if defaultValue != nil {
+			defaultValueActual = *defaultValue
+		}
+
+		result = append(result, models.TableColumn{
+			Cid:          cid,
+			Name:         name,
+			Type:         typeName,
+			NotNull:      notNull == 1,
+			DefaultValue: defaultValueActual,
+			PrimaryKey:   primaryKey == 1,
+		})
+	}
+
+	return result, nil
+}
+
 func (d *DB) ListThirdPartyProjects(userid int64, ptype string) ([]models.Project, error) {
 
 	cond := db.Cond{

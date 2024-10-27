@@ -13,28 +13,39 @@
     import { params } from "$lib/params";
     import EasyGrid from "../../playground/EasyGrid/EasyGrid.svelte";
 
-
-    let {
-        table 
-    } = $props()
+    let { table } = $props();
 
     const pid = $params["pid"];
 
     const rootApi = getContext("__api__") as RootAPI;
-    const api = NewBookAPI(rootApi);
 
     let columns = $state([]);
 
+    const load = async () => {
+        const resp = await rootApi.listProjectTableColumns(pid, table);
+        if (resp.status !== 200) {
+            return;
+        }
+
+        columns = resp.data.map((col) => {
+            return {
+                title: col.name,
+                key: col.name,
+                type: "text",
+            };
+        });
+    };
+
+    load();
+
 </script>
 
-
-
 <EasyGrid
-columns={columns}
-enablePagination={true}
-enableSidebar={true}
-enableSort={true}
-onLoad={(params) => {
-    return [];
-}}
+    {columns}
+    enablePagination={true}
+    enableSidebar={true}
+    enableSort={true}
+    onLoad={(params) => {
+        return [];
+    }}
 />

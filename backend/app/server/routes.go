@@ -103,6 +103,7 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 
 	apiv1.POST("/project/:pid/sqlexec", a.accessMiddleware(a.runProjectSQL))
 	apiv1.GET("/project/:pid/tables", a.accessMiddleware(a.listProjectTables))
+	apiv1.GET("/project/:pid/tables/:table/columns", a.accessMiddleware(a.listProjectTableColumns))
 
 	// project plugins
 

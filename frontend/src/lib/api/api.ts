@@ -81,6 +81,13 @@ export interface ProjectPlugin {
     updated_at: string;
 }
 
+export interface TableColumn {
+    name: string;
+    type: string;
+    not_null: boolean;
+    default_value: string;
+    primary_key: boolean;
+}
 
 
 export class RootAPI {
@@ -193,6 +200,10 @@ export class RootAPI {
         return this.client.get<string[]>(`/project/${pid}/tables`)
     }
 
+
+    listProjectTableColumns = (pid: string, table: string) => {
+        return this.client.get<TableColumn[]>(`/project/${pid}/tables/${table}/columns`)
+    }
 
     // project files
 
