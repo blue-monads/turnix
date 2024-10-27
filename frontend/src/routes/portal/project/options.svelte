@@ -27,6 +27,7 @@
   let message = "";
 
   const data = $modalStore[0].meta["data"];
+  const pid = data["id"];
 </script>
 
 {#if loading}
@@ -58,7 +59,7 @@
         onclick={() => {
           modalStore.close();
         }}
-        href={`/z/pages/portal/project/files/${data["id"]}`}
+        href={`/z/pages/portal/project/files/${pid}`}
       >
         <SvgIcon name="folder" className="w-6 h-6" />
         <span>Project Files</span>
@@ -69,7 +70,7 @@
         onclick={() => {
           modalStore.close();
         }}
-        href={`/z/pages/portal/project/plugins?pid=${data["id"]}`}
+        href={`/z/pages/portal/project/plugins?pid=${pid}`}
       >
         <SvgIcon name="squares-2x2" className="w-6 h-6" />
         <span>Plugins</span>
@@ -80,20 +81,39 @@
         onclick={() => {
           modalStore.close();
         }}
-        href={`/z/pages/portal/project/users?pid=${data["id"]}`}
+        href={`/z/pages/portal/project/livequery?pid=${pid}`}
       >
-        <SvgIcon name="users" className="w-6 h-6" />
-        <span>Users and Permissions</span>
+        <SvgIcon name="squares-2x2" className="w-6 h-6" />
+        <span>Live Query</span>
       </a>
-
-
+      <a
+        class="logo-item"
+        onclick={() => {
+          modalStore.close();
+        }}
+        href={`/z/pages/portal/project/explore?pid=${pid}`}
+      >
+        <SvgIcon name="squares-2x2" className="w-6 h-6" />
+        <span>Explore Data</span>
+      </a>
 
       <a
         class="logo-item"
         onclick={() => {
           modalStore.close();
         }}
-        href={`/z/pages/portal/hooks?ptype=${data["ptype"]}&pid=${data["id"]}`}
+        href={`/z/pages/portal/project/users?pid=${pid}`}
+      >
+        <SvgIcon name="users" className="w-6 h-6" />
+        <span>Users and Permissions</span>
+      </a>
+
+      <a
+        class="logo-item"
+        onclick={() => {
+          modalStore.close();
+        }}
+        href={`/z/pages/portal/hooks?ptype=${data["ptype"]}&pid=${pid}`}
       >
         <SvgIcon name="code-bracket-square" className="w-6 h-6" />
         <span>Project Hooks</span>
