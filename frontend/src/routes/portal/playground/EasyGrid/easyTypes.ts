@@ -36,6 +36,7 @@ export interface FilterModel {
     fiterType: ValueType
     operator: OperatorType
     value: string[]
+    depth?: number
 }
 
 export interface OperatorValue {
