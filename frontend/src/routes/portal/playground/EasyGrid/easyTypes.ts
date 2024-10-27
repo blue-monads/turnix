@@ -2,14 +2,15 @@
 
 export interface GridOptions {
     columns: Column[]
-    onLoad: LoaderFunc
+    onLoad: LoaderFunc    
     actions?: Action[]
+    headerActions?: Action[]
     key: string
+    enableStartAutoLoad?: boolean
     enableSort?: boolean
     enableSidebar?: boolean
     enablePagination?: boolean
     handle?: GridHandle
-
 }
 
 

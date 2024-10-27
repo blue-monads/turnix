@@ -19,21 +19,27 @@
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { params } from "$lib/params";
     import EasyGrid from "../../playground/EasyGrid/EasyGrid.svelte";
+    import type { GridHandle } from "../../playground/EasyGrid/easyTypes";
 
     let tabSet: number = $state(0);
-    let savedClientCode = $state("");
     let serverCode = $state("");
 
-    let { runAction = $bindable() } = $props();
-
-    runAction = () => {
-        savedClientCode = clientCode;
-    };
 
     const pid = $params["pid"];
 
     const rootApi = getContext("__api__") as RootAPI;
-    const api = NewBookAPI(rootApi);
+
+    interface ColumnMapping {
+        sqlName: string;
+        gridName: string;
+        rendererType: string;
+    }
+
+    let columnMappings: ColumnMapping[] = $state([]);
+    let lastData = $state([]);
+    let handle: GridHandle = $state();
+
+    // export type RendererType = "text" | "date" | "number" | "currency" | "autocolor" | "relativedate" | "lookup" | string
 </script>
 
 <div class="flex flex-col w-full h-[94vh] p-2">
@@ -61,7 +67,10 @@
                     <button
                         class="inline-flex rounded p.05 variant-filled self-center"
                         onclick={() => {
-                            runAction();
+                            console.log("@handle", handle);
+
+                            handle.reload();
+
                         }}
                     >
                         <SvgIcon className="w-4 h-4 mt-1" name="play" />
@@ -73,18 +82,81 @@
                     <div class="max-h-[40vh] md:max-h-[90vh] overflow-auto">
                         {#if tabSet === 0}
                             <EasyGrid
+                                bind:handle
                                 columns={[]}
+                                enableStartAutoLoad={false}
+                                enablePagination={false}
+                                enableSidebar={false}
+                                enableSort={false}
+                                onLoad={async (params) => {
+                                    if (!serverCode) {
+                                        return [];
+                                    }
+
+                                    const resp = await rootApi.runProjectSQL(pid, serverCode);
+                                    if (resp.status !== 200) {
+                                        return [];
+                                    }
+
+                                    lastData = resp.data;
+                                    return lastData;
+                                }}
+                            />
+                        {:else if tabSet === 1}
+                            <EasyGrid
+                                enableStartAutoLoad={false}
+                                columns={[
+                                    {
+                                        title: "SQL Name",
+                                        key: "sqlName",
+                                        type: "text",
+                                    },
+                                    {
+                                        title: "Grid Name",
+                                        key: "gridName",
+                                        type: "text",
+                                    },
+                                    {
+                                        title: "Renderer Type",
+                                        key: "rendererType",
+                                        type: "text",
+                                        rendererOptions: {
+                                            autoColor: true,
+                                        },
+                                    },
+                                ]}
                                 enablePagination={false}
                                 enableSidebar={false}
                                 enableSort={false}
                                 onLoad={(params) => {
-                                    return [];
+                                    return columnMappings;
                                 }}
+                                headerActions={[
+                                    {
+                                        name: "Add",
+                                        action: () => {
+                                            columnMappings = [
+                                                ...columnMappings,
+                                                {
+                                                    sqlName: "",
+                                                    gridName: "",
+                                                    rendererType: "text",
+                                                },
+                                            ];
+                                        },
+                                    },
+                                    {
+                                        name: "Infer",
+                                        action: () => {
+
+
+                                        },
+                                    },
+                                ]}
+
+
                             />
-                        {:else if tabSet === 1}
-                            <span>Mappings HERE</span>
                         {/if}
-                        
                     </div>
                 </svelte:fragment>
             </TabGroup>

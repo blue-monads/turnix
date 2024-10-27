@@ -11,7 +11,9 @@
         actions,
         key,
         enableSort,
+        headerActions,
         handle = $bindable(),
+        enableStartAutoLoad = true,
         enableSidebar = false,
         enablePagination = true
     }: GridOptions = $props();
@@ -135,7 +137,11 @@
         loading = false;
     };
 
-    loadData("initial");
+    if (enableStartAutoLoad) {
+        loadData("initial");
+    } else {
+        loadedColumns = $state.snapshot(enabledColumns);
+    }
 
     $effect(() => {
         const handleClickOutside = (event) => {
@@ -166,7 +172,7 @@
     <div class="flex">
         <div class="flex-1 min-h-32 overflow-auto"> 
             
-        {#if columns.length === 0 || (datas.length === 0 && !loading)}
+        {#if columns.length === 0}
             <div class="flex justify-center items-center h-full">
                 <span class="text-gray-500">Empty</span>
             </div>
@@ -175,7 +181,7 @@
                 <span class="text-gray-500">Loading...</span>
             </div>
         {:else}            
-            <table class="table-auto border-collapse relative ">
+            <table class="table-auto border-collapse relative w-full">
                 <thead>
                     <tr class="rounded-lg text-sm font-medium text-gray-700 text-left">
                         {#each columns as column}
@@ -276,8 +282,32 @@
                             {/if}
                         {/each}
 
-                        {#if actions}
-                            <th class="px-2 py-2"> Actions </th>
+                        {#if actions || headerActions}
+                            <th class="px-2 py-2 flex"> 
+                                {#if headerActions}
+                                    {#each headerActions as ha }
+                                        <button
+                                        class="flex m-1 btn btn-sm bg-gray-50 {ha.Class }"
+                                            onclick={() => {
+                                                ha.action();
+                                            }}
+                                        >
+                                            {#if ha.icon}
+                                                <SvgIcon
+                                                    name={ha.icon}
+                                                    className="h-5 w-5"
+                                                />
+                                            {/if}
+
+                                            {ha.name}
+                                            </button>
+                                        
+                                    {/each}
+                                {:else}
+                                    Actions
+
+                                {/if}
+                            </th>
                         {/if}
                     </tr>
                 </thead>
@@ -288,6 +318,14 @@
                         >
                             <td colspan={columns.length} class="px-2 py-2">
                                 <span class="p-1 rounded-lg">Loading...</span>
+                            </td>
+                        </tr>
+                    {:else if datas.length === 0}
+                        <tr
+                            class="hover:bg-gray-100 border-b border-gray-200 py-10 text-gray-700"
+                        >
+                            <td colspan={columns.length} class="px-2 py-2">
+                                <span class="p-1 rounded-lg">Empty</span>
                             </td>
                         </tr>
                     {:else}
