@@ -7,7 +7,9 @@ export interface GridOptions {
     key: string
     enableSort?: boolean
     enableSidebar?: boolean
+    enablePagination?: boolean
     handle?: GridHandle
+
 }
 
 

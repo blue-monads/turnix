@@ -12,7 +12,8 @@
         key,
         enableSort,
         handle = $bindable(),
-        enableSidebar = false
+        enableSidebar = false,
+        enablePagination = true
     }: GridOptions = $props();
 
     let datas = $state([]);
@@ -157,8 +158,18 @@
 
 <div class="p-1 overflow-auto card">
     <div class="flex">
-        <div class="flex-1">           
-            <table class="table-auto border-collapse w-full relative">
+        <div class="flex-1 min-h-32"> 
+            
+        {#if columns.length === 0 || (datas.length === 0 && !loading)}
+            <div class="flex justify-center items-center h-full">
+                <span class="text-gray-500">Empty</span>
+            </div>
+        {:else if loading}
+            <div class="flex justify-center items-center h-full">
+                <span class="text-gray-500">Loading...</span>
+            </div>
+        {:else}            
+            <table class="table-auto border-collapse w-full relative ">
                 <thead>
                     <tr class="rounded-lg text-sm font-medium text-gray-700 text-left">
                         {#each columns as column}
@@ -344,6 +355,8 @@
                     {/if}
                 </tbody>
             </table>
+            {/if}
+
         </div>
 
         {#if enableSidebar} 
@@ -409,13 +422,13 @@
                 </div>
         {/if}
 
+
+
 </div>
 
 
 
-
-
-    {#if !loading}
+    {#if !loading && enablePagination}
         <div class="flex justify-end gap-2">
 
             <button 
@@ -447,7 +460,7 @@
             <div class="flex gap-2">
                 <button
                     class="btn btn-sm bg-gray-100"
-                    onCLick={async () => {
+                    onclick={async () => {
                         loadData("previous");
                     }}
                 >
@@ -456,7 +469,7 @@
 
                 <button
                     class="btn btn-sm bg-gray-100"
-                    onCLick={async () => {
+                    onclick={async () => {
                         loadData("next");
                     }}
                 >

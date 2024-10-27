@@ -27,10 +27,15 @@
       { title: "Type", key: "acc_type", rendererOptions: { autoColor: true } },
       { title: "Created At", key: "created_at" },
     ]}
-    onLoad={(params) => {
+    onLoad={async (params) => {
       console.log("@load", params);
 
-      return sampleData;
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(sampleData);
+        }, 2000);
+      });
+
     }}
   />
 </div>
