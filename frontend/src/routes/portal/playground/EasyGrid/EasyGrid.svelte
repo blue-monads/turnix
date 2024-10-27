@@ -350,7 +350,7 @@
 
         {#if enableSidebar} 
             {#if sidePanelMode != "none"}
-                <div class="flex min-w-60 flex-col border-l border-gray-200 p-1 resize-x overflow-auto">
+                <div class="flex min-w-48 flex-col border-l border-gray-200 p-1 resize-x overflow-auto">
 
                     {#if sidePanelMode === "columns"}
                         <div class="flex flex-col gap-2 p-2">
