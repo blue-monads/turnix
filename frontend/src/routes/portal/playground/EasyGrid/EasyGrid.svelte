@@ -97,7 +97,7 @@
             activeColumns,
             minId: minId,            
             maxId: maxId,
-            pageSize: 5 //recordLoadCount,
+            pageSize: recordLoadCount,
         });
 
         if (!nextDatas) {
