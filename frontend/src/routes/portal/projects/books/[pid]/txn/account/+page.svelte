@@ -32,7 +32,7 @@
 
     console.log("@data", resp.data);
 
-    data = formatResponse(resp.data);
+    const formateddata = formatResponse(resp.data);
     console.log("@data_____", data);
 
     const accounts = (await rresp).data as Record<string, any>[];
@@ -42,7 +42,7 @@
       accountsIndex[id] = account["name"];
     });
 
-    data = data;
+    data = formateddata.txns;
 
     loading = false;
   };
