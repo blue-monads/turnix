@@ -47,7 +47,7 @@ func (b *DbOps) NotepadGet(pid, uid, id int64) (*models.Notepad, error) {
 	return data, nil
 }
 
-func (b *DbOps) NotepadList(pid, uid int64) ([]models.Notepad, error) {
+func (b *DbOps) NotepadList(pid, uid, offset int64) ([]models.Notepad, error) {
 	err := b.userHasScope(pid, uid, "read")
 	if err != nil {
 		return nil, err
@@ -56,7 +56,7 @@ func (b *DbOps) NotepadList(pid, uid int64) ([]models.Notepad, error) {
 	datas := make([]models.Notepad, 0)
 	table := b.notepadTable(pid)
 
-	err = table.Find().All(&datas)
+	err = table.Find(db.Cond{"id >": offset}).Limit(100).All(&datas)
 	if err != nil {
 		return nil, err
 	}
