@@ -304,3 +304,30 @@ type Notepad struct {
 	UpdatedAt    *time.Time `json:"updated_at" db:"updated_at,omitempty"`
 	LinkedClient int64      `json:"linked_client_id" db:"linked_client_id"`
 }
+
+type Estimate struct {
+	Id          int64      `json:"id" db:"id"`
+	Title       string     `json:"title" db:"title"`
+	Notes       string     `json:"notes" db:"notes"`
+	Attachments string     `json:"attachments" db:"attachments"`
+	TaxId       int64      `json:"tax_id" db:"tax_id"`
+	SubTotal    int64      `json:"sub_total" db:"sub_total"`
+	Total       int64      `json:"total" db:"total"`
+	CreatedBy   int64      `json:"created_by" db:"created_by"`
+	UpdatedBy   int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt   *time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at" db:"updated_at"`
+}
+
+type EstimateLine struct {
+	Id         int64      `json:"id" db:"id"`
+	Info       string     `json:"info" db:"info"`
+	Qty        int64      `json:"qty" db:"qty"`
+	EstimateId int64      `json:"estimate_id" db:"estimate_id"`
+	ProductId  int64      `json:"product_id" db:"product_id"`
+	Amount     int64      `json:"amount" db:"amount"`
+	CreatedBy  int64      `json:"created_by" db:"created_by"`
+	UpdatedBy  int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt  *time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt  *time.Time `json:"updated_at" db:"updated_at"`
+}
