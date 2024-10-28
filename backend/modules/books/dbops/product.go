@@ -52,7 +52,7 @@ func (b *DbOps) ProductGet(pid, uid, id int64) (*models.Product, error) {
 	return data, nil
 }
 
-func (b *DbOps) ProductList(pid, uid int64) ([]models.Product, error) {
+func (b *DbOps) ProductList(pid, uid, offset int64) ([]models.Product, error) {
 	err := b.userHasScope(pid, uid, "read")
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (b *DbOps) ProductList(pid, uid int64) ([]models.Product, error) {
 	datas := make([]models.Product, 0)
 	table := b.productTable(pid)
 
-	err = table.Find().All(&datas)
+	err = table.Find(db.Cond{"id >": offset}).Limit(100).All(&datas)
 	if err != nil {
 		return nil, err
 	}

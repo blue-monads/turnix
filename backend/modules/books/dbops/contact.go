@@ -49,7 +49,7 @@ func (b *DbOps) ContactGet(pid, uid, id int64) (*models.Contact, error) {
 	return data, nil
 }
 
-func (b *DbOps) ContactList(pid, uid int64) ([]models.Contact, error) {
+func (b *DbOps) ContactList(pid, uid, offset int64) ([]models.Contact, error) {
 	err := b.userHasScope(pid, uid, "read")
 	if err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ func (b *DbOps) ContactList(pid, uid int64) ([]models.Contact, error) {
 	datas := make([]models.Contact, 0)
 	table := b.contactTable(pid)
 
-	err = table.Find(db.Cond{"is_deleted": false}).All(&datas)
+	err = table.Find(db.Cond{"is_deleted": false, "id >": offset}).Limit(100).All(&datas)
 	if err != nil {
 		return nil, err
 	}

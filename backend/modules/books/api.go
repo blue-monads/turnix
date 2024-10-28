@@ -422,7 +422,9 @@ func (b *BookModule) deleteCatagory(ctx xtypes.ContextPlus) (any, error) {
 func (b *BookModule) listProducts(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	return b.dbOpts.ProductList(pid, ctx.Claim.UserId)
+	offset, _ := strconv.ParseInt(ctx.Http.Query("offset"), 10, 64)
+
+	return b.dbOpts.ProductList(pid, ctx.Claim.UserId, offset)
 }
 
 func (b *BookModule) addProduct(ctx xtypes.ContextPlus) (any, error) {
@@ -469,7 +471,9 @@ func (b *BookModule) deleteProduct(ctx xtypes.ContextPlus) (any, error) {
 func (b *BookModule) listContacts(ctx xtypes.ContextPlus) (any, error) {
 	pid := ctx.ProjectId()
 
-	return b.dbOpts.ContactList(pid, ctx.Claim.UserId)
+	offset, _ := strconv.ParseInt(ctx.Http.Query("offset"), 10, 64)
+
+	return b.dbOpts.ContactList(pid, ctx.Claim.UserId, offset)
 }
 
 func (b *BookModule) addContact(ctx xtypes.ContextPlus) (any, error) {
