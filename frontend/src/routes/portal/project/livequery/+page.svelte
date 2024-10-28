@@ -33,7 +33,9 @@
 
     let columnMappings: ColumnMapping[] = $state([]);
     let lastData = $state([]);
-    let handle: GridHandle = $state();
+    let mainGridHandle: GridHandle = $state();
+    let mappingGridHandle: GridHandle = $state();
+
 
     // export type RendererType = "text" | "date" | "number" | "currency" | "autocolor" | "relativedate" | "lookup" | string
 
@@ -94,9 +96,8 @@
                     <button
                         class="inline-flex rounded p.05 variant-filled self-center"
                         onclick={() => {
-                            console.log("@handle", handle);
-
-                            handle.reload();
+                            console.log("@handle", mainGridHandle);
+                            mainGridHandle.reload();
                         }}
                     >
                         <SvgIcon className="w-4 h-4 mt-1" name="play" />
@@ -109,7 +110,7 @@
                         {#if tabSet === 0}
                             {#key finalCoumns}
                                 <EasyGrid
-                                    bind:handle
+                                    bind:handle={mainGridHandle}
                                     columns={finalCoumns}
                                     enableStartAutoLoad={false}
                                     enablePagination={false}
@@ -146,6 +147,7 @@
                             {/key}
                         {:else if tabSet === 1}
                             <EasyGrid
+                                bind:handle={mappingGridHandle}
                                 columns={[
                                     {
                                         title: "SQL Name",
@@ -196,8 +198,6 @@
                     </div>
                 </svelte:fragment>
             </TabGroup>
-
-            <!-- <div>AAA</div> -->
         </div>
     </div>
 </div>
