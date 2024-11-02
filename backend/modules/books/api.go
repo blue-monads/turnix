@@ -24,6 +24,7 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	salesGrp := group.Group("/:pid/sales")
 	taxGrp := group.Group("/:pid/tax")
 	stocksGrp := group.Group("/:pid/stocks")
+	estimateGrp := group.Group("/:pid/estimates")
 
 	// accounts
 	accGrp.GET("/", x(b.listAccount))
@@ -93,6 +94,12 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	stocksGrp.POST("/", x(b.addProductStockIn))
 	stocksGrp.GET("/:id", x(b.getProductStockIn))
 	stocksGrp.DELETE("/:id", x(b.deleteProductStockIn))
+
+	// estimates
+	estimateGrp.GET("/", x(b.listEstimate))
+	estimateGrp.POST("/", x(b.addEstimate))
+	estimateGrp.GET("/:id", x(b.getEstimate))
+	estimateGrp.DELETE("/:id", x(b.deleteEstimate))
 
 	return nil
 }
@@ -657,5 +664,54 @@ func (b *BookModule) deleteProductStockIn(ctx xtypes.ContextPlus) (any, error) {
 
 	err := b.dbOpts.ProductStockInDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 
+	return nil, err
+}
+
+// estimates
+
+func (b *BookModule) listEstimate(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	userId := ctx.Claim.UserId
+	offset, _ := strconv.ParseInt(ctx.Http.Query("offset"), 10, 64)
+
+	list, err := b.dbOpts.EstimateList(pid, userId, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	return list, nil
+}
+
+func (b *BookModule) addEstimate(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	userId := ctx.Claim.UserId
+
+	var req dbops.EstimateData
+
+	if err := ctx.Http.Bind(&req); err != nil {
+		return nil, err
+	}
+
+	id, err := b.dbOpts.EstimateAdd(pid, userId, &req)
+	if err != nil {
+		return nil, err
+	}
+
+	return id, nil
+}
+
+func (b *BookModule) getEstimate(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	id := ctx.ParamInt64("id")
+	userId := ctx.Claim.UserId
+
+	return b.dbOpts.EstimateGet(pid, userId, id)
+}
+
+func (b *BookModule) deleteEstimate(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	id := ctx.ParamInt64("id")
+	userId := ctx.Claim.UserId
+	err := b.dbOpts.EstimateDelete(pid, userId, id)
 	return nil, err
 }

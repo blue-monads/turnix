@@ -112,6 +112,14 @@ func estimateTableName(pid int64) string {
 	return fmt.Sprintf("z_%d_Estimates", pid)
 }
 
+func (b *DbOps) estimateLineTable(pid int64) db.Collection {
+	return b.db.Table(estimateLineTableName(pid))
+}
+
+func estimateLineTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_EstimateLines", pid)
+}
+
 func notepadTableName(pid int64) string {
 	return fmt.Sprintf("z_%d_Notepads", pid)
 }

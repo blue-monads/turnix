@@ -306,28 +306,42 @@ type Notepad struct {
 }
 
 type Estimate struct {
-	Id          int64      `json:"id" db:"id"`
-	Title       string     `json:"title" db:"title"`
-	Notes       string     `json:"notes" db:"notes"`
-	Attachments string     `json:"attachments" db:"attachments"`
-	TaxId       int64      `json:"tax_id" db:"tax_id"`
-	SubTotal    int64      `json:"sub_total" db:"sub_total"`
-	Total       int64      `json:"total" db:"total"`
-	CreatedBy   int64      `json:"created_by" db:"created_by"`
-	UpdatedBy   int64      `json:"updated_by" db:"updated_by"`
-	CreatedAt   *time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at" db:"updated_at"`
+	ID int64 `json:"id" db:"id,omitempty"`
+
+	Title       string `json:"title" db:"title"`
+	ClientID    int64  `json:"client_id" db:"client_id"`
+	ClientName  string `json:"client_name" db:"client_name"`
+	Notes       string `json:"notes" db:"notes,omitempty"`
+	Attachments string `json:"attachments" db:"attachments,omitempty"`
+
+	TotalItemPrice          float64 `json:"total_item_price" db:"total_item_price"`
+	TotalItemTaxAmount      float64 `json:"total_item_tax_amount" db:"total_item_tax_amount"`
+	TotalItemDiscountAmount float64 `json:"total_item_discount_amount" db:"total_item_discount_amount"`
+
+	SubTotal              float64 `json:"sub_total" db:"sub_total"`
+	OverallDiscountAmount float64 `json:"overall_discount_amount" db:"overall_discount_amount"`
+	OverallTaxAmount      float64 `json:"overall_tax_amount" db:"overall_tax_amount"`
+	Total                 float64 `json:"total" db:"total"`
+
+	CreatedBy int64      `json:"created_by" db:"created_by"`
+	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	SalesDate *time.Time `json:"sales_date" db:"sales_date,omitempty"`
 }
 
 type EstimateLine struct {
-	Id         int64      `json:"id" db:"id"`
-	Info       string     `json:"info" db:"info"`
-	Qty        int64      `json:"qty" db:"qty"`
-	EstimateId int64      `json:"estimate_id" db:"estimate_id"`
-	ProductId  int64      `json:"product_id" db:"product_id"`
-	Amount     int64      `json:"amount" db:"amount"`
-	CreatedBy  int64      `json:"created_by" db:"created_by"`
-	UpdatedBy  int64      `json:"updated_by" db:"updated_by"`
-	CreatedAt  *time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt  *time.Time `json:"updated_at" db:"updated_at"`
+	ID             int64      `json:"id" db:"id,omitempty"`
+	Info           string     `json:"info" db:"info"`
+	Qty            int64      `json:"qty" db:"qty"`
+	EstimateId     int64      `json:"estimate_id" db:"estimate_id"`
+	ProductID      int64      `json:"product_id" db:"product_id"`
+	Price          float64    `json:"price" db:"price"`
+	TaxAmount      float64    `json:"tax_amount" db:"tax_amount"`
+	DiscountAmount float64    `json:"discount_amount" db:"discount_amount"`
+	TotalAmount    float64    `json:"total_amount" db:"total_amount"`
+	CreatedBy      int64      `json:"created_by" db:"created_by"`
+	UpdatedBy      int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt      *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt      *time.Time `json:"updated_at" db:"updated_at,omitempty"`
 }

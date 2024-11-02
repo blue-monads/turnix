@@ -74,15 +74,27 @@ create table __project__Reports(
 create table __project__Estimates(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL DEFAULT '',
+    client_id INTEGER NOT NULL DEFAULT 0,
+    client_name TEXT NOT NULL DEFAULT '',
+
     notes TEXT NOT NULL DEFAULT '',
     attachments TEXT NOT NULL DEFAULT '',
-    tax_id INTEGER NOT NULL DEFAULT 0,
-    sub_total INTEGER NOT NULL DEFAULT 0,
-    total INTEGER NOT NULL DEFAULT 0,
+
+    total_item_price INTEGER NOT NULL DEFAULT 0,
+    total_item_tax_amount INTEGER NOT NULL DEFAULT 0,
+    total_item_discount_amount INTEGER NOT NULL DEFAULT 0,
+
+    sub_total INTEGER NOT NULL DEFAULT 0, -- total_item_price + total_item_tax_amount - total_item_discount_amount
+
+    overall_discount_amount INTEGER NOT NULL DEFAULT 0,
+    overall_tax_amount INTEGER NOT NULL DEFAULT 0,
+    
+    total INTEGER NOT NULL DEFAULT 0, -- sub_total +  overall_tax_amount - overall_discount_amount
     created_by INTEGER NOT NULL,
-    updated_by INTEGER NOT NULL,
+    updated_by INTEGER NOT NULL,    
+    sales_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 );
 
 create table __project__EstimateLines(
@@ -91,7 +103,12 @@ create table __project__EstimateLines(
     qty INTEGER NOT NULL DEFAULT 0,    
     estimate_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL DEFAULT 0,
-    amount INTEGER NOT NULL DEFAULT 0,
+
+    price INTEGER NOT NULL DEFAULT 0, -- original item price
+    tax_amount INTEGER NOT NULL DEFAULT 0,
+    discount_amount INTEGER NOT NULL DEFAULT 0,
+
+    total_amount INTEGER NOT NULL DEFAULT 0, -- total_amount = item_price + item_tax_amount - discount_amount
     created_by INTEGER NOT NULL,
     updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -183,7 +200,7 @@ create table __project__Sales(
     overall_discount_amount INTEGER NOT NULL DEFAULT 0,
     overall_tax_amount INTEGER NOT NULL DEFAULT 0,
     
-    total INTEGER NOT NULL DEFAULT 0, -- sub_total +  overall_discount_amount - overall_discount_amount
+    total INTEGER NOT NULL DEFAULT 0, -- sub_total +  overall_tax_amount - overall_discount_amount
     created_by INTEGER NOT NULL,
     updated_by INTEGER NOT NULL,    
     sales_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
