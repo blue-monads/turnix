@@ -12,7 +12,7 @@ func (b *DbOps) ReportTemplateList(pid, uid, offset int64) ([]models.ReportTempl
 	datas := make([]models.ReportTemplate, 0)
 
 	err := table.Find(db.Cond{"id >": offset}).
-		Select("id", "name", "viewer_editable", "created_by", "updated_by").
+		Select("id", "name", "report_type", "viewer_editable", "created_by", "updated_by").
 		Limit(100).All(&datas)
 	if err != nil {
 		return nil, err
