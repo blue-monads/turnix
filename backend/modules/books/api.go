@@ -26,6 +26,9 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	stocksGrp := group.Group("/:pid/stocks")
 	estimateGrp := group.Group("/:pid/estimates")
 
+	reportTpl := group.Group("/:pid/reportTemplate")
+	reportSaved := group.Group("/:pid/reportSaved")
+
 	// accounts
 	accGrp.GET("/", x(b.listAccount))
 	accGrp.POST("/", x(b.addAccount))
@@ -81,6 +84,20 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	// report
 
 	report.POST("/live", x(b.reportLiveGenerate))
+
+	// report template
+	reportTpl.GET("/", x(b.reportTemplateList))
+	reportTpl.POST("/", x(b.reportTemplateAdd))
+	reportTpl.GET("/:id", x(b.reportTemplateGet))
+	reportTpl.POST("/:id", x(b.reportTemplateUpdate))
+	reportTpl.DELETE("/:id", x(b.reportTemplateDelete))
+
+	// report saved
+	reportSaved.GET("/", x(b.reportSavedList))
+	reportSaved.POST("/", x(b.reportSavedAdd))
+	reportSaved.GET("/:id", x(b.reportSavedGet))
+	reportSaved.POST("/:id", x(b.reportSavedUpdate))
+	reportSaved.DELETE("/:id", x(b.reportSavedDelete))
 
 	// sales
 	salesGrp.GET("/", x(b.listSales))
@@ -355,6 +372,108 @@ func (b *BookModule) reportLiveGenerate(ctx xtypes.ContextPlus) (any, error) {
 	}
 
 }
+
+// report template
+
+func (b *BookModule) reportTemplateList(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	offset, _ := strconv.ParseInt(ctx.Http.Query("offset"), 10, 64)
+
+	return b.dbOpts.ReportTemplateList(pid, ctx.Claim.UserId, offset)
+}
+
+func (b *BookModule) reportTemplateAdd(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	data := &models.ReportTemplate{}
+	err := ctx.Http.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.dbOpts.ReportTemplateAdd(pid, ctx.Claim.UserId, data)
+}
+
+func (b *BookModule) reportTemplateGet(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	return b.dbOpts.ReportTemplateGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+}
+
+func (b *BookModule) reportTemplateUpdate(ctx xtypes.ContextPlus) (any, error) {
+
+	pid := ctx.ProjectId()
+
+	data := make(map[string]any)
+	err := ctx.Http.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.dbOpts.ReportTemplateUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
+
+	return nil, err
+
+}
+
+func (b *BookModule) reportTemplateDelete(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	err := b.dbOpts.ReportTemplateDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	return nil, err
+}
+
+// report saved
+
+func (b *BookModule) reportSavedList(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	offset, _ := strconv.ParseInt(ctx.Http.Query("offset"), 10, 64)
+
+	return b.dbOpts.SavedTemplateList(pid, ctx.Claim.UserId, offset)
+}
+
+func (b *BookModule) reportSavedAdd(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	data := &models.SavedReport{}
+	err := ctx.Http.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.dbOpts.SavedTemplateAdd(pid, ctx.Claim.UserId, data)
+}
+
+func (b *BookModule) reportSavedGet(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	return b.dbOpts.SavedTemplateGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+}
+
+func (b *BookModule) reportSavedUpdate(ctx xtypes.ContextPlus) (any, error) {
+
+	pid := ctx.ProjectId()
+
+	data := make(map[string]any)
+	err := ctx.Http.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.dbOpts.SavedTemplateUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
+
+	return nil, err
+
+}
+
+func (b *BookModule) reportSavedDelete(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	err := b.dbOpts.SavedTemplateDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+	return nil, err
+}
+
+// project
 
 func (b *BookModule) importData(ctx xtypes.ContextPlus) (any, error) {
 

@@ -252,6 +252,32 @@ export interface EstimateLine {
 }
 
 
+export interface ReportTemplate {
+    id: number
+    name: string
+    input_options: string
+    output_options: string
+    query_template: string
+    filter_script: string
+    viewer_editable: boolean
+    template: string
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+}
+
+export interface SavedReport {
+    id: number
+    name: string
+    template_id: number
+    result: string
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+}
+
 
 export const NewBookAPI = (api: RootAPI) => {
     return new BooksAPI(api.projectClient)
@@ -488,6 +514,55 @@ export class BooksAPI {
 
     deleteProductStockIn = (pid: string, id: string) => {
         return this.client.delete(`books/${pid}/stocks/${id}`)
+    }
+
+
+        
+	// report template
+	
+
+    reportTemplateList = (pid: string, offset?: string) => {
+        return this.client.get<ReportTemplate[]>(`/project/${pid}/reportTemplate?offset=${offset || ""}`)
+    }
+
+    reportTemplateAdd = (pid: string, data: Partial<ReportTemplate>) => {
+        return this.client.post(`/project/${pid}/reportTemplate`, data)
+    }
+
+    reportTemplateGet = (pid: string, id: string) => {
+        return this.client.get<ReportTemplate>(`/project/${pid}/reportTemplate/${id}`)
+    }
+
+    reportTemplateUpdate = (pid: string, id: string, data: Partial<any>) => {
+        return this.client.post(`/project/${pid}/reportTemplate/${id}`, data)
+    }
+
+    reportTemplateDelete = (pid: string, id: string) => {
+        return this.client.delete(`/project/${pid}/reportTemplate/${id}`)
+    }
+
+
+    // report saved
+
+
+    reportSavedList = (pid: string, offset?: string) => {
+        return this.client.get<any[]>(`/project/${pid}/reportSaved?offset=${offset || ""}`)
+    }
+
+    reportSavedAdd = (pid: string, data: Partial<SavedReport>) => {
+        return this.client.post(`/project/${pid}/reportSaved`, data)
+    }
+
+    reportSavedGet = (pid: string, id: string) => {
+        return this.client.get<SavedReport>(`/project/${pid}/reportSaved/${id}`)
+    }
+    
+    reportSavedUpdate = (pid: string, id: string, data: Partial<any>) => {
+        return this.client.post(`/project/${pid}/reportSaved/${id}`, data)
+    }
+
+    reportSavedDelete = (pid: string, id: string) => {
+        return this.client.delete(`/project/${pid}/reportSaved/${id}`)
     }
 
 }

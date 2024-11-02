@@ -124,6 +124,22 @@ func notepadTableName(pid int64) string {
 	return fmt.Sprintf("z_%d_Notepads", pid)
 }
 
+func (b *DbOps) savedReportTable(pid int64) db.Collection {
+	return b.db.Table(savedReportTableName(pid))
+}
+
+func savedReportTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_SavedReports", pid)
+}
+
+func (b *DbOps) reportTemplateTable(pid int64) db.Collection {
+	return b.db.Table(reportTemplateTableName(pid))
+}
+
+func reportTemplateTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_ReportTemplates", pid)
+}
+
 func (b *DbOps) userHasScope(pid, uid int64, scope string) error {
 	dbscope, err := b.db.GetProjectUserScope(uid, pid)
 	if err != nil {

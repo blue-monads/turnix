@@ -44,23 +44,29 @@ type TransactionLine struct {
 }
 
 type ReportTemplate struct {
-	ID            int64  `json:"id" db:"id,omitempty"`
-	Name          string `json:"name" db:"name"`
-	InputOptions  string `json:"input_options" db:"input_options"`
-	OutputOptions string `json:"output_options" db:"output_options"`
-	QueryTemplate string `json:"query_template" db:"query_template"`
-	FilterScript  string `json:"filter_script" db:"filter_script"`
+	ID             int64      `json:"id" db:"id,omitempty"`
+	Name           string     `json:"name" db:"name,omitempty"`
+	InputOptions   string     `json:"input_options" db:"input_options,omitempty"`
+	OutputOptions  string     `json:"output_options" db:"output_options,omitempty"`
+	QueryTemplate  string     `json:"query_template" db:"query_template,omitempty"`
+	FilterScript   string     `json:"filter_script" db:"filter_script,omitempty"`
+	ViewerEditable bool       `json:"viewer_editable" db:"viewer_editable,omitempty"`
+	Template       string     `json:"template" db:"template,omitempty"`
+	CreatedBy      int64      `json:"created_by" db:"created_by,omitempty"`
+	UpdatedBy      int64      `json:"updated_by" db:"updated_by,omitempty"`
+	CreatedAt      *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt      *time.Time `json:"updated_at" db:"updated_at,omitempty"`
 }
 
-type Report struct {
+type SavedReport struct {
 	ID         int64      `json:"id" db:"id,omitempty"`
-	TemplateID int64      `json:"template_id" db:"template_id"`
-	Result     string     `json:"result" db:"result"`
-	CreatedBy  int64      `json:"created_by" db:"created_by"`
-	UpdatedBy  int64      `json:"updated_by" db:"updated_by"`
+	Name       string     `json:"name" db:"name,omitempty"`
+	TemplateID int64      `json:"template_id" db:"template_id,omitempty"`
+	Result     string     `json:"result" db:"result,omitempty"`
+	CreatedBy  int64      `json:"created_by" db:"created_by,omitempty"`
+	UpdatedBy  int64      `json:"updated_by" db:"updated_by,omitempty"`
 	CreatedAt  *time.Time `json:"created_at" db:"created_at,omitempty"`
 	UpdatedAt  *time.Time `json:"updated_at" db:"updated_at,omitempty"`
-	IsDeleted  bool       `json:"is_deleted" db:"is_deleted,omitempty"`
 }
 
 type TxnRecord struct {
