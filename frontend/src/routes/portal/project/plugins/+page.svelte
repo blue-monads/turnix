@@ -93,10 +93,21 @@
                     );
                 },
             },
+            {
+                Name: "Live Editor",
+                Class: "variant-filled-primary",
+                Action: async (id, data) => {
+                    console.log("@view", id, data);
+
+                    goto(
+                        `/z/pages/portal/project/plugins/view?pid=${pid}&id=${id}`,
+                    );
+                },
+            },
 
             {
-                Name: "edit",
-                Class: "variant-filled-primary",
+                Name: "Raw Edit",
+                Class: "variant-filled-secondary",
 
                 Action: async (id, data) => {
                     console.log("@edit", id, data);
