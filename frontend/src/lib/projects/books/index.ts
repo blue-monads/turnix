@@ -256,6 +256,7 @@ export interface ReportTemplate {
     id: number
     name: string
     input_options: string
+    report_type: string
     output_options: string
     query_template: string
     filter_script: string
@@ -521,48 +522,48 @@ export class BooksAPI {
 	// report template
 	
 
-    reportTemplateList = (pid: string, offset?: string) => {
-        return this.client.get<ReportTemplate[]>(`/project/${pid}/reportTemplate?offset=${offset || ""}`)
+    listReportTemplate = (pid: string, offset?: string) => {
+        return this.client.get<ReportTemplate[]>(`books/${pid}/reportTemplate?offset=${offset || ""}`)
     }
 
-    reportTemplateAdd = (pid: string, data: Partial<ReportTemplate>) => {
-        return this.client.post(`/project/${pid}/reportTemplate`, data)
+    addReportTemplate = (pid: string, data: Partial<ReportTemplate>) => {
+        return this.client.post(`books/${pid}/reportTemplate`, data)
     }
 
-    reportTemplateGet = (pid: string, id: string) => {
-        return this.client.get<ReportTemplate>(`/project/${pid}/reportTemplate/${id}`)
+    getReportTemplate = (pid: string, id: string) => {
+        return this.client.get<ReportTemplate>(`books/${pid}/reportTemplate/${id}`)
     }
 
-    reportTemplateUpdate = (pid: string, id: string, data: Partial<any>) => {
-        return this.client.post(`/project/${pid}/reportTemplate/${id}`, data)
+    updateReportTemplate = (pid: string, id: string, data: Partial<any>) => {
+        return this.client.post(`books/${pid}/reportTemplate/${id}`, data)
     }
 
-    reportTemplateDelete = (pid: string, id: string) => {
-        return this.client.delete(`/project/${pid}/reportTemplate/${id}`)
+    deleteReportTemplate = (pid: string, id: string) => {
+        return this.client.delete(`books/${pid}/reportTemplate/${id}`)
     }
 
 
     // report saved
 
 
-    reportSavedList = (pid: string, offset?: string) => {
-        return this.client.get<any[]>(`/project/${pid}/reportSaved?offset=${offset || ""}`)
+    listReportSaved = (pid: string, offset?: string) => {
+        return this.client.get<any[]>(`books/${pid}/reportSaved?offset=${offset || ""}`)
     }
 
-    reportSavedAdd = (pid: string, data: Partial<SavedReport>) => {
-        return this.client.post(`/project/${pid}/reportSaved`, data)
+    addReportSaved = (pid: string, data: Partial<SavedReport>) => {
+        return this.client.post(`books/${pid}/reportSaved`, data)
     }
 
-    reportSavedGet = (pid: string, id: string) => {
-        return this.client.get<SavedReport>(`/project/${pid}/reportSaved/${id}`)
+    getReportSavedGe = (pid: string, id: string) => {
+        return this.client.get<SavedReport>(`books/${pid}/reportSaved/${id}`)
     }
     
-    reportSavedUpdate = (pid: string, id: string, data: Partial<any>) => {
-        return this.client.post(`/project/${pid}/reportSaved/${id}`, data)
+    updateReportSaved = (pid: string, id: string, data: Partial<any>) => {
+        return this.client.post(`books/${pid}/reportSaved/${id}`, data)
     }
 
-    reportSavedDelete = (pid: string, id: string) => {
-        return this.client.delete(`/project/${pid}/reportSaved/${id}`)
+    deleteReportSaved = (pid: string, id: string) => {
+        return this.client.delete(`books/${pid}/reportSaved/${id}`)
     }
 
 }

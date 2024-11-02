@@ -6,6 +6,8 @@
   import type { RootAPI } from "$lib/api";
   import { page } from "$app/stores";
 
+  import ListReports from "./template/+page.svelte"
+
   const pid = $page.params["pid"];
 
   const store = getModalStore();
@@ -74,3 +76,6 @@
 
   </svelte:fragment>
 </AppBar>
+
+
+<ListReports />

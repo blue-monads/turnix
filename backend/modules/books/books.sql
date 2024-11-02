@@ -49,17 +49,16 @@ create table __project__TransactionLines(
 create table __project__ReportTemplates(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL DEFAULT '',
-    report_type TEXT NOT NULL DEFAULT 'custom', -- html_report, sql_report
+    report_type TEXT NOT NULL DEFAULT 'html_report', -- html_report, sql_report
     input_options JSON NOT NULL DEFAULT '{}',
     output_options JSON NOT NULL DEFAULT '{}',
     viewer_editable BOOLEAN NOT NULL DEFAULT FALSE,
     template TEXT NOT NULL DEFAULT '',
-    filter_script TEXT NULL DEFAULT ''
-    
+    filter_script TEXT NULL DEFAULT '',
     created_by INTEGER NOT NULL,
     updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 create table __project__SavedReports(
@@ -70,7 +69,7 @@ create table __project__SavedReports(
     created_by INTEGER NOT NULL,
     updated_by INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- INVOICING

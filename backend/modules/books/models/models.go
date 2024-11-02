@@ -51,6 +51,7 @@ type ReportTemplate struct {
 	QueryTemplate  string     `json:"query_template" db:"query_template,omitempty"`
 	FilterScript   string     `json:"filter_script" db:"filter_script,omitempty"`
 	ViewerEditable bool       `json:"viewer_editable" db:"viewer_editable,omitempty"`
+	ReportType     string     `json:"report_type" db:"report_type,omitempty"`
 	Template       string     `json:"template" db:"template,omitempty"`
 	CreatedBy      int64      `json:"created_by" db:"created_by,omitempty"`
 	UpdatedBy      int64      `json:"updated_by" db:"updated_by,omitempty"`

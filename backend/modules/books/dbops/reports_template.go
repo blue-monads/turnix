@@ -25,6 +25,9 @@ func (b *DbOps) ReportTemplateAdd(pid, uid int64, data *models.ReportTemplate) (
 
 	table := b.reportTemplateTable(pid)
 
+	data.CreatedBy = uid
+	data.UpdatedBy = uid
+
 	r, err := table.Insert(data)
 	if err != nil {
 		return 0, err

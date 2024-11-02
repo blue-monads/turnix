@@ -45,6 +45,9 @@ func (b *DbOps) SavedTemplateAdd(pid, uid int64, data *models.SavedReport) (int6
 		return 0, err
 	}
 
+	data.CreatedBy = uid
+	data.UpdatedBy = uid
+
 	table := b.savedReportTable(pid)
 
 	r, err := table.Insert(data)
