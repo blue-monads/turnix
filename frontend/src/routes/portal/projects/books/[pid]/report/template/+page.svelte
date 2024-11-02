@@ -40,7 +40,7 @@
             ["id", "ID"],
             ["name", "Name"],
             ["report_type", "Report Type"],
-            ["Created At", "Created At"],
+            ["created_at", "Created At"],
         ]}
         hashSeed={35}
         datas={datas}
