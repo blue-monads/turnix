@@ -36,7 +36,14 @@
     const submit = async (data: Record<string, any>) => {
         console.log("@submit/data", data);
 
-        const resp = await api.addEstimate(pid, data);
+        const finalData = {     
+            estimate: {
+                ...data.sale, sales_date: new Date(data.sale.sales_date).toISOString(),
+            },
+            lines: data.lines,
+        }
+
+        const resp = await api.addEstimate(pid, finalData);
         if (resp.status !== 200) {
             return resp.data.message;
         }

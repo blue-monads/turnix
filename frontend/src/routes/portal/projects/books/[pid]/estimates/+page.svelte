@@ -98,7 +98,7 @@
                 Name: "delete",
                 Class: "variant-filled-error",
                 Action: async (id) => {
-                    const res = await api.deleteSale(pid, id);
+                    const res = await api.deleteEstimate(pid, id);
                     if (res.status !== 200) {
                         return;
                     }

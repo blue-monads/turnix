@@ -409,7 +409,7 @@ export class BooksAPI {
 
     // sales
 
-    addSale = (pid: string, data: Partial<SalesData>) => {
+    addSale = (pid: string, data: SalesData) => {
         return this.client.post(`books/${pid}/sales`, data)
     }
 
@@ -431,7 +431,7 @@ export class BooksAPI {
 		return this.client.get<Estimate[]>(`books/${pid}/estimates`)
 	}
 
-	addEstimate = (pid: string, data: Partial<EstimateData>) => {
+	addEstimate = (pid: string, data: EstimateData) => {
 		return this.client.post(`books/${pid}/estimates`, data)
 	}
 

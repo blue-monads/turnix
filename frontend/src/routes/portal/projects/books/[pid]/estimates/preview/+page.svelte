@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { NewBookAPI, type Sale, type SalesData } from "$lib/projects/books";
+    import { NewBookAPI, type Estimate, type EstimateData, type EstimateLine } from "$lib/projects/books";
     import { getContext } from "svelte";
     import type { RootAPI } from "$lib/api";
     import { page } from "$app/stores";
@@ -12,7 +12,7 @@
 
     const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let data: SalesData | undefined = $state();
+    let data: EstimateData | undefined = $state();
     let contacts: object[] = $state([]);
     let loadingContacts = $state(true);
     let loadingData = $state(true);
@@ -30,7 +30,7 @@
 
     const loadData = async () => {
         loadingData = true;
-        const resp = await api.getSale(pid, sid);
+        const resp = await api.getEstimate(pid, sid);
         if (resp.status !== 200) {
             return;
         }
@@ -56,7 +56,10 @@
     <Loader />
 {:else}
     <SalesPreview
-        salesData={data as any}
+        name="Estimate"
+        data={data?.estimate as Estimate}
+        lines={data?.lines as EstimateLine[]}
+
         pid={Number(pid)}
         contactsNameIndex={__clientIndex}
     />
