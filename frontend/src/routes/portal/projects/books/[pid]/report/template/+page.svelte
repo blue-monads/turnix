@@ -42,8 +42,9 @@
             ["report_type", "Report Type"],
             ["Created At", "Created At"],
         ]}
+        hashSeed={35}
         datas={datas}
-        color={["ctype"]}
+        color={["report_type"]}
         actions={[
             {
                 Name: "explore",
