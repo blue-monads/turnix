@@ -547,7 +547,7 @@ export class BooksAPI {
 
 
     listReportSaved = (pid: string, offset?: string) => {
-        return this.client.get<any[]>(`books/${pid}/reportSaved?offset=${offset || ""}`)
+        return this.client.get<SavedReport[]>(`books/${pid}/reportSaved?offset=${offset || ""}`)
     }
 
     addReportSaved = (pid: string, data: Partial<SavedReport>) => {
