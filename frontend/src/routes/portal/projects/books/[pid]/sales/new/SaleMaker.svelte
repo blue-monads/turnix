@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
+    import { run } from "svelte/legacy";
 
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import type { BooksAPI, Contact } from "$lib/projects/books";
@@ -13,13 +13,13 @@
 
     const store = getModalStore();
 
-
     // data fields
 
     // extra data
 
     interface Props {
         pid: number;
+        name?: string;
         title?: string;
         notes?: string;
         client_id?: number;
@@ -35,11 +35,13 @@
         lines?: NewSaleLine[];
         contactsNameIndex?: Record<number, string>;
         submit: (data: SaleData) => Promise<string>;
+        modeOptions: [string, string][];
         api: BooksAPI;
     }
 
     let {
         pid,
+        name = "New Sale",
         title = $bindable(""),
         notes = $bindable(""),
         client_id = $bindable(0),
@@ -52,25 +54,29 @@
         overall_tax_amount = $bindable(0),
         total = $bindable(0),
         sales_date = $bindable(new Date().toISOString().slice(0, 16)),
+        modeOptions = [
+            ["invoice", "Invoice"],
+            ["direct_sale", "Direct Sale"],
+        ],
         lines = $bindable([
-        // {
-        //     info: "test",
-        //     product_id: 1,
-        //     qty: 4,
-        //     amount: 20,
-        //     price: 24,
-        //     tax_amount: 1,
-        //     discount_amount: 4,
-        //     total_amount: 84,
-        // },
-    ]),
+            // {
+            //     info: "test",
+            //     product_id: 1,
+            //     qty: 4,
+            //     amount: 20,
+            //     price: 24,
+            //     tax_amount: 1,
+            //     discount_amount: 4,
+            //     total_amount: 84,
+            // },
+        ]),
         contactsNameIndex = {},
         submit,
-        api
+        api,
     }: Props = $props();
 
-    let mode = $state("invoice");
-    let message = $state("")
+    let mode = $state(modeOptions.length > 0 ? modeOptions[0][0] : "");
+    let message = $state("");
 
     let overall_tax_percentage = $state(0);
     let overall_discount_percentage = $state(0);
@@ -110,8 +116,7 @@
                     if (!title) {
                         title = data["name"] || "";
                     }
-                    
-                    
+
                     client_id = data["id"] || 0;
                 },
             },
@@ -166,20 +171,18 @@
 <form class="p-2">
     <div class="card">
         <header class="card-header flex justify-between">
-            <h3 class="h3">New Sale</h3>
+            <h3 class="h3">{name}</h3>
+
             <div class="w-64">
-                <RadioGroup>
-                    <RadioItem
-                        bind:group={mode}
-                        name="justify"
-                        value={"direct_sale"}>Direct Sale</RadioItem
-                    >
-                    <RadioItem
-                        bind:group={mode}
-                        name="justify"
-                        value={"invoice"}>Invoice</RadioItem
-                    >
-                </RadioGroup>
+                {#if modeOptions.length > 0}
+                    <RadioGroup>
+                        {#each modeOptions as [value, name]}
+                            <RadioItem bind:group={mode} name="justify" {value}
+                                >{name}</RadioItem
+                            >
+                        {/each}
+                    </RadioGroup>
+                {/if}
             </div>
         </header>
 
@@ -203,7 +206,6 @@
                         <span>Billed To</span>
 
                         <div class="flex gap-2">
-                            
                             <span class="text-sm italic"
                                 >{contactsNameIndex[client_id] || ""}
                             </span>
@@ -219,7 +221,7 @@
                 </div>
 
                 <label class="label">
-                    <span>Date of Sale</span>
+                    <span>Date</span>
                     <input
                         type="datetime-local"
                         class="input p-1"
@@ -317,10 +319,7 @@
                 </table>
             </div>
             <div class="flex justify-start p-2">
-                <button
-                    class="btn btn-sm variant-filled"
-                    onclick={salesPicker}
-                >
+                <button class="btn btn-sm variant-filled" onclick={salesPicker}>
                     <SvgIcon
                         name="plus"
                         className="w-4 h-4 inline-block align-middle"
@@ -458,14 +457,12 @@
             <div>
                 <p class="text-red-500">{message}</p>
             </div>
-
         </section>
         <footer class="card-footer flex justify-end">
             <button
                 disabled={lines.length === 0 || !client_id}
                 class="btn variant-filled"
                 onclick={async () => {
-
                     const resp = await submit({
                         sale: {
                             title,
@@ -485,7 +482,6 @@
                     });
 
                     message = resp;
-
                 }}
             >
                 save

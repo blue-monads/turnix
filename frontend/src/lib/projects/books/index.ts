@@ -210,6 +210,49 @@ export interface StockInLine {
 }
 
 
+export interface EstimateData {
+    estimate: Estimate
+    lines: EstimateLine[]
+}
+
+export interface Estimate {
+    id: number
+    title: string
+    client_id: number
+    client_name: string
+    notes: string
+    attachments: string
+    total_item_price: number
+    total_item_tax_amount: number
+    total_item_discount_amount: number
+    sub_total: number
+    overall_discount_amount: number
+    overall_tax_amount: number
+    total: number
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+}
+
+export interface EstimateLine {
+    id: number
+    info: string
+    qty: number
+    sale_id: number
+    product_id: number
+    price: number
+    tax_amount: number
+    discount_amount: number
+    total_amount: number
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+}
+
+
+
 export const NewBookAPI = (api: RootAPI) => {
     return new BooksAPI(api.projectClient)
 }
@@ -381,6 +424,25 @@ export class BooksAPI {
     deleteSale = (pid: string, id: string) => {
         return this.client.delete(`books/${pid}/sales/${id}`)
     }
+
+    // estimates
+
+    listEstimate = (pid: string) => {
+		return this.client.get<Estimate[]>(`books/${pid}/estimates`)
+	}
+
+	addEstimate = (pid: string, data: Partial<EstimateData>) => {
+		return this.client.post(`books/${pid}/estimates`, data)
+	}
+
+	getEstimate = (pid: string, id: string) => {
+		return this.client.get<EstimateData>(`books/${pid}/estimates/${id}`)
+	}
+
+	deleteEstimate = (pid: string, id: string) => {
+		return this.client.delete(`books/${pid}/estimates/${id}`)
+	}
+
 
     // tax 
     listTax = (pid: string) => {
