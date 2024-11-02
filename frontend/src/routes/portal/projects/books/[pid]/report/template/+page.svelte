@@ -46,12 +46,18 @@
         color={["ctype"]}
         actions={[
             {
-                Name: "edit",
+                Name: "explore",
                 Class: "variant-filled-primary",
                 Action: async (id, data) => {
-                    goto(
-                        `/z/pages/portal/projects/books/${pid}/contacts/edit?cid=${id}`,
-                    );
+                    if (data.report_type === "html_report") {
+                        goto(
+                            `/z/pages/portal/projects/books/${pid}/report/template/edit/html?template_id=${id}`,
+                        );
+                    } else {
+                        goto(
+                            `/z/pages/portal/projects/books/${pid}/report/template/edit/sql?template_id=${id}`,
+                        );
+                    }
                 },
             },
             {
