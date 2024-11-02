@@ -303,7 +303,7 @@ type Notepad struct {
 	ID           int64      `json:"id" db:"id,omitempty"`
 	Title        string     `json:"title" db:"title"`
 	Notes        string     `json:"notes" db:"notes"`
-	JType        string     `json:"jtype" db:"jtype"`
+	JType        string     `json:"note_type" db:"note_type"`
 	Attachments  string     `json:"attachments" db:"attachments"`
 	CreatedBy    int64      `json:"created_by" db:"created_by"`
 	UpdatedBy    int64      `json:"updated_by" db:"updated_by"`

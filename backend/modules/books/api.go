@@ -28,6 +28,7 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 
 	reportTpl := group.Group("/:pid/reportTemplate")
 	reportSaved := group.Group("/:pid/reportSaved")
+	notepad := group.Group("/:pid/notepad")
 
 	// accounts
 	accGrp.GET("/", x(b.listAccount))
@@ -117,6 +118,14 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	estimateGrp.POST("/", x(b.addEstimate))
 	estimateGrp.GET("/:id", x(b.getEstimate))
 	estimateGrp.DELETE("/:id", x(b.deleteEstimate))
+
+	// notepad
+
+	notepad.GET("/", x(b.listNotepad))
+	notepad.POST("/", x(b.addNotepad))
+	notepad.GET("/:id", x(b.getNotepad))
+	notepad.POST("/:id", x(b.updateNotepad))
+	notepad.DELETE("/:id", x(b.deleteNotepad))
 
 	return nil
 }
@@ -832,5 +841,55 @@ func (b *BookModule) deleteEstimate(ctx xtypes.ContextPlus) (any, error) {
 	id := ctx.ParamInt64("id")
 	userId := ctx.Claim.UserId
 	err := b.dbOpts.EstimateDelete(pid, userId, id)
+	return nil, err
+}
+
+// notepad
+
+func (b *BookModule) listNotepad(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	offset, _ := strconv.ParseInt(ctx.Http.Query("offset"), 10, 64)
+
+	return b.dbOpts.NotepadList(pid, ctx.Claim.UserId, offset)
+}
+
+func (b *BookModule) addNotepad(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	data := &models.Notepad{}
+	err := ctx.Http.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.dbOpts.NotepadAdd(pid, ctx.Claim.UserId, data)
+}
+
+func (b *BookModule) getNotepad(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	return b.dbOpts.NotepadGet(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
+}
+
+func (b *BookModule) updateNotepad(ctx xtypes.ContextPlus) (any, error) {
+
+	pid := ctx.ProjectId()
+
+	data := make(map[string]any)
+	err := ctx.Http.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	err = b.dbOpts.NotepadUpdate(pid, ctx.Claim.UserId, ctx.ParamInt64("id"), data)
+
+	return nil, err
+
+}
+
+func (b *BookModule) deleteNotepad(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	err := b.dbOpts.NotepadDelete(pid, ctx.Claim.UserId, ctx.ParamInt64("id"))
 	return nil, err
 }

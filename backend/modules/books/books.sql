@@ -289,7 +289,7 @@ create table __project__Notepads(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
-    jtype TEXT NOT NULL DEFAULT 'normal',
+    note_type TEXT NOT NULL DEFAULT 'normal',
     attachments TEXT NOT NULL DEFAULT '',
     created_by INTEGER NOT NULL,
     updated_by INTEGER NOT NULL,

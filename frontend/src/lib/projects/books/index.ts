@@ -280,6 +280,19 @@ export interface SavedReport {
 }
 
 
+export interface Notepad {
+    id: number
+    title: string
+    notes: string
+    note_type: string
+    attachments: string
+    created_by: number
+    updated_by: number
+    created_at: string
+    updated_at: string
+}
+
+
 export const NewBookAPI = (api: RootAPI) => {
     return new BooksAPI(api.projectClient)
 }
@@ -565,6 +578,29 @@ export class BooksAPI {
     deleteReportSaved = (pid: string, id: string) => {
         return this.client.delete(`books/${pid}/reportSaved/${id}`)
     }
+
+
+
+    listNotepad = (pid: string, offset?: string) => {
+        return this.client.get<Notepad[]>(`books/${pid}/notepad?offset=${offset || ""}`)
+    }
+
+    addNotepad = (pid: string, data: Partial<Notepad>) => {
+        return this.client.post(`books/${pid}/notepad`, data)
+    }
+
+    getNotepad = (pid: string, id: string) => {
+        return this.client.get<Notepad>(`books/${pid}/notepad/${id}`)
+    }
+
+    updateNotepad = (pid: string, id: string, data: Partial<Notepad>) => {
+        return this.client.post(`books/${pid}/notepad/${id}`, data)
+    }
+
+    deleteNotepad = (pid: string, id: string) => {
+        return this.client.delete(`books/${pid}/notepad/${id}`)
+    }
+
 
 }
 
