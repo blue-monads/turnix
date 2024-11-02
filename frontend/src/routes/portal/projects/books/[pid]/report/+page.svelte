@@ -6,7 +6,7 @@
   import type { RootAPI } from "$lib/api";
   import { page } from "$app/stores";
 
-  import ListReports from "./template/+page.svelte"
+  import ListReports from "./template/+page.svelte";
 
   const pid = $page.params["pid"];
 
@@ -39,30 +39,12 @@
   </svelte:fragment>
 
   <svelte:fragment slot="trail">
-    <!-- <a
-    href={`/z/pages/portal/projects/books/${pid}/report/editor`}
-    class="btn variant-filled-primary btn-sm"
-  >
-    <SvgIcon className="h-4 w-4" name="pencil-square" />
-
-    Editor 
-  </a> -->
-
-  <a
-  href={`/z/pages/portal/projects/books/${pid}/report/template/new`}
-  class="btn variant-ghost-primary btn-sm"
->
-  <SvgIcon className="h-4 w-4" name="plus" />
-  Report
-</a>
-
     <a
-      href={`/z/pages/portal/projects/books/${pid}/report/static`}
-      class="btn variant-filled btn-sm"
+      href={`/z/pages/portal/projects/books/${pid}/report/template/new`}
+      class="btn variant-ghost-primary btn-sm"
     >
-      <SvgIcon className="h-4 w-4" name="bolt" />
-
-      Static Report
+      <SvgIcon className="h-4 w-4" name="plus" />
+      Report
     </a>
 
     <a
@@ -74,8 +56,24 @@
       Saved Reports
     </a>
 
+    <a
+      href={`/z/pages/portal/projects/books/${pid}/report/static`}
+      class="btn variant-filled btn-sm"
+    >
+      <SvgIcon className="h-4 w-4" name="bolt" />
+
+      Static Report
+    </a>
+
+    <a
+      href={`/z/pages/portal/projects/books/${pid}/report/editor`}
+      class="btn variant-filled-primary btn-sm"
+    >
+      <SvgIcon className="h-4 w-4" name="pencil-square" />
+
+      Editor
+    </a>
   </svelte:fragment>
 </AppBar>
-
 
 <ListReports />
