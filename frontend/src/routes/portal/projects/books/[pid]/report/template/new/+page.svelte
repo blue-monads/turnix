@@ -27,7 +27,7 @@
                 options: ["html_report", "sql_report"],
             },
         ],
-        required_fields: ["name"],
+        required_fields: ["name", "report_type"],
     }}
     onSave={async (data) => {
 
