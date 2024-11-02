@@ -46,12 +46,12 @@
     Editor 
   </a>
     <a
-      href={`/z/pages/portal/projects/books/${pid}/report/live`}
+      href={`/z/pages/portal/projects/books/${pid}/report/static`}
       class="btn variant-filled btn-sm"
     >
       <SvgIcon className="h-4 w-4" name="bolt" />
 
-      Live Report
+      Static Report
     </a>
 
     <a

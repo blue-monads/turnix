@@ -59,10 +59,14 @@
       <li class="crumb">
         <a class="anchor" href="/z/pages/portal/projects/books">Books</a>
       </li>
-      <li class="crumb-separator" aria-hidden>&rsaquo;</li>
-      <li>Reports</li>
-      <li class="crumb-separator" aria-hidden>&rsaquo;</li>
-      <li>Live</li>
+      <li class="crumb-separator" aria-hidden={true}>&rsaquo;</li>
+      <li>
+        
+        <a class="anchor" href={`/z/pages/portal/projects/books/${pid}/report`}>Reports</a>
+
+      </li>
+      <li class="crumb-separator" aria-hidden={true}>&rsaquo;</li>
+      <li>Static Report</li>
     </ol>
   </svelte:fragment>
 </AppBar>
@@ -70,7 +74,7 @@
 <div class="flex flex-col p-2 gap-2">
   <div class="card p-2">
     <header class="card-header">
-      <h4 class="h4">Live Reports</h4>
+      <h4 class="h4">Static Reports</h4>
     </header>
 
     <section
