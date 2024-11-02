@@ -37,14 +37,23 @@
   </svelte:fragment>
 
   <svelte:fragment slot="trail">
-    <a
+    <!-- <a
     href={`/z/pages/portal/projects/books/${pid}/report/editor`}
     class="btn variant-filled-primary btn-sm"
   >
     <SvgIcon className="h-4 w-4" name="pencil-square" />
 
     Editor 
-  </a>
+  </a> -->
+
+  <a
+  href={`/z/pages/portal/projects/books/${pid}/report/template/new`}
+  class="btn variant-ghost-primary btn-sm"
+>
+  <SvgIcon className="h-4 w-4" name="plus" />
+  Report
+</a>
+
     <a
       href={`/z/pages/portal/projects/books/${pid}/report/static`}
       class="btn variant-filled btn-sm"
@@ -61,17 +70,6 @@
       <SvgIcon className="h-4 w-4" name="cloud-arrow-up" />
 
       Saved Reports
-    </a>
-
-    
-
-    <a
-      href={`/z/pages/portal/projects/books/${pid}/report/template`}
-      class="btn variant-filled-secondary btn-sm"
-    >
-      <SvgIcon className="h-4 w-4" name="code-bracket-square" />
-
-      Templates
     </a>
 
   </svelte:fragment>
