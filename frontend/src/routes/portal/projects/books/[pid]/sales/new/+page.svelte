@@ -36,7 +36,9 @@
     const submit = async (data: Record<string, any>) => {
         console.log("@submit/data", data);
 
-        const resp = await api.addSale(pid, data);
+        data.sales_date = new Date(data.sales_date).toISOString();
+
+        const resp = await api.addSale(pid, data as any);
         if (resp.status !== 200) {
             return resp.data.message;
         }
@@ -54,6 +56,7 @@
     <Loader />
 {:else}
     <SaleMaker 
+        name="New Sale"
         pid={Number(pid)} 
         {api} 
         contactsNameIndex={__clientIndex}

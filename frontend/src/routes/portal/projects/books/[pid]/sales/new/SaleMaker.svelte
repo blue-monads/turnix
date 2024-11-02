@@ -35,7 +35,7 @@
         lines?: NewSaleLine[];
         contactsNameIndex?: Record<number, string>;
         submit: (data: SaleData) => Promise<string>;
-        modeOptions: [string, string][];
+        modeOptions?: [string, string][];
         api: BooksAPI;
     }
 
