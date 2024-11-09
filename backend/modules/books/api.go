@@ -14,7 +14,7 @@ import (
 
 func (b *BookModule) register(group *gin.RouterGroup) error {
 
-	x := b.app.AuthMiddleware
+	w := b.app.AsApiAction
 
 	accGrp := group.Group("/:pid/account")
 	report := group.Group("/:pid/report")
@@ -31,101 +31,101 @@ func (b *BookModule) register(group *gin.RouterGroup) error {
 	notepad := group.Group("/:pid/notepad")
 
 	// accounts
-	accGrp.GET("/", x(b.listAccount))
-	accGrp.POST("/", x(b.addAccount))
-	accGrp.GET("/:id", x(b.getAccount))
-	accGrp.POST("/:id", x(b.updateAccount))
-	accGrp.DELETE("/:id", x(b.deleteAccount))
+	accGrp.GET("/", w("listAccount", b.listAccount))
+	accGrp.POST("/", w("addAccount", b.addAccount))
+	accGrp.GET("/:id", w("getAccount", b.getAccount))
+	accGrp.POST("/:id", w("updateAccount", b.updateAccount))
+	accGrp.DELETE("/:id", w("deleteAccount", b.deleteAccount))
 
 	// transactions
-	txnGrp.GET("/", x(b.listTxn))
-	txnGrp.GET("/line/list", x(b.listTxnWithLines))
-	txnGrp.GET("/line/:aid/list", x(b.listAccountTxnWithLines))
-	txnGrp.POST("/", x(b.addTxn))
-	txnGrp.GET("/:id", x(b.getTxn))
-	txnGrp.GET("/:id/line", x(b.getTxnWithLine))
-	txnGrp.POST("/:id", x(b.updateTxn))
-	txnGrp.POST("/:id/line", x(b.updateTxnWithLine))
-	txnGrp.DELETE("/:id", x(b.deleteTxn))
-	txnGrp.POST("/export", x(b.exportData))
-	txnGrp.POST("/import", x(b.importData))
+	txnGrp.GET("/", w("listTxn", b.listTxn))
+	txnGrp.GET("/line/list", w("listTxnWithLines", b.listTxnWithLines))
+	txnGrp.GET("/line/:aid/list", w("listAccountTxnWithLines", b.listAccountTxnWithLines))
+	txnGrp.POST("/", w("addTxn", b.addTxn))
+	txnGrp.GET("/:id", w("getTxn", b.getTxn))
+	txnGrp.GET("/:id/line", w("getTxnWithLine", b.getTxnWithLine))
+	txnGrp.POST("/:id", w("updateTxn", b.updateTxn))
+	txnGrp.POST("/:id/line", w("updateTxnWithLine", b.updateTxnWithLine))
+	txnGrp.DELETE("/:id", w("deleteTxn", b.deleteTxn))
+	txnGrp.POST("/export", w("exportData", b.exportData))
+	txnGrp.POST("/import", w("importData", b.importData))
 
 	// catagories
 
-	inventry.GET("/catagories", x(b.listCatagories))
-	inventry.POST("/catagories", x(b.addCatagory))
-	inventry.GET("/catagories/:id", x(b.getCatagory))
-	inventry.POST("/catagories/:id", x(b.updateCatagory))
-	inventry.DELETE("/catagories/:id", x(b.deleteCatagory))
+	inventry.GET("/catagories", w("listCatagories", b.listCatagories))
+	inventry.POST("/catagories", w("addCatagory", b.addCatagory))
+	inventry.GET("/catagories/:id", w("getCatagory", b.getCatagory))
+	inventry.POST("/catagories/:id", w("updateCatagory", b.updateCatagory))
+	inventry.DELETE("/catagories/:id", w("deleteCatagory", b.deleteCatagory))
 
 	// products
-	inventry.GET("/products", x(b.listProducts))
-	inventry.POST("/products", x(b.addProduct))
-	inventry.GET("/products/:id", x(b.getProduct))
-	inventry.POST("/products/:id", x(b.updateProduct))
-	inventry.DELETE("/products/:id", x(b.deleteProduct))
+	inventry.GET("/products", w("listProducts", b.listProducts))
+	inventry.POST("/products", w("addProduct", b.addProduct))
+	inventry.GET("/products/:id", w("getProduct", b.getProduct))
+	inventry.POST("/products/:id", w("updateProduct", b.updateProduct))
+	inventry.DELETE("/products/:id", w("deleteProduct", b.deleteProduct))
 
 	// contacts
-	contactGrp.GET("/", x(b.listContacts))
-	contactGrp.POST("/", x(b.addContact))
-	contactGrp.GET("/:id", x(b.getContact))
-	contactGrp.POST("/:id", x(b.updateContact))
-	contactGrp.DELETE("/:id", x(b.deleteContact))
+	contactGrp.GET("/", w("listContacts", b.listContacts))
+	contactGrp.POST("/", w("addContact", b.addContact))
+	contactGrp.GET("/:id", w("getContact", b.getContact))
+	contactGrp.POST("/:id", w("updateContact", b.updateContact))
+	contactGrp.DELETE("/:id", w("deleteContact", b.deleteContact))
 
 	// tax
-	taxGrp.GET("/", x(b.listTax))
-	taxGrp.POST("/", x(b.addTax))
-	taxGrp.GET("/:id", x(b.getTax))
-	taxGrp.POST("/:id", x(b.updateTax))
-	taxGrp.DELETE("/:id", x(b.deleteTax))
-	taxGrp.POST("/:id/product", x(b.addTaxProduct))
-	taxGrp.DELETE("/:id/product/:tpid", x(b.deleteTaxProduct))
-	taxGrp.GET("/:id/product", x(b.listTaxProduct))
+	taxGrp.GET("/", w("listTax", b.listTax))
+	taxGrp.POST("/", w("addTax", b.addTax))
+	taxGrp.GET("/:id", w("getTax", b.getTax))
+	taxGrp.POST("/:id", w("updateTax", b.updateTax))
+	taxGrp.DELETE("/:id", w("deleteTax", b.deleteTax))
+	taxGrp.POST("/:id/product", w("addTaxProduct", b.addTaxProduct))
+	taxGrp.DELETE("/:id/product/:tpid", w("deleteTaxProduct", b.deleteTaxProduct))
+	taxGrp.GET("/:id/product", w("listTaxProduct", b.listTaxProduct))
 
 	// report
 
-	report.POST("/live", x(b.reportLiveGenerate))
+	report.POST("/live", w("reportLiveGenerate", b.reportLiveGenerate))
 
 	// report template
-	reportTpl.GET("/", x(b.reportTemplateList))
-	reportTpl.POST("/", x(b.reportTemplateAdd))
-	reportTpl.GET("/:id", x(b.reportTemplateGet))
-	reportTpl.POST("/:id", x(b.reportTemplateUpdate))
-	reportTpl.DELETE("/:id", x(b.reportTemplateDelete))
+	reportTpl.GET("/", w("reportTemplateList", b.reportTemplateList))
+	reportTpl.POST("/", w("reportTemplateAdd", b.reportTemplateAdd))
+	reportTpl.GET("/:id", w("reportTemplateGet", b.reportTemplateGet))
+	reportTpl.POST("/:id", w("reportTemplateUpdate", b.reportTemplateUpdate))
+	reportTpl.DELETE("/:id", w("reportTemplateDelete", b.reportTemplateDelete))
 
 	// report saved
-	reportSaved.GET("/", x(b.reportSavedList))
-	reportSaved.POST("/", x(b.reportSavedAdd))
-	reportSaved.GET("/:id", x(b.reportSavedGet))
-	reportSaved.POST("/:id", x(b.reportSavedUpdate))
-	reportSaved.DELETE("/:id", x(b.reportSavedDelete))
+	reportSaved.GET("/", w("reportSavedList", b.reportSavedList))
+	reportSaved.POST("/", w("reportSavedAdd", b.reportSavedAdd))
+	reportSaved.GET("/:id", w("reportSavedGet", b.reportSavedGet))
+	reportSaved.POST("/:id", w("reportSavedUpdate", b.reportSavedUpdate))
+	reportSaved.DELETE("/:id", w("reportSavedDelete", b.reportSavedDelete))
 
 	// sales
-	salesGrp.GET("/", x(b.listSales))
-	salesGrp.POST("/", x(b.addSales))
-	salesGrp.GET("/:id", x(b.getSales))
-	salesGrp.DELETE("/:id", x(b.deleteSales))
+	salesGrp.GET("/", w("listSales", b.listSales))
+	salesGrp.POST("/", w("addSales", b.addSales))
+	salesGrp.GET("/:id", w("getSales", b.getSales))
+	salesGrp.DELETE("/:id", w("deleteSales", b.deleteSales))
 
 	// stocks
 
-	stocksGrp.GET("/", x(b.listProductStockIn))
-	stocksGrp.POST("/", x(b.addProductStockIn))
-	stocksGrp.GET("/:id", x(b.getProductStockIn))
-	stocksGrp.DELETE("/:id", x(b.deleteProductStockIn))
+	stocksGrp.GET("/", w("listProductStockIn", b.listProductStockIn))
+	stocksGrp.POST("/", w("addProductStockIn", b.addProductStockIn))
+	stocksGrp.GET("/:id", w("getProductStockIn", b.getProductStockIn))
+	stocksGrp.DELETE("/:id", w("deleteProductStockIn", b.deleteProductStockIn))
 
 	// estimates
-	estimateGrp.GET("/", x(b.listEstimate))
-	estimateGrp.POST("/", x(b.addEstimate))
-	estimateGrp.GET("/:id", x(b.getEstimate))
-	estimateGrp.DELETE("/:id", x(b.deleteEstimate))
+	estimateGrp.GET("/", w("listEstimate", b.listEstimate))
+	estimateGrp.POST("/", w("addEstimate", b.addEstimate))
+	estimateGrp.GET("/:id", w("getEstimate", b.getEstimate))
+	estimateGrp.DELETE("/:id", w("deleteEstimate", b.deleteEstimate))
 
 	// notepad
 
-	notepad.GET("/", x(b.listNotepad))
-	notepad.POST("/", x(b.addNotepad))
-	notepad.GET("/:id", x(b.getNotepad))
-	notepad.POST("/:id", x(b.updateNotepad))
-	notepad.DELETE("/:id", x(b.deleteNotepad))
+	notepad.GET("/", w("listNotepad", b.listNotepad))
+	notepad.POST("/", w("addNotepad", b.addNotepad))
+	notepad.GET("/:id", w("getNotepad", b.getNotepad))
+	notepad.POST("/:id", w("updateNotepad", b.updateNotepad))
+	notepad.DELETE("/:id", w("deleteNotepad", b.deleteNotepad))
 
 	return nil
 }
