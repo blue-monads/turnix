@@ -281,6 +281,20 @@ func (d *DB) ListProjectHooks(pid int64) ([]models.ProjectHook, error) {
 	return hooks, nil
 }
 
+func (d *DB) ListAllProjectHooks() ([]models.ProjectHook, error) {
+
+	table := d.projectHooksTable()
+
+	hooks := []models.ProjectHook{}
+
+	err := table.Find().Select("id", "event", "project_id").All(&hooks)
+	if err != nil {
+		return nil, err
+	}
+
+	return hooks, nil
+}
+
 func (d *DB) AddProjectHook(uid, pid int64, data *models.ProjectHook) (int64, error) {
 
 	if !d.isOwner(uid, pid) {
