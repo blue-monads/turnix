@@ -17,5 +17,4 @@ var def = &xproject.Defination{
 			IsRequired: false,
 		},
 	},
-	EventTypes: []string{"on_splat"},
 }

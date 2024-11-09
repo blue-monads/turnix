@@ -25,7 +25,6 @@ type Defination struct {
 	Version             string
 	NewFormSchemaFields []PTypeField
 	Perminssions        []string
-	EventTypes          []string
 	GlobalJS            []byte
 	AssetData           fs.FS
 

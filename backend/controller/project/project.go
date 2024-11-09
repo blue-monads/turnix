@@ -31,7 +31,6 @@ func (a *ProjectController) ListProjectTypes() ([]models.ProjectTypes, error) {
 			Icon:       pdef.Icon,
 			Info:       pdef.Info,
 			IsExternal: pdef.AssetData != nil,
-			EventTypes: pdef.EventTypes,
 		})
 
 	}
@@ -51,7 +50,6 @@ func (a *ProjectController) GetProjectType(ptype string) (*models.ProjectTypes, 
 				Info:       pdef.Info,
 				Icon:       pdef.Icon,
 				IsExternal: pdef.AssetData != nil,
-				EventTypes: pdef.EventTypes,
 			}, nil
 		}
 
