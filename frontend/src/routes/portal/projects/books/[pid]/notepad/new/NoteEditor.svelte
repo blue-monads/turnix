@@ -6,6 +6,8 @@
     }
 
     let { title = "", notes = "", attachments = "" }: Props = $props();
+
+    let files: FileList | undefined = $state();
 </script>
 
 <div class="card">
@@ -13,7 +15,12 @@
     <section class="p-4 flex flex-col gap-4">
         <label class="label"
             ><span>Title</span>
-        <input class="input p-1" type="text" placeholder="Input" bind:value={title} />
+            <input
+                class="input p-1"
+                type="text"
+                placeholder="Input"
+                bind:value={title}
+            />
         </label>
 
         <label class="label"
@@ -46,24 +53,45 @@
                 <h2
                     class="mt-4 text-xl font-medium text-gray-700 tracking-wide"
                 >
-                    Category image
+                    Attachments
                 </h2>
 
-                <p class="mt-2 text-gray-500 tracking-wide">
-                    Upload or drag & drop your file PNG, PDF, JPG or GIF.
-                </p>
+                {#if !files}
+                    <p class="mt-2 text-gray-500 tracking-wide">
+                        Upload or drag & drop your file PNG, PDF, JPG or GIF.
+                    </p>
+                {:else}
+                    <div class="flex items-center gap-2">
+                        {#each files as file}
+                            <div class="flex-shrink-0 w-32 h-32">
+                                <img
+                                    src={URL.createObjectURL(file)}
+                                    alt=""
+                                    class="w-full h-auto"
+                                />
+                            </div>
+                        {/each}
+                    </div>
+                {/if}
 
                 <input
                     type="file"
                     class="hidden"
                     name="category_image"
                     accept="image/png, image/jpeg, image/webp"
+                    multiple={true}
+                    bind:files
                 />
             </div>
         </label>
     </section>
 
     <footer class="card-footer flex justify-end">
-        <button type="submit" class="btn variant-filled">save</button>
+        <button 
+            type="button" 
+            class="btn variant-filled"
+            disabled={!title || !notes}
+            >save
+        </button>
     </footer>
 </div>
