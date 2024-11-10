@@ -5,8 +5,13 @@
         Tab,
         TabGroup,
     } from "@skeletonlabs/skeleton";
+    import VerySimpleModal from "../../playground/VerySimpleModal.svelte";
+    import FilePicker from "../filestore/FilePicker.svelte";
 
     const store = getModalStore();
+
+
+    let showModal = $state(false);
 
 </script>
 
@@ -21,9 +26,17 @@
 <button 
     class="btn btn-sm variant-filled" 
     onclick={() => {
-
+        showModal = !showModal;
 
     }}
     >
-    show
+    toggle
 </button>
+
+
+<VerySimpleModal bind:showModal={showModal}>
+    <div class="w-full min-w-[724px] h-full">
+        <FilePicker />
+    </div>
+
+</VerySimpleModal>
