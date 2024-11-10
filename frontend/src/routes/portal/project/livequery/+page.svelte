@@ -33,8 +33,8 @@
 
     let columnMappings: ColumnMapping[] = $state([]);
     let lastData = $state([]);
-    let mainGridHandle: GridHandle = $state();
-    let mappingGridHandle: GridHandle = $state();
+    let mainGridHandle: GridHandle | undefined = $state();
+    let mappingGridHandle: GridHandle | undefined = $state();
 
 
     // export type RendererType = "text" | "date" | "number" | "currency" | "autocolor" | "relativedate" | "lookup" | string
@@ -57,7 +57,7 @@
             return {
                 title: cm.gridName,
                 key: cm.sqlName,
-                type: "text",
+                
                 rendererType: cm.rendererType,
             };
         })
@@ -97,7 +97,7 @@
                         class="inline-flex rounded p.05 variant-filled self-center"
                         onclick={() => {
                             console.log("@handle", mainGridHandle);
-                            mainGridHandle.reload();
+                            mainGridHandle?.reload();
                         }}
                     >
                         <SvgIcon className="w-4 h-4 mt-1" name="play" />
@@ -110,6 +110,7 @@
                         {#if tabSet === 0}
                             {#key finalCoumns}
                                 <EasyGrid
+                                    key="id"
                                     bind:handle={mainGridHandle}
                                     columns={finalCoumns}
                                     enableStartAutoLoad={false}
@@ -147,22 +148,20 @@
                             {/key}
                         {:else if tabSet === 1}
                             <EasyGrid
+                                key=""
                                 bind:handle={mappingGridHandle}
                                 columns={[
                                     {
                                         title: "SQL Name",
                                         key: "sqlName",
-                                        type: "text",
                                     },
                                     {
                                         title: "Grid Name",
                                         key: "gridName",
-                                        type: "text",
                                     },
                                     {
                                         title: "Renderer Type",
                                         key: "rendererType",
-                                        type: "text",
                                         rendererOptions: {
                                             autoColor: true,
                                         },
@@ -171,7 +170,7 @@
                                 enablePagination={false}
                                 enableSidebar={false}
                                 enableSort={false}
-                                onLoad={(params) => {
+                                onLoad={async (params) => {
                                     return columnMappings;
                                 }}
                                 headerActions={[
