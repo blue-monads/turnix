@@ -5,7 +5,7 @@
     let value = $state(0);
 </script>
 
-<div class="w-full bg-white p-4">
+<div class="w-full bg-white">
 
     <div class="flex justify-between bg-slate-200 items-center px-2 rounded">
         <div class="flex items-center">
