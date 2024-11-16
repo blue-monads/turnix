@@ -6,9 +6,12 @@
         TabGroup,
     } from "@skeletonlabs/skeleton";
     import VerySimpleModal from "../../playground/VerySimpleModal.svelte";
-    import FilePicker from "../filestore/FilePicker.svelte";
+    import FilePicker from "../filestore/FilePicker/FilePicker.svelte";
+    import { getContext } from "svelte";
+    import type { RootAPI } from "$lib";
 
     const store = getModalStore();
+    const api = getContext("__api__") as RootAPI;
 
 
     let showModal = $state(false);

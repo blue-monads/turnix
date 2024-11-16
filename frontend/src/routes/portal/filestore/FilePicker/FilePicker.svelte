@@ -1,6 +1,6 @@
 <script lang="ts">
     import { RadioGroup, RadioItem } from "@skeletonlabs/skeleton";
-    import FileListings from "../self/files/FileListings.svelte";
+    import FileListings from "../../self/files/FileListings.svelte";
 
     let value = $state(0);
 </script>
