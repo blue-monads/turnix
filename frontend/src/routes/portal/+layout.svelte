@@ -70,7 +70,7 @@
     icon: "code-bracket-square",
   });
 
-  let api: RootAPI = $state();
+  let api: RootAPI;
 
   const load = () => {
     // @ts-ignore
@@ -183,7 +183,7 @@
           }}
           <a
             use:popup={popupHover}
-            class="p-4 hover:bg-secondary-50 [&>*]:pointer-events-none"
+            class="p-4 hover:bg-secondary-50 [&>*]:pointer-events-none [&]:z-20"
             href={item["link"]}
           >
             <SvgIcon name={item["icon"] || "link"} className="w-6 h-6" />
