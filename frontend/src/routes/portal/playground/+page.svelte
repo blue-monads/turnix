@@ -39,7 +39,7 @@
 
 <VerySimpleModal bind:showModal={showModal}>
     <div class="w-full min-w-[724px] h-full">
-        <FilePicker />
+        <FilePicker pid={1} />
     </div>
 
 </VerySimpleModal>

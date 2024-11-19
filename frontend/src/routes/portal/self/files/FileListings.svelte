@@ -13,6 +13,7 @@
         baseUrl?: string;
         path?: string;
         selected: string;
+        hidePreview?: boolean;
         onExplore?: (row: File) => void;
     }
 
@@ -35,6 +36,7 @@
         baseUrl = "/z/pages/portal/self/files",
         path = "",
         selected = $bindable(),
+        hidePreview = false,
         onExplore = explore
     }: Props = $props();
 
@@ -168,7 +170,7 @@
                             {/if}
                         </td>
                         <td>
-                            {#if !row.is_folder}
+                            {#if !row.is_folder && !hidePreview}
                                 <button
                                     onclick={() => previewFile(row)}
                                     class="btn btn-sm variant-filled"

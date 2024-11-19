@@ -13,7 +13,7 @@
     let { fileId, filename, api }: Props = $props();
 
 
-    let elemRoot: HTMLElement = $state();
+    let elemRoot: HTMLElement | undefined = $state();
 
     const imageExts = ["png", "jpg", "jpeg", "gif", "bmp", "webp", "svg"];
     const fileExt = filename.split(".").pop();

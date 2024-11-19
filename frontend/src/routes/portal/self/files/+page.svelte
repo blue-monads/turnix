@@ -31,9 +31,9 @@
         loading = false;
     };
 
-    run(() => {
+    $effect.pre(() => {
         load(_path);
-    });
+    })
 
 </script>
 
