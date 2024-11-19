@@ -1,5 +1,9 @@
 <script lang="ts">
-    import { RadioGroup, RadioItem } from "@skeletonlabs/skeleton";
+    import {
+        FileDropzone,
+        RadioGroup,
+        RadioItem,
+    } from "@skeletonlabs/skeleton";
     import FileListings from "../../self/files/FileListings.svelte";
     import { getContext } from "svelte";
     import type { File, RootAPI } from "$lib";
@@ -22,11 +26,17 @@
     let loading = $state(false);
     let personalPath = $state("");
     let projectPath = $state("");
+    let uploadFile: any | undefined = $state();
 
     let previewFile: File | undefined = $state();
 
-    let mode: "listing" | "preview" = $state("listing");
+    let mode: "listing" | "upload" | "preview" = $state("listing");
     let value: "personal" | "project" = $state("personal");
+
+    const onDrop = async (e: any) => {
+        console.log("onDrop", e);
+        uploadFile = e.target.files[0];
+    };
 
     const loadPersonal = async (lpath?: string) => {
         loading = true;
@@ -67,6 +77,11 @@
 
     $effect(() => {
         if (mode === "preview") {
+            isBackDisabled = false;
+            return;
+        }
+
+        if (mode === "upload") {
             isBackDisabled = false;
             return;
         }
@@ -169,6 +184,34 @@
                     console.log("@@explore", row.path);
                 }}
             />
+        {:else if mode === "upload"}
+            <FileDropzone on:change={onDrop} name="files">
+                <div slot="lead" class="flex justify-center">
+                    <SvgIcon name="arrow-up-tray" className="w-6 h-6" />
+                </div>
+
+                <svelte:fragment slot="message">
+                    {#if uploadFile}
+                        {uploadFile.name}
+                    {:else}
+                        <strong>Upload a file</strong> or drag and drop
+                    {/if}
+                </svelte:fragment>
+            </FileDropzone>
+
+            <div class="flex justify-end py-2">
+                <button
+                    class="btn btn-sm variant-filled"
+                    disabled={!uploadFile || loading}
+                    onclick={async () => {}}
+                >
+                    {#if loading}
+                        Uploading...
+                    {:else}
+                        Upload
+                    {/if}
+                </button>
+            </div>
         {:else if previewFile}
             <div
                 class="w-auto h-full max-h-96 max-w-xs md:max-w-screen-md overflow-auto"
@@ -187,14 +230,20 @@
             class="btn btn-sm bg-gray-100"
             disabled={isBackDisabled}
             onclick={() => {
-                if (mode === "preview") {
+                if (mode === "preview" || mode === "upload") {
                     previewFile = undefined;
                     mode = "listing";
                 } else {
                     if (value === "personal") {
-                        personalPath = personalPath.substring(0, personalPath.lastIndexOf("/"));
+                        personalPath = personalPath.substring(
+                            0,
+                            personalPath.lastIndexOf("/"),
+                        );
                     } else {
-                        projectPath = projectPath.substring(0, projectPath.lastIndexOf("/"));
+                        projectPath = projectPath.substring(
+                            0,
+                            projectPath.lastIndexOf("/"),
+                        );
                     }
                 }
             }}
@@ -202,20 +251,34 @@
             <SvgIcon className="h-4 w-4" name="chevron-left" />
         </button>
 
-        <button
-            class="btn btn-sm variant-filled"
-            disabled={selected === ""}
-            onclick={() => {
-                const picked = files.find((f) => f.name === selected);
-                if (picked) {
-                    onPick?.(picked);
-                    return;
-                }
-                console.log("@clicked");
-            }}
-        >
-            <SvgIcon className="h-4 w-4" name="check" />
-            <span class="hidden md:inline">Pick</span>
-        </button>
+        <div class="flex gap-2">
+            {#if mode !== "upload"}
+                <button
+                    class="btn btn-sm variant-filled-primary"
+                    onclick={() => {
+                        mode = "upload";
+                    }}
+                >
+                    <SvgIcon className="h-4 w-4" name="arrow-up-on-square" />
+                    <span class="hidden md:inline">Upload</span>
+                </button>
+
+                <button
+                    class="btn btn-sm variant-filled"
+                    disabled={selected === ""}
+                    onclick={() => {
+                        const picked = files.find((f) => f.name === selected);
+                        if (picked) {
+                            onPick?.(picked);
+                            return;
+                        }
+                        console.log("@clicked");
+                    }}
+                >
+                    <SvgIcon className="h-4 w-4" name="check" />
+                    <span class="hidden md:inline">Pick</span>
+                </button>
+            {/if}
+        </div>
     </div>
 </div>
