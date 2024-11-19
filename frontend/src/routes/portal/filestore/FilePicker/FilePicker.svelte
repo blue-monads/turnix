@@ -268,7 +268,7 @@
                         mode = "upload";
                     }}
                 >
-                    <SvgIcon className="h-4 w-4" name="arrow-up-on-square" />
+                    <SvgIcon className="h-4 w-4" name="cloud-arrow-up" />
                     <span class="hidden md:inline">Upload</span>
                 </button>
 
