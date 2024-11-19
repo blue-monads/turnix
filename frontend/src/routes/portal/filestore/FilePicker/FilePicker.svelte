@@ -136,10 +136,11 @@
                 hidePreview={true}
                 onExplore={(row) => {
                     if (row.is_folder) {
+                        const nextPath = row.path ? `${row.path}/${row.name}` : row.name;
                         if (value === "personal") {
-                            personalPath = `${row.path}/${row.name}`;
+                            personalPath = nextPath;
                         } else {
-                            projectPath = `${row.path}/${row.name}`;
+                            projectPath = nextPath;
                         }
                     } else {
                         previewFile = row;
