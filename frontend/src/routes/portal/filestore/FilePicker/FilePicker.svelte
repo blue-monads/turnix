@@ -127,10 +127,12 @@
             </li>
 
             {#each _paths as path, i}
-                <li class="crumb">
-                    {path}
-                </li>
-                <li class="crumb-separator" aria-hidden="true">/</li>
+                {#if path}
+                    <li class="crumb">
+                        {path}
+                    </li>
+                    <li class="crumb-separator" aria-hidden="true">/</li>
+                {/if}
             {/each}
 
             <li class="crumb">
