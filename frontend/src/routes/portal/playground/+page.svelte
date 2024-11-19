@@ -38,7 +38,7 @@
 
 
 <VerySimpleModal bind:showModal={showModal}>
-    <div class="w-full min-w-[724px] h-full">
+    <div class="w-full md:min-w-[724px] h-full">
         <FilePicker pid={1} />
     </div>
 
