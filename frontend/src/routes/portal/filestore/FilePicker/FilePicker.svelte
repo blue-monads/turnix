@@ -71,6 +71,10 @@
             isBackDisabled = projectPath === "";
         }
     });
+
+    let _paths = $derived(
+        (value === "personal" ? personalPath : projectPath).split("/"),
+    );
 </script>
 
 <div class="w-full bg-white">
@@ -100,6 +104,29 @@
         </div>
     </div>
 
+    <div class="flex justify-between p-1">
+        <ol class="breadcrumb">
+            <li class="crumb">
+                <button
+                    onclick={() => {
+                        personalPath = "";
+                        projectPath = "";
+                        mode = "listing";
+                    }}
+                >
+                    <SvgIcon className="h-4 w-4" name="home" />
+                </button>
+            </li>
+
+            {#each _paths as path, i}
+                <li class="crumb">
+                    {path}
+                </li>
+                <li class="crumb-separator" aria-hidden="true">/</li>
+            {/each}
+        </ol>
+    </div>
+
     <div class="py-2 text-xs">
         {#if mode === "listing"}
             <FileListings
@@ -110,9 +137,9 @@
                 onExplore={(row) => {
                     if (row.is_folder) {
                         if (value === "personal") {
-                            personalPath = row.name;
+                            personalPath = `${row.path}/${row.name}`;
                         } else {
-                            projectPath = row.name;
+                            projectPath = `${row.path}/${row.name}`;
                         }
                     } else {
                         previewFile = row;
@@ -142,7 +169,7 @@
             onclick={() => {
                 personalPath = "";
                 projectPath = "";
-                mode = "listing"
+                mode = "listing";
             }}
         >
             <SvgIcon className="h-4 w-4" name="chevron-left" />

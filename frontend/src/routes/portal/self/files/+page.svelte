@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
     import { getContext } from "svelte";
     import type { RootAPI, File } from "$lib/api";
     import { params } from "$lib/params";
