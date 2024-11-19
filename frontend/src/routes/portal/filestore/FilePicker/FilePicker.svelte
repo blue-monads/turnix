@@ -187,9 +187,16 @@
             class="btn btn-sm bg-gray-100"
             disabled={isBackDisabled}
             onclick={() => {
-                personalPath = "";
-                projectPath = "";
-                mode = "listing";
+                if (mode === "preview") {
+                    previewFile = undefined;
+                    mode = "listing";
+                } else {
+                    if (value === "personal") {
+                        personalPath = personalPath.substring(0, personalPath.lastIndexOf("/"));
+                    } else {
+                        projectPath = projectPath.substring(0, projectPath.lastIndexOf("/"));
+                    }
+                }
             }}
         >
             <SvgIcon className="h-4 w-4" name="chevron-left" />
