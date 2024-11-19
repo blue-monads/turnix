@@ -4,6 +4,7 @@
     import { getContext } from "svelte";
     import type { File, RootAPI } from "$lib";
     import FilePreview from "../../self/files/preview/FilePreview.svelte";
+    import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
     interface Props {
         api?: RootAPI;
@@ -44,13 +45,30 @@
     };
 
     $effect(() => {
-        mode = "listing"
+        console.log("@effect");
+
+        mode = "listing";
         if (value === "personal") {
             files = [];
-            loadPersonal(personalPath);            
+            loadPersonal(personalPath);
         } else {
             files = [];
             loadProject(String(pid), projectPath);
+        }
+    });
+
+    let isBackDisabled = $state(false);
+
+    $effect(() => {
+        if (mode === "preview") {
+            isBackDisabled = false;
+            return;
+        }
+
+        if (value === "personal") {
+            isBackDisabled = personalPath === "";
+        } else {
+            isBackDisabled = projectPath === "";
         }
     });
 </script>
@@ -92,20 +110,22 @@
                 onExplore={(row) => {
                     if (row.is_folder) {
                         if (value === "personal") {
-                            personalPath = row.path;
+                            personalPath = row.name;
                         } else {
-                            projectPath = row.path;
+                            projectPath = row.name;
                         }
                     } else {
                         previewFile = row;
                         mode = "preview";
                     }
 
-                    console.log("@@explore", row);
+                    console.log("@@explore", row.path);
                 }}
             />
         {:else if previewFile}
-            <div class="max-h-96 max-w-screen-md w-auto h-full ">
+            <div
+                class="w-auto h-full max-h-96 max-w-xs md:max-w-screen-md overflow-auto"
+            >
                 <FilePreview
                     {api}
                     fileId={String(previewFile?.id)}
@@ -113,5 +133,19 @@
                 />
             </div>
         {/if}
+    </div>
+
+    <div class="flex justify-start">
+        <button
+            class="btn btn-sm bg-gray-100"
+            disabled={isBackDisabled}
+            onclick={() => {
+                personalPath = "";
+                projectPath = "";
+                mode = "listing"
+            }}
+        >
+            <SvgIcon className="h-4 w-4" name="chevron-left" />
+        </button>
     </div>
 </div>

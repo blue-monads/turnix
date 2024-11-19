@@ -24,11 +24,12 @@
 
 <style>
 	dialog {
-		min-width: 10rem;
 		border-radius: 0.2em;
 		border: none;
 		padding: 0;
 	}
+
+
 	dialog::backdrop {
 		background: rgba(0, 0, 0, 0.3);
 	}
