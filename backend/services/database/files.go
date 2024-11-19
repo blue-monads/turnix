@@ -435,31 +435,32 @@ type FileShare struct {
 	ID        string     `json:"id" db:"id,omitempty"`
 	FileID    int64      `json:"file_id" db:"file_id"`
 	UserID    int64      `json:"user_id" db:"user_id"`
+	ProjectID int64      `json:"project_id" db:"project_id"`
 	CreatedAt *time.Time `json:"created_at" db:"created_at"`
 }
 
 var generator, _ = nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12)
 
-func (d *DB) AddFileShare(fileId, userId int64) (int64, error) {
+func (d *DB) AddFileShare(fileId, userId, pid int64) (string, error) {
 	table := d.fileSharesTable()
 
 	t := &time.Time{}
 
+	shareId := generator()
+
 	data := &FileShare{
-		ID:        generator(),
+		ID:        shareId,
 		FileID:    fileId,
 		UserID:    userId,
+		ProjectID: pid,
 		CreatedAt: t,
 	}
 
-	rid, err := table.Insert(data)
+	_, err := table.Insert(data)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
-
-	id := rid.ID().(int64)
-
-	return id, nil
+	return shareId, nil
 }
 
 func (d *DB) ListFileShares(fileId int64) ([]FileShare, error) {
