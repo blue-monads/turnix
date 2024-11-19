@@ -9,11 +9,16 @@
     interface Props {
         api?: RootAPI;
         pid?: number;
+        onPick?: (file: File) => void;
     }
 
-    let { api = getContext("__api__") as RootAPI, pid }: Props = $props();
+    let {
+        api = getContext("__api__") as RootAPI,
+        pid,
+        onPick,
+    }: Props = $props();
 
-    let files = $state([]);
+    let files: File[] = $state([]);
     let loading = $state(false);
     let personalPath = $state("");
     let projectPath = $state("");
@@ -48,6 +53,7 @@
         console.log("@effect");
 
         mode = "listing";
+        previewFile = undefined;
         if (value === "personal") {
             files = [];
             loadPersonal(personalPath);
@@ -75,6 +81,8 @@
     let _paths = $derived(
         (value === "personal" ? personalPath : projectPath).split("/"),
     );
+
+    let selected = $state("");
 </script>
 
 <div class="w-full bg-white">
@@ -124,6 +132,10 @@
                 </li>
                 <li class="crumb-separator" aria-hidden="true">/</li>
             {/each}
+
+            <li class="crumb">
+                {previewFile?.name}
+            </li>
         </ol>
     </div>
 
@@ -132,11 +144,14 @@
             <FileListings
                 {files}
                 loading={false}
-                selected=""
+                pickMode={true}
+                bind:selected
                 hidePreview={true}
                 onExplore={(row) => {
                     if (row.is_folder) {
-                        const nextPath = row.path ? `${row.path}/${row.name}` : row.name;
+                        const nextPath = row.path
+                            ? `${row.path}/${row.name}`
+                            : row.name;
                         if (value === "personal") {
                             personalPath = nextPath;
                         } else {
@@ -146,6 +161,8 @@
                         previewFile = row;
                         mode = "preview";
                     }
+
+                    selected = "";
 
                     console.log("@@explore", row.path);
                 }}
@@ -163,7 +180,7 @@
         {/if}
     </div>
 
-    <div class="flex justify-start">
+    <div class="flex justify-between">
         <button
             class="btn btn-sm bg-gray-100"
             disabled={isBackDisabled}
@@ -174,6 +191,22 @@
             }}
         >
             <SvgIcon className="h-4 w-4" name="chevron-left" />
+        </button>
+
+        <button
+            class="btn btn-sm variant-filled"
+            disabled={selected === ""}
+            onclick={() => {
+                const picked = files.find((f) => f.name === selected);
+                if (picked) {
+                    onPick?.(picked);
+                    return;
+                }
+                console.log("@clicked");
+            }}
+        >
+            <SvgIcon className="h-4 w-4" name="check" />
+            <span class="hidden md:inline">Pick</span>
         </button>
     </div>
 </div>

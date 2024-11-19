@@ -15,6 +15,7 @@
         selected: string;
         hidePreview?: boolean;
         onExplore?: (row: File) => void;
+        pickMode?: boolean;
     }
 
     const explore = (row: File) => {
@@ -37,7 +38,8 @@
         path = "",
         selected = $bindable(),
         hidePreview = false,
-        onExplore = explore
+        onExplore = explore,
+        pickMode = false,
     }: Props = $props();
 
     let api = getContext("__api__") as RootAPI;
@@ -102,7 +104,7 @@
         const rect = button.getBoundingClientRect();
         dropdownPosition = {
             top: rect.bottom + window.scrollY,
-            left: rect.left + window.scrollX - 5
+            left: rect.left + window.scrollX - 5,
         };
         isActive = !isActive || activeFileId !== row.id;
         activeFileId = isActive ? row.id : 0;
@@ -134,8 +136,17 @@
                             : ''}"
                     >
                         <td class="w-1">
-                            {#if selected === row.name}
-                                <input type="checkbox" checked={true} />
+                            {#if pickMode}
+                                <input
+                                    type="checkbox"
+                                    checked={selected === row.name}
+                                    onchange={() => {
+                                        selected =
+                                            selected === row.name
+                                                ? ""
+                                                : row.name;
+                                    }}
+                                />
                             {/if}
                         </td>
                         <td>
@@ -144,7 +155,7 @@
                                 type="button"
                                 onclick={(ev) => {
                                     console.log("@clicked1", onExplore);
-                                    onExplore(row)
+                                    onExplore(row);
                                     console.log("@clicked2", onExplore);
 
                                     ev.preventDefault();
@@ -175,10 +186,7 @@
                                     onclick={() => previewFile(row)}
                                     class="btn btn-sm variant-filled"
                                 >
-                                    <SvgIcon
-                                        name="eye"
-                                        className="w-4 h-4"
-                                    />
+                                    <SvgIcon name="eye" className="w-4 h-4" />
                                 </button>
                             {/if}
 
@@ -186,10 +194,7 @@
                                 onclick={(e) => toggleDropdown(e, row)}
                                 class="btn btn-sm variant-filled-secondary relative group transition-all duration-200 focus:overflow-visible overflow-hidden"
                             >
-                                <SvgIcon
-                                    name="bars-3"
-                                    className="w-4 h-4"
-                                />
+                                <SvgIcon name="bars-3" className="w-4 h-4" />
                             </button>
 
                             {#if isActive && activeFileId === row.id}
@@ -199,14 +204,14 @@
                                 >
                                     {#each row.is_folder ? folderActions : fileActions as action}
                                         <button
-                                            onclick={((ev) => {
+                                            onclick={(ev) => {
                                                 ev.stopPropagation();
 
                                                 dispatcher("action", {
                                                     action,
                                                     row,
                                                 });
-                                            })}
+                                            }}
                                             class="flex gap-1 justify-start items-center p-1 rounded-lg hover:bg-white hover:text-secondary-600"
                                         >
                                             <SvgIcon
