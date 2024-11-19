@@ -3,6 +3,8 @@
     import FileListings from "../../self/files/FileListings.svelte";
 
     let value = $state(0);
+
+
 </script>
 
 <div class="w-full bg-white">
@@ -32,6 +34,7 @@
 
     <div class="py-2 text-xs">
         <FileListings
+            
             baseUrl=""
             path=""
             files={[]}

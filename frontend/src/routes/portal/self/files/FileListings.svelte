@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { preventDefault, stopPropagation } from 'svelte/legacy';
     import { createEventDispatcher, getContext, onMount } from "svelte";
     import type { File, RootAPI } from "$lib/api";
     import { FolderIcon, Loader } from "$lib/compo";
@@ -14,24 +13,11 @@
         baseUrl?: string;
         path?: string;
         selected: string;
+        onExplore?: (row: File) => void;
     }
 
-    let {
-        files = [],
-        loading = false,
-        baseUrl = "/z/pages/portal/self/files",
-        path = "",
-        selected = $bindable()
-    }: Props = $props();
-
-    let api = getContext("__api__") as RootAPI;
-
-    const dispatcher = createEventDispatcher();
-    const store = getModalStore();
-
-    let size = "32";
-
-    const expore = (row: File) => () => {
+    const explore = (row: File) => {
+        console.log("@exp");
         if (row.is_folder) {
             goto(
                 `${baseUrl}?folder=${path ? path + "/" + row.name : row.name}`,
@@ -43,6 +29,21 @@
         }
     };
 
+    let {
+        files = [],
+        loading = false,
+        baseUrl = "/z/pages/portal/self/files",
+        path = "",
+        selected = $bindable(),
+        onExplore = explore
+    }: Props = $props();
+
+    let api = getContext("__api__") as RootAPI;
+
+    const dispatcher = createEventDispatcher();
+    const store = getModalStore();
+
+    let size = "32";
     const fileActions = [
         { name: "rename", icon: "pencil-square" },
         { name: "download", icon: "arrow-down-on-square" },
@@ -139,7 +140,13 @@
                             <button
                                 class="mr-1 text-indigo-500"
                                 type="button"
-                                onclick={preventDefault(expore(row))}
+                                onclick={(ev) => {
+                                    console.log("@clicked1", onExplore);
+                                    onExplore(row)
+                                    console.log("@clicked2", onExplore);
+
+                                    ev.preventDefault();
+                                }}
                             >
                                 {#if row.is_folder}
                                     <FolderIcon {size} />
@@ -190,7 +197,9 @@
                                 >
                                     {#each row.is_folder ? folderActions : fileActions as action}
                                         <button
-                                            onclick={stopPropagation(() => {
+                                            onclick={((ev) => {
+                                                ev.stopPropagation();
+
                                                 dispatcher("action", {
                                                     action,
                                                     row,
