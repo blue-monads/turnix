@@ -124,9 +124,6 @@ type TransactionResult struct {
 	SecondUpdatedBy    int64      `db:"second_updated_by" json:"second_updated_by"`
 	SecondCreatedAt    *time.Time `db:"second_created_at" json:"second_created_at"`
 	SecondUpdatedAt    *time.Time `db:"second_updated_at" json:"second_updated_at"`
-
-	LinkedSalesID   int64 `db:"linked_sales_id,omitempty" json:"linked_sales_id"`
-	LinkedInvoiceID int64 `db:"linked_invoice_id,omitempty" json:"linked_invoice_id"`
 }
 
 const (

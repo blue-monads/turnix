@@ -180,7 +180,7 @@ func (b *DbOps) ListAccountTxnWithLines(pid, uid, accId, offset int64) (*TxnReco
 		t2.debit_amount AS second_debit_amount, t2.credit_amount AS second_credit_amount,
 		t2.created_by AS second_created_by, t2.updated_by AS second_updated_by,
 		t2.created_at AS second_created_at, t2.updated_at AS second_updated_at,
-		t.id AS id, t.title, t.notes, t.linked_sales_id, t.linked_invoice_id,
+		t.id AS id, t.title, t.notes,
 		t.reference_id, t.attachments, t.created_by AS txn_created_by,
 		t.updated_by AS txn_updated_by, t.created_at AS txn_created_at,
 		t.updated_at AS txn_updated_at, t.is_deleted
