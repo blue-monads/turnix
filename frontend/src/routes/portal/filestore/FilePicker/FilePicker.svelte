@@ -192,7 +192,16 @@
 
                 <svelte:fragment slot="message">
                     {#if uploadFile}
-                        {uploadFile.name}
+                        <div class="flex-shrink-0 w-32 h-32">
+                            <img
+                                src={URL.createObjectURL(uploadFile)}
+                                alt=""
+                                class="w-full h-auto"
+                            />
+                        </div>
+                        <span>
+                            {uploadFile.name}
+                        </span>
                     {:else}
                         <strong>Upload a file</strong> or drag and drop
                     {/if}
