@@ -13,7 +13,7 @@
     interface Props {
         api?: RootAPI;
         pid?: number;
-        pickMode?: "all" | "file" | "folder" | "images"
+        pickMode?: "all" | "file" | "folder" | "images";
         onPick?: (file: File) => void;
     }
 
@@ -21,7 +21,7 @@
         api = getContext("__api__") as RootAPI,
         pid,
         onPick,
-        pickMode = "all"
+        pickMode = "all",
     }: Props = $props();
 
     let files: File[] = $state([]);
@@ -59,6 +59,21 @@
         }
 
         files = resp.data as any;
+    };
+
+    const submitUploadFile = async () => {
+        if (value === "personal") {
+            await api.addSelfFile(uploadFile.name, personalPath, uploadFile);
+        } else {
+            await api.addProjectFile(
+                String(pid),
+                uploadFile.name,
+                personalPath,
+                uploadFile,
+            );
+        }
+        uploadFile = undefined;
+        mode = "listing";
     };
 
     $effect(() => {
@@ -214,7 +229,7 @@
                 <button
                     class="btn btn-sm variant-filled"
                     disabled={!uploadFile || loading}
-                    onclick={async () => {}}
+                    onclick={submitUploadFile}
                 >
                     {#if loading}
                         Uploading...
