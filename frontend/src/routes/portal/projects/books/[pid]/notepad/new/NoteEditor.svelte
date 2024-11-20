@@ -9,13 +9,14 @@
     const rootApi = getContext("__api__") as RootAPI;
     const api = NewBookAPI(rootApi);
 
-    
-    let title = "";
-    let notes = "";
+    let title = $state("");
+    let notes = $state("");
     let attachments = $state("");
 
     let files = $derived(
-        attachments.split(",").map((f) => rootApi.getSharedFileURL(f)),
+        attachments.split(",").
+        filter(Boolean).
+        map((f) => rootApi.getSharedFileURL(f)),
     );
 </script>
 
@@ -42,42 +43,65 @@
             ></textarea></label
         >
 
-        <!-- svelte-ignore a11y_label_has_associated_control -->
-        <label>
+        <div>
             <span>Files</span>
 
             <div
-                class="mx-auto cursor-pointer flex w-full max-w-lg flex-col items-center justify-center rounded-xl border-2 border-dashed p-2 text-center"
+                class="mx-auto cursor-pointer flex w-full max-w-lg flex-col items-center justify-center p-2 text-center"
             >
                 <div class="flex items-center gap-2">
                     {#each files as file}
-                        <div class="flex-shrink-0 w-32 h-32">
-                            <img src={file} alt="" class="w-full h-auto" />
-                        </div>
+                            <div
+                                class="flex-shrink-0 p-1 rounded bg-white relative"
+                            >
+                                <button
+                                    class="btn btn-sm absolute top-0 right-0"
+                                    onclick={() => {
+                                        attachments = attachments.replace(
+                                            file,
+                                            "",
+                                        );
+                                    }}
+                                >
+                                    <SvgIcon
+                                        name="x-mark"
+                                        className="w-4 h-4"
+                                    />
+                                </button>
+
+                                <img
+                                    src={file}
+                                    alt=""
+                                    class="w-full max-w-32 h-auto"
+                                />
+                            </div>
                     {/each}
                 </div>
             </div>
 
-            <button class="btn btn-sm variant-filled-secondary" onclick={() => {
-                modal.show(FilePicker, {
-                    onPick: async (file: any) => {
-                        modal.close();
+            <button
+                class="btn btn-sm variant-filled-secondary"
+                onclick={() => {
+                    modal.show(FilePicker, {
+                        onPick: async (file: any) => {
+                            modal.close();
 
-                        const resp = await rootApi.sharedFile(file.id);
-                        if (resp.status !== 200) {
-                            return;
-                        }
+                            const resp = await rootApi.sharedFile(file.id);
+                            if (resp.status !== 200) {
+                                return;
+                            }
 
-                        attachments = attachments === "" ? resp.data : attachments + "," + resp.data;
-                   }
-                });
-                    
-            }}>
+                            attachments =
+                                attachments === ""
+                                    ? resp.data
+                                    : attachments + "," + resp.data;
+                        },
+                    });
+                }}
+            >
                 <SvgIcon name="plus" className="w-6 h-6" />
             </button>
-
-
-        </label>
+        </div>
     </section>
 
     <footer class="card-footer flex justify-end">
