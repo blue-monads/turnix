@@ -21,7 +21,7 @@
 
     let _paths = $derived(($params["folder"] || "").split("/"));
 
-    let __epoch;
+    let __epoch = 0;
     run(() => {
         __epoch = 1;
     });
