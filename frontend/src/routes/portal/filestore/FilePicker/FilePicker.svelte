@@ -29,6 +29,7 @@
     let personalPath = $state("");
     let projectPath = $state("");
     let uploadFile: any | undefined = $state();
+    let uploading = $state(false)
 
     let previewFile: File | undefined = $state();
 
@@ -62,6 +63,9 @@
     };
 
     const submitUploadFile = async () => {
+        
+        uploading = true
+
         if (value === "personal") {
             await api.addSelfFile(uploadFile.name, personalPath, uploadFile);
         } else {
@@ -80,7 +84,7 @@
         console.log("@effect");
 
         mode = "listing";
-        previewFile = undefined;
+        previewFile = undefined;        
         if (value === "personal") {
             files = [];
             loadPersonal(personalPath);
@@ -228,7 +232,7 @@
             <div class="flex justify-end py-2">
                 <button
                     class="btn btn-sm variant-filled"
-                    disabled={!uploadFile || loading}
+                    disabled={!uploadFile || uploading}
                     onclick={submitUploadFile}
                 >
                     {#if loading}
