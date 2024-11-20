@@ -1,13 +1,18 @@
 <script lang="ts">
-    interface Props {
-        title?: string;
-        notes?: string;
-        attachments?: string;
-    }
+    import type { RootAPI } from "$lib/api";
+    import { NewBookAPI } from "$lib/projects/books";
+    import { getContext } from "svelte";
 
-    let { title = "", notes = "", attachments = "" }: Props = $props();
+    const rootApi = getContext("__api__") as RootAPI;
+    const api = NewBookAPI(rootApi);
+    
+    let title = "";
+    let notes = "";
+    let attachments = $state("");
 
-    let files: FileList | undefined = $state();
+    let files = $derived(
+        attachments.split(",").map((f) => rootApi.getFileWithShortKeyURL(f)),
+    );
 </script>
 
 <div class="card">
@@ -33,62 +38,27 @@
             ></textarea></label
         >
 
+        <!-- svelte-ignore a11y_label_has_associated_control -->
         <label>
             <span>Files</span>
 
             <div
                 class="mx-auto cursor-pointer flex w-full max-w-lg flex-col items-center justify-center rounded-xl border-2 border-dashed p-2 text-center"
             >
-                <svg
-                    class="h-10 w-10 text-secondary-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                    />
-                </svg>
-
-                <h2
-                    class="mt-4 text-xl font-medium text-gray-700 tracking-wide"
-                >
-                    Attachments
-                </h2>
-
-                {#if !files}
-                    <p class="mt-2 text-gray-500 tracking-wide">
-                        Upload or drag & drop your file PNG, PDF, JPG or GIF.
-                    </p>
-                {:else}
-                    <div class="flex items-center gap-2">
-                        {#each files as file}
-                            <div class="flex-shrink-0 w-32 h-32">
-                                <img
-                                    src={URL.createObjectURL(file)}
-                                    alt=""
-                                    class="w-full h-auto"
-                                />
-                            </div>
-                        {/each}
-                    </div>
-                {/if}
-
-                <input
-                    type="file"
-                    class="hidden"
-                    name="category_image"
-                    accept="image/png, image/jpeg, image/webp"
-                    multiple={true}
-                    bind:files
-                />
+                <div class="flex items-center gap-2">
+                    {#each files as file}
+                        <div class="flex-shrink-0 w-32 h-32">
+                            <img src={file} alt="" class="w-full h-auto" />
+                        </div>
+                    {/each}
+                </div>
             </div>
         </label>
     </section>
 
     <footer class="card-footer flex justify-end">
-        <button 
-            type="button" 
+        <button
+            type="button"
             class="btn variant-filled"
             disabled={!title || !notes}
             >save
