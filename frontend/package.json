@@ -6,7 +6,9 @@
 		"build": "vite build # && node scripts/removeInlineScript.cjs",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		
+		"build:static:filepicker": "ENTRY_FILE=filepicker OUT_FILE=filepicker rollup -c " 
 	},
 	"devDependencies": {
 		"@fontsource/fira-mono": "^4.5.10",
