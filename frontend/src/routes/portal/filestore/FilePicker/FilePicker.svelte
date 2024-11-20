@@ -121,7 +121,7 @@
     let selected = $state("");
 </script>
 
-<div class="w-full bg-white">
+<div class="w-full bg-white md:min-w-[724px] h-full">
     <div class="flex justify-between bg-slate-200 items-center px-2 rounded">
         <div class="flex items-center">
             <h4 class="h4 py-2">File Picker</h4>

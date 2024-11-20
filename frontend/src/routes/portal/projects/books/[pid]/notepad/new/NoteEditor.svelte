@@ -1,10 +1,14 @@
 <script lang="ts">
     import type { RootAPI } from "$lib/api";
+    import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { NewBookAPI } from "$lib/projects/books";
     import { getContext } from "svelte";
+    import FilePicker from "../../../../../filestore/FilePicker/FilePicker.svelte";
 
+    const modal = getContext("__vs_modal__") as any;
     const rootApi = getContext("__api__") as RootAPI;
     const api = NewBookAPI(rootApi);
+
     
     let title = "";
     let notes = "";
@@ -53,6 +57,20 @@
                     {/each}
                 </div>
             </div>
+
+            <button class="btn btn-sm variant-filled-secondary" onclick={() => {
+                modal.show(FilePicker, {
+                    onPick: async (file: any) => {
+                        modal.close();
+                        console.log("@clicked", file);
+                    }
+                });
+                    
+            }}>
+                <SvgIcon name="plus" className="w-6 h-6" />
+            </button>
+
+
         </label>
     </section>
 

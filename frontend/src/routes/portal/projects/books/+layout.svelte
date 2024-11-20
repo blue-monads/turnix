@@ -8,6 +8,8 @@
     let { children }: Props = $props();
 </script>
 
-<WithVerySimpleModal />
+<WithVerySimpleModal> 
+    {@render children?.()}
 
-{@render children?.()}
+</WithVerySimpleModal>
+
