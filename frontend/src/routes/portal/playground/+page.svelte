@@ -5,7 +5,7 @@
         Tab,
         TabGroup,
     } from "@skeletonlabs/skeleton";
-    import VerySimpleModal from "../../playground/VerySimpleModal.svelte";
+    import VerySimpleModal from "../../playground/VerySimpleModal/VerySimpleModal.svelte";
     import FilePicker from "../filestore/FilePicker/FilePicker.svelte";
     import { getContext } from "svelte";
     import type { RootAPI } from "$lib";
