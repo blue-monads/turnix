@@ -4,10 +4,15 @@
     import { NewBookAPI } from "$lib/projects/books";
     import { getContext } from "svelte";
     import FilePicker from "../../../../../filestore/FilePicker/FilePicker.svelte";
+    import { page } from "$app/stores";
+
+    const pid = $page.params["pid"];
+
 
     const modal = getContext("__vs_modal__") as any;
     const rootApi = getContext("__api__") as RootAPI;
     const api = NewBookAPI(rootApi);
+
 
     let title = $state("");
     let notes = $state("");
@@ -83,6 +88,7 @@
                 class="btn btn-sm variant-filled-secondary"
                 onclick={() => {
                     modal.show(FilePicker, {
+                        pid: pid,
                         onPick: async (file: any) => {
                             modal.close();
 

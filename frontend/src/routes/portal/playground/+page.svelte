@@ -39,7 +39,7 @@
 
 <VerySimpleModal bind:showModal={showModal}>
     <div class="w-full md:min-w-[724px] h-full">
-        <FilePicker pid={1} />
+        <FilePicker pid={1} tabMode="project" />
     </div>
 
 </VerySimpleModal>

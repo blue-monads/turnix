@@ -13,6 +13,7 @@
     interface Props {
         api?: RootAPI;
         pid?: number;
+        tabMode?: "all" | "personal" | "project";
         pickMode?: "all" | "file" | "folder" | "images";
         onPick?: (file: File) => void;
     }
@@ -22,6 +23,7 @@
     let {
         api = getContext("__api__") as RootAPI,
         pid,
+        tabMode = "all",
         onPick,
         pickMode = "all",
     } = pp;
@@ -33,12 +35,14 @@
     let personalPath = $state("");
     let projectPath = $state("");
     let uploadFile: any | undefined = $state();
-    let uploading = $state(false)
+    let uploading = $state(false);
 
     let previewFile: File | undefined = $state();
 
     let mode: "listing" | "upload" | "preview" = $state("listing");
-    let value: "personal" | "project" = $state("personal");
+    let value: "personal" | "project" = $state(
+        tabMode === "project" ? "project" : "personal",
+    );
 
     const onDrop = async (e: any) => {
         console.log("onDrop", e);
@@ -67,8 +71,7 @@
     };
 
     const submitUploadFile = async () => {
-        
-        uploading = true
+        uploading = true;
 
         if (value === "personal") {
             await api.addSelfFile(uploadFile.name, personalPath, uploadFile);
@@ -88,7 +91,7 @@
         console.log("@effect");
 
         mode = "listing";
-        previewFile = undefined;        
+        previewFile = undefined;
         if (value === "personal") {
             files = [];
             loadPersonal(personalPath);
@@ -132,23 +135,25 @@
         </div>
 
         <div class="flex items-center">
-            <RadioGroup>
-                <RadioItem
-                    bind:group={value}
-                    name="justify"
-                    value={"personal"}
-                    padding="p-0.5 px-2 text-sm"
-                    >Personal
-                </RadioItem>
-                <RadioItem
-                    bind:group={value}
-                    name="justify"
-                    value={"project"}
-                    padding="p-0.5 px-2 text-sm"
-                >
-                    Project
-                </RadioItem>
-            </RadioGroup>
+            {#if tabMode === "all"}
+                <RadioGroup>
+                    <RadioItem
+                        bind:group={value}
+                        name="justify"
+                        value={"personal"}
+                        padding="p-0.5 px-2 text-sm"
+                        >Personal
+                    </RadioItem>
+                    <RadioItem
+                        bind:group={value}
+                        name="justify"
+                        value={"project"}
+                        padding="p-0.5 px-2 text-sm"
+                    >
+                        Project
+                    </RadioItem>
+                </RadioGroup>
+            {/if}
         </div>
     </div>
 
