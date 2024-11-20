@@ -338,6 +338,19 @@ export class RootAPI {
         return this.client.get<Partial<User>>(`/user/${uid}`)
     }
 
+    getSharedFile = (fid: string) => {
+        return this.client.get(`/file/shared/${fid}`)
+    }
+
+    getSharedFileURL = (fid: string): string => {
+        return `${location.origin}/z/api/v1/file/shared/${fid}`
+    }
+
+    sharedFile = (fid: string, pid?: string) => {
+        return this.client.post(`/file/shared/${fid}?pid=${pid}`, {})
+    }
+
+
     getFileShortKey = (fid: string) => {
         return this.client.post(`/file/${fid}/shortkey`, {})
     }

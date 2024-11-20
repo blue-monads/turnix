@@ -456,6 +456,8 @@ func (d *DB) AddFileShare(fileId, userId, pid int64) (string, error) {
 		CreatedAt: t,
 	}
 
+	pp.Println("@shareid", shareId)
+
 	_, err := table.Insert(data)
 	if err != nil {
 		return "", err

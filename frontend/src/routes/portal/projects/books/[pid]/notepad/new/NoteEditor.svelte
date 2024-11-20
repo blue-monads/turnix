@@ -15,7 +15,7 @@
     let attachments = $state("");
 
     let files = $derived(
-        attachments.split(",").map((f) => rootApi.getFileWithShortKeyURL(f)),
+        attachments.split(",").map((f) => rootApi.getSharedFileURL(f)),
     );
 </script>
 
@@ -62,8 +62,14 @@
                 modal.show(FilePicker, {
                     onPick: async (file: any) => {
                         modal.close();
-                        console.log("@clicked", file);
-                    }
+
+                        const resp = await rootApi.sharedFile(file.id);
+                        if (resp.status !== 200) {
+                            return;
+                        }
+
+                        attachments = attachments === "" ? resp.data : attachments + "," + resp.data;
+                   }
                 });
                     
             }}>

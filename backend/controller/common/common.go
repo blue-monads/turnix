@@ -62,6 +62,10 @@ func (c *CommonController) GetSharedFile(file string, ctx *gin.Context) error {
 	return c.db.GetSharedFile(file, ctx.Writer)
 }
 
+func (c *CommonController) SharedFile(fid, uid, pid int64) (string, error) {
+	return c.db.AddFileShare(fid, uid, pid)
+}
+
 type ShortFileKey struct {
 	FileId    int64 `json:"f"`
 	ExpiresAt int64 `json:"e"`

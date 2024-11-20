@@ -14,8 +14,14 @@ func (a *Server) userProfile(claim *signer.AccessClaim, ctx *gin.Context) (any, 
 	return a.cCommon.GetUserInfo(uid)
 }
 
-func (a *Server) getSharedFile(ctx *gin.Context) {
+func (a *Server) sharedFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	fid, _ := strconv.ParseInt(ctx.Param("file"), 10, 64)
+	pid, _ := strconv.ParseInt(ctx.Query("pid"), 10, 64)
 
+	return a.cCommon.SharedFile(fid, claim.UserId, pid)
+}
+
+func (a *Server) getSharedFile(ctx *gin.Context) {
 	file := ctx.Param("file")
 
 	if strings.Contains(file, ".") {
@@ -28,7 +34,6 @@ func (a *Server) getSharedFile(ctx *gin.Context) {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-
 }
 
 func (s *Server) GetFileShortKey(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
