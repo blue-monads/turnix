@@ -36,7 +36,9 @@
 <VerySimpleModal bind:showModal>
     {#key epoch}
         {#if innerContent}
-            {@render innerContent(pp)}
+            <!-- {@render innerContent(pp)} -->
+            <!-- svelte-ignore svelte_component_deprecated -->
+            <svelte:component this={innerContent} {...pp} />
         {/if}
     {/key}
 </VerySimpleModal>

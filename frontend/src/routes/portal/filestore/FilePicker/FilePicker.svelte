@@ -17,12 +17,16 @@
         onPick?: (file: File) => void;
     }
 
+    let pp: Props = $props();
+
     let {
         api = getContext("__api__") as RootAPI,
         pid,
         onPick,
         pickMode = "all",
-    }: Props = $props();
+    } = pp;
+
+    console.log("@props", $state.snapshot(pp));
 
     let files: File[] = $state([]);
     let loading = $state(false);
