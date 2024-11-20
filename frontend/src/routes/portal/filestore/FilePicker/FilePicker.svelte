@@ -13,6 +13,7 @@
     interface Props {
         api?: RootAPI;
         pid?: number;
+        pickMode?: "all" | "file" | "folder" | "images"
         onPick?: (file: File) => void;
     }
 
@@ -20,6 +21,7 @@
         api = getContext("__api__") as RootAPI,
         pid,
         onPick,
+        pickMode = "all"
     }: Props = $props();
 
     let files: File[] = $state([]);
