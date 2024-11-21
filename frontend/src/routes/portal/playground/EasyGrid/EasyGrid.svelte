@@ -23,7 +23,7 @@
     let datas = $state([]);
 
     let sortMode: "asc" | "desc" = $state("asc");
-    let sortKey: string = $state(undefined);
+    let sortKey: string | undefined = $state(undefined);
     let minId: number = $state(0);
     let maxId: number = $state(0);
     let loading = $state(false);

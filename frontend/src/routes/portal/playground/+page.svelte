@@ -9,6 +9,7 @@
     import FilePicker from "../filestore/FilePicker/FilePicker.svelte";
     import { getContext } from "svelte";
     import type { RootAPI } from "$lib";
+    import RenderBox from "./RenderBox/RenderBox.svelte";
 
     const store = getModalStore();
     const api = getContext("__api__") as RootAPI;
@@ -17,14 +18,6 @@
     let showModal = $state(false);
 
 </script>
-
-<div class="flex flex-col p-4">
-    <h1>Hello</h1>
-
-    <!-- FilePicker -->
-  
-</div>
-
 
 <button 
     class="btn btn-sm variant-filled" 
@@ -35,6 +28,16 @@
     >
     toggle
 </button>
+
+
+
+<RenderBox 
+    pid={"1"} 
+    rootApi={api} 
+    htmlSource={"<h1>RenderBox</h1>"}  
+    title={"RenderBox TEST"}
+
+    />
 
 
 <VerySimpleModal bind:showModal={showModal}>

@@ -50,6 +50,13 @@
                 Name: "explore",
                 Class: "variant-filled-primary",
                 Action: async (id, data) => {
+
+                },
+            },
+            {
+                Name: "edit",
+                Class: "variant-filled-primary",
+                Action: async (id, data) => {
                     if (data.report_type === "html_report") {
                         goto(
                             `/z/pages/portal/projects/books/${pid}/report/template/edit/html?template_id=${id}`,
