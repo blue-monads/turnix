@@ -8,25 +8,32 @@
 
     const pid = $page.params["pid"];
 
-
     const modal = getContext("__vs_modal__") as any;
     const rootApi = getContext("__api__") as RootAPI;
-    const api = NewBookAPI(rootApi);
 
+    interface Props {
+        data?: Record<string, any>;
+        onSave: (data: Record<string, any>) => Promise<void>;
+    }
 
-    let title = $state("");
-    let notes = $state("");
-    let attachments = $state("");
+    let { data, onSave }: Props = $props();
+
+    let title = $state(data?.title || "");
+    let notes = $state(data?.notes || "");
+    let attachments: string = $state(data?.attachments || "");
 
     let files = $derived(
-        attachments.split(",").
-        filter(Boolean).
-        map((f) => rootApi.getSharedFileURL(f)),
+        attachments
+            .split(",")
+            .filter(Boolean)
+            .map((f) => rootApi.getSharedFileURL(f)),
     );
 </script>
 
 <div class="card">
-    <header class="card-header"><h4 class="h4">Add Note</h4></header>
+    <header class="card-header">
+        <h4 class="h4">{data ? "Edit Note" : "Add Note" }</h4>
+    </header>
     <section class="p-4 flex flex-col gap-4">
         <label class="label"
             ><span>Title</span>
@@ -56,30 +63,24 @@
             >
                 <div class="flex items-center gap-2">
                     {#each files as file}
-                            <div
-                                class="flex-shrink-0 p-1 rounded bg-white relative"
+                        <div
+                            class="flex-shrink-0 p-1 rounded bg-white relative"
+                        >
+                            <button
+                                class="btn btn-sm absolute top-0 right-0"
+                                onclick={() => {
+                                    attachments = attachments.replace(file, "");
+                                }}
                             >
-                                <button
-                                    class="btn btn-sm absolute top-0 right-0"
-                                    onclick={() => {
-                                        attachments = attachments.replace(
-                                            file,
-                                            "",
-                                        );
-                                    }}
-                                >
-                                    <SvgIcon
-                                        name="x-mark"
-                                        className="w-4 h-4"
-                                    />
-                                </button>
+                                <SvgIcon name="x-mark" className="w-4 h-4" />
+                            </button>
 
-                                <img
-                                    src={file}
-                                    alt=""
-                                    class="w-full max-w-32 h-auto"
-                                />
-                            </div>
+                            <img
+                                src={file}
+                                alt=""
+                                class="w-full max-w-32 h-auto"
+                            />
+                        </div>
                     {/each}
                 </div>
             </div>
@@ -114,6 +115,13 @@
         <button
             type="button"
             class="btn variant-filled"
+            onclick={() => {
+                onSave({
+                    title,
+                    notes,
+                    attachments,
+                });
+            }}
             disabled={!title || !notes}
             >save
         </button>

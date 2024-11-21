@@ -60,8 +60,8 @@
         action_key={"id"}
         key_names={[
             ["id", "ID"],
-            ["name", "Name"],
-
+            ["title", "Title"],
+            ["notes", "Notes"]
         ]}
         datas={datas}
         color={["ctype"]}
@@ -70,7 +70,7 @@
                 Name: "edit",
                 Class: "variant-filled-primary",
                 Action: async (id, data) => {
-
+                    goto(`/z/pages/portal/projects/books/${pid}/notepad/edit?id=${id}`);
                 },
             },
             {
