@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { RootAPI } from "$lib";
+    import type { IFrameIPCMessage, RenderBoxHandle } from "./renderbox";
 
     interface Props {
         pid: string;
@@ -7,19 +8,9 @@
         htmlSource: string;
         title?: string;
         handle?: RenderBoxHandle;
-        ipcHandler?:  () => void;
-    }
+        ipcHandler?:  (ev: MessageEvent) => Promise<void>;
+    };
 
-    export interface IFrameIPCMessage {
-        type: "sql_query" | "api_call" | "ping";
-        name?: string;
-        data: any;
-        msgId: number;
-    }
-
-    export interface RenderBoxHandle {
-        reload: () => void;
-    }
 
     let {
         pid,
@@ -27,6 +18,7 @@
         rootApi,
         htmlSource,
         handle = $bindable(),
+        ipcHandler,
     }: Props = $props();
 
     let epoch = $state(0);
@@ -45,6 +37,12 @@
         const data = ev.data as IFrameIPCMessage;
         console.log("onFrameMessage", data);
 
+        if (ipcHandler) {
+            await ipcHandler(ev);
+            return;
+        }
+
+
         if (data.type === "sql_query") {
             console.log("sql_query", data);
 
@@ -52,9 +50,8 @@
             const sqlCode = data.data["sql"];
 
             try {
-                const resp = await rootApi.runProjectSQL(pid, {
-                    input: sqlCode,
-                    name: data.name as string,
+                const resp = await rootApi.runProjectSQL2(pid, {
+                    qstr: sqlCode,                   
                     data: args,
                 });
 
