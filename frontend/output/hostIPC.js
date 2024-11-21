@@ -2,6 +2,7 @@
 
     let pendingMessages = {}
     let messageId = 0;
+    let parent_port = null;
 
     window.addEventListener("message", (ev) => {
         console.log("message", ev);
@@ -11,7 +12,7 @@
         }
         const port = ev.ports[0];
         port.onmessage = handleMessage;
-        window["__parent_port__"] = port;
+        parent_port = port;
     }, false);
 
     const handleMessage = (ev) => {
@@ -31,13 +32,14 @@
             pendingMessages[msgId] = resolve;
         });
         data["msgId"] = msgId;
-        const port = window["__parent_port__"]
+        const port = parent_port;
         port?.postMessage(data);
         return p;
     }
 
     window["hostIPC"] = {
         sendMessage,
+        getPort: () => parent_port,
     }
     
 })();
