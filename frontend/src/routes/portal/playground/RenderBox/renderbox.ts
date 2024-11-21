@@ -7,4 +7,5 @@ export interface IFrameIPCMessage {
 
 export interface RenderBoxHandle {
     reload: () => void;
+    print: () => void;
 }

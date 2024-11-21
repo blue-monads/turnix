@@ -31,6 +31,9 @@
             epoch = epoch + 1;
             iframe = undefined;
         },
+        print: () => {
+            iframe?.contentWindow?.print();
+        },
     };
 
     const onFrameMessage = async (ev: MessageEvent) => {
