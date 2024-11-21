@@ -1,1 +1,0 @@
-import{M as n,J as r,y as c,al as i,Q as y,I as _,X as h,z as k}from"./runtime.D6lgFUio.js";function d(s,t,o){r&&c();var e=s,f=h,a;n(()=>{i(f,f=t())&&(a&&y(a),a=_(()=>o(e)))}),r&&(e=k)}export{d as k};

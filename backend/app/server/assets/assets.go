@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/bornjre/turnix/backend/utils/libx/httpx"
-	"github.com/bornjre/turnix/frontend"
+	"github.com/bornjre/turnix/frontend/output"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 )
@@ -52,7 +52,7 @@ func PagesRoutesServer() gin.HandlerFunc {
 
 		pp.Println("@FILE ==>", ppath)
 
-		out, err := frontend.BuildProd.ReadFile(path.Join("build", ppath))
+		out, err := output.BuildProd.ReadFile(path.Join("build", ppath))
 		if err != nil {
 			pp.Println("@open_err", err.Error())
 			return
