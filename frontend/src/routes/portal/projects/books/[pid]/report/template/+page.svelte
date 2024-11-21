@@ -51,11 +51,21 @@
                 Class: "variant-filled-primary",
                 Action: async (id, data) => {
 
+                    if (data.report_type === "html_report") {
+                        goto(
+                            `/z/pages/portal/projects/books/${pid}/report/template/preview/html?template_id=${id}`,
+                        );
+                    } else {
+                        goto(
+                            `/z/pages/portal/projects/books/${pid}/report/template/preview/sql?template_id=${id}`,
+                        );
+                    }
+
                 },
             },
             {
                 Name: "edit",
-                Class: "variant-filled-primary",
+                Class: "variant-filled-secondary",
                 Action: async (id, data) => {
                     if (data.report_type === "html_report") {
                         goto(
