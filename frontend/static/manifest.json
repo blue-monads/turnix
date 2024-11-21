@@ -1,10 +1,10 @@
 {
-    "name": "Loopy Action",
-    "description": "Automation with human in loop.",
+    "name": "Turnix",
+    "description": "Turnix is application framework for building web apps.",
     "version": "1.0.0",
     "manifest_version": 3,
     "action": {
-      "default_title": "Loopy Action",
+      "default_title": "Turnix SOB",
       "default_icon": "favicon.png",
       "default_popup": "index.html"
     }
