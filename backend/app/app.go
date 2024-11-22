@@ -69,6 +69,7 @@ func New(opts Options) *App {
 		ProjectBuilders: app.projects,
 		Controller:      app.controller,
 		LocalSocket:     opts.LocalSocket,
+		DevMode:         os.Getenv("TURNIX_DEV_MODE") == "true",
 	})
 
 	return app

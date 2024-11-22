@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/bornjre/turnix/backend/app/server/assets"
 	"github.com/bornjre/turnix/backend/utils/libx/httpx"
 	"github.com/gin-gonic/gin"
 )
@@ -155,15 +154,6 @@ func (s *Server) noRoute(ctx *gin.Context) {
 			return
 		}
 	}
-
-}
-
-// during dev we just proxy to dev vite server running otherwise serve files from build folder
-func (s *Server) pages(z *gin.RouterGroup) {
-	rfunc := assets.PagesRoutesServer()
-
-	z.GET("/pages", rfunc)
-	z.GET("/pages/*files", rfunc)
 
 }
 

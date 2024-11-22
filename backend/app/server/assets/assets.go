@@ -16,6 +16,7 @@ import (
 const NoPreBuildFiles = false
 
 func PagesRoutesServer() gin.HandlerFunc {
+
 	var proxy *httputil.ReverseProxy
 	pserver := os.Getenv("FRONTEND_DEV_SERVER")
 

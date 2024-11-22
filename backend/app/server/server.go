@@ -36,6 +36,8 @@ type Server struct {
 	localSocket string
 	ldListener  net.Listener
 
+	devMode bool
+
 	// controllers
 
 	cAuth    *auth.AuthController
@@ -54,6 +56,7 @@ type Options struct {
 	ProjectBuilders map[string]*xproject.Defination
 	Controller      *controller.RootController
 	LocalSocket     string
+	DevMode         bool
 }
 
 func New(opts Options) *Server {
@@ -62,6 +65,8 @@ func New(opts Options) *Server {
 	if err != nil {
 		panic(err)
 	}
+
+	opts.ProjectBuilders["abc"] = &xproject.Defination{}
 
 	s := &Server{
 		db:          opts.DB,
@@ -74,6 +79,7 @@ func New(opts Options) *Server {
 		cSelf:       opts.Controller.GetSelfController(),
 		cCommon:     opts.Controller.GetCommonController(),
 		localSocket: opts.LocalSocket,
+		devMode:     opts.DevMode,
 	}
 
 	s.injector = Injector{
