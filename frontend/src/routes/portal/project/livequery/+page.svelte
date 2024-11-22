@@ -1,7 +1,5 @@
 <script lang="ts">
     import {
-        AppBar,
-        getModalStore,
         Tab,
         TabGroup,
     } from "@skeletonlabs/skeleton";
@@ -9,8 +7,6 @@
     import {
         sql, SQLite
     } from "@codemirror/lang-sql";
-    import { autocompletion } from "@codemirror/autocomplete";
-    import { NewBookAPI } from "$lib/projects/books";
     import { getContext } from "svelte";
     import type { RootAPI } from "$lib/api";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
