@@ -34,7 +34,6 @@
         loading = false;
     };
 
-
     load();
 
     let handle: RenderBoxHandle | undefined;
@@ -52,7 +51,14 @@
                     >
                 </li>
                 <li class="crumb-separator" aria-hidden="true">&rsaquo;</li>
-                <li>Reports</li>
+                <li>
+                    <a
+                        class="anchor"
+                        href={`/z/pages/portal/projects/books/${pid}/report`}
+                        >Reports</a
+                    >
+                </li>
+
                 <li class="crumb-separator" aria-hidden="true">&rsaquo;</li>
                 <li>Editor</li>
             </ol>
