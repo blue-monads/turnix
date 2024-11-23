@@ -66,7 +66,7 @@ func New(opts Options) *Server {
 		panic(err)
 	}
 
-	opts.ProjectBuilders["abc"] = &xproject.Defination{}
+	// opts.ProjectBuilders["abc"] = &xproject.Defination{}
 
 	s := &Server{
 		db:          opts.DB,
