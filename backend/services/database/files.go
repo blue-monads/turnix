@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/jaevor/go-nanoid"
@@ -442,11 +443,30 @@ type FileShare struct {
 var generator, _ = nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12)
 
 func (d *DB) AddFileShare(fileId, userId, pid int64) (string, error) {
+
+	file, err := d.GetFileMeta(fileId)
+	if err != nil {
+		return "", err
+	}
+
+	if file.OwnerUser != userId {
+		scope, err := d.GetProjectUserScope(userId, file.OwnerProj)
+		if err != nil {
+			return "", err
+		}
+
+		if scope == "" {
+			return "", fmt.Errorf("file not found")
+		}
+	}
+
+	ext := filepath.Ext(file.Name)
+
 	table := d.fileSharesTable()
 
 	t := &time.Time{}
 
-	shareId := generator()
+	shareId := fmt.Sprintf("%s%s", generator(), ext)
 
 	data := &FileShare{
 		ID:        shareId,
@@ -458,7 +478,7 @@ func (d *DB) AddFileShare(fileId, userId, pid int64) (string, error) {
 
 	pp.Println("@shareid", shareId)
 
-	_, err := table.Insert(data)
+	_, err = table.Insert(data)
 	if err != nil {
 		return "", err
 	}
