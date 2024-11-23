@@ -5,7 +5,7 @@ import (
 
 	// modules
 
-	"github.com/bornjre/turnix/backend/distro"
+	"github.com/bornjre/turnix/backend/distro/devmode"
 
 	_ "github.com/bornjre/turnix/backend/modules/books"
 
@@ -15,28 +15,6 @@ import (
 
 func main() {
 
-	app, err := distro.NewApp()
-	if err != nil {
-		panic(err)
-	}
-
-	defer app.Stop()
-
-	mig, err := app.NeedsMigrate()
-	if err != nil {
-		panic(err)
-	}
-
-	if mig {
-		err = app.RunNormalSeed()
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	err = app.Start()
-	if err != nil {
-		panic(err)
-	}
+	devmode.Run()
 
 }
