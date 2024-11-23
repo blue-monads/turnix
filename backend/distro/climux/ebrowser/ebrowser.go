@@ -3,7 +3,9 @@ package ebrowser
 import (
 	_ "embed"
 	"fmt"
+	"net/url"
 	"os/exec"
+	"strings"
 	"sync"
 
 	"github.com/blue-monads/turnix/backend/distro/climux"
@@ -59,9 +61,43 @@ func (e *EbrowserApp) Run() {
 func (e *EbrowserApp) __BindEbrowserRPC(name string, opts map[string]string) {
 	pp.Println("@ctx", name, opts)
 
-	if name == "local-navigate" {
+	switch name {
+	case "local-navigate":
 		e.webview.Navigate(opts["url"])
+	case "remote-navigate":
+		e.remoteNavigate(opts["url"])
+	default:
+		panic(fmt.Errorf("unknown rpc name %s", name))
 	}
+
+}
+
+func (e *EbrowserApp) remoteNavigate(urlstr string) {
+
+	pp.Println("@remoteNavigate/1", urlstr)
+
+	u, err := url.Parse(urlstr)
+	if err != nil {
+		panic(err)
+	}
+
+	hostName := u.Hostname()
+
+	pp.Println("@remoteNavigate/2", hostName)
+
+	if strings.HasSuffix(hostName, ".lpweb") {
+		keyHash := strings.TrimSuffix(hostName, ".lpweb")
+		u.Scheme = "http"
+		u.Host = fmt.Sprintf("%s.localhost:%d", keyHash, e.port)
+
+		pp.Println("@remoteNavigate/3", u.String())
+
+		e.webview.Navigate(u.String())
+	} else {
+		pp.Println("@remoteNavigate/4", urlstr)
+		e.webview.Navigate(urlstr)
+	}
+
 }
 
 func (e *EbrowserApp) Close() {

@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { AppBar } from "@skeletonlabs/skeleton";
-    import { buildApi, type StartAPI } from "../startAPI";
+    import { type StartAPI } from "../startAPI";
     import { getContext } from "svelte";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
@@ -40,6 +39,14 @@
 
         rpcFunc("local-navigate", {
             url: `http://localhost${port}/z/pages`,
+        });
+    };
+
+    const remoteNavigate = () => {
+        const rpcFunc = (window as any)["__ebrowser_rpc__"];
+
+        rpcFunc("remote-navigate", {
+            url: remoteAddr,
         });
     };
 </script>
@@ -120,12 +127,15 @@
         <label>
             <span>Remote Address</span>
             <div class="flex flex-col gap-2">
-                <input type="text" class="input p-1"
-                placeholder="http://xxyyzz-7773.lpweb" 
-                bind:value={remoteAddr} />
+                <input
+                    type="text"
+                    class="input p-1"
+                    placeholder="http://xxyyzz-7773.lpweb"
+                    bind:value={remoteAddr}
+                />
                 <button
                     class="btn variant-soft-success"
-                    onclick={async () => {}}
+                    onclick={remoteNavigate}
                 >
                     Explore
                 </button>
