@@ -25,9 +25,10 @@ type Defination struct {
 	Version             string
 	NewFormSchemaFields []PTypeField
 	Perminssions        []string
-	EventTypes          []string
 	GlobalJS            []byte
 	AssetData           fs.FS
+
+	RegisteredTables []Table
 
 	OnAPIMount       func(RouterGroup *gin.RouterGroup)
 	OnPageRequest    func(ctx *gin.Context)
@@ -45,4 +46,9 @@ type PTypeField struct {
 	Disabled   bool     `json:"disabled"`
 	Options    []string `json:"options"`
 	IsRequired bool     `json:"is_required"`
+}
+
+type Table struct {
+	Name      string
+	Relations []string
 }

@@ -10,8 +10,8 @@
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let contacts: object[] = [];
-    let loadingContacts = true;
+    let contacts: object[] = $state([]);
+    let loadingContacts = $state(true);
 
     const loadData = async () => {
         loadingContacts = true;
@@ -26,17 +26,19 @@
 
     loadData();
 
-    $: __clientIndex = contacts.reduce((acc: any, item: any) => {
+    let __clientIndex = $derived(contacts.reduce((acc: any, item: any) => {
         const item_id = item["id"];
         const name = item["name"];
         acc[item_id] = name;
         return acc;
-    }, {});
+    }, {}));
 
     const submit = async (data: Record<string, any>) => {
         console.log("@submit/data", data);
 
-        const resp = await api.addSale(pid, data);
+        data.sale.sales_date = new Date(data.sale.sales_date).toISOString();
+
+        const resp = await api.addSale(pid, data as any);
         if (resp.status !== 200) {
             return resp.data.message;
         }
@@ -54,6 +56,7 @@
     <Loader />
 {:else}
     <SaleMaker 
+        name="New Sale"
         pid={Number(pid)} 
         {api} 
         contactsNameIndex={__clientIndex}

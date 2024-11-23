@@ -11,7 +11,7 @@
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let cats: any[] = [];
+    let cats: any[] = $state([]);
 
     const load = async () => {
         const resp = await api.listProducts(pid);

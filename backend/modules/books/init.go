@@ -8,21 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var eventTypes = []string{
-	"after_txn_add",
-	"after_txn_edit",
-	"after_txn_remove",
-	"before_txn_remove",
-	"before_txn_add",
-	"before_txn_edit",
-	"after_account_add",
-	"after_account_edit",
-	"after_account_remove",
-	"before_account_remove",
-	"before_account_add",
-	"before_account_edit",
-}
-
 var perminssions = []string{"read", "write", "read/write"}
 
 func init() {
@@ -49,8 +34,6 @@ func New(opt xproject.BuilderOption) (*xproject.Defination, error) {
 		Icon:                "book-open",
 		NewFormSchemaFields: []xproject.PTypeField{},
 		Perminssions:        perminssions,
-		EventTypes:          eventTypes,
-
 		OnDeInit: func(pid int64) error {
 			return mod.DeInit(pid)
 		},

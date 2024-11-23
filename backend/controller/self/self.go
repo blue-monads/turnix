@@ -87,8 +87,8 @@ func (a *SelfController) ListFileShares(userId int64, fileId int64) ([]database.
 	return a.db.ListFileShares(fileId)
 }
 
-func (a *SelfController) AddFileShare(userId int64, fileId int64) (int64, error) {
-	return a.db.AddFileShare(fileId, userId)
+func (a *SelfController) AddFileShare(userId int64, fileId, pid int64) (string, error) {
+	return a.db.AddFileShare(fileId, userId, pid)
 }
 
 func (a *SelfController) DeleteFileShare(userId int64, Id string) error {

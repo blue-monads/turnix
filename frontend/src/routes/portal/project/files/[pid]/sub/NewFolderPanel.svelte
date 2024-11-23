@@ -4,7 +4,7 @@
     const store = getModalStore();
 
 
-    let value = "";
+    let value = $state("");
 
     const onNewName = $store[0].meta["onNewName"];
 
@@ -29,7 +29,7 @@
         <div class="inline-flex justify-end">
             <button
                 disabled={value === ""}
-                on:click={() => {
+                onclick={() => {
                     onNewName(value)
                     store.close()
                 }}

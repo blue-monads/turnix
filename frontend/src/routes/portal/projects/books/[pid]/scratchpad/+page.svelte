@@ -1,1 +1,0 @@
-<div>journal</div>

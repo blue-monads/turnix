@@ -11,8 +11,8 @@
   let pid = $page.params["pid"];
   let mid = $params["mid"];
   let message = "";
-  let data = {};
-  let loading = true;
+  let data = $state({});
+  let loading = $state(true);
 
   const api = NewUnloopAPI(getContext("__api__") as RootAPI);
 

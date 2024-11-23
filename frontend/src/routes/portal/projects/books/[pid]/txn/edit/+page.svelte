@@ -21,20 +21,20 @@
     const api = NewBookAPI(getContext("__api__") as RootAPI);
     const store = getModalStore();
 
-    let loading = true;
+    let loading = $state(true);
 
     let oldData: TxnData;
     let debitLineId = 0;
     let creditLineId = 0;
     let firstIsDebit = true;
 
-    let title = "";
-    let notes = "";
-    let debit_account_id = 0;
-    let credit_account_id = 0;
-    let debit_amount = 0;
-    let credit_amount = 0;
-    let reference_id = "";
+    let title = $state("");
+    let notes = $state("");
+    let debit_account_id = $state(0);
+    let credit_account_id = $state(0);
+    let debit_amount = $state(0);
+    let credit_amount = $state(0);
+    let reference_id = $state("");
 
     const onSubmit = async (data: TxnData) => {
         let first_line_data: Record<string, any> = {};

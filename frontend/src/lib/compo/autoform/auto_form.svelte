@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import KvEditor from "./_kv_editor.svelte";
   import type { Schema } from "./form";
   import MultiText from "./_multi_text.svelte";
@@ -7,27 +9,43 @@
   import { createEventDispatcher } from "svelte";
   import SvgIcon from "../icons/SvgIcon.svelte";
 
-  export let schema: Schema;
-  export let data: Record<string, any> = {};
-  export let modified = false;
-  export let message = "";
-  export let onSave: ((data: any) => Promise<void>) | undefined = undefined;
-  export let noSubmit = false;
+  interface Props {
+    schema: Schema;
+    data?: Record<string, any>;
+    modified?: boolean;
+    message?: string;
+    onSave?: ((data: any) => Promise<void>) | undefined;
+    noSubmit?: boolean;
+  }
+
+  let {
+    schema,
+    data = {},
+    modified = $bindable(false),
+    message = "",
+    onSave = undefined,
+    noSubmit = false
+  }: Props = $props();
 
   const dispatch = createEventDispatcher();
 
-  let mod_data = {};
-  $: _open_selects = {};
+  let mod_data = $state({});
+  let _open_selects;
+  run(() => {
+    _open_selects = {};
+  });
 
-  $: console.log(
-    `FORM_DEBUG => ${schema.name}`,
-    "DATA",
-    mod_data,
-    "ORIGINAL_DATA",
-    data,
-    "SCHEMA",
-    schema,
-  );
+  run(() => {
+    console.log(
+      `FORM_DEBUG => ${schema.name}`,
+      "DATA",
+      mod_data,
+      "ORIGINAL_DATA",
+      data,
+      "SCHEMA",
+      schema,
+    );
+  });
 
   const get = (name: string): any => data[name] || "";
   const set = (name: string) => (ev: any) => {
@@ -71,7 +89,7 @@
             type="text"
             list="field-{idx}-datalist"
             value={get(field.key_name)}
-            on:change={set(field.key_name)}
+            onchange={set(field.key_name)}
             disabled={field.disabled}
             class="p-2 input"
           />
@@ -87,7 +105,7 @@
             type="email"
             list="field-{idx}-datalist"
             value={get(field.key_name)}
-            on:change={set(field.key_name)}
+            onchange={set(field.key_name)}
             disabled={field.disabled}
             class="p-2 input"
           />
@@ -99,7 +117,7 @@
                 type="text"
                 list="field-{idx}-datalist"
                 value={get(field.key_name)}
-                on:change={set(field.key_name)}
+                onchange={set(field.key_name)}
                 disabled={field.disabled}
                 class="p-2 input"
               />
@@ -114,7 +132,7 @@
                 class="p-1 input"
                 id="field-{idx}"
                 value={get(field.key_name)}
-                on:change={set(field.key_name)}
+                onchange={set(field.key_name)}
               >
                 {#each field.options || [] as opt}
                   <option value={opt}>{opt}</option>
@@ -124,7 +142,7 @@
 
             <div class="w-10 p-1 text-gray-700">
               <button
-                on:click={() => {
+                onclick={() => {
                   _open_selects[idx] = !_open_selects[idx];
                   _open_selects = _open_selects;
                 }}
@@ -142,7 +160,7 @@
             list="field-{idx}-datalist"
             value={get(field.key_name) ||
               (field["slug_gen"] ? field.slug_gen() : newSlug(field.key_name))}
-            on:change={set(field.key_name)}
+            onchange={set(field.key_name)}
             disabled={field.disabled}
             class="p-2 shadow rounded-lg bg-gray-100 outline-none focus:bg-gray-200"
           />
@@ -155,7 +173,7 @@
           <textarea
             id={`field-${idx}`}
             value={get(field.key_name)}
-            on:change={set(field.key_name)}
+            onchange={set(field.key_name)}
             disabled={field.disabled}
             class="p-2 textarea"
           />
@@ -164,7 +182,7 @@
             type="number"
             id={`field-${idx}`}
             value={get(field.key_name)}
-            on:change={setNumber(field.key_name)}
+            onchange={setNumber(field.key_name)}
             disabled={field.disabled}
             class="p-2 shadow rounded-lg bg-gray-100 outline-none focus:bg-gray-200"
           />
@@ -174,7 +192,7 @@
               type="checkbox"
               id={`field-${idx}`}
               value={get(field.key_name) || false}
-              on:change={setBool(field.key_name)}
+              onchange={setBool(field.key_name)}
               class="p-2"
             />
           </div>

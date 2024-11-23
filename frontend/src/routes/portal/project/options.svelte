@@ -8,7 +8,7 @@
   const modalStore = getModalStore();
 
   let datas = [];
-  let loading = true;
+  let loading = $state(true);
 
   const load = async () => {
     let api: RootAPI = $modalStore[0].meta["api"];
@@ -27,6 +27,7 @@
   let message = "";
 
   const data = $modalStore[0].meta["data"];
+  const pid = data["id"];
 </script>
 
 {#if loading}
@@ -45,7 +46,7 @@
     <div class="logo-cloud flex flex-col gap-1 border p-2">
       <a
         class="logo-item"
-        on:click={() => {
+        onclick={() => {
           modalStore.close();
         }}
         href="/z/pages/portal/projects/{['ptype']}?pid={data['id']}"
@@ -55,10 +56,10 @@
       </a>
       <a
         class="logo-item"
-        on:click={() => {
+        onclick={() => {
           modalStore.close();
         }}
-        href={`/z/pages/portal/project/files/${data["id"]}`}
+        href={`/z/pages/portal/project/files/${pid}`}
       >
         <SvgIcon name="folder" className="w-6 h-6" />
         <span>Project Files</span>
@@ -66,21 +67,32 @@
 
       <a
         class="logo-item"
-        on:click={() => {
+        onclick={() => {
           modalStore.close();
         }}
-        href={`/z/pages/portal/project/plugins?pid=${data["id"]}`}
+        href={`/z/pages/portal/project/plugins?pid=${pid}`}
       >
         <SvgIcon name="squares-2x2" className="w-6 h-6" />
         <span>Plugins</span>
       </a>
 
       <a
+      class="logo-item"
+      onclick={() => {
+        modalStore.close();
+      }}
+      href={`/z/pages/portal/project/tools?pid=${pid}`}
+    >
+      <SvgIcon name="wrench-screwdriver" className="w-6 h-6" />
+      <span>Tools</span>
+    </a>
+
+      <a
         class="logo-item"
-        on:click={() => {
+        onclick={() => {
           modalStore.close();
         }}
-        href={`/z/pages/portal/project/users?pid=${data["id"]}`}
+        href={`/z/pages/portal/project/users?pid=${pid}`}
       >
         <SvgIcon name="users" className="w-6 h-6" />
         <span>Users and Permissions</span>
@@ -90,18 +102,7 @@
 
       <a
         class="logo-item"
-        on:click={() => {
-          modalStore.close();
-        }}
-        href={`/z/pages/portal/hooks?ptype=${data["ptype"]}&pid=${data["id"]}`}
-      >
-        <SvgIcon name="code-bracket-square" className="w-6 h-6" />
-        <span>Project Hooks</span>
-      </a>
-
-      <a
-        class="logo-item"
-        on:click={() => {
+        onclick={() => {
           modalStore.close();
         }}
         href="/z/pages/portal/projects"

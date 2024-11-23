@@ -1,10 +1,19 @@
 <script lang="ts">
   import { formatCurrency } from "$lib/utils";
   import type { TxnLine } from "./txntype";
+  import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
+  import { createEventDispatcher, getContext, onMount } from "svelte";
 
-  export let lineData: TxnLine[] = [];
-  export let accountsIndex: Record<number, string>;
-  export let pid: string;
+  const dispatcher = createEventDispatcher();
+
+
+  interface Props {
+    lineData?: TxnLine[];
+    accountsIndex: Record<number, string>;
+    pid: string;
+  }
+
+  let { lineData = [], accountsIndex, pid }: Props = $props();
 
   console.log("@lines", lineData);
 </script>
@@ -31,11 +40,11 @@
           <td role="gridcell">{txn.txn.id}</td>
           <td role="gridcell">{txn.txn.title}</td>
           <td role="gridcell">{txn.txn.notes}</td>
-          <td role="gridcell"></td>
-          <td role="gridcell"></td>
-          <td role="gridcell"></td>
+          <td role="gridcell" />
+          <td role="gridcell" />
+          <td role="gridcell" />
 
-          <td role="gridcell"></td>
+          <td role="gridcell" />
           <td role="gridcell">
             <a
               class="underline"
@@ -48,9 +57,9 @@
 
         {#each txn.lines as line}
           <tr>
-            <td role="gridcell"></td>
-            <td role="gridcell"></td>
-            <td role="gridcell"></td>
+            <td role="gridcell" />
+            <td role="gridcell" />
+            <td role="gridcell" />
             <td role="gridcell">
               <span class="chip variant-filled">
                 {accountsIndex[line.account_id] || ""}</span
@@ -70,11 +79,37 @@
                 </span>
               {/if}
             </td>
-            <td role="gridcell"></td>
-            <td role="gridcell"></td>
+            <td role="gridcell" />
+            <td role="gridcell" />
           </tr>
         {/each}
       {/each}
     </tbody>
   </table>
+
+  <div class="flex justify-end gap-2 p-1">
+    <div class="flex gap-2">
+      <button
+        class="btn btn-sm bg-gray-100"
+
+        
+        onclick={() => {
+          console.log("@prev");
+          dispatcher("prev_page");
+        }}
+      >
+        <SvgIcon className="h-4 w-4" name="chevron-left" />
+      </button>
+
+      <button
+        class="btn btn-sm bg-gray-100"
+        onclick={() => {
+          console.log("@next");
+          dispatcher("next_page");
+        }}
+      >
+        <SvgIcon className="h-4 w-4" name="chevron-right" />
+      </button>
+    </div>
+  </div>
 </div>

@@ -1,107 +1,125 @@
 package engine
 
 import (
-	"sync"
-
-	hookengine "github.com/bornjre/turnix/backend/engine/hookEngine"
-	pluginengine "github.com/bornjre/turnix/backend/engine/pluginAction"
 	"github.com/bornjre/turnix/backend/engine/pool"
 
+	"encoding/json"
+	"fmt"
+
 	"github.com/bornjre/turnix/backend/services/database"
-	"github.com/bornjre/turnix/backend/services/signer"
-	"github.com/bornjre/turnix/backend/xtypes/xengine"
-	"github.com/rs/xid"
-	"github.com/rs/zerolog"
+	"github.com/dop251/goja"
 )
 
 type Engine struct {
-	handlers     map[string][]handlerRef
-	hLock        sync.RWMutex
-	hookEngine   *hookengine.HookEngine
-	pluginEngine *pluginengine.PluginAction
+	pool *pool.GojaPool
+	db   *database.DB
 }
 
-type handlerRef struct {
-	handler  xengine.EventHandler
-	priority int16
-}
-
-func New(db *database.DB, signer *signer.Signer, logger zerolog.Logger) *Engine {
-
-	gpool := pool.New(logger)
-
+func New(pool *pool.GojaPool) *Engine {
 	return &Engine{
-		handlers: make(map[string][]handlerRef),
-		hLock:    sync.RWMutex{},
-		hookEngine: hookengine.New(hookengine.Options{
-			DB:       db,
-			Signer:   signer,
-			Logger:   logger,
-			GojaPool: gpool,
-		}),
-		pluginEngine: pluginengine.New(gpool),
+		pool: pool,
+	}
+}
+
+func (p *Engine) Run(pid, plugId int64, name string, data map[string]any) (any, error) {
+
+	jsHandle := p.pool.Get(pid, true)
+
+	if jsHandle == nil {
+		return nil, fmt.Errorf("no goja handle found")
 	}
 
-}
+	defer p.pool.Set(jsHandle)
 
-func (e *Engine) Init() error {
-	return e.hookEngine.Init()
-}
+	if jsHandle.LastPid != pid {
 
-func (e *Engine) Invalidate(pid int64) error {
-	return e.hookEngine.Invalidate(pid)
-}
-
-func (e *Engine) Emit(ev xengine.EventNew) (*xengine.EventResult, error) {
-
-	e.hLock.RLock()
-
-	handlers := e.handlers[ev.Type]
-
-	e.hLock.RUnlock()
-
-	ctx := xengine.EventContext{
-		EventId:       xid.New().String(),
-		Event:         &ev,
-		PreventAction: false,
-		Data:          map[string]any{},
-	}
-
-	for _, hr := range handlers {
-		err := hr.handler(ctx)
+		plugin, err := p.db.GetProjectPlugin(0, pid, plugId)
 		if err != nil {
 			return nil, err
 		}
+
+		pgm, err := goja.Compile(fmt.Sprintf("project_plugin_%d", pid), plugin.ServerCode, true)
+		if err != nil {
+			return nil, err
+		}
+
+		jsHandle.LastPid = 0
+		_, err = jsHandle.JS.RunProgram(pgm)
+		if err != nil {
+			return nil, err
+		}
+
+		jsHandle.Bind()
+		jsHandle.JS.SetFieldNameMapper(goja.TagFieldNameMapper("json", true))
+
+		jsHandle.LastPid = pid
 	}
 
-	if ev.Project == 0 || !ev.AllowHook {
-		return &xengine.EventResult{
-			PreventAction: ctx.PreventAction,
-			Errors:        map[string]string{},
-			Data:          ctx.Data,
-		}, nil
+	var entry func(ctx *goja.Object)
+
+	eval := jsHandle.JS.Get(name)
+	if eval == nil {
+		return nil, fmt.Errorf("%s function not found in script", name)
 	}
 
-	return e.hookEngine.Emit(ctx)
+	err := jsHandle.JS.ExportTo(eval, &entry)
+	if err != nil {
+		return nil, err
+	}
+
+	obj := buildEventObject(jsHandle.JS, data)
+
+	entry(obj)
+
+	return nil, nil
+}
+
+func (p *Engine) LiveRun(pid int64, name, source string, data map[string]any) (any, error) {
+
+	rt := goja.New()
+
+	_, err := rt.RunString(source)
+	if err != nil {
+		return nil, err
+	}
+
+	var entry func(ctx *goja.Object)
+
+	eval := rt.Get(name)
+	if eval == nil {
+		return nil, fmt.Errorf("%s function not found in script", name)
+	}
+
+	err = rt.ExportTo(eval, &entry)
+	if err != nil {
+		return nil, err
+	}
+
+	obj := buildEventObject(rt, data)
+
+	entry(obj)
+
+	return nil, nil
 
 }
 
-func (e *Engine) OnEvent(name string, handler xengine.EventHandler, priority int16) {
+func buildEventObject(jsEngine *goja.Runtime, data map[string]any) *goja.Object {
+	obj := jsEngine.NewObject()
 
-	e.hLock.Lock()
-	defer e.hLock.Unlock()
+	obj.Set("dataAsObject", func() any {
 
-	handlers := e.handlers[name]
-
-	handlers = append(handlers, handlerRef{
-		handler:  handler,
-		priority: priority,
+		return data
 	})
 
-	e.handlers[name] = handlers
+	obj.Set("dataAsJsonString", func() any {
 
-}
+		out, err := json.Marshal(data)
+		if err != nil {
+			return nil
+		}
 
-func (e *Engine) Stop(force bool) error {
-	return nil
+		return string(out)
+	})
+
+	return obj
 }

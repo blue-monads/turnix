@@ -20,16 +20,19 @@
     import { sampleHtml, sampleJs } from "./sample";
     import { params } from "$lib/params";
     import Runner from "../../run/Runner.svelte";
+    import LiveEditor from "./LiveEditor.svelte";
 
-    let tabSet: number = 0;
-    let serverCode = sampleJs;
-    let clientCode = sampleHtml;
-    let savedClientCode = "";
+    let tabSet: number = $state(0);
+    let serverCode = $state(sampleJs);
+    let clientCode = $state(sampleHtml);
+    let savedClientCode = $state("");
 
-    const pid = $params["pid"];
+    const pid = $params["pid"];    
 
     const rootApi = getContext("__api__") as RootAPI;
     const api = NewBookAPI(rootApi);
+
+    let runAction = $state();
 
     interface Message {
         type: "api_call" | "ping";
@@ -68,10 +71,7 @@
     <svelte:fragment slot="trail">
         <button
             class="btn variant-filled btn-sm"
-            on:click={() => {
-                savedClientCode = clientCode;
-
-            }}
+            onclick={runAction}
         >
             <SvgIcon className="w-4 h-4" name="play" />
             Run
@@ -80,47 +80,5 @@
     </svelte:fragment>
 </AppBar>
 
-<div class=" flex flex-col md:flex-row w-full h-[94vh]">
-    <div class="flex-1 w-full md:w-1/2 border border-slate-50 h-1/2 md:h-full">
-        <TabGroup>
-            
-            <Tab padding="ml-6 p-2" bind:group={tabSet} name="SQL Query" value={0}>
-                <span>Server Code</span>
-            </Tab>
-            <Tab bind:group={tabSet} name="UI" value={1}>
-                <span>Client Code</span>
-            </Tab>
+<LiveEditor bind:runAction={runAction} />
 
-            <svelte:fragment slot="panel">
-                <div class="max-h-[40vh] md:max-h-[90vh] overflow-auto"> 
-                    {#if tabSet === 0}
-                        <CodeMirror
-                            bind:value={serverCode}
-
-                            extensions={[
-                                autocompletion({
-                                    activateOnTyping: true,
-                                    override: [
-                                        localCompletionSource,
-                                        scopeCompletionSource(
-                                            completionObject,
-                                        ),
-                                    ],
-                                }),
-                            ]}
-
-                            lang={javascript()}
-                            
-                        />
-                    {:else if tabSet === 1}
-                        <CodeMirror bind:value={clientCode} lang={html()} />
-                    {/if}
-                </div>
-            </svelte:fragment>
-        </TabGroup>
-    </div>
-
-    <div class="flex-1 w-full md:w-1/2 border border-slate-50 h-1/2 md:h-full p-2">
-        <Runner client_code={savedClientCode} />        
-    </div>
-</div>

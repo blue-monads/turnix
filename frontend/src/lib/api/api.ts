@@ -81,6 +81,13 @@ export interface ProjectPlugin {
     updated_at: string;
 }
 
+export interface TableColumn {
+    name: string;
+    type: string;
+    not_null: boolean;
+    default_value: string;
+    primary_key: boolean;
+}
 
 
 export class RootAPI {
@@ -189,6 +196,25 @@ export class RootAPI {
         return this.client.post(`/project/${pid}/sqlexec`, data)
     }
 
+    runProjectSQL2 = (pid: string, data: { qstr: string, data: any[] }) => {
+        return this.client.post(`/project/${pid}/sqlexec2`, data)
+    }
+
+
+    listProjectTables = (pid: string) => {
+        return this.client.get<string[]>(`/project/${pid}/tables`)
+    }
+
+
+    listProjectTableColumns = (pid: string, table: string) => {
+        return this.client.get<TableColumn[]>(`/project/${pid}/tables/${table}/columns`)
+    }
+
+    // 	apiv1.POST("/project/:pid/autoquery", a.accessMiddleware(a.autoQueryProjectTable))
+
+    autoQueryProjectTable = (pid: string, table: string, data: any) => {
+        return this.client.post(`/project/${pid}/autoquery?table=${table}`, data)
+    }
 
     // project files
 
@@ -311,6 +337,24 @@ export class RootAPI {
     userInfo = (uid: string) => {
         return this.client.get<Partial<User>>(`/user/${uid}`)
     }
+
+    getSharedFile = (fid: string) => {
+        return this.client.get(`/file/shared/${fid}`)
+    }
+
+    getSharedFileURL = (fid: string): string => {
+        return `${location.origin}/z/api/v1/file/shared/${fid}`
+    }
+
+    sharedFile = (fid: string, pid?: string) => {
+        return this.client.post(`/file/shared/${fid}?pid=${pid}`, {})
+    }
+
+
+    deleteShareFile = (fid: string) => {
+        return this.client.delete(`/file/shared/${fid}`)
+    }
+
 
     getFileShortKey = (fid: string) => {
         return this.client.post(`/file/${fid}/shortkey`, {})

@@ -1,7 +1,13 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import { formatCurrency } from "$lib";
     import { getModalStore } from "@skeletonlabs/skeleton";
-    export let parent: any;
+    interface Props {
+        parent: any;
+    }
+
+    let { parent }: Props = $props();
 
     const store = getModalStore();
 
@@ -10,14 +16,14 @@
     let overall_discount_amount = meta["overall_discount_amount"] || 0;
     let onSet: (data: any) => void = meta["onSet"] || (() => {});
 
-    let new_discouned_amount = sub_total - overall_discount_amount;
+    let new_discouned_amount = $state(sub_total - overall_discount_amount);
 
-    let overall_discount_percentage = 0;
+    let overall_discount_percentage = $state(0);
 
-    $: {
+    run(() => {
         overall_discount_percentage =
             ((sub_total - new_discouned_amount) / sub_total) * 100;
-    }
+    });
 </script>
 
 <div class="card rounded w-modal-slim {parent.backgroundColor}">
@@ -41,7 +47,7 @@
 
         <button
             class="btn variant-filled"
-            on:click={() => {
+            onclick={() => {
                 onSet(sub_total - new_discouned_amount);
                 store.close();
             }}

@@ -7,6 +7,8 @@ import (
 	"github.com/k0kubun/pp"
 )
 
+// https://github.com/olebedev/gojax/blob/master/fetch/fetch.go
+
 type GojaHandle struct {
 	JS      *goja.Runtime
 	LastPid int64

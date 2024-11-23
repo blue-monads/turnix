@@ -11,8 +11,8 @@
 
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
-    let loading = true;
-    let contacts: any[] = [];
+    let loading = $state(true);
+    let contacts: any[] = $state([]);
 
     const load = async () => {
         loading = true;

@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from "svelte/legacy";
+
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import type { BooksAPI, Contact } from "$lib/projects/books";
     import type { NewSaleLine, SaleData } from "./sub/sales";
@@ -11,47 +13,75 @@
 
     const store = getModalStore();
 
-    export let pid: number;
-
     // data fields
-    export let title = "";
-    export let notes = "";
-    export let client_id = 0;
-    export let client_name = "";
-    export let total_item_price = 0;
-    export let total_item_tax_amount = 0;
-    export let total_item_discount_amount = 0;
-    export let sub_total = 0;
-    export let overall_discount_amount = 0;
-    export let overall_tax_amount = 0;
-    export let total = 0;
-    export let sales_date = new Date().toISOString().slice(0, 16);
 
     // extra data
-    export let lines: NewSaleLine[] = [
-        // {
-        //     info: "test",
-        //     product_id: 1,
-        //     qty: 4,
-        //     amount: 20,
-        //     price: 24,
-        //     tax_amount: 1,
-        //     discount_amount: 4,
-        //     total_amount: 84,
-        // },
-    ];
 
-    export let contactsNameIndex: Record<number, string> = {};
-    export let submit:  (data: SaleData) => Promise<string>;
-    export let api: BooksAPI;
+    interface Props {
+        pid: number;
+        name?: string;
+        title?: string;
+        notes?: string;
+        client_id?: number;
+        client_name?: string;
+        total_item_price?: number;
+        total_item_tax_amount?: number;
+        total_item_discount_amount?: number;
+        sub_total?: number;
+        overall_discount_amount?: number;
+        overall_tax_amount?: number;
+        total?: number;
+        sales_date?: any;
+        lines?: NewSaleLine[];
+        contactsNameIndex?: Record<number, string>;
+        submit: (data: SaleData) => Promise<string>;
+        modeOptions?: [string, string][];
+        api: BooksAPI;
+    }
 
-    let mode = "invoice";
-    let message = ""
+    let {
+        pid,
+        name = "New Sale",
+        title = $bindable(""),
+        notes = $bindable(""),
+        client_id = $bindable(0),
+        client_name = "",
+        total_item_price = $bindable(0),
+        total_item_tax_amount = $bindable(0),
+        total_item_discount_amount = $bindable(0),
+        sub_total = $bindable(0),
+        overall_discount_amount = $bindable(0),
+        overall_tax_amount = $bindable(0),
+        total = $bindable(0),
+        sales_date = $bindable(new Date().toISOString().slice(0, 16)),
+        modeOptions = [
+            ["invoice", "Invoice"],
+            ["direct_sale", "Direct Sale"],
+        ],
+        lines = $bindable([
+            // {
+            //     info: "test",
+            //     product_id: 1,
+            //     qty: 4,
+            //     amount: 20,
+            //     price: 24,
+            //     tax_amount: 1,
+            //     discount_amount: 4,
+            //     total_amount: 84,
+            // },
+        ]),
+        contactsNameIndex = {},
+        submit,
+        api,
+    }: Props = $props();
 
-    let overall_tax_percentage = 0;
-    let overall_discount_percentage = 0;
+    let mode = $state(modeOptions.length > 0 ? modeOptions[0][0] : "");
+    let message = $state("");
 
-    $: {
+    let overall_tax_percentage = $state(0);
+    let overall_discount_percentage = $state(0);
+
+    run(() => {
         total_item_price = lines.reduce((acc, item) => {
             return acc + item.amount * item.qty;
         }, 0);
@@ -73,7 +103,7 @@
             (overall_discount_amount / sub_total) * 100;
 
         total = sub_total + overall_tax_amount - overall_discount_amount;
-    }
+    });
 
     const clientPicker = () => {
         store.trigger({
@@ -86,8 +116,7 @@
                     if (!title) {
                         title = data["name"] || "";
                     }
-                    
-                    
+
                     client_id = data["id"] || 0;
                 },
             },
@@ -142,20 +171,18 @@
 <form class="p-2">
     <div class="card">
         <header class="card-header flex justify-between">
-            <h3 class="h3">New Sale</h3>
+            <h3 class="h3">{name}</h3>
+
             <div class="w-64">
-                <RadioGroup>
-                    <RadioItem
-                        bind:group={mode}
-                        name="justify"
-                        value={"direct_sale"}>Direct Sale</RadioItem
-                    >
-                    <RadioItem
-                        bind:group={mode}
-                        name="justify"
-                        value={"invoice"}>Invoice</RadioItem
-                    >
-                </RadioGroup>
+                {#if modeOptions.length > 0}
+                    <RadioGroup>
+                        {#each modeOptions as [value, name]}
+                            <RadioItem bind:group={mode} name="justify" {value}
+                                >{name}</RadioItem
+                            >
+                        {/each}
+                    </RadioGroup>
+                {/if}
             </div>
         </header>
 
@@ -179,12 +206,11 @@
                         <span>Billed To</span>
 
                         <div class="flex gap-2">
-                            
                             <span class="text-sm italic"
                                 >{contactsNameIndex[client_id] || ""}
                             </span>
 
-                            <button on:click={clientPicker}>
+                            <button onclick={clientPicker}>
                                 <SvgIcon
                                     name="plus"
                                     className="w-4 h-4 inline-block align-middle"
@@ -195,7 +221,7 @@
                 </div>
 
                 <label class="label">
-                    <span>Date of Sale</span>
+                    <span>Date</span>
                     <input
                         type="datetime-local"
                         class="input p-1"
@@ -279,7 +305,7 @@
                                 >
                                     <button
                                         class="hover:underline text-warning-800 text-xs"
-                                        on:click={() => {
+                                        onclick={() => {
                                             lines.splice(index, 1);
                                             lines = lines;
                                         }}
@@ -293,10 +319,7 @@
                 </table>
             </div>
             <div class="flex justify-start p-2">
-                <button
-                    class="btn btn-sm variant-filled"
-                    on:click={salesPicker}
-                >
+                <button class="btn btn-sm variant-filled" onclick={salesPicker}>
                     <SvgIcon
                         name="plus"
                         className="w-4 h-4 inline-block align-middle"
@@ -368,7 +391,7 @@
                                 >
                                     <button
                                         class="underline"
-                                        on:click={onSetOverAllTax}
+                                        onclick={onSetOverAllTax}
                                     >
                                         <span>
                                             <strong>
@@ -396,7 +419,7 @@
                                 >
                                     <button
                                         class="underline"
-                                        on:click={onSetOverAllDiscount}
+                                        onclick={onSetOverAllDiscount}
                                     >
                                         <span>
                                             <strong>
@@ -434,14 +457,12 @@
             <div>
                 <p class="text-red-500">{message}</p>
             </div>
-
         </section>
         <footer class="card-footer flex justify-end">
             <button
                 disabled={lines.length === 0 || !client_id}
                 class="btn variant-filled"
-                on:click={async () => {
-
+                onclick={async () => {
                     const resp = await submit({
                         sale: {
                             title,
@@ -461,7 +482,6 @@
                     });
 
                     message = resp;
-
                 }}
             >
                 save

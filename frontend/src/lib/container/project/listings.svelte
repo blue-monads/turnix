@@ -4,12 +4,16 @@
   import { getContext, onMount } from "svelte";
   import * as nav from "$lib/nav";
   import type { RootAPI } from "$lib/api";
-  export let ptype = "";
-  export let title = "projects";
+  interface Props {
+    ptype?: string;
+    title?: string;
+  }
+
+  let { ptype = "", title = "projects" }: Props = $props();
 
   const api = getContext("__api__") as RootAPI;
 
-  let datas: any[] = [];
+  let datas: any[] = $state([]);
 
   const load = async () => {
     const resp = await api.listProjects(ptype);

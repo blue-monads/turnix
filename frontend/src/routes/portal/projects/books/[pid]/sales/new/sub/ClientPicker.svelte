@@ -2,12 +2,16 @@
     import { AutoTable, Loader } from "$lib/compo";
     import type { BooksAPI } from "$lib/projects/books";
     import { getModalStore } from "@skeletonlabs/skeleton";
-    export let parent: any;
+    interface Props {
+        parent: any;
+    }
+
+    let { parent }: Props = $props();
 
     const store = getModalStore();
-    let mode: "loading" | "main";
+    let mode: "loading" | "main" = $state();
 
-    let data: object[] = $store[0].meta["data"] || [];
+    let data: object[] = $state($store[0].meta["data"] || []);
 
     const loadData = async () => {
         if (data.length) {

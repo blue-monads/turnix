@@ -1,17 +1,31 @@
 <script lang="ts">
-  export let modified = false;
-  export let data = {};
-  export let onChange: Function | undefined = undefined;
-  export let sensitive = false;
+  import { run as run_1 } from 'svelte/legacy';
 
-  $: _data = { ...(typeof data === "string" ? JSON.parse(data) : data) };
+  interface Props {
+    modified?: boolean;
+    data?: any;
+    onChange?: Function | undefined;
+    sensitive?: boolean;
+  }
+
+  let {
+    modified = $bindable(false),
+    data = {},
+    onChange = undefined,
+    sensitive = false
+  }: Props = $props();
+
+  let _data;
+  run_1(() => {
+    _data = { ...(typeof data === "string" ? JSON.parse(data) : data) };
+  });
 
   export const getData = () => ({ ..._data });
 
-  let current_active_key = "";
-  let new_key = "";
-  let new_value = "";
-  let run = false;
+  let current_active_key = $state("");
+  let new_key = $state("");
+  let new_value = $state("");
+  let run = $state(false);
 
   const value_set = (key: string, newvalue: any) => {
     modified = true;
@@ -19,10 +33,12 @@
     _data = { ..._data, [key]: newvalue };
   };
 
-  $: if (modified && onChange && !run) {
-    onChange(_data);
-    run = true;
-  }
+  run_1(() => {
+    if (modified && onChange && !run) {
+      onChange(_data);
+      run = true;
+    }
+  });
 </script>
 
 <div class="border p-2 shadow rounded">
@@ -54,11 +70,11 @@
                   type="text"
                   class="border border-slate-500 rounded-sm w-full"
                   value={val + ""}
-                  on:change={(ev) => value_set(key, ev.target["value"])}
+                  onchange={(ev) => value_set(key, ev.target["value"])}
                 />
               {:else}
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
 
                 <input
                   value={val}
@@ -70,7 +86,7 @@
             <td class="px-6 py-4 text-right">
               {#if current_active_key !== key}
                 <button
-                  on:click={() => {
+                  onclick={() => {
                     current_active_key = key;
                   }}
                   class="font-medium text-blue-600 hover:underline"
@@ -79,7 +95,7 @@
               {/if}
               <button
                 class="font-medium text-blue-600 hover:underline"
-                on:click={() => {
+                onclick={() => {
                   delete _data[key];
                   _data = { ..._data };
                   modified = true;
@@ -110,7 +126,7 @@
           <td class="text-right">
             <button
               class="font-medium text-blue-600 hover:underline"
-              on:click={() => {
+              onclick={() => {
                 if (!new_key) {
                   return;
                 }

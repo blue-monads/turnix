@@ -12,8 +12,8 @@
     const api = NewBookAPI(getContext("__api__") as RootAPI);
     const cid = $params["cid"];
 
-    let loading = true;
-    let data: any;
+    let loading = $state(true);
+    let data: any = $state();
 
     const load = async () => {
         loading = true;

@@ -1,7 +1,7 @@
 <script lang="ts">
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
 
-    const peerInfo = {
+    const peerInfo = $state({
         id: "xx-yy-zz",
         added: "2022-12-31",
         lastSeen: "2022-12-31",
@@ -30,7 +30,7 @@
                 relayToken: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
             },
         ],
-    };
+    });
 </script>
 
 <div class="flex p-2 flex-col gap-2 overflow-auto max-h-screen">

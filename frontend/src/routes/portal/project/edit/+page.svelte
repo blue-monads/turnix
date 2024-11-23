@@ -9,9 +9,9 @@
 
     let pid = $params["pid"];
 
-    let data = {};
-    let message = "";
-    let loading = true;
+    let data = $state({});
+    let message = $state("");
+    let loading = $state(true);
 
     const load = async () => {
         loading = true;

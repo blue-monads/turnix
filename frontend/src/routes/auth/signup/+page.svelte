@@ -1,8 +1,8 @@
 <script lang="ts">
-    let name = "";
-    let email = "";
-    let password = "";
-    let repassword = "";
+    let name = $state("");
+    let email = $state("");
+    let password = $state("");
+    let repassword = $state("");
 </script>
 
 <div class="flex justify-center items-center">

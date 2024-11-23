@@ -8,11 +8,11 @@
   import type { RootAPI } from "$lib/api";
 
   const api = getContext("__api__") as RootAPI;
-  let loading = true;
+  let loading = $state(true);
 
-  let message = "";
+  let message = $state("");
 
-  let schemaFields: Field[] = [];
+  let schemaFields: Field[] = $state([]);
   const load = async () => {
     const resp = await api.getProjectTypeForm($params["ptype"]);
     if (resp.status !== 200) {
@@ -23,10 +23,10 @@
     loading = false;
   };
 
-  let name = "";
-  let ptype = $params["ptype"];
-  let info = "";
-  let extrameta = {};
+  let name = $state("");
+  let ptype = $state($params["ptype"]);
+  let info = $state("");
+  let extrameta = $state({});
 
   load();
 </script>
@@ -90,7 +90,7 @@
       <footer class="flex justify-end p-2 gap-2">
         <button
           class="btn variant-filled"
-          on:click={async () => {
+          onclick={async () => {
             loading = true;
             const resp = await api.addProject({
               name,

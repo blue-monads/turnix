@@ -7,7 +7,7 @@
     const api = getContext("__api__") as RootAPI;
     const uid = $page.params["uid"];
 
-    let user: Partial<User>;
+    let user: Partial<User> = $state();
 
     const load = async () => {
         const resp = await api.userInfo(uid);
@@ -20,7 +20,7 @@
 
     load();
 
-    let message = "";
+    let message = $state("");
 
     const senUserMessage = async () => {
         const uid = $page.params["uid"];
@@ -74,7 +74,7 @@
                 <div class="flex justify-end pt-8 gap-2">
                     <button
                         disabled={message.length === 0}
-                        on:click={senUserMessage}
+                        onclick={senUserMessage}
                         class="btn btn-sm variant-filled"
                     >
                         Send

@@ -10,7 +10,7 @@
     const rootApi = getContext("__api__") as RootAPI;
 
     let loading = false;
-    let data: any = undefined;
+    let data: any = $state(undefined);
 
     const load = async () => {
         const resp = await rootApi.getProject(pid);

@@ -97,59 +97,29 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 
 	e.cmd = cmd
 
-	time.Sleep(time.Second * 20)
+	time.Sleep(time.Second * 5)
+
+	msg, err := e.getStatus()
+
+	if err != nil {
+		time.Sleep(time.Second * 5)
+
+		msg, err = e.getStatus()
+		if err != nil {
+			time.Sleep(time.Second * 5)
+		}
+	}
 
 	ctx.JSON(200, gin.H{
 		"pid":  cmd.Process.Pid,
-		"port": e.port,
+		"port": msg.Port,
 	})
-
-	go func() {
-		e.cmd.Wait()
-
-		e.cLock.Lock()
-		defer e.cLock.Unlock()
-		e.cmd = nil
-
-	}()
 
 }
 
 func (e *EbrowserApp) statusPage(ctx *gin.Context) {
 
-	localSocket := path.Join(e.configurer.BasePath, e.config.LocalSocket)
-
-	pp.Println("status/1", localSocket)
-
-	conn, err := net.Dial("unix", localSocket)
-	pp.Println("status/1.5")
-
-	if err != nil {
-		ctx.JSON(200, gin.H{
-			"is_running": false,
-			"status":     err.Error(),
-		})
-		return
-	}
-
-	pp.Println("status/2")
-
-	defer conn.Close()
-
-	out, err := io.ReadAll(conn)
-	if err != nil {
-		ctx.JSON(200, gin.H{
-			"is_running": false,
-			"status":     err.Error(),
-		})
-		return
-	}
-
-	pp.Println("status/3")
-
-	msg := server.LocalStatus{}
-
-	err = json.Unmarshal(out, &msg)
+	msg, err := e.getStatus()
 	if err != nil {
 		ctx.JSON(200, gin.H{
 			"is_running": false,
@@ -166,5 +136,38 @@ func (e *EbrowserApp) statusPage(ctx *gin.Context) {
 		"status":      "ok",
 		"working_dir": e.configurer.BasePath,
 	})
+
+}
+
+func (e *EbrowserApp) getStatus() (*server.LocalStatus, error) {
+
+	localSocket := path.Join(e.configurer.BasePath, e.config.LocalSocket)
+
+	conn, err := net.Dial("unix", localSocket)
+	pp.Println("status/1.5")
+
+	if err != nil {
+		return nil, err
+	}
+
+	pp.Println("status/2")
+
+	defer conn.Close()
+
+	out, err := io.ReadAll(conn)
+	if err != nil {
+		return nil, err
+	}
+
+	pp.Println("status/3")
+
+	msg := server.LocalStatus{}
+
+	err = json.Unmarshal(out, &msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return &msg, nil
 
 }

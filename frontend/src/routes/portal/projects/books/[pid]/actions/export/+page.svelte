@@ -14,7 +14,7 @@
     const rootApi = getContext("__api__") as RootAPI;
     const api = NewBookAPI(rootApi);
 
-    let loading = false;
+    let loading = $state(false);
 
     const saveAsJsonFile = (data: any, filename: string) => {
         const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -45,7 +45,7 @@
             <button
                 disabled={loading}
                 class="btn btn-sm variant-filled"
-                on:click={async () => {
+                onclick={async () => {
                     loading = true;
 
                     const resp = await api.exportData(pid);

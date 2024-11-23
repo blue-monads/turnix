@@ -2,14 +2,18 @@
     import { RootAPI } from "$lib/api";
 
 
-    let loading = false;
+    let loading = $state(false);
 
-    export let fileId: string;
-    export let filename: string;
-    export let api: RootAPI;
+    interface Props {
+        fileId: string;
+        filename: string;
+        api: RootAPI;
+    }
+
+    let { fileId, filename, api }: Props = $props();
 
 
-    let elemRoot: HTMLElement;
+    let elemRoot: HTMLElement | undefined = $state();
 
     const imageExts = ["png", "jpg", "jpeg", "gif", "bmp", "webp", "svg"];
     const fileExt = filename.split(".").pop();
@@ -27,7 +31,7 @@
 
 
 
-    let fileurlWithShortKey = "";
+    let fileurlWithShortKey = $state("");
 
     const load = async () => {
         loading = true;
@@ -64,17 +68,17 @@
             alt={filename}
         />
     {:else if fileType === "video"}
-        <!-- svelte-ignore a11y-media-has-caption -->
+        <!-- svelte-ignore a11y_media_has_caption -->
         <video controls>
             <source src={fileurlWithShortKey} type="video/mp4" />
         </video>
     {:else if fileType === "audio"}
-        <!-- svelte-ignore a11y-media-has-caption -->
+        <!-- svelte-ignore a11y_media_has_caption -->
         <audio controls>
             <source src={fileurlWithShortKey} type="audio/mp3" />
         </audio>
     {:else}
-        <button class="btn btn-sm variant-filled" on:click={download}>
+        <button class="btn btn-sm variant-filled" onclick={download}>
             download
         </button>
     {/if}

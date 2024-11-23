@@ -1,9 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { scale } from "svelte/transition";
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
 
-  let show = false; // menu state
-  let menuRef: any = null; // menu wrapper DOM reference
+  let { children }: Props = $props();
+
+  let show = $state(false); // menu state
+  let menuRef: any = $state(null); // menu wrapper DOM reference
 
   onMount(() => {
     const handleOutsideClick = (event: Event) => {
@@ -33,7 +38,7 @@
 <div class="relative" bind:this={menuRef}>
   <div>
     <button
-      on:click={() => (show = !show)}
+      onclick={() => (show = !show)}
       class="menu focus:outline-none focus:shadow-solid p-2 shadow border rounded"
     >
       Options
@@ -46,7 +51,7 @@
         class="origin-top-right absolute right-0 w-48 py-2 mt-1 bg-white z-50
             rounded shadow-md flex flex-col"
       >
-        <slot />
+        {@render children?.()}
       </div>
     {/if}
   </div>

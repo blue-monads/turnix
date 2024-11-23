@@ -17,9 +17,9 @@
   const api = NewBookAPI(getContext("__api__") as RootAPI);
   const store = getModalStore();
 
-  let loading = true;
-  let data: TxnLine[] = [];
-  let accountsIndex: Record<number, string> = {};
+  let loading = $state(true);
+  let data: TxnLine[] = $state([]);
+  let accountsIndex: Record<number, string> = $state({});
 
   const load = async () => {
     const rresp = api.listAccount(pid);
@@ -32,7 +32,7 @@
 
     console.log("@data", resp.data);
 
-    data = formatResponse(resp.data);
+    const formateddata = formatResponse(resp.data);
     console.log("@data_____", data);
 
     const accounts = (await rresp).data as Record<string, any>[];
@@ -42,7 +42,7 @@
       accountsIndex[id] = account["name"];
     });
 
-    data = data;
+    data = formateddata.txns;
 
     loading = false;
   };

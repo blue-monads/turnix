@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/bornjre/turnix/backend/controller"
@@ -13,6 +14,7 @@ import (
 	"github.com/bornjre/turnix/backend/controller/common"
 	"github.com/bornjre/turnix/backend/controller/project"
 	"github.com/bornjre/turnix/backend/controller/self"
+	"github.com/bornjre/turnix/backend/engine/pool"
 	"github.com/bornjre/turnix/backend/services/database"
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/xproject"
@@ -34,12 +36,18 @@ type Server struct {
 	localSocket string
 	ldListener  net.Listener
 
+	devMode bool
+
 	// controllers
 
 	cAuth    *auth.AuthController
 	cProject *project.ProjectController
 	cSelf    *self.SelfController
 	cCommon  *common.CommonController
+
+	// injector
+
+	injector Injector
 }
 
 type Options struct {
@@ -48,6 +56,7 @@ type Options struct {
 	ProjectBuilders map[string]*xproject.Defination
 	Controller      *controller.RootController
 	LocalSocket     string
+	DevMode         bool
 }
 
 func New(opts Options) *Server {
@@ -57,7 +66,9 @@ func New(opts Options) *Server {
 		panic(err)
 	}
 
-	return &Server{
+	// opts.ProjectBuilders["abc"] = &xproject.Defination{}
+
+	s := &Server{
 		db:          opts.DB,
 		signer:      opts.Signer,
 		rootLogger:  zerolog.New(os.Stdout).With().Str("service", "server").Logger(),
@@ -68,10 +79,27 @@ func New(opts Options) *Server {
 		cSelf:       opts.Controller.GetSelfController(),
 		cCommon:     opts.Controller.GetCommonController(),
 		localSocket: opts.LocalSocket,
+		devMode:     opts.DevMode,
 	}
+
+	s.injector = Injector{
+		server:           s,
+		hashooksIndex:    make(map[string]bool),
+		hasHookIndexLock: sync.RWMutex{},
+		pool:             pool.New(s.rootLogger),
+		hLock:            sync.RWMutex{},
+		handles:          make(map[int64]HookHandle),
+	}
+
+	return s
 }
 
 func (a *Server) Start(port string) error {
+
+	err := a.injector.loadHooks()
+	if err != nil {
+		return err
+	}
 
 	a.listenUnixSocket(port)
 

@@ -15,8 +15,8 @@
     const api = getContext("__api__") as RootAPI;
     let pid = $params["pid"];
 
-    let plugins: ProjectPlugin[] = [];
-    let loading = true;
+    let plugins: ProjectPlugin[] = $state([]);
+    let loading = $state(true);
 
     const load = async () => {
         loading = true;
@@ -50,7 +50,7 @@
     <svelte:fragment slot="trail">
         <button
             class="btn btn-sm variant-ghost-secondary"
-            on:click={() => {
+            onclick={() => {
 
                 store.trigger({
                     type: "component",
@@ -93,10 +93,21 @@
                     );
                 },
             },
+            {
+                Name: "Live Editor",
+                Class: "variant-filled-primary",
+                Action: async (id, data) => {
+                    console.log("@view", id, data);
+
+                    goto(
+                        `/z/pages/portal/project/plugins/view?pid=${pid}&id=${id}`,
+                    );
+                },
+            },
 
             {
-                Name: "edit",
-                Class: "variant-filled-primary",
+                Name: "Raw Edit",
+                Class: "variant-filled-secondary",
 
                 Action: async (id, data) => {
                     console.log("@edit", id, data);

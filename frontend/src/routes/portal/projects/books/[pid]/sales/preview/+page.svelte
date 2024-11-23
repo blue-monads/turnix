@@ -12,10 +12,10 @@
 
     const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let data: SalesData;
-    let contacts: object[] = [];
-    let loadingContacts = true;
-    let loadingData = true;
+    let data: SalesData | undefined = $state();
+    let contacts: object[] = $state([]);
+    let loadingContacts = $state(true);
+    let loadingData = $state(true);
 
     const loadContact = async () => {
         loadingContacts = true;
@@ -43,21 +43,22 @@
     loadData();
     loadContact();
 
-    $: __clientIndex = contacts.reduce((acc: any, item: any) => {
-        const item_id = item["id"];
-        const name = item["name"];
-        acc[item_id] = name;
-        return acc;
-    }, {});
-
+    let __clientIndex = $derived(
+        contacts.reduce((acc: any, item: any) => {
+            const item_id = item["id"];
+            const name = item["name"];
+            acc[item_id] = name;
+            return acc;
+        }, {}),
+    );
 </script>
 
 {#if loadingContacts || loadingData}
     <Loader />
 {:else}
     <SalesPreview
-        {api}
-        salesData={data}
+        lines={data.lines}
+        data={data.sale}
         pid={Number(pid)}
         contactsNameIndex={__clientIndex}
     />

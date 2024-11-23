@@ -8,8 +8,8 @@
 
     const api = getContext("__api__") as RootAPI;
 
-    let loading = false;
-    let file: File;
+    let loading = $state(false);
+    let file: File | undefined = $state();
 
     const onDrop = async (e: any) => {
         console.log("onDrop", e);
@@ -35,10 +35,10 @@
     <button
         class="btn btn-sm variant-filled"
         disabled={!file || loading}
-        on:click={async () => {
+        onclick={async () => {
             loading = true;
             const path = $params["folder"] || "";
-            await api.addSelfFile(file.name, path, file);
+            await api.addSelfFile(file?.name as string, path, file);
 
             loading = false;
             goto(`/z/pages/portal/self/files?folder=${path}`);

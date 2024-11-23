@@ -5,8 +5,12 @@
     import Video from "./Video.svelte";
     import Zip from "./Zip.svelte";
 
-    export let name: string = "";
-    export let size: string;
+    interface Props {
+        name?: string;
+        size: string;
+    }
+
+    let { name = "", size }: Props = $props();
 
     const icons = {
         image: Image,
@@ -25,7 +29,7 @@
         zip: "zip",
     };
 
-    let itype = "other";
+    let itype = $state("other");
     if (name.includes(".")) {
         itype = exts[name.split(".").pop()] || "other";
     }

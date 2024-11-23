@@ -1,8 +1,8 @@
 <script>
     import { login } from "$lib/api/auth";
 
-    let email = "dev@example.com";
-    let password = "dev123";
+    let email = $state("dev@example.com");
+    let password = $state("dev123");
 
     const loginHandle = async () => {
         const resp = await login({
@@ -21,7 +21,7 @@
 </script>
 
 <div class="flex justify-center items-center">
-    <div class="card bg-initial card-hover overflow-hidden variant-ringed">
+    <div class="card bg-initial overflow-hidden hover:variant-ringed">
         <header></header>
 
         <div class="p-4 space-y-4">
@@ -50,7 +50,7 @@
         </div>
         <hr class="opacity-50" />
         <footer class="p-4 flex justify-start items-center space-x-4">
-            <button on:click={loginHandle} type="button" class="btn variant-filled-primary">
+            <button onclick={loginHandle} type="button" class="btn variant-filled-primary">
                 <span>Submit</span>
             </button>
         </footer>

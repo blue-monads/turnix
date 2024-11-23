@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/bornjre/turnix/backend/services/database/autoquery"
 	"github.com/bornjre/turnix/backend/services/signer"
 	"github.com/bornjre/turnix/backend/xtypes/models"
 	"github.com/gin-gonic/gin"
@@ -233,6 +234,58 @@ func (a *Server) runProjectSQL(claim *signer.AccessClaim, ctx *gin.Context) (any
 	res, err := a.cProject.RunQuerySQL(claim.UserId, pid, data.Input, data.Name, data.Data)
 
 	return res, err
+}
+
+type ProjectSQLExec2 struct {
+	QStr string `json:"qstr"`
+	Data []any  `json:"data"`
+}
+
+func (a *Server) runProjectSQL2(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+
+	data := ProjectSQLExec2{}
+	err := ctx.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := a.cProject.RunQuerySQL2(claim.UserId, pid, data.QStr, data.Data)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
+}
+
+func (a *Server) listProjectTables(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+
+	return a.cProject.ListProjectTables(claim.UserId, pid)
+}
+
+func (a *Server) listProjectTableColumns(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	table := ctx.Param("table")
+
+	return a.cProject.ListProjectTableColumns(claim.UserId, pid, table)
+}
+
+func (a *Server) autoQueryProjectTable(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	pid, _ := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	table := ctx.Query("table")
+
+	if table == "" {
+		return nil, fmt.Errorf("table is required")
+	}
+
+	opts := autoquery.LoaderParams{}
+	err := ctx.Bind(&opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return a.cProject.AutoQueryProjectTable(claim.UserId, pid, table, opts)
 }
 
 // plugins

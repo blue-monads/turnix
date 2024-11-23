@@ -13,8 +13,8 @@
     const pid = $page.params["pid"];
     const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-    let sales: Sale[] = [];
-    let loading = true;
+    let sales: Sale[] = $state([]);
+    let loading = $state(true);
 
     const load = async () => {
         loading = true;
@@ -66,7 +66,7 @@
 
         <button
             class="btn variant-filled-secondary btn-sm"
-            on:click={() => {
+            onclick={() => {
 
             }}
         >

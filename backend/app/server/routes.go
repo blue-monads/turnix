@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/bornjre/turnix/backend/app/server/assets"
 	"github.com/bornjre/turnix/backend/utils/libx/httpx"
 	"github.com/gin-gonic/gin"
 )
@@ -102,6 +101,10 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 	apiv1.DELETE("/project/:pid/files/:id", a.accessMiddleware(a.removeProjectFile))
 
 	apiv1.POST("/project/:pid/sqlexec", a.accessMiddleware(a.runProjectSQL))
+	apiv1.POST("/project/:pid/sqlexec2", a.accessMiddleware(a.runProjectSQL2))
+	apiv1.GET("/project/:pid/tables", a.accessMiddleware(a.listProjectTables))
+	apiv1.GET("/project/:pid/tables/:table/columns", a.accessMiddleware(a.listProjectTableColumns))
+	apiv1.POST("/project/:pid/autoquery", a.accessMiddleware(a.autoQueryProjectTable))
 
 	// project plugins
 
@@ -125,11 +128,15 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 	apiv1.POST("/self/files/:id/shares", a.accessMiddleware(a.addSelfFileShare))
 	apiv1.DELETE("/self/files/:id/shares/:id", a.accessMiddleware(a.deleteSelfFileShare))
 
-	// user profile
-	apiv1.GET("/user/:uid", a.accessMiddleware(a.userProfile))
 	apiv1.GET("/file/shared/:file", a.getSharedFile)
+	apiv1.POST("/file/shared/:file", a.accessMiddleware(a.sharedFile))
+	apiv1.DELETE("/file/shared/:file", a.accessMiddleware(a.deleteShareFile))
+
 	apiv1.GET("/file/shortKey/:shortkey", a.GetFileWithShortKey)
 	apiv1.POST("/file/:fid/shortkey", a.accessMiddleware(a.GetFileShortKey))
+
+	// user profile
+	apiv1.GET("/user/:uid", a.accessMiddleware(a.userProfile))
 
 }
 
@@ -149,15 +156,6 @@ func (s *Server) noRoute(ctx *gin.Context) {
 			return
 		}
 	}
-
-}
-
-// during dev we just proxy to dev vite server running otherwise serve files from build folder
-func (s *Server) pages(z *gin.RouterGroup) {
-	rfunc := assets.PagesRoutesServer()
-
-	z.GET("/pages", rfunc)
-	z.GET("/pages/*files", rfunc)
 
 }
 

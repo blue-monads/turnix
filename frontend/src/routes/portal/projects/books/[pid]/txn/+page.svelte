@@ -14,23 +14,17 @@
   const api = NewBookAPI(getContext("__api__") as RootAPI);
   const store = getModalStore();
 
-  let loading = true;
-  let data: TxnLine[] = [];
-  let accountsIndex: Record<number, string> = {};
+  let loading = $state(true);
+  let data: TxnLine[] = $state([]);
+  let accountsIndex: Record<number, string> = $state({});
+  let maxId: number = $state([]);
 
   const load = async () => {
     const rresp = await api.listAccount(pid);
 
     loading = true;
-    const resp = await api.listTxnWithLines(pid);
-    if (resp.status !== 200) {
-      return;
-    }
 
-    console.log("@data", resp.data);
-
-    data = formatResponse(resp.data);
-    console.log("@data_____", data);
+    await loadTxnLines(true);
 
     const accounts = (await rresp).data as Record<string, any>[];
 
@@ -39,11 +33,36 @@
       accountsIndex[id] = account["name"];
     });
 
-    data = data;
 
     loading = false;
   };
   load();
+
+  // prev_page
+
+  const loadTxnLines = async (forward: boolean) => {
+
+
+    const nextOffset = maxId.length > 0 ? maxId.at(-1) : 0;
+    if (!forward && maxId.length > 0) {
+      maxId = maxId.slice(0, -1);
+    }
+
+    const resp = await api.listTxnWithLines(pid, nextOffset);
+    if (resp.status !== 200) {
+      return;
+    }
+
+    const { maxId: nextMaxId, txns } = formatResponse(resp.data);
+
+    data = txns;
+    maxId.push(nextMaxId);
+
+
+
+  }
+
+
 </script>
 
 <AppBar>
@@ -84,6 +103,13 @@
   <Loader />
 {:else}
   {#key data}
-    <Transactions {accountsIndex} lineData={data} {pid} />
+    <Transactions 
+      {accountsIndex} 
+      lineData={data} 
+      {pid} 
+      on:prev_page={() => loadTxnLines(false)}
+      on:next_page={() => loadTxnLines(true)}
+      
+      />
   {/key}
 {/if}

@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { preventDefault } from 'svelte/legacy';
+
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { getContext } from "svelte";
     import type { RootAPI } from "$lib/api";
@@ -7,12 +9,12 @@
 
     const rootApi = getContext("__api__") as RootAPI;
 
-    let name = "";
-    let bio = "";
-    let utype = "user";
-    let email = "";
-    let phone = "";
-    let password = "";
+    let name = $state("");
+    let bio = $state("");
+    let utype = $state("user");
+    let email = $state("");
+    let phone = $state("");
+    let password = $state("");
 
     const addUser = async () => {
 
@@ -45,7 +47,7 @@
         <section class="">
             <form
                 class="flex flex-col gap-4"
-                on:submit|preventDefault={addUser}
+                onsubmit={preventDefault(addUser)}
             >
                 <label class="label"
                     ><span>Name</span>

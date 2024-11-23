@@ -100,6 +100,46 @@ func productTaxTableName(pid int64) string {
 	return fmt.Sprintf("z_%d_ProductTaxes", pid)
 }
 
+func (b *DbOps) notepadTable(pid int64) db.Collection {
+	return b.db.Table(notepadTableName(pid))
+}
+
+func (b *DbOps) estimateTable(pid int64) db.Collection {
+	return b.db.Table(estimateTableName(pid))
+}
+
+func estimateTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_Estimates", pid)
+}
+
+func (b *DbOps) estimateLineTable(pid int64) db.Collection {
+	return b.db.Table(estimateLineTableName(pid))
+}
+
+func estimateLineTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_EstimateLines", pid)
+}
+
+func notepadTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_Notepads", pid)
+}
+
+func (b *DbOps) savedReportTable(pid int64) db.Collection {
+	return b.db.Table(savedReportTableName(pid))
+}
+
+func savedReportTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_SavedReports", pid)
+}
+
+func (b *DbOps) reportTemplateTable(pid int64) db.Collection {
+	return b.db.Table(reportTemplateTableName(pid))
+}
+
+func reportTemplateTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_ReportTemplates", pid)
+}
+
 func (b *DbOps) userHasScope(pid, uid int64, scope string) error {
 	dbscope, err := b.db.GetProjectUserScope(uid, pid)
 	if err != nil {

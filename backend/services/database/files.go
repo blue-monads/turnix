@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/jaevor/go-nanoid"
@@ -435,31 +436,53 @@ type FileShare struct {
 	ID        string     `json:"id" db:"id,omitempty"`
 	FileID    int64      `json:"file_id" db:"file_id"`
 	UserID    int64      `json:"user_id" db:"user_id"`
+	ProjectID int64      `json:"project_id" db:"project_id"`
 	CreatedAt *time.Time `json:"created_at" db:"created_at"`
 }
 
 var generator, _ = nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12)
 
-func (d *DB) AddFileShare(fileId, userId int64) (int64, error) {
+func (d *DB) AddFileShare(fileId, userId, pid int64) (string, error) {
+
+	file, err := d.GetFileMeta(fileId)
+	if err != nil {
+		return "", err
+	}
+
+	if file.OwnerUser != userId {
+		scope, err := d.GetProjectUserScope(userId, file.OwnerProj)
+		if err != nil {
+			return "", err
+		}
+
+		if scope == "" {
+			return "", fmt.Errorf("file not found")
+		}
+	}
+
+	ext := filepath.Ext(file.Name)
+
 	table := d.fileSharesTable()
 
 	t := &time.Time{}
 
+	shareId := fmt.Sprintf("%s%s", generator(), ext)
+
 	data := &FileShare{
-		ID:        generator(),
+		ID:        shareId,
 		FileID:    fileId,
 		UserID:    userId,
+		ProjectID: pid,
 		CreatedAt: t,
 	}
 
-	rid, err := table.Insert(data)
+	pp.Println("@shareid", shareId)
+
+	_, err = table.Insert(data)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
-
-	id := rid.ID().(int64)
-
-	return id, nil
+	return shareId, nil
 }
 
 func (d *DB) ListFileShares(fileId int64) ([]FileShare, error) {

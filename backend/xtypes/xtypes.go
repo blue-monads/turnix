@@ -15,6 +15,8 @@ type App interface {
 	Stop() error
 
 	AuthMiddleware(fn ApiHandler) gin.HandlerFunc
+	AsApiAction(name string, fn ApiHandler) gin.HandlerFunc
+
 	GetDatabase() any
 	GetSockd() xsockd.Sockd
 

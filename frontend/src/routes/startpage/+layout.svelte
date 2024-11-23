@@ -1,12 +1,19 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import { page } from "$app/stores";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { onMount } from "svelte";
     import { buildApi, type StartAPI } from "./startAPI";
     import Api from "./api.svelte";
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
     const pid = $page.params["pid"];
 
-    let active = true;
+    let active = $state(true);
 
     let sibarItems: Record<string, any>[] = [
         {
@@ -21,6 +28,21 @@
             icon: "rss",
             key: "peers",
         },
+
+        {
+            name: "Extend",
+            link: "/z/pages/startpage/extend",
+            icon: "puzzle-piece",
+            key: "extend",
+        },
+
+        {
+            name: "Easy Share",
+            link: "/z/pages/startpage/share",
+            icon: "share",
+            key: "share",
+        },
+
         {
             name: "Setting",
             link: "/z/pages/startpage/setting",
@@ -29,8 +51,10 @@
         },
     ];
 
-    $: sidebarKey = $page.url.pathname.split("/").at(4);
-    $: console.log(sidebarKey);
+    let sidebarKey = $derived($page.url.pathname.split("/").at(4));
+    run(() => {
+        console.log(sidebarKey);
+    });
 
     onMount(() => {
         const g = window as any;
@@ -40,7 +64,7 @@
         };
     });
 
-    let api: StartAPI;
+    let api: StartAPI = $state();
 
     buildApi(location.origin).then((_api) => {
         api = _api;
@@ -79,7 +103,7 @@
         <div class="absolute md:bottom-8">
             <button
                 class=" rounded border-2 bg-slate-100 p-1"
-                on:click={() => {
+                onclick={() => {
                     active = !active;
                 }}
             >
@@ -107,7 +131,7 @@
     <main class="grow w-full h-screen overflow-auto">
         {#if api}
             <Api {api}>
-                <slot />
+                {@render children?.()}
             </Api>
         {/if}
     </main>

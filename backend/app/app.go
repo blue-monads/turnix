@@ -69,6 +69,7 @@ func New(opts Options) *App {
 		ProjectBuilders: app.projects,
 		Controller:      app.controller,
 		LocalSocket:     opts.LocalSocket,
+		DevMode:         os.Getenv("TURNIX_DEV_MODE") == "true",
 	})
 
 	return app
@@ -104,4 +105,8 @@ func (a *App) GetServer() any {
 
 func (a *App) AuthMiddleware(fn xtypes.ApiHandler) gin.HandlerFunc {
 	return a.server.AuthMiddleware(fn)
+}
+
+func (a *App) AsApiAction(name string, fn xtypes.ApiHandler) gin.HandlerFunc {
+	return a.server.AsApiAction(name, fn)
 }

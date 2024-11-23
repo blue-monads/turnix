@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/bornjre/turnix/backend/services/database/autoquery"
+	"github.com/bornjre/turnix/backend/xtypes/models"
 	"github.com/k0kubun/pp"
 	"github.com/rqlite/sql"
 )
@@ -46,7 +48,7 @@ func splitQueries(input string) []Query {
 	return queries
 }
 
-func prevenSQLEscape(input string) error {
+func prevenSQLEscape(prefix string, input string) error {
 
 	parser := sql.NewParser(strings.NewReader(input))
 	stmt, err := parser.ParseStatement()
@@ -66,13 +68,13 @@ func prevenSQLEscape(input string) error {
 
 		case *sql.QualifiedTableName:
 			tbl := snode.TableName()
-			if !strings.HasPrefix(tbl, "__project__") {
+			if !strings.HasPrefix(tbl, prefix) {
 				return fmt.Errorf("you sneaky sneaky")
 			}
 
 		case *sql.QualifiedRef:
 
-			if !strings.HasPrefix(snode.Table.Name, "__project__") {
+			if !strings.HasPrefix(snode.Table.Name, prefix) {
 				return fmt.Errorf("you sneaky sneaky")
 			}
 
@@ -87,6 +89,15 @@ func prevenSQLEscape(input string) error {
 
 	return nil
 
+}
+
+func (a *ProjectController) RunQuerySQL2(userId int64, pid int64, qstr string, data []any) ([]map[string]any, error) {
+	err := prevenSQLEscape("__project__", qstr)
+	if err != nil {
+		return nil, err
+	}
+
+	return a.db.RunProjectSQLQuery(pid, qstr, data)
 }
 
 func (a *ProjectController) RunQuerySQL(userId int64, pid int64, input, name string, data []any) ([]map[string]any, error) {
@@ -106,10 +117,44 @@ func (a *ProjectController) RunQuerySQL(userId int64, pid int64, input, name str
 		return nil, fmt.Errorf("cannot extract query by name: %s", name)
 	}
 
-	err := prevenSQLEscape(queryContent)
+	err := prevenSQLEscape("__project__", queryContent)
 	if err != nil {
 		return nil, err
 	}
 
 	return a.db.RunProjectSQLQuery(pid, queryContent, data)
+}
+
+func (a *ProjectController) ListProjectTables(userId int64, pid int64) ([]string, error) {
+	return a.db.ListProjectTables(pid)
+}
+
+func (a *ProjectController) ListProjectTableColumns(userId int64, pid int64, table string) ([]models.TableColumn, error) {
+	return a.db.ListProjectTableColumns(pid, table)
+}
+
+func (a *ProjectController) AutoQueryProjectTable(userId int64, pid int64, table string, opts autoquery.LoaderParams) ([]map[string]any, error) {
+
+	prefix := fmt.Sprintf("z_%d_", pid)
+
+	fullTableName := fmt.Sprintf("z_%d_%s", pid, table)
+
+	builder := autoquery.NewBuilder(fullTableName, opts)
+	strquery, args := builder.Build()
+
+	err := prevenSQLEscape(prefix, strquery)
+	if err != nil {
+		return nil, err
+	}
+
+	pp.Println("@strquery", strquery)
+
+	data, err := a.db.RunProjectSQLQuery(pid, strquery, args)
+	if err != nil {
+		return nil, err
+	}
+
+	pp.Println("@data", data)
+
+	return data, nil
 }

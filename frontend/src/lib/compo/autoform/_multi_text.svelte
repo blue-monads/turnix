@@ -1,11 +1,15 @@
 <script lang="ts">
-  export let value = "";
-  export let onChange = null;
-  export let seperator = ",";
+  interface Props {
+    value?: string;
+    onChange?: any;
+    seperator?: string;
+  }
 
-  $: _value = value.split(seperator);
+  let { value = $bindable(""), onChange = null, seperator = "," }: Props = $props();
 
-  let new_val = "";
+  let _value = $derived(value.split(seperator));
+
+  let new_val = $state("");
 
   const push = () => {
     if (!onChange) return;
@@ -33,12 +37,12 @@
         type="text"
         class="w-full p-1 border"
         value={val}
-        on:change={changeInner(idx)}
+        onchange={changeInner(idx)}
       />
 
       <button
         class="bg-gray-700 rounded text-white p-2"
-        on:click={removeInner(idx)}>-</button
+        onclick={removeInner(idx)}>-</button
       >
     </div>
   {/each}
@@ -47,7 +51,7 @@
     <input type="text" class="p-1 w-full border" bind:value={new_val} />
     <button
       class="bg-gray-700 rounded text-white p-1"
-      on:click={() => {
+      onclick={() => {
         if (!new_val) return;
         value = value + "," + new_val;
         new_val = "";

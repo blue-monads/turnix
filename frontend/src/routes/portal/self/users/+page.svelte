@@ -7,8 +7,8 @@
 
     const api = getContext("__api__") as RootAPI;
 
-    let users: User[] = [];
-    let loading = true;
+    let users: User[] = $state([]);
+    let loading = $state(true);
 
     const load = async () => {
         loading = true;
@@ -96,7 +96,7 @@
                                 </a>
                                 <button 
                                     class="btn btn-sm variant-filled-error"
-                                    on:click={() => deleteUser(user)}
+                                    onclick={() => deleteUser(user)}
                                     >Delete</button
                                 >
                             </div>

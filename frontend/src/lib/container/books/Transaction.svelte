@@ -1,24 +1,43 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
+
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
   import { FileDropzone } from "@skeletonlabs/skeleton";
 
-  let files: FileList;
+  let files: FileList = $state();
 
-  export let edit = false;
 
-  export let title = "";
-  export let notes = "";
-  export let debit_account_id = 0;
-  export let credit_account_id = 0;
-  export let debit_amount = 100;
-  export let credit_amount = 100;
-  export let reference_id = "";
-  export let attachments: Record<string, string> = {};
 
-  export let onSubmit: Function;
-  export let onPickAccount: Function;
 
-  export let accountsIndex: Record<string, string> = {};
+  interface Props {
+    edit?: boolean;
+    title?: string;
+    notes?: string;
+    debit_account_id?: number;
+    credit_account_id?: number;
+    debit_amount?: number;
+    credit_amount?: number;
+    reference_id?: string;
+    attachments?: Record<string, string>;
+    onSubmit: Function;
+    onPickAccount: Function;
+    accountsIndex?: Record<string, string>;
+  }
+
+  let {
+    edit = false,
+    title = $bindable(""),
+    notes = $bindable(""),
+    debit_account_id = $bindable(0),
+    credit_account_id = $bindable(0),
+    debit_amount = $bindable(100),
+    credit_amount = $bindable(100),
+    reference_id = "",
+    attachments = {},
+    onSubmit,
+    onPickAccount,
+    accountsIndex = {}
+  }: Props = $props();
 
   const pickDebitAccount = async () => {
     const nextaccount = await onPickAccount();
@@ -38,7 +57,7 @@
 <div class="p-2">
   <form
     class="card"
-    on:submit|preventDefault={() => {
+    onsubmit={preventDefault(() => {
       onSubmit({
         title,
         notes,
@@ -49,7 +68,7 @@
         reference_id,
         attachments,
       });
-    }}
+    })}
   >
     <header class="card-header">
       <h4 class="h4">
@@ -90,7 +109,7 @@
           <button
             class="pt-4 cursor-pointer"
             type="button"
-            on:click={pickDebitAccount}
+            onclick={pickDebitAccount}
           >
             <SvgIcon name="arrow-up-right" className="w-5 h-5" />
           </button>
@@ -121,7 +140,7 @@
           <button
             class="pt-4 cursor-pointer"
             type="button"
-            on:click={pickCreditAccount}
+            onclick={pickCreditAccount}
           >
             <SvgIcon name="arrow-up-right" className="w-5 h-5" />
           </button>
@@ -148,7 +167,7 @@
         />
       </label>
 
-      <!-- svelte-ignore a11y-label-has-associated-control -->
+      <!-- svelte-ignore a11y_label_has_associated_control -->
       <label class="label">
         <span>Attachments</span>
         <FileDropzone bind:files name="files">

@@ -1,6 +1,13 @@
 <script lang="ts">
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-    import type { BooksAPI, Contact, SalesData } from "$lib/projects/books";
+    import type {
+        BooksAPI,
+        Contact,
+        Estimate,
+        EstimateLine,
+        Sale,
+        SaleLine,
+    } from "$lib/projects/books";
     import {
         getModalStore,
         RadioGroup,
@@ -10,9 +17,16 @@
 
     const store = getModalStore();
 
-    export let pid: number;
-    export let salesData: SalesData;
-    export let contactsNameIndex: Record<number, string> = {};
+    interface Props {
+        pid: number;
+        lines: SaleLine[] | EstimateLine[];
+        data: Sale | Estimate;
+        name?: string;
+
+        contactsNameIndex?: Record<number, string>;
+    }
+
+    let { pid, name="Sale", lines, data, contactsNameIndex = {} }: Props = $props();
 
     // export let api: BooksAPI;
 
@@ -23,7 +37,7 @@
 <form class="p-2">
     <div class="card">
         <header class="card-header flex justify-between">
-            <h3 class="h3">Sales #{salesData.sale.id}</h3>
+            <h3 class="h3">{name} #{data.id}</h3>
         </header>
 
         <section class="p-4 flex flex-col gap-4">
@@ -31,16 +45,16 @@
                 <div class="flex flex-col gap-2">
                     <div class="label">
                         <span class="font-semibold">Title : </span>
-                        <span>{salesData.sale.title || ""}</span>
+                        <span>{data.title || ""}</span>
                     </div>
 
                     <div class="label">
                         <span class="font-semibold">Billed To : </span>
                         <a
                             class="text-sm italic underline"
-                            href={`/z/pages/portal/projects/books/${pid}/contacts/edit?cid=${salesData.sale.client_id}`}
+                            href={`/z/pages/portal/projects/books/${pid}/contacts/edit?cid=${data.client_id}`}
                         >
-                            {contactsNameIndex[salesData.sale.client_id] || ""}
+                            {contactsNameIndex[data.client_id] || ""}
                         </a>
                     </div>
                 </div>
@@ -52,7 +66,7 @@
                         class="input p-1"
                         placeholder="Date"
                         disabled
-                        value={new Date(salesData.sale.created_at)
+                        value={new Date(data.created_at)
                             .toISOString()
                             .slice(0, 16)}
                     />
@@ -76,7 +90,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {#each salesData.lines as line, index}
+                        {#each lines as line, index}
                             <tr>
                                 <td class="px-4 py-2 border">{line.info}</td>
                                 <td
@@ -140,7 +154,7 @@
                     <span>Notes</span>
                     <textarea
                         class="textarea p-1"
-                        value={salesData.sale.notes}
+                        value={data.notes}
                         disabled={true}
                         rows="4"
                         placeholder="Notes about the sale.."
@@ -159,8 +173,7 @@
                                 >
                                     <span>
                                         {formatCurrency(
-                                            salesData.sale
-                                                .total_item_tax_amount,
+                                            data.total_item_tax_amount,
                                         )}
                                     </span>
                                 </td>
@@ -175,8 +188,7 @@
                                 >
                                     <span>
                                         {formatCurrency(
-                                            salesData.sale
-                                                .total_item_discount_amount,
+                                            data.total_item_discount_amount,
                                         )}
                                     </span>
                                 </td>
@@ -193,7 +205,7 @@
                                 >
                                     <strong
                                         >{formatCurrency(
-                                            salesData.sale.sub_total,
+                                            data.sub_total,
                                         )}</strong
                                     >
                                 </td>
@@ -209,8 +221,7 @@
                                     <span>
                                         <strong>
                                             {formatCurrency(
-                                                salesData.sale
-                                                    .overall_tax_amount,
+                                                data.overall_tax_amount,
                                             )}
                                         </strong>
                                         {#if overall_tax_percentage}
@@ -233,8 +244,7 @@
                                     <span>
                                         <strong>
                                             {formatCurrency(
-                                                salesData.sale
-                                                    .overall_discount_amount,
+                                                data.overall_discount_amount,
                                             )}
                                         </strong>
                                         {#if overall_discount_percentage}
@@ -255,7 +265,7 @@
                                 <td
                                     class="px-2 py-2 border border-gray-800 text-right font-semibold"
                                 >
-                                    {formatCurrency(salesData.sale.total)}
+                                    {formatCurrency(data.total)}
                                 </td>
                             </tr>
                         </tbody>
@@ -264,7 +274,7 @@
             </div>
         </section>
         <footer class="card-footer flex justify-end">
-            <button class="btn variant-soft-error" on:click={() => {}}>
+            <button class="btn variant-soft-error" onclick={() => {}}>
                 delete
             </button>
         </footer>

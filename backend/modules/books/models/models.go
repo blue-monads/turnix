@@ -44,23 +44,30 @@ type TransactionLine struct {
 }
 
 type ReportTemplate struct {
-	ID            int64  `json:"id" db:"id,omitempty"`
-	Name          string `json:"name" db:"name"`
-	InputOptions  string `json:"input_options" db:"input_options"`
-	OutputOptions string `json:"output_options" db:"output_options"`
-	QueryTemplate string `json:"query_template" db:"query_template"`
-	FilterScript  string `json:"filter_script" db:"filter_script"`
+	ID             int64      `json:"id" db:"id,omitempty"`
+	Name           string     `json:"name" db:"name,omitempty"`
+	InputOptions   string     `json:"input_options" db:"input_options,omitempty"`
+	OutputOptions  string     `json:"output_options" db:"output_options,omitempty"`
+	QueryTemplate  string     `json:"query_template" db:"query_template,omitempty"`
+	FilterScript   string     `json:"filter_script" db:"filter_script,omitempty"`
+	ViewerEditable bool       `json:"viewer_editable" db:"viewer_editable,omitempty"`
+	ReportType     string     `json:"report_type" db:"report_type,omitempty"`
+	Template       string     `json:"template" db:"template,omitempty"`
+	CreatedBy      int64      `json:"created_by" db:"created_by,omitempty"`
+	UpdatedBy      int64      `json:"updated_by" db:"updated_by,omitempty"`
+	CreatedAt      *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt      *time.Time `json:"updated_at" db:"updated_at,omitempty"`
 }
 
-type Report struct {
+type SavedReport struct {
 	ID         int64      `json:"id" db:"id,omitempty"`
-	TemplateID int64      `json:"template_id" db:"template_id"`
-	Result     string     `json:"result" db:"result"`
-	CreatedBy  int64      `json:"created_by" db:"created_by"`
-	UpdatedBy  int64      `json:"updated_by" db:"updated_by"`
+	Name       string     `json:"name" db:"name,omitempty"`
+	TemplateID int64      `json:"template_id" db:"template_id,omitempty"`
+	Result     string     `json:"result" db:"result,omitempty"`
+	CreatedBy  int64      `json:"created_by" db:"created_by,omitempty"`
+	UpdatedBy  int64      `json:"updated_by" db:"updated_by,omitempty"`
 	CreatedAt  *time.Time `json:"created_at" db:"created_at,omitempty"`
 	UpdatedAt  *time.Time `json:"updated_at" db:"updated_at,omitempty"`
-	IsDeleted  bool       `json:"is_deleted" db:"is_deleted,omitempty"`
 }
 
 type TxnRecord struct {
@@ -287,4 +294,58 @@ type Contact struct {
 	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
 	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
 	IsDeleted bool       `json:"is_deleted" db:"is_deleted,omitempty"`
+}
+
+type Notepad struct {
+	ID           int64      `json:"id" db:"id,omitempty"`
+	Title        string     `json:"title" db:"title"`
+	Notes        string     `json:"notes" db:"notes"`
+	JType        string     `json:"note_type" db:"note_type"`
+	Attachments  string     `json:"attachments" db:"attachments"`
+	CreatedBy    int64      `json:"created_by" db:"created_by"`
+	UpdatedBy    int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt    *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt    *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	LinkedClient int64      `json:"linked_client_id" db:"linked_client_id"`
+}
+
+type Estimate struct {
+	ID int64 `json:"id" db:"id,omitempty"`
+
+	Title       string `json:"title" db:"title"`
+	ClientID    int64  `json:"client_id" db:"client_id"`
+	ClientName  string `json:"client_name" db:"client_name"`
+	Notes       string `json:"notes" db:"notes,omitempty"`
+	Attachments string `json:"attachments" db:"attachments,omitempty"`
+
+	TotalItemPrice          float64 `json:"total_item_price" db:"total_item_price"`
+	TotalItemTaxAmount      float64 `json:"total_item_tax_amount" db:"total_item_tax_amount"`
+	TotalItemDiscountAmount float64 `json:"total_item_discount_amount" db:"total_item_discount_amount"`
+
+	SubTotal              float64 `json:"sub_total" db:"sub_total"`
+	OverallDiscountAmount float64 `json:"overall_discount_amount" db:"overall_discount_amount"`
+	OverallTaxAmount      float64 `json:"overall_tax_amount" db:"overall_tax_amount"`
+	Total                 float64 `json:"total" db:"total"`
+
+	CreatedBy int64      `json:"created_by" db:"created_by"`
+	UpdatedBy int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+	SalesDate *time.Time `json:"sales_date" db:"sales_date,omitempty"`
+}
+
+type EstimateLine struct {
+	ID             int64      `json:"id" db:"id,omitempty"`
+	Info           string     `json:"info" db:"info"`
+	Qty            int64      `json:"qty" db:"qty"`
+	EstimateId     int64      `json:"estimate_id" db:"estimate_id"`
+	ProductID      int64      `json:"product_id" db:"product_id"`
+	Price          float64    `json:"price" db:"price"`
+	TaxAmount      float64    `json:"tax_amount" db:"tax_amount"`
+	DiscountAmount float64    `json:"discount_amount" db:"discount_amount"`
+	TotalAmount    float64    `json:"total_amount" db:"total_amount"`
+	CreatedBy      int64      `json:"created_by" db:"created_by"`
+	UpdatedBy      int64      `json:"updated_by" db:"updated_by"`
+	CreatedAt      *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt      *time.Time `json:"updated_at" db:"updated_at,omitempty"`
 }

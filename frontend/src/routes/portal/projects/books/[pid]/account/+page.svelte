@@ -13,7 +13,7 @@
   const store = getModalStore();
   const api = NewBookAPI(getContext("__api__") as RootAPI);
 
-  let accounts: any[] = [];
+  let accounts: any[] = $state([]);
 
   const load = async () => {
     const resp = await api.listAccount(pid);

@@ -13,12 +13,17 @@
   import ClientPicker from "./portal/projects/books/[pid]/sales/new/sub/ClientPicker.svelte";
   import NewFolderPanel from "./portal/project/files/[pid]/sub/NewFolderPanel.svelte";
   import NewPluginPicker from "./portal/project/plugins/NewPluginPicker.svelte";
-  import FilePicker from "./portal/filestore/FilePicker.svelte";
+  import FilePicker from "./portal/filestore/FilePicker/FilePicker.svelte";
   import { Drawer } from "@skeletonlabs/skeleton";
   import Notification from "./portal/self/inbox/notification.svelte";
   import OverAllTaxPicker from "./portal/projects/books/[pid]/sales/new/sub/OverAllTaxPicker.svelte";
   import OverAllDiscountPicker from "./portal/projects/books/[pid]/sales/new/sub/OverAllDiscountPicker.svelte";
   import FilePreviewDialog from "./portal/self/files/preview/FilePreviewDialog.svelte";
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
+
+  let { children }: Props = $props();
 
   initializeStores();
 
@@ -45,4 +50,4 @@
 
 <Modal components={modalRegistry} />
 
-<slot />
+{@render children?.()}

@@ -91,6 +91,76 @@ func (d *DB) RunProjectSQLQuery(pid int64, query string, data []any) ([]map[stri
 
 }
 
+func (d *DB) ListProjectTables(pid int64) ([]string, error) {
+
+	result := make([]string, 0)
+
+	rows, err := d.sess.SQL().Query(fmt.Sprintf(`SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%%' and name like 'z_%d_%%'`, pid))
+	if err != nil {
+		return nil, err
+	}
+
+	prefix := fmt.Sprintf("z_%d_", pid)
+
+	for rows.Next() {
+		var name string
+		err := rows.Scan(&name)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, strings.TrimLeft(name, prefix))
+	}
+
+	return result, nil
+}
+
+/*
+
+cid	name	type	notnull	dflt_value	pk
+
+*/
+
+func (d *DB) ListProjectTableColumns(pid int64, table string) ([]models.TableColumn, error) {
+
+	result := make([]models.TableColumn, 0)
+
+	finalTableName := fmt.Sprintf("z_%d_%s", pid, table)
+
+	rows, err := d.sess.SQL().Query(fmt.Sprintf(`SELECT * FROM pragma_table_info('%s')`, finalTableName))
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var cid int64
+		var name string
+		var typeName string
+		var notNull int
+		var defaultValue *string
+		var primaryKey int
+		err := rows.Scan(&cid, &name, &typeName, &notNull, &defaultValue, &primaryKey)
+		if err != nil {
+			return nil, err
+		}
+		var defaultValueActual string
+		if defaultValue != nil {
+			defaultValueActual = *defaultValue
+		}
+
+		result = append(result, models.TableColumn{
+			Cid:          cid,
+			Name:         name,
+			Type:         typeName,
+			NotNull:      notNull == 1,
+			DefaultValue: defaultValueActual,
+			PrimaryKey:   primaryKey == 1,
+		})
+	}
+
+	return result, nil
+}
+
 func (d *DB) ListThirdPartyProjects(userid int64, ptype string) ([]models.Project, error) {
 
 	cond := db.Cond{
@@ -204,6 +274,20 @@ func (d *DB) ListProjectHooks(pid int64) ([]models.ProjectHook, error) {
 	hooks := []models.ProjectHook{}
 
 	err := table.Find(db.Cond{"project_id": pid}).All(&hooks)
+	if err != nil {
+		return nil, err
+	}
+
+	return hooks, nil
+}
+
+func (d *DB) ListAllProjectHooks() ([]models.ProjectHook, error) {
+
+	table := d.projectHooksTable()
+
+	hooks := []models.ProjectHook{}
+
+	err := table.Find().Select("id", "event", "project_id").All(&hooks)
 	if err != nil {
 		return nil, err
 	}

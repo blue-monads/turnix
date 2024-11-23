@@ -1,20 +1,26 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import FileListings from "../../../self/files/FileListings.svelte";
     import { getContext } from "svelte";
     import type { RootAPI, File } from "$lib/api";
     import { page } from "$app/stores";
     import { params } from "$lib/params";
 
-    export let files: File[] = []; //sampleFiles
 
-    export let selected: string;
+    interface Props {
+        files?: File[];
+        selected: string;
+    }
+
+    let { files = $bindable([]), selected = $bindable() }: Props = $props();
 
     const api = getContext("__api__") as RootAPI;
     const pid = $page.params["pid"];
 
-    $: _path = $params["folder"] || "";
+    let _path = $derived($params["folder"] || "");
 
-    let loading = false;
+    let loading = $state(false);
 
     const load = async (lpath?: string) => {
         loading = true;
@@ -27,7 +33,9 @@
         loading = false;
     };
 
-    $: load(_path);
+    run(() => {
+        load(_path);
+    });
 
 </script>
 

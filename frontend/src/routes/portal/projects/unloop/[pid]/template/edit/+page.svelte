@@ -14,9 +14,9 @@
   let tid = $params["tid"];
 
 
-  let message = "";
-  let loading = true;
-  let data = {};
+  let message = $state("");
+  let loading = $state(true);
+  let data = $state({});
 
   const load = async () => {
     loading = true;
