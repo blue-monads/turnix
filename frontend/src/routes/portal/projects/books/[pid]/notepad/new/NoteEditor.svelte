@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { RootAPI } from "$lib/api";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-    import { NewBookAPI } from "$lib/projects/books";
     import { getContext } from "svelte";
     import FilePicker from "../../../../../filestore/FilePicker/FilePicker.svelte";
     import { page } from "$app/stores";
@@ -22,17 +21,12 @@
     let notes = $state(data?.notes || "");
     let attachments: string = $state(data?.attachments || "");
 
-    let files = $derived(
-        attachments
-            .split(",")
-            .filter(Boolean)
-            .map((f) => rootApi.getSharedFileURL(f)),
-    );
+    let files = $derived(attachments.split(",").filter(Boolean));
 </script>
 
 <div class="card">
     <header class="card-header">
-        <h4 class="h4">{data ? "Edit Note" : "Add Note" }</h4>
+        <h4 class="h4">{data ? "Edit Note" : "Add Note"}</h4>
     </header>
     <section class="p-4 flex flex-col gap-4">
         <label class="label"
@@ -64,11 +58,19 @@
                 <div class="flex items-center gap-2">
                     {#each files as file}
                         <div
-                            class="flex-shrink-0 p-1 rounded bg-white relative"
+                            class="flex-shrink-0 p-1 rounded bg-white relative min-w-20 min-h-20"
                         >
                             <button
                                 class="btn btn-sm absolute top-0 right-0"
-                                onclick={() => {
+                                onclick={async () => {
+                                    console.log("@delete_file", file);
+
+                                    try {
+                                        await rootApi.deleteShareFile(file);                                        
+                                    } catch (error) {                                        
+                                        console.error(error);
+                                    }
+                                    
                                     attachments = attachments.replace(file, "");
                                 }}
                             >
@@ -76,7 +78,7 @@
                             </button>
 
                             <img
-                                src={file}
+                                src={rootApi.getSharedFileURL(file)}
                                 alt=""
                                 class="w-full max-w-32 h-auto"
                             />

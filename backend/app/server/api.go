@@ -21,6 +21,12 @@ func (a *Server) sharedFile(claim *signer.AccessClaim, ctx *gin.Context) (any, e
 	return a.cCommon.SharedFile(fid, claim.UserId, pid)
 }
 
+func (a *Server) deleteShareFile(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	file := ctx.Param("file")
+	err := a.cSelf.DeleteFileShare(claim.UserId, file)
+	return nil, err
+}
+
 func (a *Server) getSharedFile(ctx *gin.Context) {
 	file := ctx.Param("file")
 

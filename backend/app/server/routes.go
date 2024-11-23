@@ -128,13 +128,15 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 	apiv1.POST("/self/files/:id/shares", a.accessMiddleware(a.addSelfFileShare))
 	apiv1.DELETE("/self/files/:id/shares/:id", a.accessMiddleware(a.deleteSelfFileShare))
 
-	// user profile
-	apiv1.GET("/user/:uid", a.accessMiddleware(a.userProfile))
 	apiv1.GET("/file/shared/:file", a.getSharedFile)
 	apiv1.POST("/file/shared/:file", a.accessMiddleware(a.sharedFile))
+	apiv1.DELETE("/file/shared/:file", a.accessMiddleware(a.deleteShareFile))
 
 	apiv1.GET("/file/shortKey/:shortkey", a.GetFileWithShortKey)
 	apiv1.POST("/file/:fid/shortkey", a.accessMiddleware(a.GetFileShortKey))
+
+	// user profile
+	apiv1.GET("/user/:uid", a.accessMiddleware(a.userProfile))
 
 }
 

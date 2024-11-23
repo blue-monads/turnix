@@ -351,6 +351,11 @@ export class RootAPI {
     }
 
 
+    deleteShareFile = (fid: string) => {
+        return this.client.delete(`/file/shared/${fid}`)
+    }
+
+
     getFileShortKey = (fid: string) => {
         return this.client.post(`/file/${fid}/shortkey`, {})
     }
