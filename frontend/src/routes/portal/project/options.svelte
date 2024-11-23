@@ -77,25 +77,15 @@
       </a>
 
       <a
-        class="logo-item"
-        onclick={() => {
-          modalStore.close();
-        }}
-        href={`/z/pages/portal/project/livequery?pid=${pid}`}
-      >
-        <SvgIcon name="squares-2x2" className="w-6 h-6" />
-        <span>Live Query</span>
-      </a>
-      <a
-        class="logo-item"
-        onclick={() => {
-          modalStore.close();
-        }}
-        href={`/z/pages/portal/project/explore?pid=${pid}`}
-      >
-        <SvgIcon name="squares-2x2" className="w-6 h-6" />
-        <span>Explore Data</span>
-      </a>
+      class="logo-item"
+      onclick={() => {
+        modalStore.close();
+      }}
+      href={`/z/pages/portal/project/tools?pid=${pid}`}
+    >
+      <SvgIcon name="wrench-screwdriver" className="w-6 h-6" />
+      <span>Tools</span>
+    </a>
 
       <a
         class="logo-item"
@@ -108,16 +98,7 @@
         <span>Users and Permissions</span>
       </a>
 
-      <a
-        class="logo-item"
-        onclick={() => {
-          modalStore.close();
-        }}
-        href={`/z/pages/portal/hooks?ptype=${data["ptype"]}&pid=${pid}`}
-      >
-        <SvgIcon name="code-bracket-square" className="w-6 h-6" />
-        <span>Project Hooks</span>
-      </a>
+
 
       <a
         class="logo-item"
