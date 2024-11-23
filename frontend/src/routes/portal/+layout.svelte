@@ -182,7 +182,7 @@
             placement: "right",
           }}
           <a
-            use:popup={popupHover}
+            use:popup={popupHover as any}
             class="p-4 hover:bg-secondary-50 [&>*]:pointer-events-none [&]:z-20"
             href={item["link"]}
           >
