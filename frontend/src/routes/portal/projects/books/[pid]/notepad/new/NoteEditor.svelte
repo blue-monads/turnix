@@ -49,16 +49,14 @@
             ></textarea></label
         >
 
-        <div>
+        <div class="flex flex-col gap-2">
             <span>Files</span>
 
-            <div
-                class="mx-auto cursor-pointer flex w-full max-w-lg flex-col items-center justify-center p-2 text-center"
-            >
-                <div class="flex items-center gap-2">
+
+                <div class="flex justify-items-start flex-wrap gap-2 p-2">
                     {#each files as file}
                         <div
-                            class="flex-shrink-0 p-1 rounded bg-white relative min-w-20 min-h-20"
+                            class="p-1 rounded bg-white relative min-w-20 min-h-20 self-start"
                         >
                             <button
                                 class="btn btn-sm absolute top-0 right-0"
@@ -85,10 +83,9 @@
                         </div>
                     {/each}
                 </div>
-            </div>
 
             <button
-                class="btn btn-sm variant-filled-secondary"
+                class="btn btn-sm variant-filled-secondary w-10"
                 onclick={() => {
                     modal.show(FilePicker, {
                         pid: pid,
