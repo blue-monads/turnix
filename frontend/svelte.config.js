@@ -16,6 +16,9 @@ const config = {
     paths: {
       base: "/z/pages"
     },
+    // version: {
+    //   name: "0.1.12",
+    // }
   },
 };
 
