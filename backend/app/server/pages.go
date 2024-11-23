@@ -70,7 +70,8 @@ func (s *Server) externalAssets() gin.HandlerFunc {
 			return
 		}
 
-		ppath := strings.TrimPrefix(ctx.Request.URL.Path, fmt.Sprintf("/z/x/%s/", pname))
+		prefix := fmt.Sprintf("/z/x/%s/", pname)
+		ppath := strings.TrimPrefix(ctx.Request.URL.Path, prefix)
 		ppath = strings.TrimSuffix(ppath, "/")
 		ppath = strings.TrimPrefix(ppath, "/")
 
