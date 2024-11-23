@@ -9,6 +9,8 @@ import (
 	"sync"
 
 	"github.com/blue-monads/turnix/backend/distro/climux"
+	"github.com/blue-monads/turnix/backend/mesh/lpweb"
+	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 
 	webview "github.com/webview/webview_go"
@@ -26,6 +28,11 @@ type EbrowserApp struct {
 
 	cmd   *exec.Cmd
 	cLock sync.Mutex
+
+	mesh          *lpweb.LPWebMesh
+	meshBuildLock sync.Mutex
+
+	engine *gin.Engine
 }
 
 func New(clictx climux.Context) *EbrowserApp {
@@ -88,9 +95,11 @@ func (e *EbrowserApp) remoteNavigate(urlstr string) {
 	if strings.HasSuffix(hostName, ".lpweb") {
 		keyHash := strings.TrimSuffix(hostName, ".lpweb")
 		u.Scheme = "http"
-		u.Host = fmt.Sprintf("%s.localhost:%d", keyHash, e.port)
+		u.Host = fmt.Sprintf("%s-lpweb.localhost:%d", keyHash, e.port)
 
 		pp.Println("@remoteNavigate/3", u.String())
+
+		e.startMesh()
 
 		e.webview.Navigate(u.String())
 	} else {

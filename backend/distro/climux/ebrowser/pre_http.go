@@ -9,10 +9,12 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/blue-monads/turnix/backend/app/server"
 	"github.com/blue-monads/turnix/backend/app/server/assets"
+	"github.com/blue-monads/turnix/backend/mesh/lpweb"
 	xutils "github.com/blue-monads/turnix/backend/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
@@ -24,9 +26,7 @@ func (e *EbrowserApp) runPreHttpServer() {
 
 	rfunc := assets.PagesRoutesServer()
 
-	engine.GET("/z/global.js", func(ctx *gin.Context) {
-
-	})
+	engine.GET("/z/global.js", func(ctx *gin.Context) {})
 	engine.GET("/z/pages", rfunc)
 	engine.GET("/z/pages/*files", rfunc)
 
@@ -41,8 +41,9 @@ func (e *EbrowserApp) runPreHttpServer() {
 	}
 
 	e.port = port
+	e.engine = engine
 
-	err = http.ListenAndServe(fmt.Sprintf(":%d", port), engine)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", port), e)
 	if err != nil {
 		panic(err)
 	}
@@ -170,4 +171,48 @@ func (e *EbrowserApp) getStatus() (*server.LocalStatus, error) {
 
 	return &msg, nil
 
+}
+
+func (e *EbrowserApp) startMesh() {
+	e.meshBuildLock.Lock()
+	defer e.meshBuildLock.Unlock()
+
+	if e.mesh != nil {
+		return
+	}
+
+	time.Sleep(time.Second * 5)
+
+	pp.Println("@e.config.MasterKey", e.config)
+
+	e.mesh = lpweb.New(e.config.MasterKey, e.port, e.port)
+
+}
+
+func (e *EbrowserApp) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+
+	host := r.Host
+
+	pp.Println("@EbrowserApp/ServeHTTP", r.Host, r.URL)
+
+	if strings.Contains(host, "-lpweb.localhost:") {
+
+		r.URL.Host = strings.Replace(host, "-lpweb", "", 1)
+		url, err := r.URL.Parse(r.URL.String())
+		if err != nil {
+			panic(err)
+		}
+
+		r.URL = url
+
+		if r.Header.Get("Upgrade") == "websocket" {
+			e.mesh.HandleWsIn(r, rw)
+		} else {
+			e.mesh.HandleHttpIn(r, rw)
+		}
+
+		return
+	}
+
+	e.engine.ServeHTTP(rw, r)
 }

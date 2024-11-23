@@ -2,10 +2,13 @@ package lpweb
 
 import (
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/blue-monads/lpweb/code/core/mesh"
 	"github.com/blue-monads/lpweb/code/proxy"
 	"github.com/blue-monads/lpweb/code/tunnel"
+	"github.com/k0kubun/pp"
 )
 
 type LPWebMesh struct {
@@ -32,6 +35,18 @@ func New(key string, meshPort, tunnelPort int) *LPWebMesh {
 }
 
 func (wp *LPWebMesh) HandleHttpIn(r *http.Request, w http.ResponseWriter) {
+
+	pp.Println("@HandleHttpIn", r.URL.String())
+	// http://mnop.lpweb
+
+	time.Sleep(time.Second * 5)
+
+	pp.Println("@1", wp.proxy)
+
+	time.Sleep(time.Second * 5)
+
+	os.Exit(1)
+
 	wp.proxy.HandleHttp3(r, w)
 }
 
