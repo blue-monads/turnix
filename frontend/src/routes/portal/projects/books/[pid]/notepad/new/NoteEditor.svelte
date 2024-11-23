@@ -22,6 +22,10 @@
     let attachments: string = $state(data?.attachments || "");
 
     let files = $derived(attachments.split(",").filter(Boolean));
+
+    const exts = ["jpg", "jpeg", "png", "gif", "webp", "svg"];
+
+
 </script>
 
 <div class="card">
@@ -52,37 +56,41 @@
         <div class="flex flex-col gap-2">
             <span>Files</span>
 
+            <div class="flex justify-items-start flex-wrap gap-2 p-2">
+                {#each files as file}
+                    <div
+                        class="p-1 rounded bg-white relative min-w-20 min-h-20 self-start"
+                    >
+                        <button
+                            class="btn btn-sm absolute top-0 right-0"
+                            onclick={async () => {
+                                console.log("@delete_file", file);
 
-                <div class="flex justify-items-start flex-wrap gap-2 p-2">
-                    {#each files as file}
-                        <div
-                            class="p-1 rounded bg-white relative min-w-20 min-h-20 self-start"
+                                try {
+                                    await rootApi.deleteShareFile(file);
+                                } catch (error) {
+                                    console.error(error);
+                                }
+
+                                attachments = attachments.replace(file, "");
+                            }}
                         >
-                            <button
-                                class="btn btn-sm absolute top-0 right-0"
-                                onclick={async () => {
-                                    console.log("@delete_file", file);
+                            <SvgIcon name="x-mark" className="w-4 h-4" />
+                        </button>
 
-                                    try {
-                                        await rootApi.deleteShareFile(file);                                        
-                                    } catch (error) {                                        
-                                        console.error(error);
-                                    }
-                                    
-                                    attachments = attachments.replace(file, "");
-                                }}
-                            >
-                                <SvgIcon name="x-mark" className="w-4 h-4" />
-                            </button>
-
+                        {#if exts.includes(file.split(".").at(-1) as string)}
                             <img
                                 src={rootApi.getSharedFileURL(file)}
                                 alt=""
                                 class="w-full max-w-32 h-auto"
                             />
-                        </div>
-                    {/each}
-                </div>
+                        {:else}
+                            <SvgIcon name="document" className="w-16 h-16 text-gray-600" />
+                        {/if}
+
+                    </div>
+                {/each}
+            </div>
 
             <button
                 class="btn btn-sm variant-filled-secondary w-10"
