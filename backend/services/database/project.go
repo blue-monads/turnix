@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bornjre/turnix/backend/utils/libx/dbutils"
-	"github.com/bornjre/turnix/backend/xtypes/models"
+	"github.com/blue-monads/turnix/backend/utils/libx/dbutils"
+	"github.com/blue-monads/turnix/backend/xtypes/models"
 	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )

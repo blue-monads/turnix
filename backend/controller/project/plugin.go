@@ -1,7 +1,7 @@
 package project
 
 import (
-	"github.com/bornjre/turnix/backend/xtypes/models"
+	"github.com/blue-monads/turnix/backend/xtypes/models"
 )
 
 func (a *ProjectController) ListProjectPlugins(userId int64, pid int64) ([]models.ProjectPlugin, error) {

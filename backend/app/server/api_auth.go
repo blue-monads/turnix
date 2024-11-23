@@ -7,13 +7,13 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/bornjre/turnix/backend/utils/libx/httpx"
-	"github.com/bornjre/turnix/backend/xtypes/models"
+	"github.com/blue-monads/turnix/backend/utils/libx/httpx"
+	"github.com/blue-monads/turnix/backend/xtypes/models"
 	_ "github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/xid"
 
-	"github.com/bornjre/turnix/backend/services/signer"
+	"github.com/blue-monads/turnix/backend/services/signer"
 )
 
 func (a *Server) signUpDirect(ctx *gin.Context) {

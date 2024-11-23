@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/bornjre/turnix/backend/modules/books/dbops"
-	"github.com/bornjre/turnix/backend/modules/books/models"
-	"github.com/bornjre/turnix/backend/xtypes"
+	"github.com/blue-monads/turnix/backend/modules/books/dbops"
+	"github.com/blue-monads/turnix/backend/modules/books/models"
+	"github.com/blue-monads/turnix/backend/xtypes"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 )

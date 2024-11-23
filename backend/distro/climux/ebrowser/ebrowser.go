@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"sync"
 
-	"github.com/bornjre/turnix/backend/distro/climux"
+	"github.com/blue-monads/turnix/backend/distro/climux"
 	"github.com/k0kubun/pp"
 
 	webview "github.com/webview/webview_go"

@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/bornjre/turnix/backend/services/database/autoquery"
-	"github.com/bornjre/turnix/backend/xtypes/models"
+	"github.com/blue-monads/turnix/backend/services/database/autoquery"
+	"github.com/blue-monads/turnix/backend/xtypes/models"
 	"github.com/k0kubun/pp"
 	"github.com/rqlite/sql"
 )

@@ -1,9 +1,9 @@
 package xtypes
 
 import (
-	"github.com/bornjre/turnix/backend/xtypes/services/xsockd"
+	"github.com/blue-monads/turnix/backend/xtypes/services/xsockd"
 
-	"github.com/bornjre/turnix/backend/xtypes/xengine"
+	"github.com/blue-monads/turnix/backend/xtypes/xengine"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,6 +1,6 @@
 package self
 
-import "github.com/bornjre/turnix/backend/xtypes/models"
+import "github.com/blue-monads/turnix/backend/xtypes/models"
 
 func (a *SelfController) ListUserMessages(userId int64, count, cursor int64) ([]models.UserMessage, error) {
 

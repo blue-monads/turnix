@@ -5,7 +5,7 @@ import (
 
 	// modules
 
-	"github.com/bornjre/turnix/backend/distro"
+	"github.com/blue-monads/turnix/backend/distro"
 )
 
 func Run() {

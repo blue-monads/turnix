@@ -7,10 +7,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/bornjre/turnix/backend/engine/pool"
-	"github.com/bornjre/turnix/backend/utils/libx/httpx"
-	"github.com/bornjre/turnix/backend/xtypes"
-	"github.com/bornjre/turnix/backend/xtypes/models"
+	"github.com/blue-monads/turnix/backend/engine/pool"
+	"github.com/blue-monads/turnix/backend/utils/libx/httpx"
+	"github.com/blue-monads/turnix/backend/xtypes"
+	"github.com/blue-monads/turnix/backend/xtypes/models"
 	"github.com/dop251/goja"
 	"github.com/gin-gonic/gin"
 )

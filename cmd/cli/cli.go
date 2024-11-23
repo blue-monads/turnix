@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/bornjre/turnix/backend/distro/climux"
+	"github.com/blue-monads/turnix/backend/distro/climux"
 )
 
 func RunCLI() {

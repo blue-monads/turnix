@@ -11,9 +11,9 @@ import (
 	"path"
 	"time"
 
-	"github.com/bornjre/turnix/backend/app/server"
-	"github.com/bornjre/turnix/backend/app/server/assets"
-	xutils "github.com/bornjre/turnix/backend/utils"
+	"github.com/blue-monads/turnix/backend/app/server"
+	"github.com/blue-monads/turnix/backend/app/server/assets"
+	xutils "github.com/blue-monads/turnix/backend/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 )

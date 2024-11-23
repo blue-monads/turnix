@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/bornjre/turnix/backend/app/server/assets"
+	"github.com/blue-monads/turnix/backend/app/server/assets"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 )

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bornjre/turnix/backend/modules/books/models"
+	"github.com/blue-monads/turnix/backend/modules/books/models"
 	"github.com/jmoiron/sqlx"
 	"github.com/k0kubun/pp"
 )

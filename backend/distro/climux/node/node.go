@@ -4,8 +4,8 @@ import (
 	"errors"
 	"os"
 
-	"github.com/bornjre/turnix/backend/distro"
-	"github.com/bornjre/turnix/backend/distro/climux"
+	"github.com/blue-monads/turnix/backend/distro"
+	"github.com/blue-monads/turnix/backend/distro/climux"
 )
 
 func init() {

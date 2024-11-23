@@ -3,7 +3,7 @@ package ebrowser
 import (
 	"time"
 
-	"github.com/bornjre/turnix/backend/distro/climux"
+	"github.com/blue-monads/turnix/backend/distro/climux"
 )
 
 func init() {

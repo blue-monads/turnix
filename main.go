@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/bornjre/turnix/cmd/cli"
+	"github.com/blue-monads/turnix/cmd/cli"
 
-	// "github.com/bornjre/turnix/backend/distro/climux"
-	_ "github.com/bornjre/turnix/backend/distro/climux/ebrowser"
-	_ "github.com/bornjre/turnix/backend/distro/climux/node"
+	// "github.com/blue-monads/turnix/backend/distro/climux"
+	_ "github.com/blue-monads/turnix/backend/distro/climux/ebrowser"
+	_ "github.com/blue-monads/turnix/backend/distro/climux/node"
 	_ "github.com/mattn/go-sqlite3"
 
-	_ "github.com/bornjre/turnix/backend/modules/books"
-	_ "github.com/bornjre/turnix/backend/modules/unloop"
+	_ "github.com/blue-monads/turnix/backend/modules/books"
+	_ "github.com/blue-monads/turnix/backend/modules/unloop"
 )
 
 func main() {

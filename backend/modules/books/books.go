@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bornjre/turnix/backend/modules/books/dbops"
-	"github.com/bornjre/turnix/backend/services/database"
-	"github.com/bornjre/turnix/backend/xtypes"
+	"github.com/blue-monads/turnix/backend/modules/books/dbops"
+	"github.com/blue-monads/turnix/backend/services/database"
+	"github.com/blue-monads/turnix/backend/xtypes"
 	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )

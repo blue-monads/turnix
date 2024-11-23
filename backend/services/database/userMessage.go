@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/bornjre/turnix/backend/xtypes/models"
+	"github.com/blue-monads/turnix/backend/xtypes/models"
 	"github.com/upper/db/v4"
 )
 

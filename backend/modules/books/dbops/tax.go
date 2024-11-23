@@ -1,7 +1,7 @@
 package dbops
 
 import (
-	"github.com/bornjre/turnix/backend/modules/books/models"
+	"github.com/blue-monads/turnix/backend/modules/books/models"
 	"github.com/upper/db/v4"
 )
 

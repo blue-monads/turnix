@@ -3,7 +3,7 @@ package xsockd
 import (
 	"errors"
 
-	"github.com/bornjre/turnix/backend/xtypes/models"
+	"github.com/blue-monads/turnix/backend/xtypes/models"
 )
 
 var (

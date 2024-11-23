@@ -3,7 +3,7 @@ package xtypes
 import (
 	"strconv"
 
-	"github.com/bornjre/turnix/backend/services/signer"
+	"github.com/blue-monads/turnix/backend/services/signer"
 	"github.com/gin-gonic/gin"
 )
 

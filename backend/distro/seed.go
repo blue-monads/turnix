@@ -1,8 +1,8 @@
 package distro
 
 import (
-	"github.com/bornjre/turnix/backend/services/database"
-	"github.com/bornjre/turnix/backend/xtypes/models"
+	"github.com/blue-monads/turnix/backend/services/database"
+	"github.com/blue-monads/turnix/backend/xtypes/models"
 )
 
 func (d *DistroApp) RunNormalSeed() error {

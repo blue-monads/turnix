@@ -3,7 +3,7 @@ package dbops
 import (
 	"time"
 
-	"github.com/bornjre/turnix/backend/modules/books/models"
+	"github.com/blue-monads/turnix/backend/modules/books/models"
 	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )

@@ -1,12 +1,12 @@
 package engine
 
 import (
-	"github.com/bornjre/turnix/backend/engine/pool"
+	"github.com/blue-monads/turnix/backend/engine/pool"
 
 	"encoding/json"
 	"fmt"
 
-	"github.com/bornjre/turnix/backend/services/database"
+	"github.com/blue-monads/turnix/backend/services/database"
 	"github.com/dop251/goja"
 )
 

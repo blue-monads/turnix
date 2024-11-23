@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/bornjre/turnix/backend/xtypes/models"
-	"github.com/bornjre/turnix/backend/xtypes/xproject"
+	"github.com/blue-monads/turnix/backend/xtypes/models"
+	"github.com/blue-monads/turnix/backend/xtypes/xproject"
 )
 
 func BuildGlobalJS(projTypes map[string]*xproject.Defination) ([]byte, error) {

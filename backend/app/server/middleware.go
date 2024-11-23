@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/bornjre/turnix/backend/utils/libx/httpx"
-	"github.com/bornjre/turnix/backend/xtypes"
+	"github.com/blue-monads/turnix/backend/utils/libx/httpx"
+	"github.com/blue-monads/turnix/backend/xtypes"
 
 	"github.com/gin-gonic/gin"
 )

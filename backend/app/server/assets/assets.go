@@ -7,8 +7,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/bornjre/turnix/backend/utils/libx/httpx"
-	"github.com/bornjre/turnix/frontend/output"
+	"github.com/blue-monads/turnix/backend/utils/libx/httpx"
+	"github.com/blue-monads/turnix/frontend/output"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 )

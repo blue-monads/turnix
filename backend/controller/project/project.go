@@ -1,9 +1,9 @@
 package project
 
 import (
-	"github.com/bornjre/turnix/backend/services/database"
-	"github.com/bornjre/turnix/backend/xtypes/models"
-	"github.com/bornjre/turnix/backend/xtypes/xproject"
+	"github.com/blue-monads/turnix/backend/services/database"
+	"github.com/blue-monads/turnix/backend/xtypes/models"
+	"github.com/blue-monads/turnix/backend/xtypes/xproject"
 )
 
 // this layer (controller) should not have claim and gin context

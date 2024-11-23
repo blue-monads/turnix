@@ -1,10 +1,10 @@
 package books
 
 import (
-	"github.com/bornjre/turnix/backend/modules/books/dbops"
-	"github.com/bornjre/turnix/backend/registry"
-	"github.com/bornjre/turnix/backend/services/database"
-	"github.com/bornjre/turnix/backend/xtypes/xproject"
+	"github.com/blue-monads/turnix/backend/modules/books/dbops"
+	"github.com/blue-monads/turnix/backend/registry"
+	"github.com/blue-monads/turnix/backend/services/database"
+	"github.com/blue-monads/turnix/backend/xtypes/xproject"
 	"github.com/gin-gonic/gin"
 )
 

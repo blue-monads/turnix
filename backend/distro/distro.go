@@ -1,11 +1,11 @@
 package distro
 
 import (
-	"github.com/bornjre/turnix/backend/app"
-	"github.com/bornjre/turnix/backend/registry"
-	"github.com/bornjre/turnix/backend/services/database"
-	"github.com/bornjre/turnix/backend/services/signer"
-	"github.com/bornjre/turnix/backend/xtypes"
+	"github.com/blue-monads/turnix/backend/app"
+	"github.com/blue-monads/turnix/backend/registry"
+	"github.com/blue-monads/turnix/backend/services/database"
+	"github.com/blue-monads/turnix/backend/services/signer"
+	"github.com/blue-monads/turnix/backend/xtypes"
 )
 
 type Options struct {

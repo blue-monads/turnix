@@ -5,12 +5,12 @@ import (
 
 	// modules
 
-	"github.com/bornjre/turnix/backend/distro/devmode"
+	"github.com/blue-monads/turnix/backend/distro/devmode"
 
-	_ "github.com/bornjre/turnix/backend/modules/books"
+	_ "github.com/blue-monads/turnix/backend/modules/books"
 
-	// _ "github.com/bornjre/turnix/backend/modules/tracker"
-	_ "github.com/bornjre/turnix/backend/modules/unloop"
+	// _ "github.com/blue-monads/turnix/backend/modules/tracker"
+	_ "github.com/blue-monads/turnix/backend/modules/unloop"
 )
 
 func main() {

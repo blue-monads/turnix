@@ -13,7 +13,7 @@ import (
 	"github.com/adrg/xdg"
 	"github.com/k0kubun/pp"
 
-	xutils "github.com/bornjre/turnix/backend/utils"
+	xutils "github.com/blue-monads/turnix/backend/utils"
 )
 
 var (

@@ -3,7 +3,7 @@ package xproject
 import (
 	"io/fs"
 
-	"github.com/bornjre/turnix/backend/xtypes"
+	"github.com/blue-monads/turnix/backend/xtypes"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"

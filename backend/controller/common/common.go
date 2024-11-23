@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bornjre/turnix/backend/services/database"
+	"github.com/blue-monads/turnix/backend/services/database"
 	"github.com/gin-gonic/gin"
 	"github.com/hako/branca"
 )

@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"github.com/bornjre/turnix/backend/services/database"
-	"github.com/bornjre/turnix/backend/services/signer"
+	"github.com/blue-monads/turnix/backend/services/database"
+	"github.com/blue-monads/turnix/backend/services/signer"
 )
 
 type AuthController struct {

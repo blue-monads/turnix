@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bornjre/turnix/backend/services/database"
+	"github.com/blue-monads/turnix/backend/services/database"
 	"github.com/upper/db/v4"
 )
 

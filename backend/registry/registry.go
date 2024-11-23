@@ -3,7 +3,7 @@ package registry
 import (
 	"sync"
 
-	"github.com/bornjre/turnix/backend/xtypes/xproject"
+	"github.com/blue-monads/turnix/backend/xtypes/xproject"
 )
 
 var (
