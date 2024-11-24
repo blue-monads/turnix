@@ -121,7 +121,7 @@ func (e *EbrowserApp) statusPage(ctx *gin.Context) {
 
 	for {
 		pp.Println("@status/1", counter)
-		if e.mesh != nil {
+		if e.mesh == nil {
 			pp.Println("@status/2/sleep", counter)
 			time.Sleep(time.Second * 2)
 		} else {
