@@ -121,8 +121,20 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 func (e *EbrowserApp) statusPage(ctx *gin.Context) {
 
 	meshAddr := ""
-	if e.mesh != nil {
-		time.Sleep(time.Second * 5)
+
+	counter := 0
+
+	for {
+		if e.mesh != nil {
+			time.Sleep(time.Second * 2)
+		}
+
+		if counter > 10 {
+			break
+		}
+
+		counter++
+
 	}
 
 	if e.mesh != nil {
