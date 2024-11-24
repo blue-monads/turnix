@@ -47,14 +47,16 @@ CREATE TABLE IF NOT EXISTS UserConfig (
 CREATE TABLE IF NOT EXISTS UserDevices (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   name TEXT NOT NULL DEFAULT '', 
-  info TEXT NOT NULL DEFAULT '', 
   dtype TEXT NOT NULL DEFAULT 'sesssion', --  session token
-  hash TEXT NOT NULL DEFAULT '', 
-  contents TEXT NOT NULL DEFAULT '', 
+  token_hash TEXT NOT NULL DEFAULT '', 
   user_id INTEGER NOT NULL, 
   project_id INTEGER NOT NULL DEFAULT 0,
+  last_ip TEXT NOT NULL DEFAULT '',
+  last_login TEXT NOT NULL DEFAULT '',
   extrameta JSON NOT NULL DEFAULT '{}', 
   expires_on TIMESTAMP not null, 
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 

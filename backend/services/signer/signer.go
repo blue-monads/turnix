@@ -12,6 +12,7 @@ import (
 const (
 	TokenTypeAccess      uint8 = 1
 	TokenTypeEmailInvite uint8 = 2
+	TokenTypePair        uint8 = 3
 )
 
 type AccessClaim struct {

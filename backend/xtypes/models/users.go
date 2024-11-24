@@ -36,3 +36,18 @@ type UserMessage struct {
 	CallbackToken string     `json:"callback_token" db:"callback_token,omitempty"`
 	Disabled      bool       `json:"disabled" db:"disabled,omitempty"`
 }
+
+type UserDevice struct {
+	ID        int64      `json:"id" db:"id,omitempty"`
+	Name      string     `json:"name" db:"name"`
+	Dtype     string     `json:"dtype" db:"dtype"`
+	TokenHash string     `json:"token_hash" db:"token_hash"`
+	UserId    int64      `json:"user_id" db:"user_id"`
+	ProjectId int64      `json:"project_id" db:"project_id,omitempty"`
+	LastIp    string     `json:"last_ip" db:"last_ip"`
+	LastLogin string     `json:"last_login" db:"last_login"`
+	ExtraMeta string     `json:"extrameta" db:"extrameta,omitempty"`
+	ExpiresOn *time.Time `json:"expires_on" db:"expires_on,omitempty"`
+	CreatedAt *time.Time `json:"created_at" db:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at" db:"updated_at,omitempty"`
+}
