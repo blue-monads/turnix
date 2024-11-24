@@ -72,29 +72,26 @@
                                     {user.bio}
                                 </dd></span
                             >
-                            <div class="flex gap-0 sm:gap-1 flex-wrap space-y-2">
-
-
-
+                            <div
+                                class="flex gap-1 flex-wrap"
+                            >
                                 <a
-                                
-                                href="/z/pages/portal/user/{user.id}"
-                                class="btn btn-sm variant-filled-tertiary"
+                                    href="/z/pages/portal/user/{user.id}"
+                                    class="btn btn-sm variant-filled-tertiary"
                                     >Profile
-                            </a>
+                                </a>
 
                                 <a
-                                
-                                href="/z/pages/portal/self/users/reset-password?uid={user.id}"
-                                class="btn btn-sm variant-filled-primary"
+                                    href="/z/pages/portal/self/users/reset-password?uid={user.id}"
+                                    class="btn btn-sm variant-filled-primary"
                                     >Reset Password
-                            </a>
+                                </a>
                                 <a
                                     href="/z/pages/portal/self/users/edit?uid={user.id}"
                                     class="btn btn-sm variant-filled-warning"
                                     >Edit
                                 </a>
-                                <button 
+                                <button
                                     class="btn btn-sm variant-filled-error"
                                     onclick={() => deleteUser(user)}
                                     >Delete</button
