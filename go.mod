@@ -7,7 +7,7 @@ require (
 	github.com/adrg/xdg v0.5.0
 	github.com/alecthomas/repr v0.4.0
 	github.com/aurowora/compress v0.0.0-20230724224640-6512772d482f
-	github.com/blue-monads/lpweb v0.0.0-20241123175128-3cb3288ed753
+	github.com/blue-monads/lpweb v0.0.0-20241124024435-bab739245d01
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dop251/goja v0.0.0-20240610225006-393f6d42497b
 	github.com/gin-contrib/size v1.0.1

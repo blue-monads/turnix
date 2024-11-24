@@ -185,7 +185,7 @@ func (e *EbrowserApp) startMesh() {
 
 	pp.Println("@e.config.MasterKey", e.config)
 
-	e.mesh = lpweb.New(e.config.MasterKey, e.port, e.port)
+	e.mesh = lpweb.New(e.config.MasterKey, e.config.MeshPort, e.config.HttpServerPort)
 
 }
 
