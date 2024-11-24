@@ -120,11 +120,21 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 
 func (e *EbrowserApp) statusPage(ctx *gin.Context) {
 
+	meshAddr := ""
+	if e.mesh != nil {
+		time.Sleep(time.Second * 5)
+	}
+
+	if e.mesh != nil {
+		meshAddr = e.mesh.GetMeshAddr()
+	}
+
 	msg, err := e.getStatus()
 	if err != nil {
 		ctx.JSON(200, gin.H{
 			"is_running": false,
 			"status":     err.Error(),
+			"mesh_addr":  meshAddr,
 		})
 		return
 	}
@@ -136,6 +146,7 @@ func (e *EbrowserApp) statusPage(ctx *gin.Context) {
 		"port":        msg.Port,
 		"status":      "ok",
 		"working_dir": e.configurer.BasePath,
+		"mesh_addr":   meshAddr,
 	})
 
 }

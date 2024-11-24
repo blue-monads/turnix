@@ -61,6 +61,8 @@ func (e *EbrowserApp) Run() {
 	e.webview.SetTitle("Turnix Start")
 	e.webview.Navigate(fmt.Sprintf("http://localhost:%d/z/pages/startpage", e.port))
 
+	go e.startMesh()
+
 	e.webview.Run()
 
 }
@@ -98,8 +100,6 @@ func (e *EbrowserApp) remoteNavigate(urlstr string) {
 		u.Host = fmt.Sprintf("%s-lpweb.localhost:%d", keyHash, e.port)
 
 		pp.Println("@remoteNavigate/3", u.String())
-
-		e.startMesh()
 
 		e.webview.Navigate(u.String())
 	} else {

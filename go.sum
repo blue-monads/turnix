@@ -35,8 +35,8 @@ github.com/benbjohnson/clock v1.3.5/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZx
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
-github.com/blue-monads/lpweb v0.0.0-20241124024435-bab739245d01 h1:nA7D6+44QPzE44SN5LfITI4dNbn8+h0jxqk4i16CWno=
-github.com/blue-monads/lpweb v0.0.0-20241124024435-bab739245d01/go.mod h1:c8NTDXIJWrOj0fau2rdvDdgORDHx81O6R0gKXuyWhss=
+github.com/blue-monads/lpweb v0.0.0-20241124030741-551e8a8faed9 h1:BRkiTngeuJFdduh3rRLHvt2GQyvyZQTWRnuluSSlsJk=
+github.com/blue-monads/lpweb v0.0.0-20241124030741-551e8a8faed9/go.mod h1:c8NTDXIJWrOj0fau2rdvDdgORDHx81O6R0gKXuyWhss=
 github.com/bradfitz/go-smtpd v0.0.0-20170404230938-deb6d6237625/go.mod h1:HYsPBTaaSFSlLx/70C2HPIMNZpVV8+vt/A+FMnYP11g=
 github.com/buger/jsonparser v0.0.0-20181115193947-bf1c66bbce23/go.mod h1:bbYlZJ7hK1yFx9hf58LP0zeX7UjIGs20ufpu3evjr+s=
 github.com/bwmarrin/snowflake v0.3.0 h1:xm67bEhkKh6ij1790JB83OujPR5CzNe8QuQqAgISZN0=
