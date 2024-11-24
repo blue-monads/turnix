@@ -74,14 +74,14 @@ func (e *EbrowserApp) __BindEbrowserRPC(name string, opts map[string]string) {
 	case "local-navigate":
 		e.webview.Navigate(opts["url"])
 	case "remote-navigate":
-		e.remoteNavigate(opts["url"])
+		e.remoteNavigate(opts["url"], opts["routeToPages"] == "true")
 	default:
 		panic(fmt.Errorf("unknown rpc name %s", name))
 	}
 
 }
 
-func (e *EbrowserApp) remoteNavigate(urlstr string) {
+func (e *EbrowserApp) remoteNavigate(urlstr string, routeToPages bool) {
 
 	pp.Println("@remoteNavigate/1", urlstr)
 
@@ -91,6 +91,10 @@ func (e *EbrowserApp) remoteNavigate(urlstr string) {
 	}
 
 	hostName := u.Hostname()
+
+	if routeToPages {
+		u.Path = "/z/pages"
+	}
 
 	pp.Println("@remoteNavigate/2", hostName)
 
