@@ -247,6 +247,8 @@ export class RootAPI {
         return this.client.delete(`/project/${pid}/files/${id}`)
     }
 
+    // self users
+
     listSelfUsers = () => {
         return this.client.get<User[]>(`/self/users`)
     }
@@ -266,6 +268,11 @@ export class RootAPI {
     deleteSelfUser = (uid: string) => {
         return this.client.delete(`/self/users/${uid}`)
     }
+
+    getSelfSelf = () => {
+        return this.client.get<User>(`/self/self`)
+    }
+
 
 
     // plugins

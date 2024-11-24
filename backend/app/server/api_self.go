@@ -57,6 +57,19 @@ func (a *Server) selfUsers(claim *signer.AccessClaim, ctx *gin.Context) (any, er
 	return a.db.ListUserByOwner(claim.UserId)
 }
 
+func (a *Server) getSelfSelf(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	usr, err := a.db.GetUser(claim.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	usr.Password = ""
+	usr.ExtraMeta = "{}"
+
+	return usr, nil
+}
+
 func (a *Server) selfAddUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	data := &models.User{}
@@ -95,7 +108,7 @@ func (a *Server) selfGetUser(claim *signer.AccessClaim, ctx *gin.Context) (any, 
 
 	pp.Println("@user", usr)
 
-	if usr.OwnerUserId != claim.UserId {
+	if usr.OwnerUserId != claim.UserId && uid != claim.UserId {
 		return nil, errNotAllowed
 	}
 
@@ -114,12 +127,12 @@ func (a *Server) selfUpdateUser(claim *signer.AccessClaim, ctx *gin.Context) (an
 		return nil, err
 	}
 
-	usr, err := a.db.GetUser(claim.UserId)
+	usr, err := a.db.GetUser(uid)
 	if err != nil {
 		return nil, err
 	}
 
-	if usr.OwnerUserId == claim.UserId {
+	if usr.OwnerUserId == claim.UserId && uid != claim.UserId {
 		return nil, errNotAllowed
 	}
 

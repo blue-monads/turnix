@@ -65,6 +65,7 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 	apiv1.GET("/self/users/:uid", a.accessMiddleware(a.selfGetUser))
 	apiv1.POST("/self/users/:uid", a.accessMiddleware(a.selfUpdateUser))
 	apiv1.DELETE("/self/users/:uid", a.accessMiddleware(a.selfDeleteUser))
+	apiv1.GET("/self/self", a.accessMiddleware(a.getSelfSelf))
 
 	apiv1.GET("/self/messages", a.accessMiddleware(a.listUserMessages))
 
