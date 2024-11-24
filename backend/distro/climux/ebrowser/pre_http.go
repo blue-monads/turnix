@@ -98,13 +98,8 @@ func (e *EbrowserApp) startInstance(ctx *gin.Context) {
 
 	e.cmd = cmd
 
-	time.Sleep(time.Second * 5)
-
 	msg, err := e.getStatus()
-
 	if err != nil {
-		time.Sleep(time.Second * 5)
-
 		msg, err = e.getStatus()
 		if err != nil {
 			time.Sleep(time.Second * 5)
@@ -125,15 +120,21 @@ func (e *EbrowserApp) statusPage(ctx *gin.Context) {
 	counter := 0
 
 	for {
+		pp.Println("@status/1", counter)
 		if e.mesh != nil {
+			pp.Println("@status/2/sleep", counter)
 			time.Sleep(time.Second * 2)
 		} else {
+			pp.Println("@status/3/break", counter)
 			break
 		}
 
 		if counter > 10 {
+			pp.Println("@status/4/break", counter)
 			break
 		}
+
+		pp.Println("@status/5", counter)
 
 		counter++
 
