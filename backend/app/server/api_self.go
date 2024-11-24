@@ -66,6 +66,15 @@ func (a *Server) selfAddUser(claim *signer.AccessClaim, ctx *gin.Context) (any, 
 		return nil, err
 	}
 
+	parent, err := a.db.GetUser(claim.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	if parent.Utype != "super" && data.Utype == "super" {
+		return nil, errNotAllowed
+	}
+
 	data.OwnerUserId = claim.UserId
 
 	return a.db.AddUser(data)
