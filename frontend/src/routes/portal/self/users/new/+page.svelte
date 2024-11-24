@@ -1,7 +1,4 @@
 <script lang="ts">
-    import { preventDefault } from 'svelte/legacy';
-
-    import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { getContext } from "svelte";
     import type { RootAPI } from "$lib/api";
     import { page } from "$app/stores";
@@ -17,7 +14,6 @@
     let password = $state("");
 
     const addUser = async () => {
-
         console.log(name, bio, utype, email, phone, password);
 
         const resp = await rootApi.addSelfUser({
@@ -45,10 +41,7 @@
         </header>
 
         <section class="">
-            <form
-                class="flex flex-col gap-4"
-                onsubmit={preventDefault(addUser)}
-            >
+            <form class="flex flex-col gap-4">
                 <label class="label"
                     ><span>Name</span>
                     <input
@@ -61,23 +54,21 @@
 
                 <label class="label">
                     <span>Email</span>
-                    <input 
-                    class="input p-1" 
-                    type="email" 
-                    bind:value={email} 
-                    required                                        
-                    
+                    <input
+                        class="input p-1"
+                        type="email"
+                        bind:value={email}
+                        required
                     />
                 </label>
 
                 <label class="label">
                     <span>Phone</span>
-                    <input 
-                    class="input p-1" 
-                    type="text" 
-                    bind:value={phone} 
-                    required
-                    
+                    <input
+                        class="input p-1"
+                        type="text"
+                        bind:value={phone}
+                        required
                     />
                 </label>
 
@@ -101,24 +92,20 @@
 
                 <label class="label">
                     <span>Bio</span>
-                    <textarea class="textarea p-1" bind:value={bio} rows={4} />
+                    <textarea class="textarea p-1" bind:value={bio} rows={4}>
+                    </textarea>
                 </label>
 
                 <div class="flex justify-end pt-8 gap-2">
-                    <button type="submit" class="btn btn-sm variant-filled">
-        
+                    <button
+                        type="button"
+                        class="btn btn-sm variant-filled"
+                        onclick={addUser}
+                    >
                         Create
                     </button>
-        
                 </div>
-
             </form>
-            
-
-
         </section>
-
-
-
     </div>
 </div>

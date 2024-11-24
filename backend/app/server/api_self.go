@@ -11,6 +11,7 @@ import (
 	"github.com/blue-monads/turnix/backend/utils/libx/httpx"
 	"github.com/blue-monads/turnix/backend/xtypes/models"
 	"github.com/gin-gonic/gin"
+	"github.com/k0kubun/pp"
 )
 
 func (a *Server) selfInfo(claim *signer.AccessClaim, _ *gin.Context) (any, error) {
@@ -73,11 +74,17 @@ func (a *Server) selfAddUser(claim *signer.AccessClaim, ctx *gin.Context) (any, 
 var errNotAllowed = errors.New("err Not Allowed")
 
 func (a *Server) selfGetUser(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
-
-	usr, err := a.db.GetUser(claim.UserId)
+	uid, err := strconv.ParseInt(ctx.Param("uid"), 10, 64)
 	if err != nil {
 		return nil, err
 	}
+
+	usr, err := a.db.GetUser(uid)
+	if err != nil {
+		return nil, err
+	}
+
+	pp.Println("@user", usr)
 
 	if usr.OwnerUserId != claim.UserId {
 		return nil, errNotAllowed
