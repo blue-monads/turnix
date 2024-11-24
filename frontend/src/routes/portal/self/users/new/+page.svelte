@@ -84,7 +84,7 @@
                 <label class="label">
                     <span>User Type</span>
                     <select class="select" bind:value={utype}>
-                        <option value="real">User</option>
+                        <option value="normal">User</option>
                         <option value="bot">Bot</option>
                         <option value="super">Super User</option>
                     </select>
