@@ -5,6 +5,7 @@ export interface Status {
     port?: string;
     status: string;
     working_dir: string;
+    mesh_addr: string;
 }
 
 

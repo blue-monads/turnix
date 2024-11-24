@@ -16,6 +16,7 @@
     let loading = $state(true);
     let port = "";
     let remoteAddr = $state("");
+    let meshAddr = $state("");
 
     const load = async () => {
         loading = true;
@@ -29,6 +30,7 @@
         workingDir = resp.data["working_dir"];
         port = resp.data["port"] as string;
         loading = false;
+        meshAddr = resp.data["mesh_addr"];
     };
 
     load();
@@ -142,4 +144,20 @@
             </div>
         </label>
     </div>
+
+
+    <div class="card p-4 max-w-md w-full">
+        <label>
+            <span>Current Node address</span>
+            <div class="flex flex-col gap-2">
+                <input
+                    type="text"
+                    class="input p-1"
+                    value={meshAddr}
+                />
+            </div>
+        </label>
+    </div>
+
+
 </div>
