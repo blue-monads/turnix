@@ -127,6 +127,8 @@ func (e *EbrowserApp) statusPage(ctx *gin.Context) {
 	for {
 		if e.mesh != nil {
 			time.Sleep(time.Second * 2)
+		} else {
+			break
 		}
 
 		if counter > 10 {
