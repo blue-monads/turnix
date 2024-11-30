@@ -37,7 +37,7 @@ func (c *Context) RunCLI(name string, args []string) error {
 		return errors.New("cli not found")
 	}
 
-	return cli.Func(Context{
+	return cli.HandleCLI(Context{
 		R:    c.R,
 		Args: args,
 	})

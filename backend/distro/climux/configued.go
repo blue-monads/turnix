@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -166,7 +167,20 @@ func (c *Configued) init() error {
 	if c.config.MeshPort == 0 {
 		if !isPortUsed(7704) {
 			c.config.MeshPort = 7704
+		} else if !isPortUsed(7704 + 10) {
+			c.config.MeshPort = 7704 + 10
+		} else if !isPortUsed(7704 + 20) {
+			c.config.MeshPort = 7704 + 20
+		} else if !isPortUsed(7704 + 30) {
+			c.config.MeshPort = 7704 + 30
+		} else if !isPortUsed(7704 + 40) {
+			c.config.MeshPort = 7704 + 40
+		} else if !isPortUsed(7704 + 50) {
+			c.config.MeshPort = 7704 + 50
+		} else {
+			return errors.New("no free port")
 		}
+
 	}
 
 	pp.Println("init/6")
@@ -174,6 +188,18 @@ func (c *Configued) init() error {
 	if c.config.HttpServerPort == 0 {
 		if !isPortUsed(7703) {
 			c.config.HttpServerPort = 7703
+		} else if !isPortUsed(7703 + 10) {
+			c.config.HttpServerPort = 7703 + 10
+		} else if !isPortUsed(7703 + 20) {
+			c.config.HttpServerPort = 7703 + 20
+		} else if !isPortUsed(7703 + 30) {
+			c.config.HttpServerPort = 7703 + 30
+		} else if !isPortUsed(7703 + 40) {
+			c.config.HttpServerPort = 7703 + 40
+		} else if !isPortUsed(7703 + 50) {
+			c.config.HttpServerPort = 7703 + 50
+		} else {
+			return errors.New("no free port")
 		}
 	}
 
