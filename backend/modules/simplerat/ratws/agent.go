@@ -106,6 +106,8 @@ func (e *ECPWebsocket) eventLoop(agentId int64, conn *websocket.Conn) {
 
 	ctx := context.Background()
 
+	defer e.RemoveAgentConn(agentId)
+
 	for {
 		select {
 		case <-ctx.Done():
