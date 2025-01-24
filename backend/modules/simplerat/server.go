@@ -261,10 +261,20 @@ func (e *ECPServer) performDeviceAction(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
+	ctx.Http.Set("raw_mode", true)
+
 	rbytes := ws.SendAgentMessage(ctx.Http.Request.Context(), did, out)
+
 	if rbytes != nil {
-		return rbytes, nil
+		pp.Println("@rbytes", string(rbytes))
+		ctx.Http.Request.Header.Set("Content-Type", "application/json")
+		ctx.Http.Writer.WriteHeader(200)
+		ctx.Http.Writer.Write(rbytes)
+
+	} else {
+		ctx.Http.JSON(400, gin.H{"error": "no response"})
 	}
 
-	return nil, errors.New("could not send message to device")
+	return nil, nil
+
 }

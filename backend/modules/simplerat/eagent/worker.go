@@ -67,12 +67,16 @@ func (a *AgentService) worker() {
 
 func HandleRunCommand(packet *Packet) (interface{}, error) {
 
-	return "nice", nil
+	return map[string]any{
+		"message": "command executed",
+	}, nil
 }
 
 func HandlePing(packet *Packet) (interface{}, error) {
 
-	return "pong", nil
+	return map[string]any{
+		"message": "pong",
+	}, nil
 }
 
 /*

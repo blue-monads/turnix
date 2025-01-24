@@ -28,9 +28,6 @@ type AgentService struct {
 
 func (a *AgentService) Run() error {
 
-	a.onClose = make(chan struct{})
-	a.workersChan = make(chan *Packet, 8)
-
 	slog.Info("Agent service started")
 
 	pp.Println(a)

@@ -173,6 +173,10 @@ func main() {
 		registerToken:    registerToken,
 		authSessionToken: config.AuthSessionToken,
 		authRefreshToken: config.AuthRefreshToken,
+
+		onClose:     make(chan struct{}),
+		workersChan: make(chan *Packet),
+		writeLoopCh: make(chan *Packet),
 	}
 
 	err = agentSvc.Run()
