@@ -5,12 +5,12 @@ import "time"
 type Device struct {
 	Id              int64      `json:"id" db:"id,omitempty"`
 	Name            string     `json:"name" db:"name"`
-	RegisterToken   string     `json:"registerToken" db:"registerToken"`
+	RegisterToken   string     `json:"register_token" db:"register_token"`
 	Dtype           string     `json:"dtype" db:"dtype"`
 	Status          string     `json:"status" db:"status"`
-	LastIp          string     `json:"lastIp" db:"lastIp"`
-	IsBeaconEnabled int        `json:"isBeaconEnabled" db:"isBeaconEnabled"`
-	LastActive      *time.Time `json:"lastActive" db:"lastActive,omitempty"`
+	LastIp          string     `json:"last_ip" db:"last_ip"`
+	IsBeaconEnabled int        `json:"beacon_enabled" db:"beacon_enabled"`
+	LastActive      *time.Time `json:"last_active" db:"last_active,omitempty"`
 	CreatedAt       *time.Time `json:"created_at" db:"created_at,omitempty"`
 }
 

@@ -37,7 +37,7 @@ func (e *ECPServer) register(group *gin.RouterGroup) error {
 type NewDevice struct {
 	Name            string `json:"name"`
 	Dtype           string `json:"dtype"`
-	IsBeaconEnabled int    `json:"isBeaconEnabled"`
+	IsBeaconEnabled int    `json:"beacon_enabled"`
 }
 
 func (e *ECPServer) apiAddDevice(ctx xtypes.ContextPlus) (any, error) {
@@ -49,10 +49,11 @@ func (e *ECPServer) apiAddDevice(ctx xtypes.ContextPlus) (any, error) {
 	}
 
 	did, err := e.dbAddDevice(ctx.ProjectId(), ctx.Claim.UserId, &Device{
-		Name:          data.Name,
-		RegisterToken: "",
-		Dtype:         data.Dtype,
-		Status:        "inactive",
+		Name:            data.Name,
+		RegisterToken:   "",
+		Dtype:           data.Dtype,
+		Status:          "inactive",
+		IsBeaconEnabled: data.IsBeaconEnabled,
 	})
 	if err != nil {
 		return nil, err
