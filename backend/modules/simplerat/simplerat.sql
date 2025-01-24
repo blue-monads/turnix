@@ -3,13 +3,13 @@
 
 create table __project__Devices (
     id INTEGER PRIMARY KEY,
-    registerToken TEXT NOT NULL DEFAULT '',
+    register_token TEXT NOT NULL DEFAULT '',
     dtype TEXT NOT NULL DEFAULT 'bot',
     status TEXT NOT NULL DEFAULT 'inactive', -- active, inactive, deleted
     name TEXT NOT NULL DEFAULT '',
-    lastIp TEXT NOT NULL DEFAULT '',    
-    isBeaconEnabled INTEGER NOT NULL DEFAULT 0,
-    lastActive TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_ip TEXT NOT NULL DEFAULT '',    
+    beacon_enabled INTEGER NOT NULL DEFAULT 0,
+    last_active TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
