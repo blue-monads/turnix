@@ -1,10 +1,10 @@
 package simplerat
 
 import (
-	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"io"
+	"log/slog"
 	"strconv"
 	"sync"
 	"time"
@@ -37,7 +37,7 @@ func (e *ECPServer) register(group *gin.RouterGroup) error {
 	device.DELETE("/remove/:id", mw("removeDevice", e.apiRemoveDevice))
 	device.GET("/list", mw("listDevice", e.apiListDevice))
 
-	device.POST("/device-action/:did", mw("performDeviceAction", e.performDeviceAction))
+	device.POST("/action/:did", mw("performDeviceAction", e.performDeviceAction))
 
 	device.POST("/finish-setup", e.apiFinishDeviceSetup)
 	device.POST("/refresh", e.apiRefreshDevice)
@@ -71,10 +71,11 @@ func (e *ECPServer) apiAddDevice(ctx xtypes.ContextPlus) (any, error) {
 		return nil, err
 	}
 
-	deviceIdBytes := make([]byte, 8)
-	binary.BigEndian.PutUint64(deviceIdBytes, uint64(did))
-
-	return e.signer.SignProjectAdvisiery(ctx.ProjectId(), deviceIdBytes)
+	return e.signer.SignProjectAdvisiery(ctx.ProjectId(), &DeviceClaim{
+		Type:     DeviceClaimTypeSetup,
+		DeviceId: did,
+		Expires:  time.Now().Add(time.Hour * 24).Unix(),
+	})
 }
 
 func (e *ECPServer) apiRemoveDevice(ctx xtypes.ContextPlus) (any, error) {
@@ -129,7 +130,15 @@ func (e *ECPServer) apiFinishDeviceSetup(ctx *gin.Context) {
 		return
 	}
 
-	deviceId := int64(binary.BigEndian.Uint64(dbytes))
+	var claim DeviceClaim
+	err = json.Unmarshal(dbytes, &claim)
+	if err != nil {
+		pp.Println("@3", err.Error())
+		ctx.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	deviceId := claim.DeviceId
 
 	t := time.Now()
 
@@ -159,6 +168,8 @@ func (e *ECPServer) apiFinishDeviceSetup(ctx *gin.Context) {
 		DeviceId: deviceId,
 		Expires:  time.Now().Add(time.Hour * 24).Unix(),
 	}
+
+	pp.Println("@5", sclaim)
 
 	sessionToken, err := e.signer.SignProjectAdvisiery(pid, sclaim)
 	if err != nil {
@@ -204,6 +215,8 @@ func (e *ECPServer) deviceWS(ctx *gin.Context) {
 		return
 	}
 
+	pp.Println("@4", claim)
+
 	deviceId := claim.DeviceId
 
 	e.wLock.RLock()
@@ -212,12 +225,18 @@ func (e *ECPServer) deviceWS(ctx *gin.Context) {
 
 	if ws == nil {
 
+		slog.Info("creating new websocket for project", "pid", pid)
+
 		e.wLock.Lock()
 		ws = ratws.NewECPWebsocket(pid)
 		e.websocket[pid] = ws
 		e.wLock.Unlock()
 
+		go ws.Run()
+
 	}
+
+	slog.Info("handling ws connection", "pid", pid, "deviceId", deviceId)
 
 	ws.HandleAgentWS(deviceId, ctx)
 }
@@ -231,7 +250,8 @@ func (e *ECPServer) performDeviceAction(ctx xtypes.ContextPlus) (any, error) {
 	e.wLock.RUnlock()
 
 	if ws == nil {
-		return nil, nil
+		slog.Error("no websocket for project")
+		return nil, errors.New("no websocket for project")
 	}
 
 	did := ctx.ParamInt64("did")

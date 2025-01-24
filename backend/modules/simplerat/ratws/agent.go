@@ -44,6 +44,8 @@ func (e *ECPWebsocket) SendAgentMessage(ctx context.Context, agentId int64, data
 	c := e.agentsConns[agentId]
 	e.acLock.RUnlock()
 	if c == nil {
+		slog.Warn("no ws connection for agent", "agentId", agentId)
+
 		return nil
 	}
 
@@ -70,15 +72,18 @@ func (e *ECPWebsocket) SendAgentMessage(ctx context.Context, agentId int64, data
 
 	jdata, err := json.Marshal(msg)
 	if err != nil {
+		slog.Warn("error marshalling message", "err", err)
 		return nil
 	}
 
 	err = c.Write(ctx, websocket.MessageText, jdata)
 	if err != nil {
+		slog.Warn("error writing to ws", "err", err)
 		return nil
 	}
 
 	for {
+		slog.Info("waiting for response")
 		msg := <-respChan
 
 		if msg.AgentId == agentId {
@@ -108,21 +113,32 @@ func (e *ECPWebsocket) eventLoop(agentId int64, conn *websocket.Conn) {
 
 	defer e.RemoveAgentConn(agentId)
 
+	errorCounter := 0
+
 	for {
+
+		if errorCounter > 5 {
+			slog.Warn("too many errors, closing ws")
+			return
+		}
+
 		select {
 		case <-ctx.Done():
 			return
 		default:
 			_, data, err := conn.Read(ctx)
 			if err != nil {
-				slog.Warn("error reading from ws", "err", err)
+				errorCounter++
+				slog.Warn("error reading from ws 1", "err", err)
 				continue
 			}
+
+			errorCounter = 0
 
 			var msg Message
 			err = json.Unmarshal(data, &msg)
 			if err != nil {
-				slog.Warn("error reading from ws", "err", err)
+				slog.Warn("error reading from ws 2", "err", err)
 				continue
 			}
 

@@ -2,8 +2,10 @@ package ratws
 
 import (
 	"sync"
+	"time"
 
 	"github.com/coder/websocket"
+	"github.com/k0kubun/pp"
 )
 
 type ECPWebsocket struct {
@@ -21,10 +23,26 @@ type ECPWebsocket struct {
 func NewECPWebsocket(pid int64) *ECPWebsocket {
 
 	return &ECPWebsocket{
-		pid:              pid,
-		svcRooms:         make(map[int64]*WSServiceRoom),
-		agentsConns:      make(map[int64]*websocket.Conn),
-		svcRoomIdCounter: 0,
-		acLock:           sync.RWMutex{},
+		pid:                    pid,
+		svcRooms:               make(map[int64]*WSServiceRoom),
+		agentsConns:            make(map[int64]*websocket.Conn),
+		svcRoomIdCounter:       1,
+		acLock:                 sync.RWMutex{},
+		pendingBrowserRequests: make(map[int64]chan *Message),
+		pbLock:                 sync.RWMutex{},
+		pbCounter:              1,
 	}
+}
+
+func (e *ECPWebsocket) Run() {
+
+	for {
+		time.Sleep(5 * time.Second)
+
+		for conn := range e.agentsConns {
+			pp.Println("@active agent", conn)
+		}
+
+	}
+
 }

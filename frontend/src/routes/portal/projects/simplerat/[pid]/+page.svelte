@@ -70,5 +70,25 @@
     ]}
     datas={devices}
     color={[]}
-    actions={[]}
+    actions={[
+        {
+          Name: "Ping",
+          Class: "variant-filled-primary",
+          icon: "plus",
+          Action: async (id) => {
+
+            const resp = await api.performDeviceAction(pid, id, "ping", {});
+            if (resp.status !== 200) {
+                console.error("Failed to ping device", resp);
+                return;
+            }
+
+            console.log("Pinged device", resp.data);
+    
+          },
+        },
+
+
+
+    ]}
 />

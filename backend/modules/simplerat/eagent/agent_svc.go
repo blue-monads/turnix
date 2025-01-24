@@ -152,10 +152,13 @@ func (a *AgentService) evLoop(c *websocket.Conn) {
 
 	for {
 
+		slog.Info("waiting for write loop")
+
 		select {
 		case <-closeCh:
 			return
 		case pkt := <-a.writeLoopCh:
+			slog.Info("writing to ws", "pkt", pkt)
 
 			err := wsjson.Write(context.Background(), c, pkt)
 			if err != nil {

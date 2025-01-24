@@ -53,7 +53,7 @@ export class SimpleRATApi {
     }
 
     performDeviceAction = (pid: string, did: string, mtype: string, data: any) => {
-        return this.client.post(`simplerat/${pid}/device-action/${did}`, {
+        return this.client.post(`simplerat/${pid}/device/action/${did}`, {
             mtype,
             data
         })
