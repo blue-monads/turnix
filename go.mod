@@ -12,6 +12,7 @@ require (
 	github.com/blue-monads/lpweb v0.0.0-20241124030741-551e8a8faed9
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/chromedp/chromedp v0.11.2
+	github.com/coder/websocket v1.8.12
 	github.com/dop251/goja v0.0.0-20240610225006-393f6d42497b
 	github.com/gin-contrib/size v1.0.1
 	github.com/gin-gonic/gin v1.10.0
