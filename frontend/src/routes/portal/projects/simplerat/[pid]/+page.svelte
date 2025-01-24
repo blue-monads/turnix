@@ -65,6 +65,8 @@
     key_names={[
         ["id", "ID"],
         ["name", "Name"],
+        ["created_at", "Created At"],
+        ["status", "Status"],
     ]}
     datas={devices}
     color={[]}
