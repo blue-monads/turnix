@@ -3,6 +3,8 @@ package simplerat
 import (
 	"encoding/binary"
 	"encoding/json"
+	"errors"
+	"io"
 	"strconv"
 	"sync"
 	"time"
@@ -34,6 +36,9 @@ func (e *ECPServer) register(group *gin.RouterGroup) error {
 	device.POST("/new", mw("addDevice", e.apiAddDevice))
 	device.DELETE("/remove/:id", mw("removeDevice", e.apiRemoveDevice))
 	device.GET("/list", mw("listDevice", e.apiListDevice))
+
+	device.POST("/device-action/:did", mw("performDeviceAction", e.performDeviceAction))
+
 	device.POST("/finish-setup", e.apiFinishDeviceSetup)
 	device.POST("/refresh", e.apiRefreshDevice)
 	device.POST("/device-ws", e.deviceWS)
@@ -226,4 +231,31 @@ func (e *ECPServer) deviceWS(ctx *gin.Context) {
 	}
 
 	ws.HandleAgentWS(deviceId, ctx)
+}
+
+func (e *ECPServer) performDeviceAction(ctx xtypes.ContextPlus) (any, error) {
+
+	pid := ctx.ProjectId()
+
+	e.wLock.RLock()
+	ws := e.websocket[pid]
+	e.wLock.RUnlock()
+
+	if ws == nil {
+		return nil, nil
+	}
+
+	did := ctx.ParamInt64("did")
+
+	out, err := io.ReadAll(ctx.Http.Request.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	rbytes := ws.SendAgentMessage(ctx.Http.Request.Context(), did, out)
+	if rbytes != nil {
+		return rbytes, nil
+	}
+
+	return nil, errors.New("could not send message to device")
 }
