@@ -103,6 +103,10 @@ func (a *App) GetServer() any {
 	return a.server
 }
 
+func (a *App) GetSigner() any {
+	return a.signer
+}
+
 func (a *App) AuthMiddleware(fn xtypes.ApiHandler) gin.HandlerFunc {
 	return a.server.AuthMiddleware(fn)
 }

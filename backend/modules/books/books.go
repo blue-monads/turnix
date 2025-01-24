@@ -3,8 +3,8 @@ package books
 import (
 	_ "embed"
 	"fmt"
-	"strings"
 
+	"github.com/blue-monads/turnix/backend/modules"
 	"github.com/blue-monads/turnix/backend/modules/books/dbops"
 	"github.com/blue-monads/turnix/backend/services/database"
 	"github.com/blue-monads/turnix/backend/xtypes"
@@ -24,12 +24,12 @@ type BookModule struct {
 
 func (b *BookModule) Init(pid int64) error {
 
-	parameterizedSchema := strings.ReplaceAll(Schema, "__project__", fmt.Sprintf("z_%d_", pid))
+	schema := modules.ParamaterizedSchema(Schema, pid)
 
 	pp.Println("@parameterizedSchema")
-	fmt.Println(parameterizedSchema)
+	fmt.Println(schema)
 
-	err := b.db.RunDDL(parameterizedSchema)
+	err := b.db.RunDDL(schema)
 	if err != nil {
 		pp.Println("@err", err.Error())
 	}

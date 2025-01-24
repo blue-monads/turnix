@@ -13,6 +13,7 @@ const (
 	TokenTypeAccess      uint8 = 1
 	TokenTypeEmailInvite uint8 = 2
 	TokenTypePair        uint8 = 3
+	TokenTypeAdvisiery   uint8 = 4
 )
 
 type AccessClaim struct {
@@ -30,6 +31,20 @@ type InviteClaim struct {
 	InviteToUser   int64  `json:"z,omitempty"`
 	InviteEmail    string `json:"e,omitempty"`
 	ProjectId      int64  `json:"p,omitempty"`
+}
+
+type AdvisieryClaimE struct {
+	XID       string `json:"x,omitempty"`
+	Typeid    uint8  `json:"t,omitempty"`
+	ProjectId int64  `json:"p,omitempty"`
+	Data      []byte `json:"d,omitempty"`
+}
+
+type AdvisieryClaimD struct {
+	XID       string          `json:"x,omitempty"`
+	Typeid    uint8           `json:"t,omitempty"`
+	ProjectId int64           `json:"p,omitempty"`
+	Data      json.RawMessage `json:"d,omitempty"`
 }
 
 // fixme => add expiry
@@ -108,6 +123,36 @@ func (ts *Signer) ParseInvite(tstr string) (*InviteClaim, error) {
 func (ts *Signer) SignInvite(claim *InviteClaim) (string, error) {
 
 	claim.Typeid = TokenTypeEmailInvite
+
+	return ts.sign(claim)
+}
+
+func (ts *Signer) ParseProjectAdvisiery(pid int64, tstr string) ([]byte, error) {
+
+	claim := &AdvisieryClaimD{}
+
+	err := ts.parse(tstr, claim)
+	if err != nil {
+		return nil, err
+	}
+
+	if claim.ProjectId != pid {
+		return nil, ErrInvalidToken
+	}
+
+	if claim.Typeid != TokenTypeAdvisiery {
+		return nil, ErrInvalidToken
+	}
+
+	return claim.Data, nil
+}
+
+func (ts *Signer) SignProjectAdvisiery(pid int64, data []byte) (string, error) {
+	claim := &AdvisieryClaimE{
+		ProjectId: pid,
+		Data:      data,
+		Typeid:    TokenTypeAdvisiery,
+	}
 
 	return ts.sign(claim)
 }
