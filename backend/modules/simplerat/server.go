@@ -4,8 +4,10 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"strconv"
+	"sync"
 	"time"
 
+	"github.com/blue-monads/turnix/backend/modules/simplerat/ratws"
 	"github.com/blue-monads/turnix/backend/services/database"
 	"github.com/blue-monads/turnix/backend/services/signer"
 	"github.com/blue-monads/turnix/backend/xtypes"
@@ -18,6 +20,9 @@ type ECPServer struct {
 	app    xtypes.App
 	db     *database.DB
 	signer *signer.Signer
+
+	websocket map[int64]*ratws.ECPWebsocket
+	wLock     sync.RWMutex
 }
 
 func (e *ECPServer) register(group *gin.RouterGroup) error {
@@ -31,6 +36,7 @@ func (e *ECPServer) register(group *gin.RouterGroup) error {
 	device.GET("/list", mw("listDevice", e.apiListDevice))
 	device.POST("/finish-setup", e.apiFinishDeviceSetup)
 	device.POST("/refresh", e.apiRefreshDevice)
+	device.POST("/device-ws", e.deviceWS)
 
 	return nil
 }
@@ -153,7 +159,7 @@ func (e *ECPServer) apiFinishDeviceSetup(ctx *gin.Context) {
 	sclaim := &DeviceClaim{
 		Type:     DeviceClaimTypeSession,
 		DeviceId: deviceId,
-		Expires:  time.Now().Add(time.Hour).Unix(),
+		Expires:  time.Now().Add(time.Hour * 24).Unix(),
 	}
 
 	sclaimBytes, err := json.Marshal(sclaim)
@@ -173,6 +179,51 @@ func (e *ECPServer) apiFinishDeviceSetup(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{"refreshToken": refreshToken, "sessionToken": sessionToken})
 }
 
-func (e *ECPServer) apiRefreshDevice(ctx *gin.Context) {
+func (e *ECPServer) apiRefreshDevice(ctx *gin.Context) {}
 
+func (e *ECPServer) deviceWS(ctx *gin.Context) {
+
+	pid, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	token := ctx.Query("token")
+	claimBytes, err := e.signer.ParseProjectAdvisiery(pid, token)
+	if err != nil {
+		pp.Println("@1", err.Error())
+		ctx.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	var claim DeviceClaim
+	err = json.Unmarshal(claimBytes, &claim)
+	if err != nil {
+		pp.Println("@2", err.Error())
+		ctx.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	if claim.Type != DeviceClaimTypeSession {
+		pp.Println("@3", "invalid claim type")
+		ctx.JSON(400, gin.H{"error": "invalid claim type"})
+		return
+	}
+
+	deviceId := claim.DeviceId
+
+	e.wLock.RLock()
+	ws := e.websocket[pid]
+	e.wLock.RUnlock()
+
+	if ws == nil {
+
+		e.wLock.Lock()
+		ws = ratws.NewECPWebsocket(pid)
+		e.websocket[pid] = ws
+		e.wLock.Unlock()
+
+	}
+
+	ws.HandleAgentWS(deviceId, ctx)
 }

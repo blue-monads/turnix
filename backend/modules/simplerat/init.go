@@ -2,8 +2,10 @@ package simplerat
 
 import (
 	_ "embed"
+	"sync"
 
 	"github.com/blue-monads/turnix/backend/modules"
+	"github.com/blue-monads/turnix/backend/modules/simplerat/ratws"
 	"github.com/blue-monads/turnix/backend/registry"
 	"github.com/blue-monads/turnix/backend/services/database"
 	"github.com/blue-monads/turnix/backend/services/signer"
@@ -26,9 +28,11 @@ func New(opt xproject.BuilderOption) (*xproject.Defination, error) {
 	db := opt.App.GetDatabase().(*database.DB)
 
 	mod := &ECPServer{
-		db:     db,
-		app:    opt.App,
-		signer: opt.App.GetSigner().(*signer.Signer),
+		db:        db,
+		app:       opt.App,
+		signer:    opt.App.GetSigner().(*signer.Signer),
+		websocket: make(map[int64]*ratws.ECPWebsocket),
+		wLock:     sync.RWMutex{},
 	}
 
 	def := &xproject.Defination{
