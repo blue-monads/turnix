@@ -1,4 +1,4 @@
-package eagent
+package main
 
 type EAgent struct {
 }

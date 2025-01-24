@@ -4,13 +4,14 @@
     import { page } from "$app/stores";
     import { NewSimpleRATApi } from "../../lib/SimpleRATApi";
 
-    let name = "";
-    let token = "";
+    let name = $state("");
+    let registerURL = $state("");
 
     interface Props {
         pid: string;
         onAddDevice: () => void;
     }
+    
 
     let { pid, onAddDevice }: Props = $props();
 
@@ -27,7 +28,12 @@
             return;
         }
 
-        token = resp.data;
+        // "http://localhost:7703/z/project/simplerat/1/device/finish-setup?token=xyz"
+
+        const token = (resp.data)
+
+        registerURL = `${window.location.origin}/z/project/simplerat/${pid}/device/finish-setup?token=${token}`;
+
         mode = "result";
     };
 </script>
@@ -75,17 +81,18 @@
 
             <section class="p-4 flex flex-col gap-4">
                 <label class="label">
-                    <span>Token</span>
+                    <span>register URL</span>
                     <textarea
-                        bind:value={token}
+                        bind:value={registerURL}
                         class="input p-1 textarea"
                         cols="30"
                         disabled
                     >
                     </textarea>
                     <button
+                        class="rounded p-0.5 bg-gray-200"
                         onclick={() => {
-                            navigator.clipboard.writeText(token);
+                            navigator.clipboard.writeText(registerURL);
                         }}
                     >
                         Copy

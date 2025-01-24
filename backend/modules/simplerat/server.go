@@ -10,6 +10,7 @@ import (
 	"github.com/blue-monads/turnix/backend/services/signer"
 	"github.com/blue-monads/turnix/backend/xtypes"
 	"github.com/gin-gonic/gin"
+	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )
 
@@ -100,6 +101,7 @@ func (e *ECPServer) apiFinishDeviceSetup(ctx *gin.Context) {
 	var data FinishDeviceSetup
 	err := ctx.Bind(&data)
 	if err != nil {
+		pp.Println("@1", err.Error())
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
@@ -111,18 +113,21 @@ func (e *ECPServer) apiFinishDeviceSetup(ctx *gin.Context) {
 
 	dbytes, err := e.signer.ParseProjectAdvisiery(pid, data.Token)
 	if err != nil {
+		pp.Println("@2", err.Error())
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
 	deviceId := int64(binary.BigEndian.Uint64(dbytes))
 
+	t := time.Now()
+
 	e.deviceTable(pid).
 		Find(db.Cond{"id": deviceId}).
 		Update(map[string]any{
 			"status": "active",
 			"lastIp": ctx.ClientIP(),
-			"lastAt": db.Raw("NOW()"),
+			"lastAt": &t,
 		})
 
 	rclaim := &DeviceClaim{
@@ -133,12 +138,14 @@ func (e *ECPServer) apiFinishDeviceSetup(ctx *gin.Context) {
 
 	rclaimBytes, err := json.Marshal(rclaim)
 	if err != nil {
+		pp.Println("@3", err.Error())
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
 	refreshToken, err := e.signer.SignProjectAdvisiery(pid, rclaimBytes)
 	if err != nil {
+		pp.Println("@4", err.Error())
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
@@ -151,12 +158,14 @@ func (e *ECPServer) apiFinishDeviceSetup(ctx *gin.Context) {
 
 	sclaimBytes, err := json.Marshal(sclaim)
 	if err != nil {
+		pp.Println("@5", err.Error())
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
 	sessionToken, err := e.signer.SignProjectAdvisiery(pid, sclaimBytes)
 	if err != nil {
+		pp.Println("@6", err.Error())
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
