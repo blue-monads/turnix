@@ -37,7 +37,7 @@ type AdvisieryClaimE struct {
 	XID       string `json:"x,omitempty"`
 	Typeid    uint8  `json:"t,omitempty"`
 	ProjectId int64  `json:"p,omitempty"`
-	Data      []byte `json:"d,omitempty"`
+	Data      any    `json:"d,omitempty"`
 }
 
 type AdvisieryClaimD struct {
@@ -147,7 +147,7 @@ func (ts *Signer) ParseProjectAdvisiery(pid int64, tstr string) ([]byte, error) 
 	return claim.Data, nil
 }
 
-func (ts *Signer) SignProjectAdvisiery(pid int64, data []byte) (string, error) {
+func (ts *Signer) SignProjectAdvisiery(pid int64, data any) (string, error) {
 	claim := &AdvisieryClaimE{
 		ProjectId: pid,
 		Data:      data,

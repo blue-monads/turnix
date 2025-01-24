@@ -72,8 +72,13 @@ func main() {
 		}
 
 		tryCount := 0
+		done := false
 
 		for {
+
+			if done {
+				break
+			}
 
 			if tryCount > 5 {
 				slog.Error("Failed to register device")
@@ -142,6 +147,8 @@ func main() {
 				slog.Error("Error writing config", slog.String("error", err.Error()))
 				break
 			}
+
+			done = true
 
 		}
 

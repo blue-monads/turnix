@@ -41,7 +41,7 @@ func (e *ECPServer) register(group *gin.RouterGroup) error {
 
 	device.POST("/finish-setup", e.apiFinishDeviceSetup)
 	device.POST("/refresh", e.apiRefreshDevice)
-	device.POST("/device-ws", e.deviceWS)
+	device.GET("/device-ws", e.deviceWS)
 
 	return nil
 }
@@ -136,9 +136,9 @@ func (e *ECPServer) apiFinishDeviceSetup(ctx *gin.Context) {
 	e.deviceTable(pid).
 		Find(db.Cond{"id": deviceId}).
 		Update(map[string]any{
-			"status": "active",
-			"lastIp": ctx.ClientIP(),
-			"lastAt": &t,
+			"status":      "active",
+			"last_ip":     ctx.ClientIP(),
+			"last_active": &t,
 		})
 
 	rclaim := &DeviceClaim{
@@ -147,14 +147,7 @@ func (e *ECPServer) apiFinishDeviceSetup(ctx *gin.Context) {
 		Expires:  time.Now().Add(time.Hour * 24 * 365).Unix(),
 	}
 
-	rclaimBytes, err := json.Marshal(rclaim)
-	if err != nil {
-		pp.Println("@3", err.Error())
-		ctx.JSON(400, gin.H{"error": err.Error()})
-		return
-	}
-
-	refreshToken, err := e.signer.SignProjectAdvisiery(pid, rclaimBytes)
+	refreshToken, err := e.signer.SignProjectAdvisiery(pid, rclaim)
 	if err != nil {
 		pp.Println("@4", err.Error())
 		ctx.JSON(400, gin.H{"error": err.Error()})
@@ -167,21 +160,17 @@ func (e *ECPServer) apiFinishDeviceSetup(ctx *gin.Context) {
 		Expires:  time.Now().Add(time.Hour * 24).Unix(),
 	}
 
-	sclaimBytes, err := json.Marshal(sclaim)
-	if err != nil {
-		pp.Println("@5", err.Error())
-		ctx.JSON(400, gin.H{"error": err.Error()})
-		return
-	}
-
-	sessionToken, err := e.signer.SignProjectAdvisiery(pid, sclaimBytes)
+	sessionToken, err := e.signer.SignProjectAdvisiery(pid, sclaim)
 	if err != nil {
 		pp.Println("@6", err.Error())
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(200, gin.H{"refreshToken": refreshToken, "sessionToken": sessionToken})
+	ctx.JSON(200, gin.H{
+		"refreshToken": refreshToken,
+		"sessionToken": sessionToken,
+	})
 }
 
 func (e *ECPServer) apiRefreshDevice(ctx *gin.Context) {}

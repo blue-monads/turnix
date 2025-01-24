@@ -65,7 +65,7 @@ func (a *AgentService) startWS() bool {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	baseUrl := a.baseURL + "/device-ws?token=" + a.authSessionToken
+	baseUrl := a.baseURL + "device-ws?token=" + a.authSessionToken
 
 	if strings.HasPrefix(baseUrl, "http://") {
 		baseUrl = strings.Replace(baseUrl, "http://", "ws://", 1)
