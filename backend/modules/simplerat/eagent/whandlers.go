@@ -17,6 +17,11 @@ func handlePing(ctx *WHContext) (any, error) {
 
 func handleFsListDir(ctx *WHContext) (any, error) {
 	path := ctx.GetAsString("path")
+
+	if path == "" {
+		path = "/"
+	}
+
 	entries, err := os.ReadDir(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list directory: %v", err)
