@@ -62,7 +62,7 @@ func handleFsReadFile(ctx *WHContext) (any, error) {
 
 	// Limit to 1MB (1048576 bytes)
 	if fileInfo.Size() > (MaxBytes) {
-		return nil, fmt.Errorf("file is too large (max 1MB): %d bytes", fileInfo.Size())
+		return nil, fmt.Errorf("file is too large (max %d bytes): %d bytes", MaxBytes, fileInfo.Size())
 	}
 
 	content, err := os.ReadFile(path)
