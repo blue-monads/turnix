@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 )
 
@@ -13,6 +14,17 @@ func (a *AgentService) worker() {
 	}
 	hLock.Unlock()
 
+	writeErr := func(msgId int64, errStr string) {
+		slog.Warn("Error handling packet", slog.String("error", errStr))
+		a.writeLoopCh <- &Packet{
+			MessageId: msgId,
+			Data: Message{
+				MType: "response",
+				Data:  errStr,
+			},
+		}
+	}
+
 	for {
 
 		packet := <-a.workersChan
@@ -24,17 +36,7 @@ func (a *AgentService) worker() {
 		handler, ok := handlers[packet.Data.MType]
 		if !ok {
 			slog.Warn("Unknown packet type", slog.Any("packet", packet))
-
-			a.writeLoopCh <- &Packet{
-				Data: Message{
-					MType: "error",
-					Data: map[string]any{
-						"error": "Unknown packet type",
-					},
-				},
-				MessageId: packet.MessageId,
-			}
-
+			writeErr(packet.MessageId, fmt.Sprintf("unknown packet type: %s", packet.Data.MType))
 			continue
 		}
 
@@ -44,14 +46,6 @@ func (a *AgentService) worker() {
 		})
 		if err != nil {
 			slog.Warn("Error handling packet", slog.String("error", err.Error()))
-			a.writeLoopCh <- &Packet{
-				MessageId: packet.MessageId,
-				Data: Message{
-					MType: "response",
-					Data:  resp,
-				},
-			}
-
 			continue
 		}
 
