@@ -39,6 +39,9 @@ func (e *ECPWebsocket) Run() {
 	for {
 		time.Sleep(5 * time.Second)
 
+		pp.Println("@active rooms", len(e.svcRooms))
+		pp.Println("@active agents", len(e.agentsConns))
+
 		for conn := range e.agentsConns {
 			pp.Println("@active agent", conn)
 		}
