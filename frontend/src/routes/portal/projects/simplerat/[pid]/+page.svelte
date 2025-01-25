@@ -7,6 +7,7 @@
     import { NewSimpleRATApi } from "../lib/SimpleRATApi";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import AddDeviceDialog from "./AddDeviceDialog.svelte";
+    import { goto } from "$app/navigation";
 
     const pid = $page.params["pid"];
 
@@ -70,6 +71,7 @@
     ]}
     datas={devices}
     color={["status"]}
+    show_drop={true}
     actions={[
         {
           Name: "Ping",
@@ -93,7 +95,7 @@
           Class: "variant-filled-secondary",
           icon: "plus",
           Action: async (id) => {
-           
+            goto(`/z/pages/portal/projects/simplerat/${pid}/device/${id}/shell`);
           },
         },
 
@@ -101,9 +103,13 @@
           Name: "FS",
           Class: "variant-filled-tertiary",
           icon: "plus",
+          drop: true,
+        
           Action: async (id) => {
+            goto(`/z/pages/portal/projects/simplerat/${pid}/device/${id}/fs`);
             
           },
+
         },
 
 
