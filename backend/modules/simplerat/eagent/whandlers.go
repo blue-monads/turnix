@@ -5,14 +5,32 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+
+	"github.com/JustinTimperio/osinfo"
+	_ "github.com/JustinTimperio/osinfo"
 )
 
 var (
 	MaxBytes = int64(1024 * 1024 * 5)
 )
 
+type PingResponse struct {
+	OsInfo   osinfo.Release `json:"os_info"`
+	Message  string         `json:"message"`
+	HostName string         `json:"hostname"`
+}
+
 func handlePing(ctx *WHContext) (any, error) {
-	return "pong", nil
+	osinfo := osinfo.GetVersion()
+	hostname, _ := os.Hostname()
+
+	r := PingResponse{
+		OsInfo:   osinfo,
+		Message:  "pong",
+		HostName: hostname,
+	}
+
+	return r, nil
 }
 
 func handleFsListDir(ctx *WHContext) (any, error) {

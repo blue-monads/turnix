@@ -6,6 +6,7 @@ toolchain go1.23.3
 
 require (
 	github.com/BurntSushi/toml v0.3.1
+	github.com/JustinTimperio/osinfo v0.0.0-20210705143940-9e63396e3c2f
 	github.com/adrg/xdg v0.5.0
 	github.com/alecthomas/repr v0.4.0
 	github.com/aurowora/compress v0.0.0-20230724224640-6512772d482f
