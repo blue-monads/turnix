@@ -50,6 +50,7 @@
                     pid: pid,
                     onAddDevice: async () => {
                         modal.close();
+                        load();
                     },
                 });
             }}
@@ -70,6 +71,7 @@
         ["status", "Status"],
     ]}
     datas={devices}
+    hashSeed={99}
     color={["status"]}
     show_drop={true}
     actions={[
