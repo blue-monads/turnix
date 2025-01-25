@@ -7,6 +7,8 @@ import (
 	"os/exec"
 
 	"github.com/JustinTimperio/osinfo"
+
+	"github.com/mackerelio/go-osstat/memory"
 )
 
 var (
@@ -17,16 +19,23 @@ type PingResponse struct {
 	OsInfo   osinfo.Release `json:"os_info"`
 	Message  string         `json:"message"`
 	HostName string         `json:"hostname"`
+	Memory   *memory.Stats  `json:"memory"`
 }
 
 func handlePing(ctx *WHContext) (any, error) {
 	osinfo := osinfo.GetVersion()
 	hostname, _ := os.Hostname()
 
+	memory, err := memory.Get()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get memory info: %v", err)
+	}
+
 	r := PingResponse{
 		OsInfo:   osinfo,
 		Message:  "pong",
 		HostName: hostname,
+		Memory:   memory,
 	}
 
 	return r, nil
