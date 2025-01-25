@@ -16,7 +16,7 @@ var (
 )
 
 func handlePing(ctx *WHContext) (any, error) {
-	return "ping", nil
+	return "pong", nil
 }
 
 func handleFsListDir(ctx *WHContext) (any, error) {
