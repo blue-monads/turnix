@@ -2,7 +2,7 @@
     import type { RootAPI } from "$lib/api";
     import { getContext } from "svelte";
     import { page } from "$app/stores";
-    import { NewSimpleRATApi } from "../../lib/SimpleRATApi";
+    import { NewSimpleRATApi } from "../lib/SimpleRATApi";
 
     let name = $state("");
     let registerURL = $state("");

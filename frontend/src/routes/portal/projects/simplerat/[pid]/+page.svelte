@@ -6,7 +6,7 @@
     import { page } from "$app/stores";
     import { NewSimpleRATApi } from "../lib/SimpleRATApi";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-    import AddDeviceDialog from "./new/AddDeviceDialog.svelte";
+    import AddDeviceDialog from "./AddDeviceDialog.svelte";
 
     const pid = $page.params["pid"];
 
@@ -69,7 +69,7 @@
         ["status", "Status"],
     ]}
     datas={devices}
-    color={[]}
+    color={["status"]}
     actions={[
         {
           Name: "Ping",
@@ -85,6 +85,24 @@
 
             console.log("Pinged device", resp.data);
     
+          },
+        },
+
+        {
+          Name: "Shell",
+          Class: "variant-filled-secondary",
+          icon: "plus",
+          Action: async (id) => {
+           
+          },
+        },
+
+        {
+          Name: "FS",
+          Class: "variant-filled-tertiary",
+          icon: "plus",
+          Action: async (id) => {
+            
           },
         },
 
