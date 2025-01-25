@@ -7,7 +7,6 @@ import (
 	"os/exec"
 
 	"github.com/JustinTimperio/osinfo"
-	_ "github.com/JustinTimperio/osinfo"
 )
 
 var (
