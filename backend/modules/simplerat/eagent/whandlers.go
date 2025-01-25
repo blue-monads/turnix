@@ -15,30 +15,8 @@ var (
 	MaxBytes = int64(1024 * 1024 * 5)
 )
 
-type PingResponse struct {
-	OsInfo   osinfo.Release `json:"os_info"`
-	Message  string         `json:"message"`
-	HostName string         `json:"hostname"`
-	Memory   *memory.Stats  `json:"memory"`
-}
-
 func handlePing(ctx *WHContext) (any, error) {
-	osinfo := osinfo.GetVersion()
-	hostname, _ := os.Hostname()
-
-	memory, err := memory.Get()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get memory info: %v", err)
-	}
-
-	r := PingResponse{
-		OsInfo:   osinfo,
-		Message:  "pong",
-		HostName: hostname,
-		Memory:   memory,
-	}
-
-	return r, nil
+	return "ping", nil
 }
 
 func handleFsListDir(ctx *WHContext) (any, error) {
@@ -143,6 +121,31 @@ func SystemExec(ctx *WHContext) (any, error) {
 	return string(output), nil
 }
 
+type SystemInfoResponse struct {
+	OsInfo   osinfo.Release `json:"os_info"`
+	HostName string         `json:"hostname"`
+	Memory   *memory.Stats  `json:"memory"`
+}
+
+func handleSystemInfo(ctx *WHContext) (any, error) {
+
+	osinfo := osinfo.GetVersion()
+	hostname, _ := os.Hostname()
+
+	memory, err := memory.Get()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get memory info: %v", err)
+	}
+
+	r := SystemInfoResponse{
+		OsInfo:   osinfo,
+		HostName: hostname,
+		Memory:   memory,
+	}
+
+	return r, nil
+}
+
 // Don't forget to register these handlers in your init or main function
 func init() {
 	RegisterHandler("ping", handlePing)
@@ -153,4 +156,5 @@ func init() {
 	RegisterHandler("fs.mkdir", handleFsMkdir)
 	RegisterHandler("fs.rename", handleFsRename)
 	RegisterHandler("system.exec", SystemExec)
+	RegisterHandler("system.info", handleSystemInfo)
 }
