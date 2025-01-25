@@ -67,31 +67,3 @@ func (a *AgentService) worker() {
 	}
 
 }
-
-func HandleRunCommand(ctx *WHContext) (interface{}, error) {
-
-	return map[string]any{
-		"message": "command executed",
-	}, nil
-}
-
-func HandlePing(ctx *WHContext) (interface{}, error) {
-
-	return map[string]any{
-		"message": "pong",
-	}, nil
-}
-
-/*
-
-	FSListDir(path string) ([]string, error)
-	FSReadFile(path string) ([]byte, error)
-	FSWriteFile(path string, data []byte) error
-	FSRemove(path string) error
-	FSMkdir(path string) error
-	FSRename(old string, new string) error
-
-	SystemExec(command string) ([]byte, error)
-	SystemStartShell(cmd string, submitFunc func([]byte) error) (chan []byte, error)
-
-*/
