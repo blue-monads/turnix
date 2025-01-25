@@ -4,14 +4,14 @@ import (
 	"log/slog"
 )
 
-var (
-	handlers = map[string]func(*Packet) (interface{}, error){
-		"run-cmd": HandleRunCommand,
-		"ping":    HandlePing,
-	}
-)
-
 func (a *AgentService) worker() {
+
+	lhandlers := make(map[string]Handler)
+	hLock.Lock()
+	for k, v := range handlers {
+		lhandlers[k] = v
+	}
+	hLock.Unlock()
 
 	for {
 
@@ -38,7 +38,10 @@ func (a *AgentService) worker() {
 			continue
 		}
 
-		resp, err := handler(packet)
+		resp, err := handler(&WHContext{
+			Packet:  packet,
+			Service: a,
+		})
 		if err != nil {
 			slog.Warn("Error handling packet", slog.String("error", err.Error()))
 			a.writeLoopCh <- &Packet{
@@ -65,14 +68,14 @@ func (a *AgentService) worker() {
 
 }
 
-func HandleRunCommand(packet *Packet) (interface{}, error) {
+func HandleRunCommand(ctx *WHContext) (interface{}, error) {
 
 	return map[string]any{
 		"message": "command executed",
 	}, nil
 }
 
-func HandlePing(packet *Packet) (interface{}, error) {
+func HandlePing(ctx *WHContext) (interface{}, error) {
 
 	return map[string]any{
 		"message": "pong",
