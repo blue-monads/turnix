@@ -8,6 +8,7 @@
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import AddDeviceDialog from "./AddDeviceDialog.svelte";
     import { goto } from "$app/navigation";
+    import { webspcketTest } from "./wstest";
 
     const pid = $page.params["pid"];
 
@@ -93,6 +94,22 @@
         },
 
         {
+            Name: "Service",
+            Class: "",
+            Action: async (id) => {
+
+
+               await webspcketTest(api, pid, id);
+        
+            },
+            
+      
+        },
+
+
+
+
+        {
           Name: "Shell",
           Class: "variant-filled-secondary",
           icon: "plus",
@@ -104,9 +121,7 @@
         {
           Name: "FS",
           Class: "variant-filled-tertiary",
-          icon: "plus",
-          drop: true,
-        
+          icon: "plus",        
           Action: async (id) => {
             goto(`/z/pages/portal/projects/simplerat/${pid}/device/${id}/fs`);
             

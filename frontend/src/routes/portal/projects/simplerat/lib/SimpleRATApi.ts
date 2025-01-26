@@ -26,16 +26,20 @@ export interface DeviceBeacon  {
 
 export const NewSimpleRATApi = (rootApi: {
     projectClient: AxiosInstance
+    access_token: string  | null
 }) => {
-    return new SimpleRATApi(rootApi.projectClient)
+    return new SimpleRATApi(rootApi.projectClient, rootApi.access_token!)
 }
 
 
 
 export class SimpleRATApi {
     client: AxiosInstance
-    constructor(c: AxiosInstance) {
+    access_token: string 
+    constructor(c: AxiosInstance, token: string) {
         this.client = c
+        this.access_token = token
+        
     }
 
     // /z/api/v1/project/:pid
@@ -57,6 +61,10 @@ export class SimpleRATApi {
             mtype,
             data
         })
+    }
+
+    getNewRoomUrl = (pid: string, did: number) => {
+        return `${location.origin}/z/project/simplerat/${pid}/device/room/new/${did}?token=${this.access_token}`
     }
 
 }

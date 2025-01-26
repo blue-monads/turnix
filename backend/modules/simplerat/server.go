@@ -306,7 +306,7 @@ func (e *ECPServer) performDeviceAction(ctx xtypes.ContextPlus) (any, error) {
 }
 
 func (e *ECPServer) browserServiceWS(ctx *gin.Context) {
-	tok := ctx.GetHeader("Authorization")
+	tok := ctx.Query("token")
 	claim, err := e.signer.ParseAccess(tok)
 	if err != nil {
 		httpx.WriteAuthErr(ctx, err)
@@ -337,7 +337,7 @@ func (e *ECPServer) browserServiceWS(ctx *gin.Context) {
 		return
 	}
 
-	msg := []byte(fmt.Sprintf(`{"type":"join_room", "room_id":%d}`, wsroom.GetRoomId()))
+	msg := []byte(fmt.Sprintf(`{"mtype":"join_room", "room_id":%d}`, wsroom.GetRoomId()))
 	ws.SendAgentMessage(ctx.Request.Context(), did, msg)
 
 }
