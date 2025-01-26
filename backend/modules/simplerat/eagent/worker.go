@@ -33,6 +33,25 @@ func (a *AgentService) worker() {
 			return
 		}
 
+		if packet.Data.MType == "help" {
+
+			commands := make([]string, 0, len(lhandlers))
+
+			for k := range lhandlers {
+				commands = append(commands, k)
+			}
+
+			a.writeLoopCh <- &Packet{
+				MessageId: packet.MessageId,
+				Data: Message{
+					MType: "response",
+					Data:  commands,
+				},
+			}
+
+			return
+		}
+
 		handler, ok := handlers[packet.Data.MType]
 		if !ok {
 			slog.Warn("Unknown packet type", slog.Any("packet", packet))
