@@ -15,6 +15,8 @@ type AgentService struct {
 	configHome string
 	configFile string
 
+	noOfWorkers int
+
 	baseURL          string
 	registerToken    string
 	authSessionToken string
@@ -32,10 +34,9 @@ func (a *AgentService) Run() error {
 
 	pp.Println(a)
 
-	go a.worker()
-	go a.worker()
-	go a.worker()
-	go a.worker()
+	for i := 0; i < a.noOfWorkers; i++ {
+		go a.worker()
+	}
 
 	for {
 

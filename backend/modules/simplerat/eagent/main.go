@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"strings"
 	"time"
 
@@ -57,8 +58,8 @@ func main() {
 
 	purl.Path = strings.Replace(purl.Path, "finish-setup", "", 1)
 
-	configFolder := xdg.DataHome + "/simplerat"
-	configFile := configFolder + "/config.json"
+	configFolder := path.Join(xdg.DataHome, "simplerat")
+	configFile := path.Join(configFolder, "config.json")
 
 	if _, err := os.Stat(configFolder); os.IsNotExist(err) {
 		os.MkdirAll(configFolder, 0755)
@@ -173,6 +174,8 @@ func main() {
 		registerToken:    registerToken,
 		authSessionToken: config.AuthSessionToken,
 		authRefreshToken: config.AuthRefreshToken,
+
+		noOfWorkers: 4,
 
 		onClose:     make(chan struct{}),
 		workersChan: make(chan *Packet),
