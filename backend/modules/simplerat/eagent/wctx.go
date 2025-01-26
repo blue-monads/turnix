@@ -91,9 +91,9 @@ func (w *WHContext) GetAsInt(key string) int {
 		return 0
 	}
 
-	intVal, ok := val.(int)
+	intVal, ok := val.(float64)
 	if ok {
-		return intVal
+		return int(intVal)
 	}
 
 	return 0

@@ -213,4 +213,5 @@ func init() {
 	RegisterHandler("fs.rename", handleFsRename)
 	RegisterHandler("system.exec", SystemExec)
 	RegisterHandler("system.info", handleSystemInfo)
+	RegisterHandler("service.joinRoom", handleServiceJoinRoom)
 }

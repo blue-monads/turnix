@@ -337,7 +337,7 @@ func (e *ECPServer) browserServiceWS(ctx *gin.Context) {
 		return
 	}
 
-	msg := []byte(fmt.Sprintf(`{"mtype":"join_room", "room_id":%d}`, wsroom.GetRoomId()))
+	msg := []byte(fmt.Sprintf(`{"mtype":"service.joinRoom", "data":{"room_id":%d}}`, wsroom.GetRoomId()))
 	ws.SendAgentMessage(ctx.Request.Context(), did, msg)
 
 }
