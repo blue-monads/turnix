@@ -12,6 +12,7 @@ type ECPWebsocket struct {
 	pid              int64
 	svcRooms         map[int64]*WSServiceRoom
 	svcRoomIdCounter int64
+	srLock           sync.RWMutex
 
 	agentsConns            map[int64]*websocket.Conn
 	acLock                 sync.RWMutex
@@ -23,10 +24,13 @@ type ECPWebsocket struct {
 func NewECPWebsocket(pid int64) *ECPWebsocket {
 
 	return &ECPWebsocket{
-		pid:                    pid,
-		svcRooms:               make(map[int64]*WSServiceRoom),
-		agentsConns:            make(map[int64]*websocket.Conn),
-		svcRoomIdCounter:       1,
+		pid:              pid,
+		svcRooms:         make(map[int64]*WSServiceRoom),
+		svcRoomIdCounter: 1,
+		srLock:           sync.RWMutex{},
+
+		agentsConns: make(map[int64]*websocket.Conn),
+
 		acLock:                 sync.RWMutex{},
 		pendingBrowserRequests: make(map[int64]chan *Message),
 		pbLock:                 sync.RWMutex{},

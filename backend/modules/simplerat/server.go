@@ -3,6 +3,7 @@ package simplerat
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"strconv"
@@ -12,6 +13,7 @@ import (
 	"github.com/blue-monads/turnix/backend/modules/simplerat/ratws"
 	"github.com/blue-monads/turnix/backend/services/database"
 	"github.com/blue-monads/turnix/backend/services/signer"
+	"github.com/blue-monads/turnix/backend/utils/libx/httpx"
 	"github.com/blue-monads/turnix/backend/xtypes"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
@@ -38,6 +40,8 @@ func (e *ECPServer) register(group *gin.RouterGroup) error {
 	device.GET("/list", mw("listDevice", e.apiListDevice))
 
 	device.POST("/action/:did", mw("performDeviceAction", e.performDeviceAction))
+	device.GET("/room/new/:did", (e.browserServiceWS))
+	device.GET("/room/join/:rid", e.deviceServiceWS)
 
 	device.POST("/finish-setup", e.apiFinishDeviceSetup)
 	device.POST("/refresh", e.apiRefreshDevice)
@@ -186,25 +190,35 @@ func (e *ECPServer) apiFinishDeviceSetup(ctx *gin.Context) {
 
 func (e *ECPServer) apiRefreshDevice(ctx *gin.Context) {}
 
-func (e *ECPServer) deviceWS(ctx *gin.Context) {
-
-	pid, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
-	if err != nil {
-		panic(err)
-	}
+func (e *ECPServer) readDeviceClaim(pid int64, ctx *gin.Context) (*DeviceClaim, error) {
 
 	token := ctx.Query("token")
 	claimBytes, err := e.signer.ParseProjectAdvisiery(pid, token)
 	if err != nil {
-		pp.Println("@1", err.Error())
-		ctx.JSON(400, gin.H{"error": err.Error()})
-		return
+		return nil, err
 	}
 
 	var claim DeviceClaim
 	err = json.Unmarshal(claimBytes, &claim)
 	if err != nil {
-		pp.Println("@2", err.Error())
+		return nil, err
+	}
+
+	return &claim, nil
+
+}
+
+func (e *ECPServer) deviceWS(ctx *gin.Context) {
+	pid, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	if err != nil {
+		pp.Println("@0", err.Error())
+		ctx.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	claim, err := e.readDeviceClaim(pid, ctx)
+	if err != nil {
+		pp.Println("@1", err.Error())
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
@@ -219,21 +233,11 @@ func (e *ECPServer) deviceWS(ctx *gin.Context) {
 
 	deviceId := claim.DeviceId
 
-	e.wLock.RLock()
-	ws := e.websocket[pid]
-	e.wLock.RUnlock()
-
+	ws := e.getProjectWS(pid, true)
 	if ws == nil {
-
-		slog.Info("creating new websocket for project", "pid", pid)
-
-		e.wLock.Lock()
-		ws = ratws.NewECPWebsocket(pid)
-		e.websocket[pid] = ws
-		e.wLock.Unlock()
-
-		go ws.Run()
-
+		pp.Println("@5", "no websocket")
+		ctx.JSON(400, gin.H{"error": "no websocket"})
+		return
 	}
 
 	slog.Info("handling ws connection", "pid", pid, "deviceId", deviceId)
@@ -241,13 +245,36 @@ func (e *ECPServer) deviceWS(ctx *gin.Context) {
 	ws.HandleAgentWS(deviceId, ctx)
 }
 
+func (e *ECPServer) getProjectWS(pid int64, create bool) *ratws.ECPWebsocket {
+	e.wLock.RLock()
+	ws := e.websocket[pid]
+	e.wLock.RUnlock()
+
+	if ws != nil {
+		return ws
+	}
+
+	if !create {
+		return nil
+	}
+
+	e.wLock.Lock()
+	defer e.wLock.Unlock()
+	ws = ratws.NewECPWebsocket(pid)
+
+	e.websocket[pid] = ws
+
+	go ws.Run()
+
+	return ws
+
+}
+
 func (e *ECPServer) performDeviceAction(ctx xtypes.ContextPlus) (any, error) {
 
 	pid := ctx.ProjectId()
 
-	e.wLock.RLock()
-	ws := e.websocket[pid]
-	e.wLock.RUnlock()
+	ws := e.getProjectWS(pid, false)
 
 	if ws == nil {
 		slog.Error("no websocket for project")
@@ -276,5 +303,91 @@ func (e *ECPServer) performDeviceAction(ctx xtypes.ContextPlus) (any, error) {
 	}
 
 	return nil, nil
+}
+
+func (e *ECPServer) browserServiceWS(ctx *gin.Context) {
+	tok := ctx.GetHeader("Authorization")
+	claim, err := e.signer.ParseAccess(tok)
+	if err != nil {
+		httpx.WriteAuthErr(ctx, err)
+		return
+	}
+
+	pid, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	did, err := strconv.ParseInt(ctx.Param("did"), 10, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	ws := e.getProjectWS(pid, true)
+	if ws == nil {
+		ctx.JSON(400, gin.H{"error": "no websocket"})
+		return
+	}
+
+	wsroom := ws.AddRoom(claim.UserId, did)
+
+	ok := wsroom.AddBrowserToRoom(claim.UserId, ctx)
+	if !ok {
+		ctx.AbortWithStatus(400)
+		return
+	}
+
+	msg := []byte(fmt.Sprintf(`{"type":"join_room", "room_id":%d}`, wsroom.GetRoomId()))
+	ws.SendAgentMessage(ctx.Request.Context(), did, msg)
+
+}
+
+func (e *ECPServer) deviceServiceWS(ctx *gin.Context) {
+
+	pid, err := strconv.ParseInt(ctx.Param("pid"), 10, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	claim, err := e.readDeviceClaim(pid, ctx)
+	if err != nil {
+		pp.Println("@1", err.Error())
+		ctx.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	if claim.Type != DeviceClaimTypeSession {
+		pp.Println("@3", "invalid claim type")
+		ctx.JSON(400, gin.H{"error": "invalid claim type"})
+		return
+	}
+
+	rid, err := strconv.ParseInt(ctx.Param("rid"), 10, 64)
+	if err != nil {
+		pp.Println("@4", err.Error())
+		ctx.JSON(400, gin.H{"error": err.Error()})
+	}
+
+	ws := e.getProjectWS(pid, false)
+
+	if ws == nil {
+		pp.Println("@5", "no websocket")
+		ctx.JSON(400, gin.H{"error": "no websocket"})
+		return
+	}
+
+	wsroom := ws.GetRoom(rid)
+	if wsroom == nil {
+		pp.Println("@6", "no room")
+		ctx.JSON(400, gin.H{"error": "no room"})
+		return
+	}
+
+	ok := wsroom.AddAgentToRoom(claim.DeviceId, ctx)
+	if !ok {
+		pp.Println("@7", "add agent failed")
+		ctx.JSON(400, gin.H{"error": "add agent failed"})
+		return
+	}
 
 }
