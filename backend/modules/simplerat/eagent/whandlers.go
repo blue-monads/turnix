@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 
@@ -83,6 +84,60 @@ func handleFsWriteFile(ctx *WHContext) (any, error) {
 	return nil, nil
 }
 
+func handleFsReadRange(ctx *WHContext) (any, error) {
+	path := ctx.GetAsString("path")
+	start := ctx.GetAsInt("start")
+	end := ctx.GetAsInt("end")
+
+	// Open the file
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %v", err)
+	}
+	defer file.Close()
+
+	// Get file size
+	fileInfo, err := file.Stat()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get file info: %v", err)
+	}
+	fileSize := fileInfo.Size()
+
+	// Validate and adjust start and end positions
+	if start < 0 {
+		start = 0
+	}
+	if end <= 0 || end > int(fileSize) {
+		end = int(fileSize)
+	}
+
+	// Ensure start is not beyond end
+	if start > end {
+		return nil, fmt.Errorf("invalid range: start (%d) is greater than end (%d)", start, end)
+	}
+
+	// Calculate range length
+	rangeLength := end - start
+
+	if int64(rangeLength) > MaxBytes {
+		return nil, fmt.Errorf("file range is too large (max %d bytes): %d bytes", MaxBytes, rangeLength)
+	}
+
+	// Create buffer and read specific range
+	buffer := make([]byte, rangeLength)
+	_, err = file.Seek(int64(start), 0)
+	if err != nil {
+		return nil, fmt.Errorf("failed to seek to start position: %v", err)
+	}
+
+	bytesRead, err := file.Read(buffer)
+	if err != nil && err != io.EOF {
+		return nil, fmt.Errorf("failed to read file range: %v", err)
+	}
+
+	return buffer[:bytesRead], nil
+}
+
 func handleFsRemove(ctx *WHContext) (any, error) {
 	path := ctx.GetAsString("path")
 	err := os.Remove(path)
@@ -152,6 +207,7 @@ func init() {
 	RegisterHandler("fs.listdir", handleFsListDir)
 	RegisterHandler("fs.readfile", handleFsReadFile)
 	RegisterHandler("fs.writefile", handleFsWriteFile)
+	RegisterHandler("fs.readrange", handleFsReadRange)
 	RegisterHandler("fs.remove", handleFsRemove)
 	RegisterHandler("fs.mkdir", handleFsMkdir)
 	RegisterHandler("fs.rename", handleFsRename)
