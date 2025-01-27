@@ -19,6 +19,8 @@ type ECPWebsocket struct {
 	pendingBrowserRequests map[int64]chan *Message
 	pbLock                 sync.RWMutex
 	pbCounter              int64
+
+	closeRoomChan chan int64
 }
 
 func NewECPWebsocket(pid int64) *ECPWebsocket {
@@ -35,10 +37,13 @@ func NewECPWebsocket(pid int64) *ECPWebsocket {
 		pendingBrowserRequests: make(map[int64]chan *Message),
 		pbLock:                 sync.RWMutex{},
 		pbCounter:              1,
+		closeRoomChan:          make(chan int64, 4),
 	}
 }
 
 func (e *ECPWebsocket) Run() {
+
+	go e.controllerEventLoop()
 
 	for {
 		time.Sleep(5 * time.Second)
@@ -50,6 +55,15 @@ func (e *ECPWebsocket) Run() {
 			pp.Println("@active agent", conn)
 		}
 
+	}
+
+}
+
+func (e *ECPWebsocket) controllerEventLoop() {
+
+	for {
+		roomId := <-e.closeRoomChan
+		e.RemoveRoom(roomId)
 	}
 
 }

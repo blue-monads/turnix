@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"strings"
+	"sync"
 
 	"github.com/coder/websocket"
 	"github.com/k0kubun/pp"
@@ -58,8 +59,10 @@ func handleServiceShell(ctx *WHContext) (any, error) {
 	}
 
 	s := &ServiceShell{
-		node: ctx.Node,
-		ws:   c,
+		node:      ctx.Node,
+		ws:        c,
+		isClosed:  false,
+		closeLock: sync.Mutex{},
 	}
 
 	// fixme make list of running services

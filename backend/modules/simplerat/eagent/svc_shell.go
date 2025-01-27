@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 	"os/exec"
+	"sync"
 
 	"github.com/blue-monads/turnix/backend/utils/kosher"
 	"github.com/coder/websocket"
@@ -17,6 +18,9 @@ type ServiceShell struct {
 	ws   *websocket.Conn
 	cmd  *exec.Cmd
 	file *os.File
+
+	isClosed  bool
+	closeLock sync.Mutex
 }
 
 func (s *ServiceShell) Run() error {
@@ -37,16 +41,44 @@ func (s *ServiceShell) Run() error {
 	return nil
 }
 
+func (s *ServiceShell) close() {
+	s.closeLock.Lock()
+	defer s.closeLock.Unlock()
+
+	if s.isClosed {
+		return
+	}
+
+	s.isClosed = true
+
+	s.file.Close()
+	s.ws.CloseNow()
+	s.cmd.Process.Kill()
+}
+
 func (s *ServiceShell) ReadLoop() {
 	ctx := context.Background()
 
+	defer func() {
+		s.close()
+	}()
+
+	errCounter := 0
+
 	for {
+
+		if errCounter > 5 {
+			return
+		}
 
 		_, out, err := s.ws.Read(ctx)
 		if err != nil {
 			slog.Error("Error reading message: ", slog.String("error", err.Error()))
+			errCounter++
 			continue
 		}
+
+		errCounter = 0
 
 		pp.Println("msg", kosher.Str(out))
 
@@ -60,11 +92,22 @@ func (s *ServiceShell) WriteLoop() {
 
 	buf := make([]byte, 1024)
 
+	defer func() {
+		s.close()
+	}()
+
+	errCounter := 0
+
 	for {
+
+		if errCounter > 7 {
+			return
+		}
 
 		n, err := s.file.Read(buf)
 		if err != nil {
 			slog.Error("Error reading from shell: ", slog.String("error", err.Error()))
+			errCounter++
 			continue
 		}
 
@@ -75,8 +118,11 @@ func (s *ServiceShell) WriteLoop() {
 		err = s.ws.Write(ctx, websocket.MessageText, msg)
 		if err != nil {
 			slog.Error("Error writing message: ", slog.String("error", err.Error()))
+			errCounter++
 			continue
 		}
+
+		errCounter = 0
 
 	}
 }

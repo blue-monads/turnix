@@ -11,6 +11,7 @@ import (
 )
 
 type WSServiceRoom struct {
+	parent            *ECPWebsocket
 	roomId            int64
 	useId             int64
 	deviceId          int64
@@ -39,6 +40,7 @@ func (e *ECPWebsocket) AddRoom(userId, deviceId int64) *WSServiceRoom {
 		browserClosed:     true,
 		agentClosed:       true,
 		lock:              sync.Mutex{},
+		parent:            e,
 	}
 
 	e.svcRooms[roomId] = room
@@ -157,39 +159,40 @@ func (ws *WSServiceRoom) browserEventLoop() {
 			ws.browserClosed = true
 		}
 
+		ws.parent.closeRoomChan <- ws.roomId
+
 	}()
 
 	for {
+
+		if ws.roomClosed {
+			return
+		}
 
 		if errCounter > 5 {
 			slog.Warn("too many errors, closing ws")
 			return
 		}
 
-		select {
-		case <-ctx.Done():
-			return
-		default:
-			wsmt, data, err := ws.browserConnection.Read(ctx)
+		wsmt, data, err := ws.browserConnection.Read(ctx)
+		if err != nil {
+			errCounter++
+			slog.Warn("error reading from ws browser 1", "err", err)
+			continue
+		}
+
+		if ws.agentConnection != nil && !ws.agentClosed {
+			err = ws.agentConnection.Write(ctx, wsmt, data)
 			if err != nil {
-				errCounter++
-				slog.Warn("error reading from ws 1", "err", err)
+				slog.Warn("error writing to ws", "err", err)
 				continue
 			}
-
-			if ws.agentConnection != nil && !ws.agentClosed {
-				err = ws.agentConnection.Write(ctx, wsmt, data)
-				if err != nil {
-					slog.Warn("error writing to ws", "err", err)
-					continue
-				}
-			} else {
-				slog.Warn("dropping message, no agent connection")
-			}
-
-			errCounter = 0
-
+		} else {
+			slog.Warn("dropping message, no agent connection")
 		}
+
+		errCounter = 0
+
 	}
 }
 
@@ -205,33 +208,39 @@ func (ws *WSServiceRoom) agentEventLoop() {
 			ws.agentConnection.CloseNow()
 			ws.agentClosed = true
 		}
+		ws.parent.closeRoomChan <- ws.roomId
 
 	}()
 
 	for {
-		select {
-		case <-ctx.Done():
+
+		if ws.roomClosed {
 			return
-		default:
-			wsmt, data, err := ws.agentConnection.Read(ctx)
+		}
+
+		if errCounter > 5 {
+			slog.Warn("too many errors, closing ws")
+			return
+		}
+
+		wsmt, data, err := ws.agentConnection.Read(ctx)
+		if err != nil {
+			errCounter++
+			slog.Warn("error reading from ws agent 1", "err", err)
+			continue
+		}
+
+		if ws.browserConnection != nil && !ws.browserClosed {
+			err = ws.browserConnection.Write(ctx, wsmt, data)
 			if err != nil {
-				errCounter++
-				slog.Warn("error reading from ws 1", "err", err)
+				slog.Warn("error writing to ws", "err", err)
 				continue
 			}
-
-			if ws.browserConnection != nil && !ws.browserClosed {
-				err = ws.browserConnection.Write(ctx, wsmt, data)
-				if err != nil {
-					slog.Warn("error writing to ws", "err", err)
-					continue
-				}
-			} else {
-				slog.Warn("dropping message, no browser connection")
-			}
-
-			errCounter = 0
-
+		} else {
+			slog.Warn("dropping message, no browser connection")
 		}
+
+		errCounter = 0
+
 	}
 }

@@ -35,6 +35,10 @@
         ws.onopen = () => {
             console.log("Connected");
             terminal.open(termRef as HTMLElement);
+            terminal.onData((data) => {
+                console.log("Data", data);
+                ws.send(data);
+            });
         };
 
 
