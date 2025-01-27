@@ -2,7 +2,7 @@ module github.com/blue-monads/turnix
 
 go 1.23
 
-toolchain go1.23.3
+toolchain go1.23.4
 
 require (
 	github.com/BurntSushi/toml v0.3.1
@@ -14,6 +14,7 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/chromedp/chromedp v0.11.2
 	github.com/coder/websocket v1.8.12
+	github.com/creack/pty v1.1.24
 	github.com/dop251/goja v0.0.0-20240610225006-393f6d42497b
 	github.com/gin-contrib/size v1.0.1
 	github.com/gin-gonic/gin v1.10.0
@@ -22,7 +23,6 @@ require (
 	github.com/jaevor/go-nanoid v1.3.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/k0kubun/pp v3.0.1+incompatible
-	github.com/kr/pty v1.1.8
 	github.com/mackerelio/go-osstat v0.2.5
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/mitchellh/mapstructure v1.5.0
@@ -54,7 +54,6 @@ require (
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/containerd/cgroups v1.1.0 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
-	github.com/creack/pty v1.1.9 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/davidlazar/go-crypto v0.0.0-20200604182044-b73af7476f6c // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect

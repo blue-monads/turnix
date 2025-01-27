@@ -63,7 +63,7 @@ export class SimpleRATApi {
         })
     }
 
-    getNewRoomUrl = (pid: string, did: number) => {
+    getNewRoomUrl = (pid: string, did: string | number) => {
         return `${location.origin}/z/project/simplerat/${pid}/device/room/new/${did}?token=${this.access_token}`
     }
 

@@ -8,8 +8,8 @@ import (
 
 	"github.com/blue-monads/turnix/backend/utils/kosher"
 	"github.com/coder/websocket"
+	"github.com/creack/pty"
 	"github.com/k0kubun/pp"
-	"github.com/kr/pty"
 )
 
 type ServiceShell struct {
