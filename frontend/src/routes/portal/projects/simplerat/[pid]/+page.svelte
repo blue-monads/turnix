@@ -79,7 +79,7 @@
         {
           Name: "Ping",
           Class: "variant-filled-primary",
-          icon: "plus",
+          icon: "paper-airplane",
           Action: async (id) => {
 
             const resp = await api.performDeviceAction(pid, id, "ping", {});
@@ -92,27 +92,10 @@
     
           },
         },
-
-        {
-            Name: "Service",
-            Class: "",
-            Action: async (id) => {
-
-
-               await webspcketTest(api, pid, id);
-        
-            },
-            
-      
-        },
-
-
-
-
         {
           Name: "Shell",
           Class: "variant-filled-secondary",
-          icon: "plus",
+          icon: "command-line",
           Action: async (id) => {
             goto(`/z/pages/portal/projects/simplerat/${pid}/device/${id}/shell`);
           },
@@ -121,7 +104,7 @@
         {
           Name: "FS",
           Class: "variant-filled-tertiary",
-          icon: "plus",        
+          icon: "folder",        
           Action: async (id) => {
             goto(`/z/pages/portal/projects/simplerat/${pid}/device/${id}/fs`);
             

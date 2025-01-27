@@ -13,6 +13,7 @@
     const api = NewSimpleRATApi(getContext("__api__") as RootAPI);
     const terminal = new Terminal();
     let termRef: HTMLElement | null = null;
+    let ws: WebSocket | null = null;
 
     const load = async () => {
         let url = api.getNewRoomUrl(pid, did);
@@ -30,14 +31,14 @@
 
 
 
-        const ws = new WebSocket(parsedURL.toString());
+        ws = new WebSocket(parsedURL.toString());
 
         ws.onopen = () => {
             console.log("Connected");
             terminal.open(termRef as HTMLElement);
             terminal.onData((data) => {
                 console.log("Data", data);
-                ws.send(data);
+                ws?.send(data);
             });
         };
 
@@ -57,6 +58,16 @@
     };
 
     load();
+
+
+   $effect(() => {
+        return () => {
+            ws?.close();
+        };
+    });
+
+
+
 </script>
 
 <svelte:head>
