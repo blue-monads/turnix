@@ -11,6 +11,7 @@ import (
 	"github.com/k0kubun/pp"
 )
 
+// read limited at 32769 bytes
 type AgentNode struct {
 	configHome string
 	configFile string
@@ -90,6 +91,8 @@ func (a *AgentNode) startWS() bool {
 			slog.Error("Error connecting to ws: ", slog.String("error", err.Error()))
 			continue
 		}
+
+		c.SetReadLimit(1024 * 1024 * 5)
 
 		go a.evLoop(c)
 

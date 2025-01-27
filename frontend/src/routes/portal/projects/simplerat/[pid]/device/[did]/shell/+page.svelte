@@ -6,6 +6,7 @@
     import { page } from "$app/stores";
     import { NewSimpleRATApi } from "../../../../lib/SimpleRATApi";
     import { Terminal } from "@xterm/xterm";
+    import { FitAddon } from '@xterm/addon-fit';
 
     const pid = $page.params["pid"];
     const did = $page.params["did"];
@@ -14,6 +15,7 @@
     const terminal = new Terminal();
     let termRef: HTMLElement | null = null;
     let ws: WebSocket | null = null;
+    const fitAddon = new FitAddon();
 
     const load = async () => {
         let url = api.getNewRoomUrl(pid, did);
@@ -35,11 +37,14 @@
 
         ws.onopen = () => {
             console.log("Connected");
+            terminal.loadAddon(fitAddon);
             terminal.open(termRef as HTMLElement);
             terminal.onData((data) => {
                 console.log("Data", data);
                 ws?.send(data);
             });
+
+            fitAddon.fit();
         };
 
 
@@ -81,7 +86,10 @@
     </svelte:fragment>
 </AppBar>
 
-<div class="shell p-4 rounded">
+<div 
+    bind:this={termRef} 
+    id="terminal"
+    class="shell p-4 rounded w-full h-full"
+    >
 
-    <div bind:this={termRef} id="terminal"></div>
 </div>

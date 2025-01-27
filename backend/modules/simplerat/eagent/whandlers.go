@@ -1,14 +1,18 @@
 package main
 
 import (
+	"bytes"
 	"encoding/base64"
 	"fmt"
+	"image"
+	"image/png"
 	"io"
 	"os"
 	"os/exec"
 
 	"github.com/JustinTimperio/osinfo"
 
+	"github.com/kbinani/screenshot"
 	"github.com/mackerelio/go-osstat/memory"
 )
 
@@ -201,7 +205,48 @@ func handleSystemInfo(ctx *WHContext) (any, error) {
 	return r, nil
 }
 
-// Don't forget to register these handlers in your init or main function
+func handleScreenShot(ctx *WHContext) (any, error) {
+
+	displayIndex := ctx.GetAsInt("displayIndex")
+	bounds := screenshot.GetDisplayBounds(displayIndex)
+
+	img, err := screenshot.CaptureRect(bounds)
+	if err != nil {
+		return nil, fmt.Errorf("failed to capture screenshot: %v", err)
+	}
+
+	buf := bytes.NewBuffer(nil)
+	err = png.Encode(buf, img)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode screenshot: %v", err)
+	}
+
+	// write to file
+
+	finalBytes := buf.Bytes()
+
+	// err = os.WriteFile("screenshot.png", finalBytes, 0644)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to write screenshot to file: %v", err)
+	// }
+
+	return finalBytes, nil
+}
+
+func handleListDisplays(ctx *WHContext) (any, error) {
+
+	n := screenshot.NumActiveDisplays()
+
+	displays := make([]image.Rectangle, n)
+
+	for i := 0; i < n; i++ {
+		bounds := screenshot.GetDisplayBounds(i)
+		displays[i] = bounds
+	}
+
+	return displays, nil
+}
+
 func init() {
 	RegisterHandler("ping", handlePing)
 	RegisterHandler("fs.listdir", handleFsListDir)
@@ -213,6 +258,8 @@ func init() {
 	RegisterHandler("fs.rename", handleFsRename)
 	RegisterHandler("system.exec", SystemExec)
 	RegisterHandler("system.info", handleSystemInfo)
+	RegisterHandler("system.listDisplays", handleListDisplays)
+	RegisterHandler("system.screenshot", handleScreenShot)
 	RegisterHandler("service.hello", handleServiceHello)
 	RegisterHandler("service.shell", handleServiceShell)
 }

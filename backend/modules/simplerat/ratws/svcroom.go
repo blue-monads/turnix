@@ -94,6 +94,8 @@ func (ws *WSServiceRoom) AddAgentToRoom(agentId int64, ctx *gin.Context) bool {
 		return false
 	}
 
+	conn.SetReadLimit(1024 * 1024 * 5)
+
 	ws.lock.Lock()
 	defer ws.lock.Unlock()
 
@@ -123,6 +125,8 @@ func (ws *WSServiceRoom) AddBrowserToRoom(browserId int64, ctx *gin.Context) boo
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return false
 	}
+
+	conn.SetReadLimit(1024 * 1024 * 5)
 
 	ws.lock.Lock()
 	defer ws.lock.Unlock()

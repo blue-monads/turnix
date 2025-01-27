@@ -20,6 +20,8 @@ func (e *ECPWebsocket) HandleAgentWS(agentId int64, ctx *gin.Context) {
 		return
 	}
 
+	c.SetReadLimit(1024 * 1024 * 5)
+
 	e.acLock.Lock()
 	defer e.acLock.Unlock()
 

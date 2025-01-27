@@ -34,6 +34,7 @@
 		"@codemirror/lang-sql": "^6.7.0",
 		"@floating-ui/dom": "^1.6.3",
 		"@krowten/svelte-heroicons": "^0.1.0",
+		"@xterm/addon-fit": "^0.10.0",
 		"@xterm/xterm": "^5.5.0",
 		"axios": "^1.6.8",
 		"svelte-codemirror-editor": "^1.4.0"
