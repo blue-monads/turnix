@@ -19,7 +19,7 @@ func handleServiceJoinRoom(ctx *WHContext) (any, error) {
 
 	pp.Println("roomId", roomId)
 
-	baseUrl := fmt.Sprintf("%sroom/join/%d", ctx.Node.baseURL, roomId)
+	baseUrl := fmt.Sprintf("%sroom/join/%d?token=%s", ctx.Node.baseURL, roomId, ctx.Node.authSessionToken)
 
 	if strings.HasPrefix(baseUrl, "https") {
 		baseUrl = strings.Replace(baseUrl, "https", "wss", 1)
@@ -84,6 +84,8 @@ func (s *ServiceShell) WriteLoop() {
 		time.Sleep(5 * time.Second)
 
 		msg := []byte(fmt.Sprintf("ping %d", counter))
+
+		counter++
 
 		err := s.ws.Write(ctx, websocket.MessageText, msg)
 		if err != nil {

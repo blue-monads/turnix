@@ -18,8 +18,13 @@ export const webspcketTest = async (api: SimpleRATApi, pid: string, did: number)
         console.log("Connected")
     }
 
+    let i = 0
+
     ws.onmessage = (e) => {
         console.log("Message", e.data)
+
+        ws.send("Hello" + i)
+        i += 1
     }
 
     ws.onclose = () => {
@@ -29,7 +34,6 @@ export const webspcketTest = async (api: SimpleRATApi, pid: string, did: number)
     ws.onerror = (e) => {
         console.log("Error", e)
     }
-
 
 
 
