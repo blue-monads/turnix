@@ -290,7 +290,7 @@ func (e *ECPServer) performDeviceAction(ctx xtypes.ContextPlus) (any, error) {
 
 	ctx.Http.Set("raw_mode", true)
 
-	rbytes := ws.SendAgentMessage(ctx.Http.Request.Context(), did, out)
+	rbytes := ws.SendAgentMessage(ctx.Http.Request.Context(), did, out, true)
 
 	if rbytes != nil {
 		pp.Println("@rbytes", string(rbytes))
@@ -338,7 +338,7 @@ func (e *ECPServer) browserServiceWS(ctx *gin.Context) {
 	}
 
 	msg := []byte(fmt.Sprintf(`{"mtype":"service.joinRoom", "data":{"room_id":%d}}`, wsroom.GetRoomId()))
-	ws.SendAgentMessage(ctx.Request.Context(), did, msg)
+	ws.SendAgentMessage(ctx.Request.Context(), did, msg, false)
 
 }
 

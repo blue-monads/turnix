@@ -39,7 +39,7 @@ type Message struct {
 	AgentId   int64           `json:",omitempty"`
 }
 
-func (e *ECPWebsocket) SendAgentMessage(ctx context.Context, agentId int64, data []byte) []byte {
+func (e *ECPWebsocket) SendAgentMessage(ctx context.Context, agentId int64, data []byte, wait bool) []byte {
 	e.acLock.RLock()
 	c := e.agentsConns[agentId]
 	e.acLock.RUnlock()
@@ -52,17 +52,20 @@ func (e *ECPWebsocket) SendAgentMessage(ctx context.Context, agentId int64, data
 	respChan := make(chan *Message)
 	counter := int64(0)
 
-	e.pbLock.Lock()
-	e.pbCounter++
-	counter = e.pbCounter
-	e.pendingBrowserRequests[e.pbCounter] = respChan
-	e.pbLock.Unlock()
-
-	defer func() {
+	if wait {
 		e.pbLock.Lock()
-		delete(e.pendingBrowserRequests, e.pbCounter)
+		e.pbCounter++
+		counter = e.pbCounter
+		e.pendingBrowserRequests[e.pbCounter] = respChan
 		e.pbLock.Unlock()
-	}()
+
+		defer func() {
+			e.pbLock.Lock()
+			delete(e.pendingBrowserRequests, e.pbCounter)
+			e.pbLock.Unlock()
+		}()
+
+	}
 
 	msg := &Message{
 		MessageId: counter,
@@ -79,6 +82,10 @@ func (e *ECPWebsocket) SendAgentMessage(ctx context.Context, agentId int64, data
 	err = c.Write(ctx, websocket.MessageText, jdata)
 	if err != nil {
 		slog.Warn("error writing to ws", "err", err)
+		return nil
+	}
+
+	if !wait {
 		return nil
 	}
 

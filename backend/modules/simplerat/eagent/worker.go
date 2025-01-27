@@ -5,7 +5,7 @@ import (
 	"log/slog"
 )
 
-func (a *AgentService) worker() {
+func (a *AgentNode) worker() {
 
 	lhandlers := make(map[string]Handler)
 	hLock.Lock()
@@ -60,8 +60,8 @@ func (a *AgentService) worker() {
 		}
 
 		resp, err := handler(&WHContext{
-			Packet:  packet,
-			Service: a,
+			Packet: packet,
+			Node:   a,
 		})
 		if err != nil {
 			slog.Warn("Error handling packet", slog.String("error", err.Error()))

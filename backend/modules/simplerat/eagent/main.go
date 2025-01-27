@@ -167,7 +167,7 @@ func main() {
 		return
 	}
 
-	agentSvc := &AgentService{
+	agentSvc := &AgentNode{
 		configHome:       configFolder,
 		configFile:       configFile,
 		baseURL:          config.BaseURL,

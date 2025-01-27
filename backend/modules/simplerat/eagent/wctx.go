@@ -22,8 +22,8 @@ func RegisterHandler(mtype string, handler Handler) {
 
 // WHContext is the context for the worker handler
 type WHContext struct {
-	Packet  *Packet
-	Service *AgentService
+	Packet *Packet
+	Node   *AgentNode
 }
 
 func (w *WHContext) GetAsString(key string) string {

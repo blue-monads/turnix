@@ -11,7 +11,7 @@ import (
 	"github.com/k0kubun/pp"
 )
 
-type AgentService struct {
+type AgentNode struct {
 	configHome string
 	configFile string
 
@@ -28,7 +28,7 @@ type AgentService struct {
 	writeLoopCh chan *Packet
 }
 
-func (a *AgentService) Run() error {
+func (a *AgentNode) Run() error {
 
 	slog.Info("Agent service started")
 
@@ -58,7 +58,7 @@ func (a *AgentService) Run() error {
 
 }
 
-func (a *AgentService) startWS() bool {
+func (a *AgentNode) startWS() bool {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
@@ -109,7 +109,7 @@ type Message struct {
 	Data  any    `json:"data"`
 }
 
-func (a *AgentService) evLoop(c *websocket.Conn) {
+func (a *AgentNode) evLoop(c *websocket.Conn) {
 	closeCh := make(chan struct{})
 
 	defer func() {
