@@ -64,8 +64,10 @@ func handleServiceShell(ctx *WHContext) (any, error) {
 
 	// fixme make list of running services
 
-	go s.ReadLoop()
-	go s.WriteLoop()
+	err = s.Run()
+	if err != nil {
+		return nil, fmt.Errorf("failed to run shell: %v", err)
+	}
 
 	return "", nil
 

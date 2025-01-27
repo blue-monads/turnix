@@ -2,17 +2,39 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
-	"time"
+	"os"
+	"os/exec"
 
+	"github.com/blue-monads/turnix/backend/utils/kosher"
 	"github.com/coder/websocket"
 	"github.com/k0kubun/pp"
+	"github.com/kr/pty"
 )
 
 type ServiceShell struct {
 	node *AgentNode
 	ws   *websocket.Conn
+	cmd  *exec.Cmd
+	file *os.File
+}
+
+func (s *ServiceShell) Run() error {
+
+	c := exec.Command("bash")
+	tty, err := pty.Start(c)
+	if err != nil {
+		slog.Error("Error starting shell: ", slog.String("error", err.Error()))
+		return err
+	}
+
+	s.cmd = c
+	s.file = tty
+
+	go s.ReadLoop()
+	go s.WriteLoop()
+
+	return nil
 }
 
 func (s *ServiceShell) ReadLoop() {
@@ -26,10 +48,9 @@ func (s *ServiceShell) ReadLoop() {
 			continue
 		}
 
-		msg := string(out)
+		pp.Println("msg", kosher.Str(out))
 
-		pp.Println("msg", msg)
-
+		s.file.Write(out)
 	}
 
 }
@@ -37,16 +58,21 @@ func (s *ServiceShell) ReadLoop() {
 func (s *ServiceShell) WriteLoop() {
 	ctx := context.Background()
 
-	counter := 0
+	buf := make([]byte, 1024)
 
 	for {
-		time.Sleep(5 * time.Second)
 
-		msg := []byte(fmt.Sprintf("ping %d", counter))
+		n, err := s.file.Read(buf)
+		if err != nil {
+			slog.Error("Error reading from shell: ", slog.String("error", err.Error()))
+			continue
+		}
 
-		counter++
+		msg := buf[:n]
 
-		err := s.ws.Write(ctx, websocket.MessageText, msg)
+		pp.Println("msg", kosher.Str(msg))
+
+		err = s.ws.Write(ctx, websocket.MessageText, msg)
 		if err != nil {
 			slog.Error("Error writing message: ", slog.String("error", err.Error()))
 			continue

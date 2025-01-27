@@ -3,7 +3,6 @@ package simplerat
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"log/slog"
 	"strconv"
@@ -305,6 +304,11 @@ func (e *ECPServer) performDeviceAction(ctx xtypes.ContextPlus) (any, error) {
 	return nil, nil
 }
 
+type ServiceRoomMessage struct {
+	MType string         `json:"mtype"`
+	Data  map[string]any `json:"data"`
+}
+
 func (e *ECPServer) browserServiceWS(ctx *gin.Context) {
 	tok := ctx.Query("token")
 	claim, err := e.signer.ParseAccess(tok)
@@ -337,8 +341,37 @@ func (e *ECPServer) browserServiceWS(ctx *gin.Context) {
 		return
 	}
 
-	msg := []byte(fmt.Sprintf(`{"mtype":"service.joinRoom", "data":{"room_id":%d}}`, wsroom.GetRoomId()))
-	ws.SendAgentMessage(ctx.Request.Context(), did, msg, false)
+	mtype := ctx.Query("mtype")
+	if mtype == "" {
+		mtype = "service.hello"
+	}
+
+	data := ServiceRoomMessage{
+		MType: mtype,
+		Data:  map[string]any{},
+	}
+
+	queryValues := ctx.Request.URL.Query()
+	for k, v := range queryValues {
+		if k == "mtype" {
+			continue
+		}
+
+		if k == "token" {
+			continue
+		}
+
+		data.Data[k] = v
+	}
+
+	data.Data["room_id"] = wsroom.GetRoomId()
+
+	jdata, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+
+	ws.SendAgentMessage(ctx.Request.Context(), did, jdata, false)
 
 }
 

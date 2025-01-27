@@ -22,6 +22,7 @@ require (
 	github.com/jaevor/go-nanoid v1.3.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/k0kubun/pp v3.0.1+incompatible
+	github.com/kr/pty v1.1.8
 	github.com/mackerelio/go-osstat v0.2.5
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/mitchellh/mapstructure v1.5.0
@@ -53,6 +54,7 @@ require (
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/containerd/cgroups v1.1.0 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
+	github.com/creack/pty v1.1.9 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/davidlazar/go-crypto v0.0.0-20200604182044-b73af7476f6c // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
