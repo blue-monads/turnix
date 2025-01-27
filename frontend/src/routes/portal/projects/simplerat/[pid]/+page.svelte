@@ -9,6 +9,7 @@
     import AddDeviceDialog from "./AddDeviceDialog.svelte";
     import { goto } from "$app/navigation";
     import { webspcketTest } from "./wstest";
+    import SystemInfoDialog from "./SystemInfoDialog.svelte";
 
     const pid = $page.params["pid"];
 
@@ -110,6 +111,24 @@
             
           },
 
+        },
+
+        {
+          Name: "Info",
+          icon: "code-bracket-square",
+          Action: async (id) => {
+            const resp = await api.performDeviceAction(pid, id, "system.info", {});
+            if (resp.status !== 200) {
+                console.error("Failed to kill device", resp);
+                return;
+            }
+
+            modal.show(SystemInfoDialog, {
+                data: resp.data,
+            });
+
+            console.log("Killed device", resp.data);
+          },
         },
 
 
