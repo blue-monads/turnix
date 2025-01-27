@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/coder/websocket"
+	"github.com/coder/websocket/wsjson"
 )
 
 func (e *ECPWebsocket) HandleAgentWS(agentId int64, ctx *gin.Context) {
@@ -73,13 +74,7 @@ func (e *ECPWebsocket) SendAgentMessage(ctx context.Context, agentId int64, data
 		AgentId:   agentId,
 	}
 
-	jdata, err := json.Marshal(msg)
-	if err != nil {
-		slog.Warn("error marshalling message", "err", err)
-		return nil
-	}
-
-	err = c.Write(ctx, websocket.MessageText, jdata)
+	err := wsjson.Write(ctx, c, msg)
 	if err != nil {
 		slog.Warn("error writing to ws", "err", err)
 		return nil
@@ -129,36 +124,24 @@ func (e *ECPWebsocket) eventLoop(agentId int64, conn *websocket.Conn) {
 			return
 		}
 
-		select {
-		case <-ctx.Done():
-			return
-		default:
-			_, data, err := conn.Read(ctx)
-			if err != nil {
-				errorCounter++
-				slog.Warn("error reading from ws 1", "err", err)
-				continue
-			}
+		var msg Message
 
-			errorCounter = 0
+		err := wsjson.Read(ctx, conn, &msg)
+		if err != nil {
+			slog.Warn("error reading from ws 2", "err", err)
+			errorCounter++
+			continue
+		}
 
-			var msg Message
-			err = json.Unmarshal(data, &msg)
-			if err != nil {
-				slog.Warn("error reading from ws 2", "err", err)
-				continue
-			}
+		msg.AgentId = agentId
+		errorCounter = 0
 
-			msg.AgentId = agentId
+		e.pbLock.RLock()
+		respChan := e.pendingBrowserRequests[msg.MessageId]
+		e.pbLock.RUnlock()
 
-			e.pbLock.RLock()
-			respChan := e.pendingBrowserRequests[msg.MessageId]
-			e.pbLock.RUnlock()
-
-			if respChan != nil {
-				respChan <- &msg
-			}
-
+		if respChan != nil {
+			respChan <- &msg
 		}
 
 	}
