@@ -18,7 +18,7 @@
         </thead>
 
         <tbody>
-            {#each Object.entries(data.data) as [key, value]}
+            {#each Object.entries(data) as [key, value]}
                 <tr>
                     <td class="p-2 border">{key}</td>
                     <td class="p-2 border">
