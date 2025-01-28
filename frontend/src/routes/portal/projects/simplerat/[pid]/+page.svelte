@@ -142,7 +142,7 @@
               }
 
                 modal.show(ScreenshotDialog, {
-                    data: resp.data.data,
+                    data: resp.data,
                 });
 
 

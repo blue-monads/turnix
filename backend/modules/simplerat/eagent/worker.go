@@ -1,9 +1,19 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log/slog"
+
+	"github.com/blue-monads/turnix/backend/modules/simplerat/wire"
 )
+
+type Response struct {
+	Mid        uint64
+	Pid        uint16
+	Mtype      uint8
+	DataBinary []byte
+}
 
 func (a *AgentNode) worker() {
 
@@ -14,14 +24,13 @@ func (a *AgentNode) worker() {
 	}
 	hLock.Unlock()
 
-	writeErr := func(msgId int64, errStr string) {
+	writeErr := func(msgId uint64, errStr string) {
 		slog.Warn("Error handling packet", slog.String("error", errStr))
-		a.writeLoopCh <- &Packet{
-			MessageId: msgId,
-			Data: Message{
-				MType: "response",
-				Data:  errStr,
-			},
+		a.writeLoopCh <- &Response{
+			Mid:        uint64(msgId),
+			Pid:        0,
+			Mtype:      wire.PtypeResponseErr,
+			DataBinary: []byte(errStr),
 		}
 	}
 
@@ -33,7 +42,7 @@ func (a *AgentNode) worker() {
 			return
 		}
 
-		if packet.Data.MType == "help" {
+		if packet.Header.MType == "help" {
 
 			commands := make([]string, 0, len(lhandlers))
 
@@ -41,42 +50,34 @@ func (a *AgentNode) worker() {
 				commands = append(commands, k)
 			}
 
-			a.writeLoopCh <- &Packet{
-				MessageId: packet.MessageId,
-				Data: Message{
-					MType: "response",
-					Data:  commands,
-				},
+			out, err := json.Marshal(commands)
+			if err != nil {
+				writeErr((packet.Header.Mid), fmt.Sprintf("error marshalling help: %s", err))
+				continue
+			}
+
+			a.writeLoopCh <- &Response{
+				Mid:        packet.Header.Mid,
+				Pid:        packet.Header.Pid,
+				Mtype:      wire.PtypeResponseOk,
+				DataBinary: out,
 			}
 
 			return
 		}
 
-		handler, ok := handlers[packet.Data.MType]
+		handler, ok := handlers[packet.Header.MType]
 		if !ok {
 			slog.Warn("Unknown packet type", slog.Any("packet", packet))
-			writeErr(packet.MessageId, fmt.Sprintf("unknown packet type: %s", packet.Data.MType))
+			writeErr((packet.Header.Mid), fmt.Sprintf("unknown packet type: %s", packet.Header.MType))
 			continue
 		}
 
-		resp, err := handler(&WHContext{
+		handler(&WHContext{
 			Packet: packet,
 			Node:   a,
 		})
-		if err != nil {
-			slog.Warn("Error handling packet", slog.String("error", err.Error()))
-			continue
-		}
 
-		slog.Info("Sending response", slog.Any("response", resp))
-
-		a.writeLoopCh <- &Packet{
-			MessageId: packet.MessageId,
-			Data: Message{
-				MType: "response",
-				Data:  resp,
-			},
-		}
 	}
 
 }

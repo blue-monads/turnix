@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/adrg/xdg"
+	"github.com/blue-monads/turnix/backend/modules/simplerat/wire"
 )
 
 var (
@@ -178,8 +179,8 @@ func main() {
 		noOfWorkers: 4,
 
 		onClose:     make(chan struct{}),
-		workersChan: make(chan *Packet),
-		writeLoopCh: make(chan *Packet),
+		workersChan: make(chan *wire.Packet),
+		writeLoopCh: make(chan *Response),
 	}
 
 	err = agentSvc.Run()

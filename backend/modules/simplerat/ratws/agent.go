@@ -2,14 +2,13 @@ package ratws
 
 import (
 	"context"
-	"encoding/json"
 	"log/slog"
 	"net/http"
 
+	"github.com/blue-monads/turnix/backend/modules/simplerat/wire"
 	"github.com/gin-gonic/gin"
 
 	"github.com/coder/websocket"
-	"github.com/coder/websocket/wsjson"
 )
 
 func (e *ECPWebsocket) HandleAgentWS(agentId int64, ctx *gin.Context) {
@@ -36,13 +35,7 @@ func (e *ECPWebsocket) HandleAgentWS(agentId int64, ctx *gin.Context) {
 
 }
 
-type Message struct {
-	MessageId int64           `json:"mid"`
-	Data      json.RawMessage `json:"data"`
-	AgentId   int64           `json:",omitempty"`
-}
-
-func (e *ECPWebsocket) SendAgentMessage(ctx context.Context, agentId int64, data []byte, wait bool) []byte {
+func (e *ECPWebsocket) SendAgentMessage(ctx context.Context, agentId int64, mtype string, data []byte, wait bool) []byte {
 	e.acLock.RLock()
 	c := e.agentsConns[agentId]
 	e.acLock.RUnlock()
@@ -52,7 +45,7 @@ func (e *ECPWebsocket) SendAgentMessage(ctx context.Context, agentId int64, data
 		return nil
 	}
 
-	respChan := make(chan *Message)
+	respChan := make(chan *wire.Packet)
 	counter := int64(0)
 
 	if wait {
@@ -70,13 +63,16 @@ func (e *ECPWebsocket) SendAgentMessage(ctx context.Context, agentId int64, data
 
 	}
 
-	msg := &Message{
-		MessageId: counter,
-		Data:      data,
-		AgentId:   agentId,
-	}
+	header := wire.Pack(&wire.Header{
+		Mid:   uint64(counter),
+		Ptype: wire.PtypeRequest,
+		Pid:   0,
+		MType: mtype,
+	})
 
-	err := wsjson.Write(ctx, c, msg)
+	header = append(header, data...)
+
+	err := c.Write(ctx, websocket.MessageBinary, header)
 	if err != nil {
 		slog.Warn("error writing to ws", "err", err)
 		return nil
@@ -90,9 +86,7 @@ func (e *ECPWebsocket) SendAgentMessage(ctx context.Context, agentId int64, data
 		slog.Info("waiting for response")
 		msg := <-respChan
 
-		if msg.AgentId == agentId {
-			return msg.Data
-		}
+		return msg.Data
 
 	}
 
@@ -126,20 +120,21 @@ func (e *ECPWebsocket) eventLoop(agentId int64, conn *websocket.Conn) {
 			return
 		}
 
-		var msg Message
-
-		err := wsjson.Read(ctx, conn, &msg)
+		_, out, err := conn.Read(ctx)
 		if err != nil {
-			slog.Warn("error reading from ws 2", "err", err)
+			slog.Warn("error reading from ws", "err", err)
 			errorCounter++
 			continue
 		}
 
-		msg.AgentId = agentId
-		errorCounter = 0
+		var msg wire.Packet
+		header := wire.Unpack(out)
+
+		msg.Header = header
+		msg.Data = out[header.Size():]
 
 		e.pbLock.RLock()
-		respChan := e.pendingBrowserRequests[msg.MessageId]
+		respChan := e.pendingBrowserRequests[int64(header.Mid)]
 		e.pbLock.RUnlock()
 
 		if respChan != nil {

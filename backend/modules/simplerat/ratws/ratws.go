@@ -4,6 +4,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/blue-monads/turnix/backend/modules/simplerat/wire"
 	"github.com/coder/websocket"
 	"github.com/k0kubun/pp"
 )
@@ -16,7 +17,7 @@ type ECPWebsocket struct {
 
 	agentsConns            map[int64]*websocket.Conn
 	acLock                 sync.RWMutex
-	pendingBrowserRequests map[int64]chan *Message
+	pendingBrowserRequests map[int64]chan *wire.Packet
 	pbLock                 sync.RWMutex
 	pbCounter              int64
 
@@ -34,7 +35,7 @@ func NewECPWebsocket(pid int64) *ECPWebsocket {
 		agentsConns: make(map[int64]*websocket.Conn),
 
 		acLock:                 sync.RWMutex{},
-		pendingBrowserRequests: make(map[int64]chan *Message),
+		pendingBrowserRequests: make(map[int64]chan *wire.Packet),
 		pbLock:                 sync.RWMutex{},
 		pbCounter:              1,
 		closeRoomChan:          make(chan int64, 4),

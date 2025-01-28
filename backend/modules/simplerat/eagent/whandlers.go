@@ -247,19 +247,31 @@ func handleListDisplays(ctx *WHContext) (any, error) {
 	return displays, nil
 }
 
+func HandlerMiddleWare(h func(*WHContext) (any, error)) Handler {
+	return func(ctx *WHContext) {
+		result, err := h(ctx)
+		if err != nil {
+			ctx.SendError(err.Error())
+			return
+		}
+
+		ctx.SendAsJSON(result)
+	}
+}
+
 func init() {
-	RegisterHandler("ping", handlePing)
-	RegisterHandler("fs.listdir", handleFsListDir)
-	RegisterHandler("fs.readfile", handleFsReadFile)
-	RegisterHandler("fs.writefile", handleFsWriteFile)
-	RegisterHandler("fs.readrange", handleFsReadRange)
-	RegisterHandler("fs.remove", handleFsRemove)
-	RegisterHandler("fs.mkdir", handleFsMkdir)
-	RegisterHandler("fs.rename", handleFsRename)
-	RegisterHandler("system.exec", SystemExec)
-	RegisterHandler("system.info", handleSystemInfo)
-	RegisterHandler("system.listDisplays", handleListDisplays)
-	RegisterHandler("system.screenshot", handleScreenShot)
-	RegisterHandler("service.hello", handleServiceHello)
-	RegisterHandler("service.shell", handleServiceShell)
+	RegisterHandler("ping", HandlerMiddleWare(handlePing))
+	RegisterHandler("fs.listdir", HandlerMiddleWare(handleFsListDir))
+	RegisterHandler("fs.readfile", HandlerMiddleWare(handleFsReadFile))
+	RegisterHandler("fs.writefile", HandlerMiddleWare(handleFsWriteFile))
+	RegisterHandler("fs.readrange", HandlerMiddleWare(handleFsReadRange))
+	RegisterHandler("fs.remove", HandlerMiddleWare(handleFsRemove))
+	RegisterHandler("fs.mkdir", HandlerMiddleWare(handleFsMkdir))
+	RegisterHandler("fs.rename", HandlerMiddleWare(handleFsRename))
+	RegisterHandler("system.exec", HandlerMiddleWare(SystemExec))
+	RegisterHandler("system.info", HandlerMiddleWare(handleSystemInfo))
+	RegisterHandler("system.listDisplays", HandlerMiddleWare(handleListDisplays))
+	RegisterHandler("system.screenshot", HandlerMiddleWare(handleScreenShot))
+	RegisterHandler("service.hello", HandlerMiddleWare(handleServiceHello))
+	RegisterHandler("service.shell", HandlerMiddleWare(handleServiceShell))
 }

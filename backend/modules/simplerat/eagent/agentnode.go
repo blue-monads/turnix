@@ -6,8 +6,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/blue-monads/turnix/backend/modules/simplerat/wire"
 	"github.com/coder/websocket"
-	"github.com/coder/websocket/wsjson"
+
 	"github.com/k0kubun/pp"
 )
 
@@ -25,8 +26,8 @@ type AgentNode struct {
 
 	onClose chan struct{}
 
-	workersChan chan *Packet
-	writeLoopCh chan *Packet
+	workersChan chan *wire.Packet
+	writeLoopCh chan *Response
 }
 
 func (a *AgentNode) Run() error {
@@ -102,16 +103,6 @@ func (a *AgentNode) startWS() bool {
 
 }
 
-type Packet struct {
-	MessageId int64   `json:"mid"`
-	Data      Message `json:"data"`
-}
-
-type Message struct {
-	MType string `json:"mtype"`
-	Data  any    `json:"data"`
-}
-
 func (a *AgentNode) evLoop(c *websocket.Conn) {
 	closeCh := make(chan struct{})
 
@@ -119,6 +110,8 @@ func (a *AgentNode) evLoop(c *websocket.Conn) {
 		c.CloseNow()
 		a.onClose <- struct{}{}
 	}()
+
+	ctx := context.Background()
 
 	go func() {
 		defer func() {
@@ -133,19 +126,25 @@ func (a *AgentNode) evLoop(c *websocket.Conn) {
 				return
 			}
 
-			var pkt Packet
-			err := wsjson.Read(context.Background(), c, &pkt)
+			_, out, err := c.Read(ctx)
 			if err != nil {
 				slog.Error("Error reading ws: ", slog.String("error", err.Error()))
 				consecutiveErrors++
-				return
+				continue
+			}
+
+			header := wire.Unpack(out)
+
+			pkt := &wire.Packet{
+				Header: header,
+				Data:   out[header.Size():],
 			}
 
 			consecutiveErrors = 0
 
-			pp.Println("@pkt", pkt)
+			pp.Println("@pkt", pkt.Header, len(pkt.Data))
 
-			a.workersChan <- &pkt
+			a.workersChan <- pkt
 
 		}
 
@@ -159,11 +158,20 @@ func (a *AgentNode) evLoop(c *websocket.Conn) {
 		case <-closeCh:
 			return
 		case pkt := <-a.writeLoopCh:
-			slog.Info("writing to ws", "pkt", pkt)
+			slog.Info("writing to ws", slog.Int("mid", int(pkt.Mid)), slog.Int("mtype", int(pkt.Mtype)))
 
-			err := wsjson.Write(context.Background(), c, pkt)
+			head := wire.Pack(&wire.Header{
+				Ptype: pkt.Mtype,
+				Mid:   pkt.Mid,
+				Pid:   pkt.Pid,
+				MType: "",
+			})
+
+			head = append(head, pkt.DataBinary...)
+
+			err := c.Write(ctx, websocket.MessageBinary, head)
 			if err != nil {
-				slog.Error("Error writing ws: ", slog.String("error", err.Error()))
+				slog.Error("Error writing to ws: ", slog.String("error", err.Error()))
 				continue
 			}
 

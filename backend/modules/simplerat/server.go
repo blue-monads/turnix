@@ -271,6 +271,12 @@ func (e *ECPServer) getProjectWS(pid int64, create bool) *ratws.ECPWebsocket {
 
 func (e *ECPServer) performDeviceAction(ctx xtypes.ContextPlus) (any, error) {
 
+	mtype := ctx.Http.Query("mtype")
+
+	if mtype == "" {
+		mtype = "ping"
+	}
+
 	pid := ctx.ProjectId()
 
 	ws := e.getProjectWS(pid, false)
@@ -289,11 +295,9 @@ func (e *ECPServer) performDeviceAction(ctx xtypes.ContextPlus) (any, error) {
 
 	ctx.Http.Set("raw_mode", true)
 
-	rbytes := ws.SendAgentMessage(ctx.Http.Request.Context(), did, out, true)
+	rbytes := ws.SendAgentMessage(ctx.Http.Request.Context(), did, mtype, out, true)
 
 	if rbytes != nil {
-		pp.Println("@rbytes", string(rbytes))
-		ctx.Http.Request.Header.Set("Content-Type", "application/json")
 		ctx.Http.Writer.WriteHeader(200)
 		ctx.Http.Writer.Write(rbytes)
 
@@ -346,10 +350,7 @@ func (e *ECPServer) browserServiceWS(ctx *gin.Context) {
 		mtype = "service.hello"
 	}
 
-	data := ServiceRoomMessage{
-		MType: mtype,
-		Data:  map[string]any{},
-	}
+	data := make(map[string]any)
 
 	queryValues := ctx.Request.URL.Query()
 	for k, v := range queryValues {
@@ -361,17 +362,17 @@ func (e *ECPServer) browserServiceWS(ctx *gin.Context) {
 			continue
 		}
 
-		data.Data[k] = v
+		data[k] = v
 	}
 
-	data.Data["room_id"] = wsroom.GetRoomId()
+	data["room_id"] = wsroom.GetRoomId()
 
 	jdata, err := json.Marshal(data)
 	if err != nil {
 		panic(err)
 	}
 
-	ws.SendAgentMessage(ctx.Request.Context(), did, jdata, false)
+	ws.SendAgentMessage(ctx.Request.Context(), did, mtype, jdata, false)
 
 }
 
