@@ -40,7 +40,16 @@ func (a *AgentNode) Run() error {
 		go a.worker()
 	}
 
+	counter := 0
+
 	for {
+
+		if counter > 0 {
+			time.Sleep(5 * time.Second)
+			slog.Info("Reconnecting agent service", slog.Int("counter", counter))
+		}
+
+		counter++
 
 		ok := a.startWS()
 
@@ -53,8 +62,6 @@ func (a *AgentNode) Run() error {
 		<-a.onClose
 
 		slog.Info("Agent service closed")
-
-		return nil
 
 	}
 
