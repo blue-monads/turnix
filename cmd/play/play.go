@@ -8,7 +8,7 @@ import (
 func main() {
 	pp.Println("@play")
 
-	p := &wire.WSPacket{
+	p := &wire.Header{
 		Ptype: wire.PtypeRequest,
 		Mid:   1,
 		Pid:   2,
