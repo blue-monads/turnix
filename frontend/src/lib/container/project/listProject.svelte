@@ -17,6 +17,8 @@
   let { ptype = undefined }: Props = $props();
 
   let projects: any[] = $state([]);
+  let ptypesMap: Record<string, any> = $state({});
+
 
   const load = async () => {
     const resp = await api.listProjects(ptype);
@@ -24,9 +26,22 @@
       return;
     }
 
+    const ptypes = ((globalThis as any).__turnix_ptypes__ || []) as Record<string, any>[];
+    const nextPtypesMap: Record<string, any> = {};
+
+    for (const ptype of ptypes) {
+      nextPtypesMap[ptype.slug] = ptype;
+    }
+
+    ptypesMap = nextPtypesMap;
     projects = resp.data;
+
+
+
   };
   const store = getModalStore();
+
+
 
   load();
 </script>
@@ -35,6 +50,9 @@
 
 <div class="p-4 flex flex-wrap gap-2">
   {#each projects as proj}
+    {@const ptypeData = ptypesMap[proj.ptype]}
+    {@const pattern: string = ptypeData.project_link_pattern}
+    
     <div class="card p-1 w-96 hover:bg-secondary-backdrop-token">
       <header class="card-header">
         <img src={`https://picsum.photos/seed/${proj.id}/512/300`} alt="" />
@@ -52,12 +70,23 @@
       </section>
 
       <footer class="card-footer flex justify-end gap-2">
-        <a
+        {#if ptypeData.is_external}
+          <a
+            href={pattern ? pattern.replace("{PID}", proj.id).replace("{PTYPE}", proj['ptype']) : `/z/x/${proj['ptype']}`}
+            class="btn variant-filled"
+          >
+            explore
+          </a>
+
+          {:else}
+          <a
           href="/z/pages/portal/projects/{proj['ptype']}/{proj['id']}"
           class="btn variant-filled"
         >
           explore
         </a>
+          
+        {/if}
 
         <button
           onclick={() => {

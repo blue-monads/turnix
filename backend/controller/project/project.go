@@ -1,6 +1,8 @@
 package project
 
 import (
+	"fmt"
+
 	"github.com/blue-monads/turnix/backend/services/database"
 	"github.com/blue-monads/turnix/backend/xtypes/models"
 	"github.com/blue-monads/turnix/backend/xtypes/xproject"
@@ -26,11 +28,14 @@ func (a *ProjectController) ListProjectTypes() ([]models.ProjectTypes, error) {
 
 	for _, pdef := range a.projects {
 		pdefs = append(pdefs, models.ProjectTypes{
-			Name:       pdef.Name,
-			Ptype:      pdef.Slug,
-			Icon:       pdef.Icon,
-			Info:       pdef.Info,
-			IsExternal: pdef.AssetData != nil,
+			Name:               pdef.Name,
+			Ptype:              pdef.Slug,
+			Icon:               pdef.Icon,
+			Info:               pdef.Info,
+			IsExternal:         pdef.LinkPattern != "",
+			Slug:               pdef.Slug,
+			ProjectLinkPattern: pdef.LinkPattern,
+			BaseLink:           fmt.Sprintf("/z/pages/portal/projects/%s", pdef.Slug),
 		})
 
 	}

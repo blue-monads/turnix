@@ -30,6 +30,7 @@ type Defination struct {
 
 	RegisteredTables []Table
 
+	LinkPattern      string
 	OnAPIMount       func(RouterGroup *gin.RouterGroup)
 	OnPageRequest    func(ctx *gin.Context)
 	OnProjectRequest func(ctx *gin.Context)

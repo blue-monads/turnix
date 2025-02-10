@@ -37,14 +37,15 @@ type ProjectHook struct {
 }
 
 type ProjectTypes struct {
-	Name       string   `json:"name"`
-	Ptype      string   `json:"ptype"`
-	Slug       string   `json:"slug"`
-	Info       string   `json:"info"`
-	Icon       string   `json:"icon"`
-	IsExternal bool     `json:"is_external"`
-	Link       string   `json:"link,omitempty"`
-	EventTypes []string `json:"event_types,omitempty"`
+	Name               string   `json:"name"`
+	Ptype              string   `json:"ptype"`
+	Slug               string   `json:"slug"`
+	Info               string   `json:"info"`
+	Icon               string   `json:"icon"`
+	IsExternal         bool     `json:"is_external"`
+	BaseLink           string   `json:"base_link,omitempty"`
+	ProjectLinkPattern string   `json:"project_link_pattern,omitempty"`
+	EventTypes         []string `json:"event_types,omitempty"`
 }
 
 type PluginImport struct {

@@ -15,13 +15,14 @@ func BuildGlobalJS(projTypes map[string]*xproject.Defination) ([]byte, error) {
 
 	for _, ptype := range projTypes {
 		data = append(data, models.ProjectTypes{
-			Name:       ptype.Name,
-			Slug:       ptype.Slug,
-			Icon:       ptype.Icon,
-			Ptype:      ptype.Slug,
-			Info:       ptype.Info,
-			Link:       fmt.Sprintf("/z/pages/portal/projects/%s", ptype.Slug),
-			IsExternal: ptype.AssetData != nil,
+			Name:               ptype.Name,
+			Slug:               ptype.Slug,
+			Icon:               ptype.Icon,
+			Ptype:              ptype.Slug,
+			Info:               ptype.Info,
+			BaseLink:           fmt.Sprintf("/z/pages/portal/projects/%s", ptype.Slug),
+			IsExternal:         ptype.LinkPattern != "",
+			ProjectLinkPattern: ptype.LinkPattern,
 		})
 	}
 
