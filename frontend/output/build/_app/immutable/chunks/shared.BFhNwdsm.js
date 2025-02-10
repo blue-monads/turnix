@@ -1,1 +1,0 @@
-import{ai as e}from"./runtime.CmPLUjJJ.js";import{a as s}from"./misc.CveY8KIp.js";function v(o,_,r,t=!0){t&&r();for(var i of _)o.addEventListener(i,r);e(()=>{for(var n of _)o.removeEventListener(n,r)})}function d(o,_,r,t=r){o.addEventListener(_,r);const i=o.__on_r;i?o.__on_r=()=>{i(),t()}:o.__on_r=t,s()}export{v as a,d as l};

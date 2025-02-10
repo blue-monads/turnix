@@ -1,1 +1,0 @@
-import{a2 as T,a3 as h,a4 as k,a5 as S,T as c}from"./runtime.CmPLUjJJ.js";function t(r,i){return r===i||(r==null?void 0:r[c])===i}function A(r={},i,a,q){return T(()=>{var f,s;return h(()=>{f=s,s=[],k(()=>{r!==a(...s)&&(i(r,...s),f&&t(a(...f),r)&&i(null,...f))})}),()=>{S(()=>{s&&t(a(...s),r)&&i(null,...s)})}}),r}export{A as b};

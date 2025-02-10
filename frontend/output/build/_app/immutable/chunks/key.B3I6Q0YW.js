@@ -1,1 +1,0 @@
-import{N as n,K as r,z as c,am as i,R as _,J as h,Y as k,A as y}from"./runtime.CmPLUjJJ.js";function I(s,t,o){r&&c();var e=s,f=k,a;n(()=>{i(f,f=t())&&(a&&_(a),a=h(()=>o(e)))}),r&&(e=y)}export{I as k};

@@ -1,1 +1,0 @@
-import{l as r,u as t,M as c,a4 as i,ar as l,as as e,b as u,at as _}from"./runtime.CmPLUjJJ.js";function b(){const a=c,s=a.l.u;s&&(s.b.length&&r(()=>{f(a),e(s.b)}),t(()=>{const o=i(()=>s.m.map(l));return()=>{for(const n of o)typeof n=="function"&&n()}}),s.a.length&&t(()=>{f(a),e(s.a)}))}function f(a){if(a.l.s)for(const s of a.l.s)u(s);_(a.s)}export{b as i};
