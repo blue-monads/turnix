@@ -40,6 +40,11 @@ func (a *Server) bindRoutes(e *gin.Engine) {
 	root.Any("/projects/:ptype", func(ctx *gin.Context) {
 		instance := a.projects[ctx.Param("ptype")]
 
+		if instance == nil {
+			ctx.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
 		if instance.OnProjectRequest == nil {
 			ctx.AbortWithStatus(http.StatusNotFound)
 			return
