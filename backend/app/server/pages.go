@@ -7,6 +7,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/blue-monads/turnix/backend/app/server/assets"
@@ -49,37 +50,59 @@ func (s *Server) externalAssets() gin.HandlerFunc {
 
 	return func(ctx *gin.Context) {
 
+		pp.Println("@ext/1")
+
 		pname := ctx.Param("pname")
 
 		if s.devMode {
+			pp.Println("@ext/2")
 			proxy := proxyAddrs[pname]
 			if proxy != nil {
+				pp.Println("@ext/3")
 				proxy.ServeHTTP(ctx.Writer, ctx.Request)
 				return
 			}
+			pp.Println("@ext/4")
 		}
+
+		pp.Println("@ext/5")
 
 		def := s.projects[pname]
 		if def == nil {
+			pp.Println("@ext/6")
 			ctx.AbortWithStatus(http.StatusNotFound)
 			return
 		}
+
+		pp.Println("@ext/7")
 
 		if def.OnPageRequest != nil {
 			def.OnPageRequest(ctx)
 			return
 		}
 
-		prefix := fmt.Sprintf("/z/x/%s/", pname)
+		pp.Println("@ext/8", ctx.Request.URL.Path)
+
+		prefix := fmt.Sprintf("/z/x/%s", pname)
 		ppath := strings.TrimPrefix(ctx.Request.URL.Path, prefix)
 		ppath = strings.TrimSuffix(ppath, "/")
 		ppath = strings.TrimPrefix(ppath, "/")
+
+		pp.Println("@ext/9")
 
 		if ppath == "" {
 			ppath = "index.html"
 		}
 
-		file, err := def.AssetData.Open(ppath)
+		pp.Println("@ext/10", ppath)
+
+		if def.AssetData == nil {
+			pp.Println("@ext/11", ppath)
+			ctx.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
+		file, err := def.AssetData.Open(path.Join(def.AssetDataPrefix, ppath))
 		if err != nil {
 			pp.Println("@open_err", err.Error())
 			return

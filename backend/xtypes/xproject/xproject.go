@@ -27,6 +27,7 @@ type Defination struct {
 	Perminssions        []string
 	GlobalJS            []byte
 	AssetData           fs.FS
+	AssetDataPrefix     string
 
 	RegisteredTables []Table
 
