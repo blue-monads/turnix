@@ -2,5 +2,5 @@ package output
 
 import "embed"
 
-//go:embed all:build/*
+//go:embed all:output/*
 var BuildProd embed.FS
