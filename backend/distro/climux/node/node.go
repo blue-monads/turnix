@@ -11,9 +11,9 @@ import (
 func init() {
 
 	climux.Register(&climux.Action{
-		Name: "node",
-		Help: "start node",
-		Func: RunNode,
+		Name:      "node",
+		Help:      "start node",
+		HandleCLI: RunNode,
 	})
 
 }

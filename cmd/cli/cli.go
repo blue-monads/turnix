@@ -31,7 +31,7 @@ func RunCLI() {
 		return
 	}
 
-	err := acli.Func(climux.Context{
+	err := acli.HandleCLI(climux.Context{
 		Args: os.Args[1:],
 		R:    clis,
 	})

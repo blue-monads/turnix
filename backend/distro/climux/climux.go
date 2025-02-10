@@ -9,9 +9,10 @@ var (
 type CLiFunc func(args []string) error
 
 type Action struct {
-	Name string
-	Help string
-	Func func(ctx Context) error
+	Name      string
+	Help      string
+	HandleCLI func(ctx Context) error
+	OnAction  func(name string, args map[string]any) error
 }
 
 type Registery map[string]*Action

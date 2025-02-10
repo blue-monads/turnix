@@ -7,8 +7,7 @@
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		
-		"build:static:filepicker": "cd src/entries/filepicker && vite -c vite.config.ts build index.ts"  
+		"build:static:filepicker": "cd src/entries/filepicker && vite -c vite.config.ts build index.ts"
 	},
 	"devDependencies": {
 		"@fontsource/fira-mono": "^4.5.10",
@@ -35,6 +34,8 @@
 		"@codemirror/lang-sql": "^6.7.0",
 		"@floating-ui/dom": "^1.6.3",
 		"@krowten/svelte-heroicons": "^0.1.0",
+		"@xterm/addon-fit": "^0.10.0",
+		"@xterm/xterm": "^5.5.0",
 		"axios": "^1.6.8",
 		"svelte-codemirror-editor": "^1.4.0"
 	}

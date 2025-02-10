@@ -69,6 +69,11 @@ func (sh *Injector) AsApiAction(name string, fn xtypes.ApiHandler) gin.HandlerFu
 
 		resp, err := fn(ctxplus)
 
+		_, exists := ctx.Get("raw_mode")
+		if exists {
+			return
+		}
+
 		httpx.WriteJSON(ctx, resp, err)
 	}
 }

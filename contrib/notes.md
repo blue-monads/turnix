@@ -46,3 +46,14 @@ AppTroll => Real everything app
 
 // LiveReportEditor
 // SavedReport
+
+/*
+
+1. paired device
+2. session device
+
+short lived paring key
+
+
+
+*/

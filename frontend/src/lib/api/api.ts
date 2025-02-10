@@ -93,13 +93,15 @@ export interface TableColumn {
 export class RootAPI {
     client: AxiosInstance
     projectClient: AxiosInstance
+    access_token: string | null
 
     constructor() {
-        let access_token;
+
+        this.access_token = null
 
         if (browser) {
-            access_token = localStorage.getItem("access_token")
-            if (!access_token) {
+           this. access_token = localStorage.getItem("access_token")
+            if (!this.access_token) {
                 window.location.pathname = "/z/pages/auth/login"
             }
         }
@@ -107,14 +109,14 @@ export class RootAPI {
         this.client = axios.create({
             baseURL: `${location.origin}/z/api/v1/`,
             headers: {
-                "Authorization": access_token
+                "Authorization": this. access_token
             }
         })
 
         this.projectClient = axios.create({
             baseURL: `${location.origin}/z/project/`,
             headers: {
-                "Authorization": access_token
+                "Authorization": this. access_token
             }
         })
 

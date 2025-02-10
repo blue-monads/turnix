@@ -11,7 +11,7 @@ func init() {
 	climux.Register(&climux.Action{
 		Name: "ebrowser",
 		Help: "Run embed browser with state folder",
-		Func: func(ctx climux.Context) error {
+		HandleCLI: func(ctx climux.Context) error {
 
 			ebApp := New(ctx)
 

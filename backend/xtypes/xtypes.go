@@ -22,6 +22,7 @@ type App interface {
 
 	GetController() any
 	GetServer() any
+	GetSigner() any
 
 	GetEngine() xengine.XEngine
 }
