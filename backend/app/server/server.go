@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/aurowora/compress"
 	"github.com/blue-monads/turnix/backend/controller"
 	"github.com/blue-monads/turnix/backend/controller/auth"
 	"github.com/blue-monads/turnix/backend/controller/common"
@@ -22,7 +23,6 @@ import (
 	"github.com/k0kubun/pp"
 	"github.com/rs/zerolog"
 
-	"github.com/aurowora/compress"
 	limits "github.com/gin-contrib/size"
 )
 
@@ -105,7 +105,10 @@ func (a *Server) Start(port string) error {
 
 	r := gin.Default()
 
-	r.Use(compress.Compress())
+	if !a.devMode {
+		r.Use(compress.Compress())
+	}
+
 	r.Use(limits.RequestSizeLimiter(100 * 1024 * 1024))
 
 	a.bindRoutes(r)

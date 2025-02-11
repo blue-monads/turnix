@@ -65,6 +65,8 @@ func (s *Server) externalAssets() gin.HandlerFunc {
 				panic(err)
 			}
 
+			pp.Println("@proxying_project", pname, addr)
+
 			proxy := httputil.NewSingleHostReverseProxy(url)
 			proxyAddrs[pname] = proxy
 		}
