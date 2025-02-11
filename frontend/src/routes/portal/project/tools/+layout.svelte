@@ -28,7 +28,7 @@
         },
         {
             name: "Hooks",
-            href: "/z/pages/portal/hooks",
+            href: "/z/pages/portal/project/tools/hooks",
         },
         {
             name: "Config",
