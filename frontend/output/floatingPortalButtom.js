@@ -37,7 +37,7 @@
     };
 
     const logoIcon = `
-       <img id="floating-turnix-button" src="/z/pages/src/lib/images/logo.png" alt="Back to turnix portal" />
+       <img id="floating-turnix-button" src="/z/lib/images/logo.png" alt="Back to turnix portal" />
     `;
 
 
