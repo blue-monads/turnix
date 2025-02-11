@@ -81,7 +81,7 @@
       onclick={() => {
         modalStore.close();
       }}
-      href={`/z/pages/portal/project/tools?pid=${pid}`}
+      href={`/z/pages/portal/project/tools/livequery?pid=${pid}`}
     >
       <SvgIcon name="wrench-screwdriver" className="w-6 h-6" />
       <span>Tools</span>

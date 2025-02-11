@@ -10,7 +10,7 @@
     import type { RootAPI } from "$lib/api";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { params } from "$lib/params";
-    import EasyGrid from "../../playground/EasyGrid/EasyGrid.svelte";
+    import EasyGrid from "../../../playground/EasyGrid/EasyGrid.svelte";
     import DataExplore from "./DataExplore.svelte";
 
     const pid = $params["pid"];

@@ -11,8 +11,8 @@
     import type { RootAPI } from "$lib/api";
     import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
     import { params } from "$lib/params";
-    import EasyGrid from "../../playground/EasyGrid/EasyGrid.svelte";
-    import type { GridHandle } from "../../playground/EasyGrid/easyTypes";
+    import EasyGrid from "../../../playground/EasyGrid/EasyGrid.svelte";
+    import type { GridHandle } from "../../../playground/EasyGrid/easyTypes";
 
     let tabSet: number = $state(0);
     let serverCode = $state("select * from __project__Accounts;");

@@ -20,8 +20,6 @@
   import { getDrawerStore } from "@skeletonlabs/skeleton";
 
   import { storePopup } from "@skeletonlabs/skeleton";
-
-  import Logo from "../../lib/images/logo.png";
   import { RootAPI } from "$lib/api/api";
   import ContextThis from "./contextThis.svelte";
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
@@ -169,7 +167,7 @@
       <div slot="lead" class="mb-4">
         <AppRailAnchor href="/z/pages/portal">
           <div class="flex justify-center items-center p-2">
-            <img src={Logo} alt="logo" />
+            <img src="/z/lib/images/logo.png" alt="logo" />
           </div>
         </AppRailAnchor>
       </div>
