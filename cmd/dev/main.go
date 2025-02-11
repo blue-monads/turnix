@@ -14,7 +14,6 @@ import (
 	_ "github.com/blue-monads/turnix/backend/modules/books"
 
 	// _ "github.com/blue-monads/turnix/backend/modules/tracker"
-	_ "github.com/blue-monads/turnix/backend/modules/simplerat"
 	_ "github.com/blue-monads/turnix/backend/modules/unloop"
 )
 
