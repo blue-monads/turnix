@@ -33,8 +33,9 @@
         />
       </div>
       <div>
+        <!-- svelte-ignore a11y_consider_explicit_label -->
         <button
-          type="submit"
+        
           class="flex items-center btn variant-filled justify-center w-12 h-12 text-white rounded-r-lg"
         >
           <svg
