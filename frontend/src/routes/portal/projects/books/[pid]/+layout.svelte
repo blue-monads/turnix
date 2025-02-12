@@ -72,6 +72,9 @@
 </script>
 
 <WithSimpleSidebar 
-    sidebarList={sideBarList} activeKey={sidebarKey}>
+    sidebarList={sideBarList} 
+    activeKey={sidebarKey}
+    name="Books"
+    >
     {@render children?.()}
 </WithSimpleSidebar>

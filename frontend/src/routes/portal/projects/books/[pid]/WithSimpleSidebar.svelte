@@ -6,9 +6,10 @@
         activeKey?: string;
         sidebarList: { name: string; link: string; icon: string; key: string }[];
         children?: () => any;
+        name: string;
     }
 
-    let { sidebarList, children, activeKey: sidebarKey }: Props = $props();
+    let { sidebarList, children, activeKey: sidebarKey, name }: Props = $props();
 
 
 
@@ -28,7 +29,7 @@
         <div
             class="mb-10 text-center variant-outline uppercase font-medium font-token hidden md:block p-1 w-full"
         >
-            <h4 class="h4">Books</h4>
+            <h4 class="h4">{name}</h4>
         </div>
 
         {#each sidebarList as item}
