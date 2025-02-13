@@ -75,8 +75,6 @@
     {
       Name: "explore txns",
       Class: "variant-filled-primary",
-
-      icon: "plus",
       Action: async (id) => {
         const next = `/txn/account?pid=${pid}&aid=${id}`;
 

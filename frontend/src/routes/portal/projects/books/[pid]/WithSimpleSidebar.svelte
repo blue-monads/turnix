@@ -55,11 +55,11 @@
         >
 
         <span class="hidden md:block">
-            <SvgIcon className="h-4 w-4" name="{ active ? 'chevron-double-left' : 'chevron-double-right' }" />
+            <SvgIcon className="h-4 w-4" name={ active ? 'chevron-double-left' : 'chevron-double-right' } />
         </span>
 
         <span class="block md:hidden"> 
-            <SvgIcon className="h-4 w-4" name="{ active ? 'chevron-double-up' : 'chevron-double-down' }" />
+            <SvgIcon className="h-4 w-4" name={ active ? 'chevron-double-up' : 'chevron-double-down' } />
         </span>
 
 

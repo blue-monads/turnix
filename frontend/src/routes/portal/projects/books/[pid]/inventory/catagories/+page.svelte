@@ -100,8 +100,6 @@
         {
             Name: "explore products",
             Class: "variant-filled-primary",
-
-            icon: "plus",
             Action: async (id) => {
                 goto(
                     `/z/pages/portal/projects/books/${pid}/inventory/products?cid=${id}`,

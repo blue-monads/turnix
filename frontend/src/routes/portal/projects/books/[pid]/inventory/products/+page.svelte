@@ -92,7 +92,6 @@
         {
             Name: "Sales",
             Class: "variant-filled-primary",
-            icon: "plus",
             Action: async (id) => {
                 goto(`/z/pages/portal/projects/books/${pid}/sales/byProduct?prid=${id}`);
             },
@@ -100,7 +99,6 @@
         {
             Name: "Stocks", 
             Class: "variant-filled-secondary",
-            icon: "plus",
             Action: async (id) => {
                 goto(`/z/pages/portal/projects/books/${pid}/inventory/stocks?prid=${id}`);
             },

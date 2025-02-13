@@ -57,8 +57,8 @@
     <Loader />
 {:else}
     <SalesPreview
-        lines={data.lines}
-        data={data.sale}
+        lines={data?.lines || []}
+        data={data?.sale as any}
         pid={Number(pid)}
         contactsNameIndex={__clientIndex}
     />
