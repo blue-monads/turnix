@@ -45,7 +45,7 @@
 <div class="p-4 flex flex-wrap gap-2">
   {#each projects as proj}
     {@const ptypeData = ptypesMap[proj.ptype]}
-    {@const pattern: string = ptypeData.project_link_pattern}
+    {@const pattern: string = ptypeData?.project_link_pattern}
 
     {#if ptypeData}
       <div class="card p-1 w-96 hover:bg-secondary-backdrop-token">
