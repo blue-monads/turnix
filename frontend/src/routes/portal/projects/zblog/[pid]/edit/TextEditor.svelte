@@ -10,7 +10,7 @@
     import { onMount } from "svelte";
   
     let element: HTMLElement;
-    let editor: Editor;
+    let editor: Editor = $state(null);
   
     $effect(() => {
       editor = new Editor({

@@ -4,4 +4,7 @@
 </script>
 
 
-<TextEditor />
+<div class="p-4">
+    <TextEditor />
+</div>
+
