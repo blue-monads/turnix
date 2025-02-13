@@ -27,7 +27,7 @@
         {active ? 'w-48' : 'hidden'}"
     >
         <div
-            class="mb-10 text-center variant-outline uppercase font-medium font-token hidden md:block p-1 w-full"
+            class="mb-10 text-center variant-outline font-medium font-token hidden md:block p-1 w-full"
         >
             <h4 class="h4">{name}</h4>
         </div>
