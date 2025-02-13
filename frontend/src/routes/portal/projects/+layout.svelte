@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { WithVerySimpleModal } from "../../../playground/VerySimpleModal";
+    import { WithVerySimpleModal } from "../../playground/VerySimpleModal";
 
     interface Props {
         children?: import("svelte").Snippet;
