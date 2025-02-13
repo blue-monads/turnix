@@ -40,7 +40,12 @@ func (z *ZBlogModule) dbUpdatePost(pid, uid, id int64, data map[string]any) erro
 
 	content, ok := data["content"]
 	if ok {
-		data["excerpt"] = content.(string)[:100]
+
+		if len(content.(string)) > 100 {
+			data["excerpt"] = content.(string)[:100]
+		} else {
+			data["excerpt"] = content.(string)
+		}
 	}
 
 	return z.postsTable(pid).Find(db.Cond{"id": id}).Update(data)
