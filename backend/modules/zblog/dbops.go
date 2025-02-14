@@ -92,7 +92,75 @@ func (z *ZBlogModule) dbDeletePost(pid, uid, id int64) error {
 	return z.postsTable(pid).Find(db.Cond{"id": id}).Delete()
 }
 
+// site
+
+type SiteModal struct {
+	ID             int64      `db:"id,omitempty"`
+	ApiKey         string     `db:"api_key"`
+	Provider       string     `db:"provider"`
+	Domain         string     `db:"domain"`
+	BasePath       string     `db:"base_path"`
+	CreatedAt      *time.Time `db:"created_at"`
+	LastDeployedAt *time.Time `db:"last_deployed_at"`
+	DeployWebhook  string     `db:"deploy_webhook"`
+	DeployBranch   string     `db:"deploy_branch"`
+}
+
+func (z *ZBlogModule) dbAddSite(pid, uid int64, data *SiteModal) (int64, error) {
+
+	table := z.sitesTable(pid)
+
+	r, err := table.Insert(data)
+	if err != nil {
+		return 0, err
+	}
+
+	return r.ID().(int64), nil
+
+}
+
+func (z *ZBlogModule) dbUpdateSite(pid, uid, id int64, data map[string]any) error {
+
+	return z.sitesTable(pid).Find(db.Cond{"id": id}).Update(data)
+}
+
+func (z *ZBlogModule) dbGetSite(pid, uid, id int64) (*SiteModal, error) {
+
+	data := &SiteModal{}
+
+	err := z.sitesTable(pid).Find(db.Cond{"id": id}).One(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (z *ZBlogModule) dbListSite(pid, uid int64) ([]SiteModal, error) {
+
+	datas := make([]SiteModal, 0)
+
+	err := z.sitesTable(pid).Find().All(&datas)
+	if err != nil {
+		return nil, err
+	}
+
+	return datas, nil
+}
+
+func (z *ZBlogModule) dbDeleteSite(pid, uid, id int64) error {
+	return z.postsTable(pid).Find(db.Cond{"id": id}).Delete()
+}
+
 // private
+
+func (z *ZBlogModule) sitesTable(pid int64) db.Collection {
+	return z.db.Table(sitesTableName(pid))
+}
+
+func sitesTableName(pid int64) string {
+	return fmt.Sprintf("z_%d_Sites", pid)
+}
 
 func (z *ZBlogModule) postsTable(pid int64) db.Collection {
 	return z.db.Table(postsTableName(pid))

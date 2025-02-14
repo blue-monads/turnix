@@ -45,11 +45,21 @@ func (z *ZBlogModule) Register(rg *gin.RouterGroup) {
 
 	api := rg.Group("/api")
 
+	// posts
+
 	api.POST("/post", w("addPosts", z.addPosts))
 	api.GET("/post", w("listPosts", z.listPosts))
 	api.GET("/post/:id", w("getPosts", z.getPosts))
 	api.PUT("/post/:id", w("updatePosts", z.updatePosts))
 	api.DELETE("/post/:id", w("deletePosts", z.deletePosts))
+
+	// sites
+
+	api.POST("/site", w("addSite", z.addSite))
+	api.GET("/site", w("listSites", z.listSites))
+	api.GET("/site/:id", w("getSite", z.getSite))
+	api.PUT("/site/:id", w("updateSite", z.updateSite))
+	api.DELETE("/site/:id", w("deleteSite", z.deleteSite))
 
 }
 
@@ -96,4 +106,50 @@ func (z *ZBlogModule) deletePosts(ctx xtypes.ContextPlus) (any, error) {
 	id := ctx.ParamInt64("id")
 
 	return nil, z.dbDeletePost(pid, ctx.Claim.UserId, id)
+}
+
+// sites
+
+func (z *ZBlogModule) listSites(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	return z.dbListSite(pid, ctx.Claim.UserId)
+}
+
+func (z *ZBlogModule) getSite(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	id := ctx.ParamInt64("id")
+	return z.dbGetSite(pid, ctx.Claim.UserId, id)
+}
+
+func (z *ZBlogModule) addSite(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+
+	data := &SiteModal{}
+	err := ctx.Http.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return z.dbAddSite(pid, ctx.Claim.UserId, data)
+}
+
+func (z *ZBlogModule) updateSite(ctx xtypes.ContextPlus) (any, error) {
+	pid := ctx.ProjectId()
+	id := ctx.ParamInt64("id")
+
+	data := make(map[string]any)
+	err := ctx.Http.Bind(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, z.dbUpdateSite(pid, ctx.Claim.UserId, id, data)
+}
+
+func (z *ZBlogModule) deleteSite(ctx xtypes.ContextPlus) (any, error) {
+
+	pid := ctx.ProjectId()
+	id := ctx.ParamInt64("id")
+
+	return nil, z.dbDeleteSite(pid, ctx.Claim.UserId, id)
 }

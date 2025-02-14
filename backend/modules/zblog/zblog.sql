@@ -1,5 +1,19 @@
+create table __project__Sites(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    api_key TEXT NOT NULL DEFAULT '',
+    provider TEXT NOT NULL DEFAULT '', -- github pages, netlify, vercel, etc
+    domain TEXT NOT NULL DEFAULT '',
+    base_path TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_deployed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    deploy_webhook TEXT NOT NULL DEFAULT '',
+    deploy_branch TEXT NOT NULL DEFAULT ''
+);
+
+
 create table __project__Posts(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    slug TEXT NOT NULL DEFAULT '',
     title TEXT NOT NULL DEFAULT '',
     excerpt TEXT NOT NULL DEFAULT '',
     content TEXT NOT NULL DEFAULT '',
