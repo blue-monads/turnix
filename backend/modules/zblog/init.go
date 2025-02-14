@@ -36,3 +36,27 @@ func New(opt xproject.BuilderOption) (*xproject.Defination, error) {
 
 	return def, nil
 }
+
+/*
+
+artifact.zip
+ - index.html
+ - posts/[id-slug].html
+ - tags/[tag].html
+ - assets
+ 	   - images
+ - theme_assets
+
+theme.zip
+ - theme.json
+ - layout.tpl.html
+ - posts.tpl.html
+ - post.tpl.html
+ - tags.tpl.html
+ - assets
+	   - css
+	   - js
+	   - img
+	   - fonts
+
+*/
