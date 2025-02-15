@@ -6,7 +6,7 @@
         getModalStore,
         type ModalSettings,
     } from "@skeletonlabs/skeleton";
-    import { FloatyButton } from "$lib/compo";
+    import FloatyButton from "./FloatyButton.svelte";
     import ListProject from "$lib/container/project/listProject.svelte";
 
     const api = getContext("__api__") as RootAPI;

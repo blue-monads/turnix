@@ -1,5 +1,4 @@
 <script lang="ts">
-
   import type { RootAPI } from "$lib/api";
   import Loader from "$lib/compo/loader/loader.svelte";
 
@@ -31,35 +30,51 @@
 {#if loading}
   <Loader />
 {:else}
-  <div class="card p-2 w-modal">
+  <div class="card px-2 w-modal-slim py-4">
     <header class="header flex justify-center">
-      <h4 class="h4">
-        <span
-          class="bg-gradient-to-br from-pink-500 to-violet-500 bg-clip-text text-transparent box-decoration-clone uppercase"
-          >Select New Project type</span
-        >
-      </h4>
+      <h4 class="h4 mb-2">Select a project type</h4>
     </header>
 
-    <div class="logo-cloud grid-cols-1 lg:!grid-cols-3 gap-1 border p-2">
+    <div class="flex flex-col gap-2 overflow-auto max-h-96">
       {#each datas as data}
         {@const icon = data["icon"]}
-        <a
-          class="logo-item"
-          onclick={() => {
-            modalStore.close();
-          }}
-          href="/z/pages/portal/project/new?ptype={data['ptype']}"
+
+        <div
+          class="flex flex-row justify-between items-center hover:bg-gray-100 rounded py-2 px-10"
         >
-          {#if icon}
-            <SvgIcon name={icon} className="w-6 h-6" />
-          {/if}
-          <span>{data["name"]}</span>
-        </a>
+          <div class="flex flex-col">
+            <h5 class="h-5 font-semibold flex gap-2">
+              {#if icon}
+                <SvgIcon name={icon} className="w-5 h-5 mt-1" />
+              {/if}
+              <span>{data["name"]}</span>
+            </h5>
+            <p class="p">{data["description"]}</p>
+          </div>
+          <div class="flex flex-row gap-4">
+            <a
+              href={ data.is_external ? `/z/x/${data['ptype']}` : `/z/pages/portal/projects/${data['ptype']}`  }
+              class="underline text-blue-500 text-sm self-center"
+              onclick={() => {
+                modalStore.close();
+              }}
+            >
+              Home
+            </a>
+
+            <a
+              href="/z/pages/portal/project/new?ptype={data['ptype']}"
+              class="btn btn-sm variant-filled"
+              onclick={() => {
+                modalStore.close();
+              }}
+            >
+              new
+            </a>
+          </div>
+        </div>
       {/each}
     </div>
-
-
-    
   </div>
 {/if}
+
