@@ -10,9 +10,9 @@
     const sideBarList = [   
         {
             name: "Posts",
-            link: `/z/pages/portal/projects/zblog/${pid}`,
+            link: `/z/pages/portal/projects/zblog/${pid}/posts`,
             icon: "users",
-            key: "",
+            key: "posts",
         },
         {
             name: "Sites",

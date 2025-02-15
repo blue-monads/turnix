@@ -1,7 +1,7 @@
 <script lang="ts">
     import PostEditor from "../edit/PostEditor.svelte";
     import { page } from "$app/stores";
-    import { NewZblogAPI } from "../../zblogApi";
+    import { NewZblogAPI } from "../../../zblogApi";
     import { getContext } from "svelte";
     import type { RootAPI } from "$lib";
     import { goto } from "$app/navigation";
