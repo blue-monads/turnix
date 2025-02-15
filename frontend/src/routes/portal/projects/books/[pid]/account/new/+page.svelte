@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { RootAPI } from "$lib/api";
-  import Account from "$lib/container/books/Account.svelte";
+  import Account from "../edit/Account.svelte";
   import { NewBookAPI } from "$lib/projects/books";
   import { getContext } from "svelte";
   import { params } from "$lib/params";

@@ -8,7 +8,7 @@
     import { Loader } from "$lib/compo";
     import { goto } from "$app/navigation";
     import { AppBar } from "@skeletonlabs/skeleton";
-    import AccountPage from "$lib/container/books/Account.svelte";
+    import AccountPage from "./Account.svelte";
     import { params } from "$lib/params";
     import { page } from "$app/stores";
    
