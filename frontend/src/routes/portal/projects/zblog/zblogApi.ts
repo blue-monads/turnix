@@ -14,6 +14,20 @@ export interface Post {
 }
 
 
+export interface Site {
+    id: string
+    name: string
+    api_key: string
+    provider: string
+    domain: string
+    base_path: string
+    created_at: string
+    last_deployed_at: string
+    deploy_webhook: string
+    deploy_branch: string
+}
+
+
 export const NewZblogAPI = (api: RootAPI) => {
     return new ZBlogAPI(api.projectClient)
 }
@@ -50,10 +64,10 @@ export class ZBlogAPI {
     // sites
 
     listSite = (pid: string) => {
-        return this.client.get<string[]>(`zblog/api/${pid}/site`)
+        return this.client.get<Site[]>(`zblog/api/${pid}/site`)
     }
 
-    addSite = (pid: string, data: string) => {
+    addSite = (pid: string, data: Partial<Site>) => {
         return this.client.post(`zblog/api/${pid}/site`, data)
     }
 
@@ -62,7 +76,7 @@ export class ZBlogAPI {
     }
 
     getSite = (pid: string, id: string) => {
-        return this.client.get<string>(`zblog/api/${pid}/site/${id}`)
+        return this.client.get<Site>(`zblog/api/${pid}/site/${id}`)
     }
 
 
