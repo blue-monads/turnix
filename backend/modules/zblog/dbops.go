@@ -132,9 +132,11 @@ type SiteModal struct {
 	Domain         string     `db:"domain" json:"domain"`
 	BasePath       string     `db:"base_path" json:"base_path"`
 	CreatedAt      *time.Time `db:"created_at" json:"created_at"`
-	LastDeployedAt *time.Time `db:"last_deployed_at" json:"last_deployed_at"`
+	LastDeployedAt *time.Time `db:"last_deployed_at,omitempty" json:"last_deployed_at"`
 	DeployWebhook  string     `db:"deploy_webhook" json:"deploy_webhook"`
 	DeployBranch   string     `db:"deploy_branch" json:"deploy_branch"`
+	DeployRepo     string     `db:"deploy_repo" json:"deploy_repo"`
+	HugoConfig     string     `db:"hugo_config" json:"hugo_config"`
 }
 
 func (z *ZBlogModule) dbAddSite(pid, uid int64, data *SiteModal) (int64, error) {

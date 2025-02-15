@@ -6,9 +6,11 @@ create table __project__Sites(
     domain TEXT NOT NULL DEFAULT '',
     base_path TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    last_deployed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_deployed_at TIMESTAMP,
     deploy_webhook TEXT NOT NULL DEFAULT '',
-    deploy_branch TEXT NOT NULL DEFAULT ''
+    deploy_branch TEXT NOT NULL DEFAULT '',
+    deploy_repo TEXT NOT NULL DEFAULT '',
+    hugo_config TEXT NOT NULL DEFAULT ''
 );
 
 

@@ -25,6 +25,8 @@ export interface Site {
     last_deployed_at: string
     deploy_webhook: string
     deploy_branch: string
+    deploy_repo: string
+    hugo_config: string
 }
 
 

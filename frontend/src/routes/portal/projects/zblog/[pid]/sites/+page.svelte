@@ -40,7 +40,7 @@
   
     <div class="flex flex-wrap justify-end gap-2">
       <a
-        href={`/z/pages/portal/projects/zblog/${pid}/new`}
+        href={`/z/pages/portal/projects/zblog/${pid}/sites/new`}
         class="btn variant-filled btn-sm"
       >
         <SvgIcon className="h-4 w-4" name="plus" />
