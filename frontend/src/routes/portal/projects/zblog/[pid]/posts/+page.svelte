@@ -49,7 +49,7 @@
       </a>
   
       <a
-        href={`/z/pages/portal/projects/zblog/${pid}/posts/tag/new`}
+        href={`/z/pages/portal/projects/zblog/${pid}/tags/new`}
         class="btn variant-filled-secondary btn-sm"
       >
         <SvgIcon className="h-4 w-4" name="plus" />
