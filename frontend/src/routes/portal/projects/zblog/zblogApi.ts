@@ -47,6 +47,27 @@ export class ZBlogAPI {
         return this.client.delete(`zblog/api/${pid}/post/${id}`)
     }
 
+    // sites
+
+    listSite = (pid: string) => {
+        return this.client.get<string[]>(`zblog/api/${pid}/site`)
+    }
+
+    addSite = (pid: string, data: string) => {
+        return this.client.post(`zblog/api/${pid}/site`, data)
+    }
+
+    deleteSite = (pid: string, id: string) => {
+        return this.client.delete(`zblog/api/${pid}/site/${id}`)
+    }
+
+    getSite = (pid: string, id: string) => {
+        return this.client.get<string>(`zblog/api/${pid}/site/${id}`)
+    }
+
+
+
+
 }
 
 
