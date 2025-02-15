@@ -5,3 +5,6 @@
 @tailwind utilities;
 
 
+input.input  {
+    padding-left: 0.3rem;
+}

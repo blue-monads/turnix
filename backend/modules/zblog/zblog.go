@@ -43,7 +43,7 @@ func (z *ZBlogModule) Register(rg *gin.RouterGroup) {
 
 	w := z.app.AsApiAction
 
-	api := rg.Group("/api")
+	api := rg.Group("/api/:pid")
 
 	// posts
 

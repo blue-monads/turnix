@@ -10,19 +10,24 @@ import (
 // posts
 
 type PostModal struct {
-	ID          int64      `db:"id,omitempty"`
-	Title       string     `db:"title"`
-	Excerpt     string     `db:"excerpt"`
-	Content     string     `db:"content"`
-	AuthorID    int64      `db:"author_id"`
-	CreatedAt   *time.Time `db:"created_at"`
-	UpdatedAt   *time.Time `db:"updated_at"`
-	IsPublished bool       `db:"is_published"`
+	ID          int64      `db:"id,omitempty" json:"id"`
+	Title       string     `db:"title" json:"title"`
+	Excerpt     string     `db:"excerpt" json:"excerpt"`
+	Content     string     `db:"content" json:"content"`
+	AuthorID    int64      `db:"author_id" json:"author_id"`
+	CreatedAt   *time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt   *time.Time `db:"updated_at" json:"updated_at"`
+	IsPublished bool       `db:"is_published" json:"is_published"`
 }
 
 func (z *ZBlogModule) dbAddPost(pid, uid int64, data *PostModal) (int64, error) {
 
 	table := z.postsTable(pid)
+
+	t := time.Now()
+	data.CreatedAt = &t
+	data.AuthorID = uid
+	data.UpdatedAt = &t
 
 	r, err := table.Insert(data)
 	if err != nil {
@@ -64,7 +69,7 @@ func (z *ZBlogModule) dbGetPost(pid, uid, aid int64) (*PostModal, error) {
 	return data, nil
 }
 
-var selectColumns = []string{
+var selectColumns = []any{
 	"id",
 	"title",
 	"excerpt",
@@ -79,7 +84,7 @@ func (z *ZBlogModule) dbListPost(pid, uid, offset int64) ([]PostModal, error) {
 	datas := make([]PostModal, 0)
 	table := z.postsTable(pid)
 
-	err := table.Find(db.Cond{"id >": offset}).Select(selectColumns).All(&datas)
+	err := table.Find(db.Cond{"id >": offset}).Select(selectColumns...).All(&datas)
 	if err != nil {
 		return nil, err
 	}
@@ -95,20 +100,24 @@ func (z *ZBlogModule) dbDeletePost(pid, uid, id int64) error {
 // site
 
 type SiteModal struct {
-	ID             int64      `db:"id,omitempty"`
-	ApiKey         string     `db:"api_key"`
-	Provider       string     `db:"provider"`
-	Domain         string     `db:"domain"`
-	BasePath       string     `db:"base_path"`
-	CreatedAt      *time.Time `db:"created_at"`
-	LastDeployedAt *time.Time `db:"last_deployed_at"`
-	DeployWebhook  string     `db:"deploy_webhook"`
-	DeployBranch   string     `db:"deploy_branch"`
+	ID             int64      `db:"id,omitempty" json:"id"`
+	ApiKey         string     `db:"api_key" json:"api_key"`
+	Provider       string     `db:"provider" json:"provider"`
+	Domain         string     `db:"domain" json:"domain"`
+	BasePath       string     `db:"base_path" json:"base_path"`
+	CreatedAt      *time.Time `db:"created_at" json:"created_at"`
+	LastDeployedAt *time.Time `db:"last_deployed_at" json:"last_deployed_at"`
+	DeployWebhook  string     `db:"deploy_webhook" json:"deploy_webhook"`
+	DeployBranch   string     `db:"deploy_branch" json:"deploy_branch"`
 }
 
 func (z *ZBlogModule) dbAddSite(pid, uid int64, data *SiteModal) (int64, error) {
 
 	table := z.sitesTable(pid)
+
+	t := time.Now()
+
+	data.CreatedAt = &t
 
 	r, err := table.Insert(data)
 	if err != nil {

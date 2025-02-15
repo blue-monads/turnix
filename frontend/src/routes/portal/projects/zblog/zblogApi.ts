@@ -4,6 +4,7 @@ import type { AxiosInstance } from "axios";
 export interface Post {
     id: number
     title: string
+    slug: string
     excerpt: string
     content: string
     author_id: number
@@ -27,24 +28,25 @@ export class ZBlogAPI {
     // posts
 
     listPost = (pid: string) => {
-        return this.client.get<Post[]>(`zblog/${pid}/api/posts`)
+        return this.client.get<Post[]>(`zblog/api/${pid}/post`)
     }
 
     addPost = (pid: string, data: Partial<Post>) => {
-        return this.client.post(`zblog/${pid}/api/posts`, data)
+        return this.client.post(`zblog/api/${pid}/post`, data)
     }
 
     getPost = (pid: string, id: number) => {
-        return this.client.get<Post>(`zblog/${pid}/api/posts/${id}`)
+        return this.client.get<Post>(`zblog/api/${pid}/post/${id}`)
     }
 
     updatePost = (pid: string, id: number, data: Partial<Post>) => {
-        return this.client.post(`zblog/${pid}/api/posts/${id}`, data)
+        return this.client.post(`zblog/api/${pid}/post/${id}`, data)
     }
 
     deletePost = (pid: string, id: number) => {
-        return this.client.delete(`zblog/${pid}/api/posts/${id}`)
+        return this.client.delete(`zblog/api/${pid}/post/${id}`)
     }
+
 }
 
 
