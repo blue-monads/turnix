@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/k0kubun/pp"
 	"github.com/upper/db/v4"
 )
 
@@ -12,6 +13,7 @@ import (
 type PostModal struct {
 	ID          int64      `db:"id,omitempty" json:"id"`
 	Title       string     `db:"title" json:"title"`
+	Slug        string     `db:"slug" json:"slug"`
 	Excerpt     string     `db:"excerpt" json:"excerpt"`
 	Content     string     `db:"content" json:"content"`
 	AuthorID    int64      `db:"author_id" json:"author_id"`
@@ -28,6 +30,18 @@ func (z *ZBlogModule) dbAddPost(pid, uid int64, data *PostModal) (int64, error) 
 	data.CreatedAt = &t
 	data.AuthorID = uid
 	data.UpdatedAt = &t
+
+	if data.Slug == "" {
+		data.Slug = fmt.Sprintf("%s-%d", data.Title, t.Unix())
+	}
+
+	if len(data.Content) > 100 {
+		data.Excerpt = data.Content[:100]
+	} else {
+		data.Excerpt = data.Content
+	}
+
+	pp.Println("@data", data)
 
 	r, err := table.Insert(data)
 	if err != nil {
