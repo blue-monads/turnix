@@ -1,4 +1,4 @@
-import type { Line, TxnLinData, TxnLine } from "$lib/container/books/txntype"
+import type { Line, TxnLinData, TxnLine } from "./sub/txntype"
 
 
 

@@ -3,7 +3,7 @@
 
     import type { RootAPI } from "$lib/api";
     import { Loader } from "$lib/compo";
-    import Transaction from "$lib/container/books/Transaction.svelte";
+    import Transaction from "./sub/Transaction.svelte";
     import { NewBookAPI, type Account } from "$lib/projects/books";
     import { getModalStore } from "@skeletonlabs/skeleton";
     import { getContext } from "svelte";
