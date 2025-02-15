@@ -1,12 +1,12 @@
 <script lang="ts">
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-  import Transactions from "$lib/container/books/Transactions.svelte";
+  import Transactions from "./sub/Transactions.svelte";
   import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
   import { NewBookAPI } from "$lib/projects/books";
   import { getContext } from "svelte";
   import type { RootAPI } from "$lib/api";
   import { Loader } from "$lib/compo";
-  import type { TxnLine } from "$lib/container/books/txntype";
+  import type { TxnLine } from "./sub/txntype";
   import { formatResponse } from "./format";
   import { page } from "$app/stores";
 
