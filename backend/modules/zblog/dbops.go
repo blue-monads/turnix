@@ -186,7 +186,7 @@ func (z *ZBlogModule) dbListSite(pid, uid int64) ([]SiteModal, error) {
 }
 
 func (z *ZBlogModule) dbDeleteSite(pid, uid, id int64) error {
-	return z.postsTable(pid).Find(db.Cond{"id": id}).Delete()
+	return z.sitesTable(pid).Find(db.Cond{"id": id}).Delete()
 }
 
 // private

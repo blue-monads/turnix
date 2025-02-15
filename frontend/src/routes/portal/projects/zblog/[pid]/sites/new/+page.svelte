@@ -75,6 +75,10 @@
     }}
     onSave={async (data) => {
 
+        if ( !data.provider) {
+            data.provider = "github_pages";
+        }
+
         const res = await api.addSite(pid, data);
         if (res.status !== 200) {
             return
