@@ -2,6 +2,8 @@ package zblog
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/k0kubun/pp"
@@ -22,6 +24,15 @@ type PostModal struct {
 	IsPublished bool       `db:"is_published" json:"is_published"`
 }
 
+var slugRegex = regexp.MustCompile(`^[a-z0-9-]+$`)
+
+func slugify(s string) string {
+	s = strings.ReplaceAll(s, " ", "-")
+	s = strings.ToLower(s)
+
+	return slugRegex.ReplaceAllString(s, "")
+}
+
 func (z *ZBlogModule) dbAddPost(pid, uid int64, data *PostModal) (int64, error) {
 
 	table := z.postsTable(pid)
@@ -32,7 +43,7 @@ func (z *ZBlogModule) dbAddPost(pid, uid int64, data *PostModal) (int64, error) 
 	data.UpdatedAt = &t
 
 	if data.Slug == "" {
-		data.Slug = fmt.Sprintf("%s-%d", data.Title, t.Unix())
+		data.Slug = slugify(data.Title)
 	}
 
 	if len(data.Content) > 100 {
