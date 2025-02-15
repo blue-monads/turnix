@@ -126,6 +126,7 @@ func (z *ZBlogModule) dbDeletePost(pid, uid, id int64) error {
 
 type SiteModal struct {
 	ID             int64      `db:"id,omitempty" json:"id"`
+	Name           string     `db:"name" json:"name"`
 	ApiKey         string     `db:"api_key" json:"api_key"`
 	Provider       string     `db:"provider" json:"provider"`
 	Domain         string     `db:"domain" json:"domain"`

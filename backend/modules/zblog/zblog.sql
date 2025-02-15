@@ -1,5 +1,6 @@
 create table __project__Sites(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL DEFAULT '',
     api_key TEXT NOT NULL DEFAULT '',
     provider TEXT NOT NULL DEFAULT '', -- github pages, netlify, vercel, etc
     domain TEXT NOT NULL DEFAULT '',
