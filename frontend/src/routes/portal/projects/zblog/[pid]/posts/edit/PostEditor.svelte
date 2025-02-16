@@ -21,7 +21,9 @@
 <div class="max-h-[40vh] md:max-h-[90vh] overflow-auto card p-4">
     <CodeMirror
     bind:value={content}
+    lang={markdown()}
     extensions={[]}
+
 
 />
 

@@ -5,10 +5,10 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	optimizeDeps: {
 		exclude: [
-			"@codemirror/lang-javascript", 
-			"@codemirror/lang-html", 
-			"@codemirror/lang-sql",
-			"@codemirror/lang-markdown",
+			// "@codemirror/lang-javascript", 
+			// "@codemirror/lang-html", 
+			// "@codemirror/lang-sql",
+			// "@codemirror/lang-markdown",
 		],
     },
 });
