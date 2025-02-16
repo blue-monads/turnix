@@ -78,9 +78,17 @@
         Name: "edit",
         Class: "variant-filled-secondary",
         Action: async (id) => {
-
+          goto(`/z/pages/portal/projects/zblog/${pid}/posts/${id}/edit`);
         },
       },
+      {
+        Name: "delete",
+        Class: "bg-red-500",
+        Action: async (id) => {
+          await api.deletePost(pid, id);
+          load();
+        },
+      }
     ]}
   />
   
