@@ -5,7 +5,6 @@ export interface Post {
     id: number
     title: string
     slug: string
-    excerpt: string
     content: string
     author_id: number
     created_at: string

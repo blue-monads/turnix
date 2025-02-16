@@ -16,7 +16,6 @@ type PostModal struct {
 	ID          int64      `db:"id,omitempty" json:"id"`
 	Title       string     `db:"title" json:"title"`
 	Slug        string     `db:"slug" json:"slug"`
-	Excerpt     string     `db:"excerpt" json:"excerpt"`
 	Content     string     `db:"content" json:"content"`
 	AuthorID    int64      `db:"author_id" json:"author_id"`
 	CreatedAt   *time.Time `db:"created_at" json:"created_at"`
@@ -46,12 +45,6 @@ func (z *ZBlogModule) dbAddPost(pid, uid int64, data *PostModal) (int64, error) 
 		data.Slug = slugify(data.Title)
 	}
 
-	if len(data.Content) > 100 {
-		data.Excerpt = data.Content[:100]
-	} else {
-		data.Excerpt = data.Content
-	}
-
 	pp.Println("@data", data)
 
 	r, err := table.Insert(data)
@@ -67,16 +60,6 @@ func (z *ZBlogModule) dbUpdatePost(pid, uid, id int64, data map[string]any) erro
 
 	t := time.Now()
 	data["updated_at"] = &t
-
-	content, ok := data["content"]
-	if ok {
-
-		if len(content.(string)) > 100 {
-			data["excerpt"] = content.(string)[:100]
-		} else {
-			data["excerpt"] = content.(string)
-		}
-	}
 
 	return z.postsTable(pid).Find(db.Cond{"id": id}).Update(data)
 }
@@ -97,7 +80,6 @@ func (z *ZBlogModule) dbGetPost(pid, uid, aid int64) (*PostModal, error) {
 var selectColumns = []any{
 	"id",
 	"title",
-	"excerpt",
 	"author_id",
 	"created_at",
 	"updated_at",
