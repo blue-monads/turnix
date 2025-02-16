@@ -81,6 +81,10 @@ export class ZBlogAPI {
     }
 
 
+    buildSite = (pid: string, id: string) => {
+        return this.client.post(`zblog/api/${pid}/site/${id}/build`)
+    }
+
 
 
 }

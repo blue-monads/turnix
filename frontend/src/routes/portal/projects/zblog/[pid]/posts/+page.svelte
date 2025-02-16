@@ -67,7 +67,6 @@
       ["id", "ID"],
       ["title", "Title"],
       ["slug", "Slug"],
-      ["excerpt", "Excerpt"],
       ["created_at", "Created At"],
 
     ]}

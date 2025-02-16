@@ -2,6 +2,7 @@ package zblog
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 
 	_ "embed"
@@ -60,6 +61,7 @@ func (z *ZBlogModule) Register(rg *gin.RouterGroup) {
 	api.GET("/site/:id", w("getSite", z.getSite))
 	api.PUT("/site/:id", w("updateSite", z.updateSite))
 	api.DELETE("/site/:id", w("deleteSite", z.deleteSite))
+	api.POST("/site/:id/build", w("buildSite", z.buildSite))
 
 }
 
@@ -152,4 +154,43 @@ func (z *ZBlogModule) deleteSite(ctx xtypes.ContextPlus) (any, error) {
 	id := ctx.ParamInt64("id")
 
 	return nil, z.dbDeleteSite(pid, ctx.Claim.UserId, id)
+}
+
+func (z *ZBlogModule) buildSite(ctx xtypes.ContextPlus) (any, error) {
+
+	pid := ctx.ProjectId()
+	id := ctx.ParamInt64("id")
+
+	site, err := z.dbGetSite(pid, ctx.Claim.UserId, id)
+	if err != nil {
+		return nil, err
+	}
+
+	posts, err := z.dbListPost(pid, ctx.Claim.UserId, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	rf, err := os.OpenRoot("/home/bingo/Desktop/zblog_wd")
+	if err != nil {
+		return nil, err
+	}
+
+	defer rf.Close()
+
+	opts := BuildOptions{
+		Site:       site,
+		Posts:      posts,
+		BaseFolder: rf,
+		ThemeLoaderFunc: func() error {
+			return nil
+		},
+	}
+
+	err = SiteBuild(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return "ok", nil
 }

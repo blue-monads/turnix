@@ -23,12 +23,11 @@ type PostModal struct {
 	IsPublished bool       `db:"is_published" json:"is_published"`
 }
 
-var slugRegex = regexp.MustCompile(`^[a-z0-9-]+$`)
+var slugRegex = regexp.MustCompile(`[^a-z0-9-]`)
 
 func slugify(s string) string {
-	s = strings.ReplaceAll(s, " ", "-")
 	s = strings.ToLower(s)
-
+	s = strings.ReplaceAll(s, " ", "-")
 	return slugRegex.ReplaceAllString(s, "")
 }
 

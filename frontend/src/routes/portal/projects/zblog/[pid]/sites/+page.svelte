@@ -75,6 +75,19 @@
       },
 
       {
+        Name: "build",
+        Class: "variant-filled",
+        Action: async (id) => {
+          
+          const resp = await api.buildSite(pid, id);
+          if (resp.status !== 200) {
+            return;
+          }
+          load();
+        },
+      },
+
+      {
         Name: "delete",
         Class: "bg-red-500",
         Action: async (id) => {
