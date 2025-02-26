@@ -100,6 +100,26 @@ func (b *BuddyStore) AddBuddyTable(fullTableName string) error {
 
 }
 
+var buddyInline = `
+
+CREATE TABLE IF NOT EXISTS BuddyInlineSnapshots (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  buddy_id TEXT NOT NULL,
+  blob BLOB
+);
+
+`
+
+func (b *BuddyStore) ensureBuddyTable() error {
+	_, err := b.db.SQL().Exec(buddyInline)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
 // private
 
 func (b *BuddyStore) tableName(name string) string {
