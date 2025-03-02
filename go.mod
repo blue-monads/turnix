@@ -2,19 +2,14 @@ module github.com/blue-monads/turnix
 
 go 1.24
 
-toolchain go1.23.4
-
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/JustinTimperio/osinfo v0.0.0-20210705143940-9e63396e3c2f
 	github.com/adrg/xdg v0.5.0
 	github.com/alecthomas/repr v0.4.0
 	github.com/aurowora/compress v0.0.0-20230724224640-6512772d482f
 	github.com/blue-monads/lpweb v0.0.0-20241124030741-551e8a8faed9
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/chromedp/chromedp v0.11.2
-	github.com/coder/websocket v1.8.12
-	github.com/creack/pty v1.1.24
 	github.com/dop251/goja v0.0.0-20240610225006-393f6d42497b
 	github.com/gin-contrib/size v1.0.1
 	github.com/gin-gonic/gin v1.10.0
@@ -23,8 +18,6 @@ require (
 	github.com/jaevor/go-nanoid v1.3.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/k0kubun/pp v3.0.1+incompatible
-	github.com/kbinani/screenshot v0.0.0-20250118074034-a3924b7bbc8c
-	github.com/mackerelio/go-osstat v0.2.5
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
@@ -32,10 +25,12 @@ require (
 	github.com/rs/xid v1.5.0
 	github.com/rs/zerolog v1.33.0
 	github.com/siddontang/go v0.0.0-20180604090527-bdc77568d726
+	github.com/spaolacci/murmur3 v1.1.0
 	github.com/thoas/go-funk v0.9.3
 	github.com/unikiosk/go-firefox v0.0.0-20220404104049-bc7e8cd58d00
 	github.com/upper/db/v4 v4.7.0
 	github.com/webview/webview_go v0.0.0-20240831120633-6173450d4dd6
+	github.com/yuin/gopher-lua v1.1.1
 	github.com/ztrue/tracerr v0.4.0
 	golang.org/x/crypto v0.25.0
 )
@@ -66,7 +61,6 @@ require (
 	github.com/flynn/noise v1.1.0 // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.4 // indirect
-	github.com/gen2brain/shm v0.1.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -106,7 +100,6 @@ require (
 	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
 	github.com/jbenet/go-temp-err-catcher v0.1.0 // indirect
 	github.com/jbenet/goprocess v0.1.4 // indirect
-	github.com/jezek/xgb v1.1.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
@@ -129,7 +122,6 @@ require (
 	github.com/libp2p/go-reuseport v0.4.0 // indirect
 	github.com/libp2p/go-yamux/v4 v4.0.1 // indirect
 	github.com/libp2p/zeroconf/v2 v2.2.0 // indirect
-	github.com/lxn/win v0.0.0-20210218163916-a377121e959e // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/marten-seemann/tcp v0.0.0-20210406111302-dfbc87cc63fd // indirect
 	github.com/matoous/go-nanoid/v2 v2.1.0 // indirect
@@ -191,7 +183,6 @@ require (
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/sourcegraph/annotate v0.0.0-20160123013949-f4cad6c6324d // indirect
 	github.com/sourcegraph/syntaxhighlight v0.0.0-20170531221838-bd320f5d308e // indirect
-	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect

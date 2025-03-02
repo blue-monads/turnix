@@ -10,7 +10,7 @@ import (
 
 	"github.com/blue-monads/turnix/backend/distro/browser"
 	"github.com/blue-monads/turnix/backend/distro/climux"
-	"github.com/blue-monads/turnix/backend/mesh/lpweb"
+	"github.com/blue-monads/turnix/backend/extras/mesh/lpweb"
 	xutils "github.com/blue-monads/turnix/backend/utils"
 	_ "github.com/chromedp/chromedp"
 	"github.com/gin-gonic/gin"

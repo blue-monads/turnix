@@ -14,7 +14,7 @@ import (
 
 	"github.com/blue-monads/turnix/backend/app/server"
 	"github.com/blue-monads/turnix/backend/app/server/assets"
-	"github.com/blue-monads/turnix/backend/mesh/lpweb"
+	"github.com/blue-monads/turnix/backend/extras/mesh/lpweb"
 	xutils "github.com/blue-monads/turnix/backend/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"

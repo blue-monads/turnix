@@ -9,7 +9,8 @@ import (
 	"sync"
 
 	"github.com/blue-monads/turnix/backend/distro/climux"
-	"github.com/blue-monads/turnix/backend/mesh/lpweb"
+	"github.com/blue-monads/turnix/backend/extras/mesh/lpweb"
+
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 
