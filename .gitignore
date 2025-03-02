@@ -2,3 +2,4 @@
 backend/foo.db
 data.db
 tmp/
+cmd/play/play.db
