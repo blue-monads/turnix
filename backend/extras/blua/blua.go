@@ -1,7 +1,6 @@
 package blua
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
 
@@ -15,13 +14,6 @@ type ExecHandle struct {
 	db            db.Session
 	pid           int64 // project id
 	activeRequest *gin.Context
-}
-
-type Database interface {
-	Exec(query string, args ...interface{}) (sql.Result, error)
-	Query(query string, args ...interface{}) (*sql.Rows, error)
-	QueryRow(query string, args ...interface{}) (*sql.Row, error)
-	RunDDL(query string) error
 }
 
 type Blua struct {
@@ -133,6 +125,8 @@ func (b *Blua) bind() error {
 	})
 
 	b.L.SetGlobal("ctx", reqTb)
+
+	// users, selfspace
 
 	return nil
 }
