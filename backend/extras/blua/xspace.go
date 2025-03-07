@@ -11,7 +11,10 @@ import (
 /*
 
 ROUTES:
- /z/portal/spaces/<space_type>/
+ /z/startup/
+ /z/preload/spaces/<space_type>/
+ /z/pages/startup/
+ /z/pages/portal/spaces/<space_type>/
  /z/spaces/<space_type>/
  /z/api/spaces/<space_type>/
 TABLE:
@@ -21,6 +24,7 @@ TABLE:
  zbuddy_bid_xxx
  zCaptureXXX
  zcapture_chash_xxx
+ zLogXXX
 WORKING_DIR:
  /workin_space/<space_type>
 
@@ -43,6 +47,9 @@ type SQL interface {
 	RunMigration(pid int64, name string, query string) error
 	ListMigration(pid int64) ([]string, error)
 	RemoveMigration(pid int64, name string) error
+
+	// Transaction
+	Begin() (*sql.Tx, error)
 }
 
 type Builder func(opt BuilderOption) (*XSpaceType, error)
