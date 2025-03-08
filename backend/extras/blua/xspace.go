@@ -9,11 +9,14 @@ import (
 )
 
 type BuilderOption struct {
-	App xtypes.App
-	DB  *database.DB
-	SQL SQL
+	App     xtypes.App
+	DataHub DataHub
+	Logger  zerolog.Logger
+}
 
-	Logger zerolog.Logger
+type DataHub interface {
+	CoreDB() *database.DB
+	Sql() SQL
 }
 
 type SQLCore interface {
