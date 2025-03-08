@@ -8,29 +8,6 @@ import (
 	"github.com/rs/zerolog"
 )
 
-/*
-
-ROUTES:
- /z/startup/
- /z/preload/spaces/<space_type>/
- /z/pages/startup/
- /z/pages/portal/spaces/<space_type>/
- /z/spaces/<space_type>/
- /z/api/spaces/<space_type>/
-TABLE:
- zSpaceXXX
- zspace_pid_xxx
- zBuddyXXX
- zbuddy_bid_xxx
- zCaptureXXX
- zcapture_chash_xxx
- zLogXXX
-WORKING_DIR:
- /workin_space/<space_type>
-
-
-*/
-
 type BuilderOption struct {
 	App xtypes.App
 	DB  *database.DB
@@ -39,17 +16,27 @@ type BuilderOption struct {
 	Logger zerolog.Logger
 }
 
-type SQL interface {
+type SQLCore interface {
 	Exec(query string, args ...interface{}) (sql.Result, error)
 	Query(query string, args ...interface{}) (*sql.Rows, error)
 	QueryRow(query string, args ...interface{}) (*sql.Row, error)
+}
+
+type SQL interface {
+	SQLCore
+
 	RunDDL(query string) error
 	RunMigration(pid int64, name string, query string) error
 	ListMigration(pid int64) ([]string, error)
 	RemoveMigration(pid int64, name string) error
 
-	// Transaction
-	Begin() (*sql.Tx, error)
+	NewTxn() (SQLTxn, error)
+}
+
+type SQLTxn interface {
+	SQLCore
+	Commit() error
+	Rollback() error
 }
 
 type Builder func(opt BuilderOption) (*XSpaceType, error)
