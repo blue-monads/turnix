@@ -15,8 +15,11 @@ type BuilderOption struct {
 }
 
 type DataHub interface {
-	CoreDB() *database.DB
 	Sql() SQL
+	CoreDB() *database.DB
+	BuddyDB() any
+
+	ChangeCapture() any
 }
 
 type SQLCore interface {
@@ -29,9 +32,9 @@ type SQL interface {
 	SQLCore
 
 	RunDDL(query string) error
-	RunMigration(pid int64, name string, query string) error
-	ListMigration(pid int64) ([]string, error)
-	RemoveMigration(pid int64, name string) error
+	// RunMigration(pid int64, name string, query string) error
+	// ListMigration(pid int64) ([]string, error)
+	// RemoveMigration(pid int64, name string) error
 
 	NewTxn() (SQLTxn, error)
 }
