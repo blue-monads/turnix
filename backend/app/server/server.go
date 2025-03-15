@@ -15,7 +15,7 @@ import (
 	"github.com/blue-monads/turnix/backend/controller/common"
 	"github.com/blue-monads/turnix/backend/controller/project"
 	"github.com/blue-monads/turnix/backend/controller/self"
-	"github.com/blue-monads/turnix/backend/engine/pool"
+	"github.com/blue-monads/turnix/backend/extras/gojaEngine/pool"
 	"github.com/blue-monads/turnix/backend/services/database"
 	"github.com/blue-monads/turnix/backend/services/signer"
 	"github.com/blue-monads/turnix/backend/xtypes/xproject"
