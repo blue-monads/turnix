@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -21,37 +20,18 @@ func (a *Server) bindRoutes(e *gin.Engine) {
 	a.pages(root)
 
 	root.GET("/global.js", func(ctx *gin.Context) {
-
-		ctx.Data(http.StatusOK, httpx.CtypeJS, a.globalJS)
+		ctx.Data(http.StatusOK, httpx.CtypeJS, []byte(`console.log("global.js")`))
 	})
 
 	projectRoute := e.Group("/z/project")
 
-	for _, instance := range a.projects {
-		if instance.OnAPIMount == nil {
-			continue
-		}
-
-		instance.OnAPIMount(projectRoute.Group(fmt.Sprintf("/%s", instance.Slug)))
-	}
+	a.engine.MountSpaces(projectRoute)
 
 	e.NoRoute(a.noRoute)
 
 	root.Any("/projects/:ptype", func(ctx *gin.Context) {
-		instance := a.projects[ctx.Param("ptype")]
-
-		if instance == nil {
-			ctx.AbortWithStatus(http.StatusNotFound)
-			return
-		}
-
-		if instance.OnProjectRequest == nil {
-			ctx.AbortWithStatus(http.StatusNotFound)
-			return
-		}
-
-		instance.OnProjectRequest(ctx)
-
+		ptype := ctx.Param("ptype")
+		a.engine.ServeSpace(ptype, ctx)
 	})
 
 	e.GET("/ping", a.ping)

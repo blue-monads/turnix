@@ -64,12 +64,12 @@ func New(opts Options) *App {
 	app.controller = controller.New(app.db, app.projects)
 
 	app.server = server.New(server.Options{
-		DB:              app.db,
-		Signer:          app.signer,
-		ProjectBuilders: app.projects,
-		Controller:      app.controller,
-		LocalSocket:     opts.LocalSocket,
-		DevMode:         os.Getenv("TURNIX_DEV_MODE") == "true",
+		DB:          app.db,
+		Signer:      app.signer,
+		Defs:        app.projects,
+		Controller:  app.controller,
+		LocalSocket: opts.LocalSocket,
+		DevMode:     os.Getenv("TURNIX_DEV_MODE") == "true",
 	})
 
 	return app

@@ -3,7 +3,6 @@ package server
 import (
 	"fmt"
 	"io"
-	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
@@ -54,22 +53,24 @@ func (s *Server) externalAssets() gin.HandlerFunc {
 	proxyAddrs := map[string]*httputil.ReverseProxy{}
 
 	if s.devMode {
-		for pname := range s.projects {
-			addr := os.Getenv(fmt.Sprintf("TURNIX_DEV_%s_SERVER", strings.ToUpper(pname)))
-			if addr == "" {
+
+		devSpacesEnv := os.Getenv("TURNIX_DEV_SPACES")
+		devSpaces := strings.Split(devSpacesEnv, ",")
+
+		for _, pname := range devSpaces {
+			nameParts := strings.Split(pname, ":")
+			if len(nameParts) != 2 {
 				continue
 			}
 
-			url, err := url.Parse(addr)
+			url, err := url.Parse(fmt.Sprint("http://localhost:%s", nameParts[1]))
 			if err != nil {
 				panic(err)
 			}
-
-			pp.Println("@proxying_project", pname, addr)
-
 			proxy := httputil.NewSingleHostReverseProxy(url)
-			proxyAddrs[pname] = proxy
+			proxyAddrs[nameParts[0]] = proxy
 		}
+
 	}
 
 	return func(ctx *gin.Context) {
@@ -89,52 +90,6 @@ func (s *Server) externalAssets() gin.HandlerFunc {
 			pp.Println("@ext/4")
 		}
 
-		pp.Println("@ext/5")
-
-		def := s.projects[pname]
-		if def == nil {
-			pp.Println("@ext/6")
-			ctx.AbortWithStatus(http.StatusNotFound)
-			return
-		}
-
-		pp.Println("@ext/7")
-
-		if def.OnPageRequest != nil {
-			def.OnPageRequest(ctx)
-			return
-		}
-
-		pp.Println("@ext/8", ctx.Request.URL.Path)
-
-		prefix := fmt.Sprintf("/z/x/%s", pname)
-		ppath := strings.TrimPrefix(ctx.Request.URL.Path, prefix)
-		ppath = strings.TrimSuffix(ppath, "/")
-		ppath = strings.TrimPrefix(ppath, "/")
-
-		pp.Println("@ext/9")
-
-		if ppath == "" {
-			ppath = "index.html"
-		}
-
-		pp.Println("@ext/10", ppath)
-
-		if def.AssetData == nil {
-			pp.Println("@ext/11", ppath)
-			ctx.AbortWithStatus(http.StatusNotFound)
-			return
-		}
-
-		file, err := def.AssetData.Open(path.Join(def.AssetDataPrefix, ppath))
-		if err != nil {
-			pp.Println("@open_err", err.Error())
-			return
-		}
-
-		defer file.Close()
-
-		io.Copy(ctx.Writer, file)
 	}
 
 }

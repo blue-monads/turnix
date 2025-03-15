@@ -1,8 +1,7 @@
 package project
 
 import (
-	"fmt"
-
+	"github.com/blue-monads/turnix/backend/engine"
 	"github.com/blue-monads/turnix/backend/services/database"
 	"github.com/blue-monads/turnix/backend/xtypes/models"
 	"github.com/blue-monads/turnix/backend/xtypes/xproject"
@@ -11,69 +10,27 @@ import (
 // this layer (controller) should not have claim and gin context
 
 type ProjectController struct {
-	db       *database.DB
-	projects map[string]*xproject.Defination
+	db     *database.DB
+	engine *engine.Engine
 }
 
 func NewProjectController(db *database.DB, projects map[string]*xproject.Defination) *ProjectController {
 
 	return &ProjectController{
-		db:       db,
-		projects: projects,
+		db: db,
 	}
 }
 
 func (a *ProjectController) ListProjectTypes() ([]models.ProjectTypes, error) {
-	pdefs := make([]models.ProjectTypes, 0)
-
-	for _, pdef := range a.projects {
-		pdefs = append(pdefs, models.ProjectTypes{
-			Name:               pdef.Name,
-			Ptype:              pdef.Slug,
-			Icon:               pdef.Icon,
-			Info:               pdef.Info,
-			IsExternal:         pdef.LinkPattern != "",
-			Slug:               pdef.Slug,
-			ProjectLinkPattern: pdef.LinkPattern,
-			BaseLink:           fmt.Sprintf("/z/pages/portal/projects/%s", pdef.Slug),
-		})
-
-	}
-
-	return pdefs, nil
+	return a.engine.ListProjectTypes()
 }
 
 func (a *ProjectController) GetProjectType(ptype string) (*models.ProjectTypes, error) {
-
-	for _, pdef := range a.projects {
-
-		if pdef.Slug == ptype {
-			return &models.ProjectTypes{
-				Name:       pdef.Name,
-				Ptype:      pdef.Slug,
-				Slug:       pdef.Slug,
-				Info:       pdef.Info,
-				Icon:       pdef.Icon,
-				IsExternal: pdef.AssetData != nil,
-			}, nil
-		}
-
-	}
-
-	return nil, nil
+	return a.engine.GetProjectType(ptype)
 }
 
 func (a *ProjectController) GetProjectTypeForm(ptype string) ([]xproject.PTypeField, error) {
-
-	for _, pdef := range a.projects {
-
-		if pdef.Slug == ptype {
-			return pdef.NewFormSchemaFields, nil
-		}
-
-	}
-
-	return nil, nil
+	return a.engine.GetProjectTypeForm(ptype)
 }
 
 func (a *ProjectController) ListProjects(userId int64, ptype string) ([]models.Project, error) {
@@ -100,13 +57,9 @@ func (a *ProjectController) AddProject(userId int64, data *models.Project) (int6
 		return 0, err
 	}
 
-	ptype := a.projects[data.Ptype]
-
-	if ptype.OnInit != nil {
-		err = ptype.OnInit(id)
-		if err != nil {
-			return 0, err
-		}
+	err = a.engine.OnInit(data.Ptype, id)
+	if err != nil {
+		return 0, err
 	}
 
 	return id, nil
