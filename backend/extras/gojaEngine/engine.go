@@ -1,7 +1,7 @@
 package engine
 
 import (
-	"github.com/blue-monads/turnix/backend/engine/pool"
+	"github.com/blue-monads/turnix/backend/extras/gojaEngine/pool"
 
 	"encoding/json"
 	"fmt"
