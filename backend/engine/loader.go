@@ -53,7 +53,12 @@ func (e *Engine) load() {
 		pp.Println("@curr_path", path)
 
 		if d.IsDir() {
-			pp.Println("@skip_path", path)
+			err = e.LoadPtypeWithFolder(path)
+			if err != nil {
+				pp.Println("@skipping_folder", path, err)
+				return nil
+			}
+
 			return nil
 		}
 
