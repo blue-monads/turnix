@@ -14,10 +14,11 @@ type ProjectController struct {
 	engine *engine.Engine
 }
 
-func NewProjectController(db *database.DB, projects map[string]*xproject.Defination) *ProjectController {
+func NewProjectController(db *database.DB, engine *engine.Engine) *ProjectController {
 
 	return &ProjectController{
-		db: db,
+		db:     db,
+		engine: engine,
 	}
 }
 

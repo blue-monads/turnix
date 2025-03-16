@@ -58,18 +58,17 @@ type Options struct {
 	Controller  *controller.RootController
 	LocalSocket string
 	DevMode     bool
+	Engine      *engine.Engine
 }
 
 func New(opts Options) *Server {
 
 	// opts.ProjectBuilders["abc"] = &xproject.Defination{}
 
-	e := engine.New(opts.Defs)
-
 	s := &Server{
 		db:          opts.DB,
 		signer:      opts.Signer,
-		engine:      e,
+		engine:      opts.Engine,
 		rootLogger:  zerolog.New(os.Stdout).With().Str("service", "server").Logger(),
 		cAuth:       opts.Controller.GetAuthController(),
 		cProject:    opts.Controller.GetProjectController(),

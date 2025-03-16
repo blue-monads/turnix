@@ -63,7 +63,7 @@ func (s *Server) externalAssets() gin.HandlerFunc {
 				continue
 			}
 
-			url, err := url.Parse(fmt.Sprint("http://localhost:%s", nameParts[1]))
+			url, err := url.Parse(fmt.Sprint("http://localhost:", nameParts[1]))
 			if err != nil {
 				panic(err)
 			}

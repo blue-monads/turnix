@@ -6,11 +6,11 @@ import (
 
 	"github.com/blue-monads/turnix/backend/app/server"
 	"github.com/blue-monads/turnix/backend/controller"
+	"github.com/blue-monads/turnix/backend/engine"
 	"github.com/blue-monads/turnix/backend/services/database"
 	"github.com/blue-monads/turnix/backend/services/signer"
 	"github.com/blue-monads/turnix/backend/xtypes"
 	"github.com/blue-monads/turnix/backend/xtypes/services/xsockd"
-	"github.com/blue-monads/turnix/backend/xtypes/xengine"
 	"github.com/blue-monads/turnix/backend/xtypes/xproject"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
@@ -24,6 +24,7 @@ type App struct {
 	rootLogger zerolog.Logger
 	controller *controller.RootController
 	server     *server.Server
+	engine     engine.Engine
 }
 
 type Options struct {
@@ -31,6 +32,7 @@ type Options struct {
 	Signer          *signer.Signer
 	ProjectBuilders map[string]xproject.Builder
 	LocalSocket     string
+	DevMode         bool
 }
 
 func New(opts Options) *App {
@@ -61,7 +63,12 @@ func New(opts Options) *App {
 
 	}
 
-	app.controller = controller.New(app.db, app.projects)
+	e := engine.New(engine.Options{
+		App:  app,
+		Defs: app.projects,
+	})
+
+	app.controller = controller.New(app.db, e)
 
 	app.server = server.New(server.Options{
 		DB:          app.db,
@@ -69,7 +76,8 @@ func New(opts Options) *App {
 		Defs:        app.projects,
 		Controller:  app.controller,
 		LocalSocket: opts.LocalSocket,
-		DevMode:     os.Getenv("TURNIX_DEV_MODE") == "true",
+		DevMode:     opts.DevMode,
+		Engine:      e,
 	})
 
 	return app
@@ -87,8 +95,8 @@ func (a *App) GetDatabase() any {
 	return a.db
 }
 
-func (a *App) GetEngine() xengine.XEngine {
-	return nil
+func (a *App) GetEngine() any {
+	return a.engine
 }
 
 func (a *App) GetSockd() xsockd.Sockd {

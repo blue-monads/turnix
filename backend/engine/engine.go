@@ -10,6 +10,11 @@ import (
 	"github.com/blue-monads/turnix/backend/xtypes/xproject"
 )
 
+type Options struct {
+	App  xtypes.App
+	Defs map[string]*xproject.Defination
+}
+
 type Engine struct {
 	app      xtypes.App
 	globalJS []byte
@@ -17,11 +22,12 @@ type Engine struct {
 	pLock    sync.RWMutex
 }
 
-func New(defs map[string]*xproject.Defination) *Engine {
+func New(opts Options) *Engine {
 	return &Engine{
-		projects: defs,
+		projects: opts.Defs,
 		globalJS: []byte(``),
 		pLock:    sync.RWMutex{},
+		app:      opts.App,
 	}
 }
 
