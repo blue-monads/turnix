@@ -27,6 +27,7 @@ func (a *Server) bindRoutes(e *gin.Engine) {
 
 	a.engine.MountProjectType(projectRoute)
 
+	// this is mostly for serving API requests
 	root.Any("/projects/:ptype", func(ctx *gin.Context) {
 		ptype := ctx.Param("ptype")
 		a.engine.ServeProjectType(ptype, ctx)
@@ -37,6 +38,7 @@ func (a *Server) bindRoutes(e *gin.Engine) {
 		a.engine.ServeProjectType(ptype, ctx)
 	})
 
+	// this is for serving assets on external app/ptype case
 	root.Any("/p/:ptype", func(ctx *gin.Context) {
 		ptype := ctx.Param("ptype")
 		a.engine.ServeProjectTypeFile(ptype, ctx)
