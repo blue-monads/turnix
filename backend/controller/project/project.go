@@ -1,8 +1,16 @@
 package project
 
 import (
+	"archive/zip"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+
 	"github.com/blue-monads/turnix/backend/engine"
 	"github.com/blue-monads/turnix/backend/services/database"
+	xutils "github.com/blue-monads/turnix/backend/utils"
 	"github.com/blue-monads/turnix/backend/xtypes/models"
 	"github.com/blue-monads/turnix/backend/xtypes/xproject"
 )
@@ -10,15 +18,17 @@ import (
 // this layer (controller) should not have claim and gin context
 
 type ProjectController struct {
-	db     *database.DB
-	engine *engine.Engine
+	db          *database.DB
+	engine      *engine.Engine
+	installPath string
 }
 
 func NewProjectController(db *database.DB, engine *engine.Engine) *ProjectController {
 
 	return &ProjectController{
-		db:     db,
-		engine: engine,
+		db:          db,
+		engine:      engine,
+		installPath: engine.InstallPath(),
 	}
 }
 
@@ -107,4 +117,97 @@ func (a *ProjectController) UpdateProjectHook(userId int64, pid int64, id int64,
 
 func (a *ProjectController) GetProjectHook(userId int64, pid int64, id int64) (*models.ProjectHook, error) {
 	return a.db.GetProjectHook(userId, pid, id)
+}
+
+// project_type install
+
+type ManifestMini struct {
+	Slug string `json:"slug"`
+}
+
+func (a *ProjectController) InstallProjectType(userId int64, url string) error {
+	randstr, err := xutils.GenerateRandomString(10)
+	if err != nil {
+		return err
+	}
+
+	tempFileName := fmt.Sprint(a.installPath, "/__downloading_", randstr)
+
+	err = downloadFile(url, tempFileName)
+	if err != nil {
+		os.Remove(tempFileName)
+		return err
+	}
+
+	mf := ManifestMini{}
+
+	err = readManifestFromZip(tempFileName, &mf)
+	if err != nil {
+		os.Remove(tempFileName)
+		return err
+	}
+
+	a.engine.InformPtypeAdded(mf.Slug)
+
+	return nil
+}
+
+const manifestFileName = "manifest.json"
+
+func readManifestFromZip(zipFilePath string, target any) error {
+	r, err := zip.OpenReader(zipFilePath)
+	if err != nil {
+		return fmt.Errorf("error opening zip file: %w", err)
+	}
+	defer r.Close()
+
+	for _, f := range r.File {
+		if f.Name == manifestFileName {
+			rc, err := f.Open()
+			if err != nil {
+				return fmt.Errorf("error opening '%s' in zip: %w", manifestFileName, err)
+			}
+			defer rc.Close()
+
+			content, err := io.ReadAll(rc)
+			if err != nil {
+				return fmt.Errorf("error reading content of '%s': %w", manifestFileName, err)
+			}
+
+			err = json.Unmarshal(content, target)
+			if err != nil {
+				return fmt.Errorf("error unmarshalling JSON from '%s': %w", manifestFileName, err)
+			}
+
+			return nil
+		}
+	}
+
+	return fmt.Errorf("'%s' not found in zip archive", manifestFileName)
+}
+
+func downloadFile(fileURL, outputPath string) error {
+	resp, err := http.Get(fileURL)
+	if err != nil {
+		return fmt.Errorf("error fetching file: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("received non-OK status code: %d", resp.StatusCode)
+	}
+
+	outputFile, err := os.Create(outputPath)
+	if err != nil {
+		return fmt.Errorf("error creating output file: %w", err)
+	}
+	defer outputFile.Close()
+
+	buffer := make([]byte, 4096)
+	_, err = io.CopyBuffer(outputFile, resp.Body, buffer)
+	if err != nil {
+		return fmt.Errorf("error streaming and writing file: %w", err)
+	}
+
+	return nil
 }

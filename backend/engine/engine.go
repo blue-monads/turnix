@@ -8,27 +8,69 @@ import (
 	"github.com/blue-monads/turnix/backend/xtypes"
 	"github.com/blue-monads/turnix/backend/xtypes/models"
 	"github.com/blue-monads/turnix/backend/xtypes/xproject"
+	"github.com/k0kubun/pp"
 )
 
 type Options struct {
-	App  xtypes.App
-	Defs map[string]*xproject.Defination
+	App                xtypes.App
+	Defs               map[string]*xproject.Defination
+	ProjectInstallPath string
 }
 
 type Engine struct {
-	app      xtypes.App
-	globalJS []byte
-	projects map[string]*xproject.Defination
-	pLock    sync.RWMutex
+	app         xtypes.App
+	globalJS    []byte
+	projects    map[string]*xproject.Defination
+	pLock       sync.RWMutex
+	installPath string
+
+	// control
+	addPtypeChan    chan string
+	removePtypeChan chan string
+	updatePtypeChan chan string
 }
 
 func New(opts Options) *Engine {
-	return &Engine{
-		projects: opts.Defs,
-		globalJS: []byte(``),
-		pLock:    sync.RWMutex{},
-		app:      opts.App,
+	e := &Engine{
+		projects:        opts.Defs,
+		globalJS:        []byte(``),
+		pLock:           sync.RWMutex{},
+		app:             opts.App,
+		addPtypeChan:    make(chan string),
+		removePtypeChan: make(chan string),
+		updatePtypeChan: make(chan string),
 	}
+
+	go e.eventLoop()
+
+	return e
+}
+
+func (e *Engine) eventLoop() {
+
+	for {
+		select {
+		case ptype := <-e.addPtypeChan:
+			pp.Println("@addPtypeChan", ptype)
+		case ptype := <-e.updatePtypeChan:
+			pp.Println("@updatePtypeChan", ptype)
+		case ptype := <-e.removePtypeChan:
+			pp.Println("@removePtypeChan", ptype)
+		}
+	}
+
+}
+
+func (e *Engine) InformPtypeAdded(ptype string) {
+	e.addPtypeChan <- ptype
+}
+
+func (e *Engine) InformPtypeUpdated(ptype string) {
+	e.updatePtypeChan <- ptype
+}
+
+func (e *Engine) InformPtypeRemoved(ptype string) {
+	e.removePtypeChan <- ptype
 }
 
 func (e *Engine) ListProjectTypes() ([]models.ProjectTypes, error) {
@@ -81,4 +123,8 @@ func (e *Engine) GetProjectTypeForm(ptype string) ([]xproject.PTypeField, error)
 
 	return nil, errors.New("not found")
 
+}
+
+func (e *Engine) InstallPath() string {
+	return e.installPath
 }

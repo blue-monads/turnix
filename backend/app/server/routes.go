@@ -54,6 +54,32 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 
 	apiv1.GET("/self/messages", a.accessMiddleware(a.listUserMessages))
 
+	// self files
+
+	apiv1.GET("/self/files", a.accessMiddleware(a.listSelfFiles))
+	apiv1.POST("/self/files", a.accessMiddleware(a.addSelfFile))
+	apiv1.PUT("/self/files", a.accessMiddleware(a.addSelfFolder))
+
+	apiv1.GET("/self/files/:id", (a.getSelfFile))
+	apiv1.DELETE("/self/files/:id", a.accessMiddleware(a.removeSelfFile))
+	apiv1.POST("/self/messages/:uid", a.accessMiddleware(a.messageUser))
+
+	apiv1.GET("/self/files/:id/shares", a.accessMiddleware(a.listSelfFileShares))
+	apiv1.POST("/self/files/:id/shares", a.accessMiddleware(a.addSelfFileShare))
+	apiv1.DELETE("/self/files/:id/shares/:id", a.accessMiddleware(a.deleteSelfFileShare))
+
+	apiv1.GET("/file/shared/:file", a.getSharedFile)
+	apiv1.POST("/file/shared/:file", a.accessMiddleware(a.sharedFile))
+	apiv1.DELETE("/file/shared/:file", a.accessMiddleware(a.deleteShareFile))
+
+	apiv1.GET("/file/shortKey/:shortkey", a.GetFileWithShortKey)
+	apiv1.POST("/file/:fid/shortkey", a.accessMiddleware(a.GetFileShortKey))
+
+	// user profile
+	apiv1.GET("/user/:uid", a.accessMiddleware(a.userProfile))
+
+	// project
+
 	apiv1.GET("/project", a.accessMiddleware(a.listProjects))
 	apiv1.POST("/project", a.accessMiddleware(a.addProject))
 	apiv1.POST("/project/:pid", a.accessMiddleware(a.updateProject))
@@ -62,6 +88,8 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 
 	apiv1.POST("/project/:pid/user", a.accessMiddleware(a.inviteUserToPoject))     // invite
 	apiv1.DELETE("/project/:pid/user", a.accessMiddleware(a.removeUserFromPoject)) // remove from project
+
+	apiv1.POST("/project_type_install", a.accessMiddleware(a.installProjectType))
 
 	// project type
 
@@ -99,30 +127,6 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 	apiv1.DELETE("/project/:pid/plugins/:id", a.accessMiddleware(a.removeProjectPlugin))
 	apiv1.POST("/project/:pid/plugins/:id", a.accessMiddleware(a.updateProjectPlugin))
 	apiv1.GET("/project/:pid/plugins/:id", a.accessMiddleware(a.getProjectPlugin))
-
-	// self files
-
-	apiv1.GET("/self/files", a.accessMiddleware(a.listSelfFiles))
-	apiv1.POST("/self/files", a.accessMiddleware(a.addSelfFile))
-	apiv1.PUT("/self/files", a.accessMiddleware(a.addSelfFolder))
-
-	apiv1.GET("/self/files/:id", (a.getSelfFile))
-	apiv1.DELETE("/self/files/:id", a.accessMiddleware(a.removeSelfFile))
-	apiv1.POST("/self/messages/:uid", a.accessMiddleware(a.messageUser))
-
-	apiv1.GET("/self/files/:id/shares", a.accessMiddleware(a.listSelfFileShares))
-	apiv1.POST("/self/files/:id/shares", a.accessMiddleware(a.addSelfFileShare))
-	apiv1.DELETE("/self/files/:id/shares/:id", a.accessMiddleware(a.deleteSelfFileShare))
-
-	apiv1.GET("/file/shared/:file", a.getSharedFile)
-	apiv1.POST("/file/shared/:file", a.accessMiddleware(a.sharedFile))
-	apiv1.DELETE("/file/shared/:file", a.accessMiddleware(a.deleteShareFile))
-
-	apiv1.GET("/file/shortKey/:shortkey", a.GetFileWithShortKey)
-	apiv1.POST("/file/:fid/shortkey", a.accessMiddleware(a.GetFileShortKey))
-
-	// user profile
-	apiv1.GET("/user/:uid", a.accessMiddleware(a.userProfile))
 
 }
 
