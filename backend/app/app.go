@@ -68,7 +68,7 @@ func New(opts Options) *App {
 	e := engine.New(engine.Options{
 		App:                app,
 		Defs:               app.projects,
-		ProjectInstallPath: fmt.Sprint(opts.BasePath, "installs"),
+		ProjectInstallPath: fmt.Sprint(opts.BasePath, "/installs"),
 	})
 
 	app.controller = controller.New(app.db, e)

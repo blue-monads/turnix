@@ -39,6 +39,7 @@ func New(opts Options) *Engine {
 		addPtypeChan:    make(chan string),
 		removePtypeChan: make(chan string),
 		updatePtypeChan: make(chan string),
+		installPath:     opts.ProjectInstallPath,
 	}
 
 	go e.eventLoop()

@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 
 	"github.com/blue-monads/turnix/backend/engine"
 	"github.com/blue-monads/turnix/backend/services/database"
@@ -126,6 +127,9 @@ type ManifestMini struct {
 }
 
 func (a *ProjectController) InstallProjectType(userId int64, url string) error {
+
+	os.MkdirAll(a.installPath, 0766)
+
 	randstr, err := xutils.GenerateRandomString(10)
 	if err != nil {
 		return err
@@ -144,6 +148,14 @@ func (a *ProjectController) InstallProjectType(userId int64, url string) error {
 	err = readManifestFromZip(tempFileName, &mf)
 	if err != nil {
 		os.Remove(tempFileName)
+		return err
+	}
+
+	finalFileName := fmt.Sprintf("%s.zip", path.Join(a.installPath, mf.Slug))
+	err = os.Rename(tempFileName, finalFileName)
+	if err != nil {
+		os.Remove(tempFileName)
+		os.Remove(finalFileName)
 		return err
 	}
 

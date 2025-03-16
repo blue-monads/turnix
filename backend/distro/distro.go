@@ -45,6 +45,8 @@ func NewAppWithOptions(opts Options) (*DistroApp, error) {
 		Signer:          signer,
 		ProjectBuilders: registry.GetAll(),
 		LocalSocket:     opts.LocalSocket,
+		DevMode:         true,
+		BasePath:        "./tmp",
 	})
 
 	return &DistroApp{
