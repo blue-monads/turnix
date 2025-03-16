@@ -53,7 +53,9 @@
           </div>
           <div class="flex flex-row gap-4">
             <a
-              href={ data.is_external ? `/z/x/${data['ptype']}` : `/z/pages/portal/projects/${data['ptype']}`  }
+              href={data.is_external
+                ? `/z/x/${data["ptype"]}`
+                : `/z/pages/portal/projects/${data["ptype"]}`}
               class="underline text-blue-500 text-sm self-center"
               onclick={() => {
                 modalStore.close();
@@ -75,6 +77,18 @@
         </div>
       {/each}
     </div>
+
+    <div class="flex justify-end px-10 py-2">
+      <a
+        href="/z/pages/portal/store"
+        class="btn btn-sm variant-filled"
+        onclick={() => {
+          modalStore.close();
+        }}
+      >
+        <SvgIcon name={"shopping-bag"} className="w-5 h-5" />
+        Store
+      </a>
+    </div>
   </div>
 {/if}
-
