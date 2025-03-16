@@ -1,6 +1,7 @@
 package luaz
 
 import (
+	"github.com/blue-monads/turnix/backend/engine/luaz/binds"
 	"github.com/gin-gonic/gin"
 	lua "github.com/yuin/gopher-lua"
 )
@@ -46,4 +47,10 @@ func (l *LuaH) Handle(ctx *gin.Context) {
 	l.L.Push(ctxt)
 	l.L.Call(1, 0)
 
+}
+
+func (l *LuaH) registerModules() error {
+	l.L.PreloadModule("fs", binds.FsModule(l.parent.root))
+
+	return nil
 }
