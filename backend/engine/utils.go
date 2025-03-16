@@ -3,6 +3,7 @@ package engine
 import (
 	"archive/zip"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -30,16 +31,23 @@ func ServeZipContentsWithPrefix(zipfile *zip.ReadCloser, pathPrefixToRemove stri
 
 		pp.Println("@zipserve/requestPath", requestPath)
 
-		if pathPrefixToRemove != "" && strings.HasPrefix(requestPath, pathPrefixToRemove) {
+		if strings.HasPrefix(requestPath, pathPrefixToRemove) {
 			requestPath = strings.TrimPrefix(requestPath, pathPrefixToRemove)
 		}
 
 		requestPath = strings.TrimPrefix(requestPath, "/")
 
+		if requestPath == "" {
+			requestPath = "index.html"
+		}
+
 		file, exists := fileMap[requestPath]
 		if !exists {
-			c.Abort()
-			return
+			file, exists = fileMap[fmt.Sprintf("%s.html", requestPath)]
+			if !exists {
+				c.AbortWithError(http.StatusNotFound, errors.New("not found"))
+				return
+			}
 		}
 
 		fileReader, err := file.Open()

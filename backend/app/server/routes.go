@@ -32,6 +32,16 @@ func (a *Server) bindRoutes(e *gin.Engine) {
 		a.engine.ServeProjectType(ptype, ctx)
 	})
 
+	root.Any("/projects/:ptype/*file", func(ctx *gin.Context) {
+		ptype := ctx.Param("ptype")
+		a.engine.ServeProjectType(ptype, ctx)
+	})
+
+	root.Any("/p/:ptype", func(ctx *gin.Context) {
+		ptype := ctx.Param("ptype")
+		a.engine.ServeProjectTypeFile(ptype, ctx)
+	})
+
 	root.Any("/p/:ptype/*file", func(ctx *gin.Context) {
 		ptype := ctx.Param("ptype")
 		a.engine.ServeProjectTypeFile(ptype, ctx)
