@@ -1,8 +1,7 @@
 package blua
 
 import (
-	"fmt"
-
+	"github.com/blue-monads/turnix/backend/engine/luaz/binds"
 	lua "github.com/yuin/gopher-lua"
 )
 
@@ -21,7 +20,7 @@ func (b *Blua) reqAbortWithStatus(L *lua.LState) int {
 func (b *Blua) reqAbortWithStatusJSON(L *lua.LState) int {
 	code := L.CheckInt(1)
 	jsonTbl := L.CheckTable(2)
-	jsonObj := b.tableToMap(L, jsonTbl)
+	jsonObj := binds.TableToMap(L, jsonTbl)
 	b.handle.activeRequest.AbortWithStatusJSON(code, jsonObj)
 	return 0
 }
@@ -125,7 +124,7 @@ func (b *Blua) reqRemoteIP(L *lua.LState) int {
 func (b *Blua) reqJSON(L *lua.LState) int {
 	code := L.CheckInt(1)
 	jsonTbl := L.CheckTable(2)
-	jsonObj := b.tableToMap(L, jsonTbl)
+	jsonObj := binds.TableToMap(L, jsonTbl)
 	b.handle.activeRequest.JSON(code, jsonObj)
 	return 0
 }
@@ -134,7 +133,7 @@ func (b *Blua) reqHTML(L *lua.LState) int {
 	code := L.CheckInt(1)
 	name := L.CheckString(2)
 	dataTbl := L.CheckTable(3)
-	dataObj := b.tableToMap(L, dataTbl)
+	dataObj := binds.TableToMap(L, dataTbl)
 	b.handle.activeRequest.HTML(code, name, dataObj)
 	return 0
 }
@@ -145,7 +144,7 @@ func (b *Blua) reqString(L *lua.LState) int {
 
 	// Get values for formatting
 	n := L.GetTop()
-	values := make([]interface{}, 0, n-2)
+	values := make([]any, 0, n-2)
 	for i := 3; i <= n; i++ {
 		val := L.Get(i)
 		switch val.Type() {
@@ -191,7 +190,7 @@ func (b *Blua) reqHeader(L *lua.LState) int {
 
 // Gin context binding methods
 func (b *Blua) reqBindJSON(L *lua.LState) int {
-	var obj map[string]interface{}
+	var obj map[string]any
 	err := b.handle.activeRequest.BindJSON(&obj)
 	if err != nil {
 		L.Push(lua.LNil)
@@ -199,13 +198,13 @@ func (b *Blua) reqBindJSON(L *lua.LState) int {
 		return 2
 	}
 
-	result := b.mapToTable(L, obj)
+	result := binds.MapToTable(L, obj)
 	L.Push(result)
 	return 1
 }
 
 func (b *Blua) reqBindHeader(L *lua.LState) int {
-	var obj map[string]interface{}
+	var obj map[string]any
 	err := b.handle.activeRequest.BindHeader(&obj)
 	if err != nil {
 		L.Push(lua.LNil)
@@ -213,13 +212,13 @@ func (b *Blua) reqBindHeader(L *lua.LState) int {
 		return 2
 	}
 
-	result := b.mapToTable(L, obj)
+	result := binds.MapToTable(L, obj)
 	L.Push(result)
 	return 1
 }
 
 func (b *Blua) reqBindQuery(L *lua.LState) int {
-	var obj map[string]interface{}
+	var obj map[string]any
 	err := b.handle.activeRequest.BindQuery(&obj)
 	if err != nil {
 		L.Push(lua.LNil)
@@ -227,7 +226,7 @@ func (b *Blua) reqBindQuery(L *lua.LState) int {
 		return 2
 	}
 
-	result := b.mapToTable(L, obj)
+	result := binds.MapToTable(L, obj)
 	L.Push(result)
 	return 1
 }
@@ -345,7 +344,7 @@ func (b *Blua) reqSSEvent(L *lua.LState) int {
 	name := L.CheckString(1)
 	message := L.CheckAny(2)
 
-	var msgValue interface{}
+	var msgValue any
 
 	switch message.Type() {
 	case lua.LTString:
@@ -355,7 +354,7 @@ func (b *Blua) reqSSEvent(L *lua.LState) int {
 	case lua.LTBool:
 		msgValue = bool(message.(lua.LBool))
 	case lua.LTTable:
-		msgValue = b.tableToMap(L, message.(*lua.LTable))
+		msgValue = binds.TableToMap(L, message.(*lua.LTable))
 	default:
 		msgValue = message.String()
 	}
@@ -365,66 +364,3 @@ func (b *Blua) reqSSEvent(L *lua.LState) int {
 }
 
 // Helper function to convert Go maps to Lua tables
-func (b *Blua) mapToTable(L *lua.LState, m map[string]interface{}) *lua.LTable {
-	table := L.NewTable()
-
-	for k, v := range m {
-		switch vt := v.(type) {
-		case string:
-			L.SetField(table, k, lua.LString(vt))
-		case float64:
-			L.SetField(table, k, lua.LNumber(vt))
-		case int:
-			L.SetField(table, k, lua.LNumber(vt))
-		case bool:
-			L.SetField(table, k, lua.LBool(vt))
-		case map[string]interface{}:
-			L.SetField(table, k, b.mapToTable(L, vt))
-		case []interface{}:
-			arrayTable := L.NewTable()
-			for i, item := range vt {
-				switch it := item.(type) {
-				case string:
-					L.RawSetInt(arrayTable, i+1, lua.LString(it))
-				case float64:
-					L.RawSetInt(arrayTable, i+1, lua.LNumber(it))
-				case int:
-					L.RawSetInt(arrayTable, i+1, lua.LNumber(it))
-				case bool:
-					L.RawSetInt(arrayTable, i+1, lua.LBool(it))
-				case map[string]interface{}:
-					L.RawSetInt(arrayTable, i+1, b.mapToTable(L, it))
-				default:
-					L.RawSetInt(arrayTable, i+1, lua.LString(fmt.Sprintf("%v", it)))
-				}
-			}
-			L.SetField(table, k, arrayTable)
-		default:
-			L.SetField(table, k, lua.LString(fmt.Sprintf("%v", vt)))
-		}
-	}
-
-	return table
-}
-
-// Helper function to convert Lua tables to Go maps
-func (b *Blua) tableToMap(L *lua.LState, table *lua.LTable) map[string]interface{} {
-	result := make(map[string]interface{})
-
-	table.ForEach(func(key, value lua.LValue) {
-		switch value.Type() {
-		case lua.LTString:
-			result[key.String()] = value.String()
-		case lua.LTNumber:
-			result[key.String()] = float64(value.(lua.LNumber))
-		case lua.LTBool:
-			result[key.String()] = bool(value.(lua.LBool))
-		case lua.LTTable:
-			result[key.String()] = b.tableToMap(L, value.(*lua.LTable))
-		default:
-			result[key.String()] = value.String()
-		}
-	})
-
-	return result
-}
