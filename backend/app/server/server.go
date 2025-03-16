@@ -109,6 +109,11 @@ func (a *Server) Start(port string) error {
 
 	a.bindRoutes(r)
 
+	err = a.engine.Start()
+	if err != nil {
+		return err
+	}
+
 	go func() {
 		time.Sleep(time.Second * 2)
 

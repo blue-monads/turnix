@@ -47,6 +47,12 @@ func New(opts Options) *Engine {
 	return e
 }
 
+func (e *Engine) Start() error {
+	e.load()
+
+	return nil
+}
+
 func (e *Engine) eventLoop() {
 
 	for {

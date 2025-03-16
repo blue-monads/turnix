@@ -25,7 +25,7 @@ type App struct {
 	rootLogger zerolog.Logger
 	controller *controller.RootController
 	server     *server.Server
-	engine     engine.Engine
+	engine     *engine.Engine
 }
 
 type Options struct {
