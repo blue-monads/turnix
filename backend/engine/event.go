@@ -5,7 +5,7 @@ func (e *Engine) OnInit(name string, id int64) error {
 	def := e.projects[name]
 	e.pLock.RUnlock()
 
-	err := def.OnInit(id)
+	err := def.def.OnInit(id)
 	if err != nil {
 		return err
 	}

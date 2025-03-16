@@ -17,11 +17,11 @@ func (e *Engine) MountSpaces(g *gin.RouterGroup) {
 	defer e.pLock.RUnlock()
 
 	for _, def := range e.projects {
-		if def.OnAPIMount == nil {
+		if def.def.OnAPIMount == nil {
 			continue
 		}
 
-		def.OnAPIMount(g.Group(fmt.Sprintf("/%s", def.Slug)))
+		def.def.OnAPIMount(g.Group(fmt.Sprintf("/%s", def.def.Slug)))
 	}
 
 }
@@ -31,7 +31,7 @@ func (e *Engine) ServeSpace(name string, ctx *gin.Context) {
 	def := e.projects[name]
 	e.pLock.RUnlock()
 
-	def.OnProjectRequest(ctx)
+	def.def.OnProjectRequest(ctx)
 }
 
 func (e *Engine) ServeSpaceFile(name string, ctx *gin.Context) {
@@ -45,8 +45,8 @@ func (e *Engine) ServeSpaceFile(name string, ctx *gin.Context) {
 		return
 	}
 
-	if def.OnPageRequest != nil {
-		def.OnPageRequest(ctx)
+	if def.def.OnPageRequest != nil {
+		def.def.OnPageRequest(ctx)
 		return
 	}
 
@@ -58,7 +58,7 @@ func (e *Engine) ServeSpaceFile(name string, ctx *gin.Context) {
 		ppath = "index.html"
 	}
 
-	if def.AssetData == nil {
+	if def.def.AssetData == nil {
 		ctx.AbortWithStatus(http.StatusNotFound)
 		return
 	}
@@ -69,13 +69,13 @@ func (e *Engine) ServeSpaceFile(name string, ctx *gin.Context) {
 
 	pp.Println("@ext/10", ppath)
 
-	if def.AssetData == nil {
+	if def.def.AssetData == nil {
 		pp.Println("@ext/11", ppath)
 		ctx.AbortWithStatus(http.StatusNotFound)
 		return
 	}
 
-	file, err := def.AssetData.Open(path.Join(def.AssetDataPrefix, ppath))
+	file, err := def.def.AssetData.Open(path.Join(def.def.AssetDataPrefix, ppath))
 	if err != nil {
 		pp.Println("@open_err", err.Error())
 		return

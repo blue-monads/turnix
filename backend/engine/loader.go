@@ -2,12 +2,8 @@ package engine
 
 import (
 	"archive/zip"
-	"encoding/json"
 	"fmt"
-	"io"
 	"io/fs"
-	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -15,6 +11,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
 )
+
+const (
+	defTypeNative    uint8 = 0
+	defTypeLuaZip    uint8 = 1
+	defTypeLuaFolder uint8 = 2
+)
+
+type LoadedDef struct {
+	def     *xproject.Defination
+	defType uint8
+	file    string
+}
 
 type Manifest struct {
 	Name     string         `json:"name"`
@@ -46,6 +54,11 @@ func (e *Engine) load() {
 			return nil
 		}
 
+		if strings.Contains(path, "__downloading_") {
+			pp.Println("@skipping_downloading", path)
+			return nil
+		}
+
 		if strings.HasSuffix(path, ".zip") {
 			err = e.LoadPtypeWithZip(path)
 			if err != nil {
@@ -61,7 +74,6 @@ func (e *Engine) load() {
 }
 
 func (e *Engine) LoadPtypeWithZip(filePath string) error {
-	//	file := fmt.Sprintf("%s/%s.zip", e.installPath, ptype)
 
 	manifest := &Manifest{}
 	err := ReadManifestFromZip(filePath, manifest)
@@ -71,86 +83,38 @@ func (e *Engine) LoadPtypeWithZip(filePath string) error {
 	}
 
 	ptype := manifest.Slug
-
-	def := &xproject.Defination{
-		Name: manifest.Name,
-		Slug: manifest.Slug,
-		Info: manifest.Info,
-		OnPageRequest: func(ctx *gin.Context) {
-			pp.Println("@OnPageRequest", ctx.Request.URL)
-
-		},
-		OnProjectRequest: func(ctx *gin.Context) {
-			pp.Println("@OnProjectRequest", ctx.Request.URL)
-
-		},
-		LinkPattern: "/z/projects/" + ptype,
+	ldef := LoadedDef{
+		defType: defTypeLuaZip,
+		file:    filePath,
 	}
 
+	r, err := zip.OpenReader(filePath)
+	if err != nil {
+		return fmt.Errorf("error opening zip file: %w", err)
+	}
+
+	basePath := "/z/projects/" + ptype
+
+	def := &xproject.Defination{
+		Name:          manifest.Name,
+		Slug:          manifest.Slug,
+		Info:          manifest.Info,
+		OnPageRequest: ServeZipContentsWithPrefix(r, basePath),
+		OnProjectRequest: func(ctx *gin.Context) {
+			// fixme => impl
+		},
+		OnClose: func() error {
+			return r.Close()
+		},
+		LinkPattern: basePath,
+	}
+
+	ldef.def = def
+
 	e.pLock.Lock()
-	e.projects[ptype] = def
+	e.projects[ptype] = &ldef
 	e.pLock.Unlock()
 
 	return nil
 
-}
-
-const manifestFileName = "manifest.json"
-
-func ReadManifestFromZip(zipFilePath string, target any) error {
-	r, err := zip.OpenReader(zipFilePath)
-	if err != nil {
-		return fmt.Errorf("error opening zip file: %w", err)
-	}
-	defer r.Close()
-
-	for _, f := range r.File {
-		if f.Name == manifestFileName {
-			rc, err := f.Open()
-			if err != nil {
-				return fmt.Errorf("error opening '%s' in zip: %w", manifestFileName, err)
-			}
-			defer rc.Close()
-
-			content, err := io.ReadAll(rc)
-			if err != nil {
-				return fmt.Errorf("error reading content of '%s': %w", manifestFileName, err)
-			}
-
-			err = json.Unmarshal(content, target)
-			if err != nil {
-				return fmt.Errorf("error unmarshalling JSON from '%s': %w", manifestFileName, err)
-			}
-
-			return nil
-		}
-	}
-
-	return fmt.Errorf("'%s' not found in zip archive", manifestFileName)
-}
-
-func DownloadFile(fileURL, outputPath string) error {
-	resp, err := http.Get(fileURL)
-	if err != nil {
-		return fmt.Errorf("error fetching file: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("received non-OK status code: %d", resp.StatusCode)
-	}
-
-	outputFile, err := os.Create(outputPath)
-	if err != nil {
-		return fmt.Errorf("error creating output file: %w", err)
-	}
-	defer outputFile.Close()
-
-	buffer := make([]byte, 4096)
-	_, err = io.CopyBuffer(outputFile, resp.Body, buffer)
-	if err != nil {
-		return fmt.Errorf("error streaming and writing file: %w", err)
-	}
-
-	return nil
 }

@@ -20,7 +20,7 @@ type Options struct {
 type Engine struct {
 	app         xtypes.App
 	globalJS    []byte
-	projects    map[string]*xproject.Defination
+	projects    map[string]*LoadedDef
 	pLock       sync.RWMutex
 	installPath string
 
@@ -31,8 +31,19 @@ type Engine struct {
 }
 
 func New(opts Options) *Engine {
+	defs := make(map[string]*LoadedDef)
+
+	for k, v := range opts.Defs {
+		ldef := &LoadedDef{
+			def:     v,
+			defType: defTypeNative,
+		}
+
+		defs[k] = ldef
+	}
+
 	e := &Engine{
-		projects:        opts.Defs,
+		projects:        defs,
 		globalJS:        []byte(``),
 		pLock:           sync.RWMutex{},
 		app:             opts.App,
@@ -84,15 +95,16 @@ func (e *Engine) ListProjectTypes() ([]models.ProjectTypes, error) {
 	pdefs := make([]models.ProjectTypes, 0)
 
 	for _, pdef := range e.projects {
+
 		pdefs = append(pdefs, models.ProjectTypes{
-			Name:               pdef.Name,
-			Ptype:              pdef.Slug,
-			Icon:               pdef.Icon,
-			Info:               pdef.Info,
-			IsExternal:         pdef.LinkPattern != "",
-			Slug:               pdef.Slug,
-			ProjectLinkPattern: pdef.LinkPattern,
-			BaseLink:           fmt.Sprintf("/z/pages/portal/projects/%s", pdef.Slug),
+			Name:               pdef.def.Name,
+			Ptype:              pdef.def.Slug,
+			Icon:               pdef.def.Icon,
+			Info:               pdef.def.Info,
+			IsExternal:         pdef.def.LinkPattern != "",
+			Slug:               pdef.def.Slug,
+			ProjectLinkPattern: pdef.def.LinkPattern,
+			BaseLink:           fmt.Sprintf("/z/pages/portal/projects/%s", pdef.def.Slug),
 		})
 
 	}
@@ -104,14 +116,14 @@ func (e *Engine) GetProjectType(ptype string) (*models.ProjectTypes, error) {
 
 	for _, pdef := range e.projects {
 
-		if pdef.Slug == ptype {
+		if pdef.def.Slug == ptype {
 			return &models.ProjectTypes{
-				Name:       pdef.Name,
-				Ptype:      pdef.Slug,
-				Slug:       pdef.Slug,
-				Info:       pdef.Info,
-				Icon:       pdef.Icon,
-				IsExternal: pdef.AssetData != nil,
+				Name:       pdef.def.Name,
+				Ptype:      pdef.def.Slug,
+				Slug:       pdef.def.Slug,
+				Info:       pdef.def.Info,
+				Icon:       pdef.def.Icon,
+				IsExternal: pdef.def.AssetData != nil,
 			}, nil
 		}
 
@@ -123,8 +135,8 @@ func (e *Engine) GetProjectType(ptype string) (*models.ProjectTypes, error) {
 func (e *Engine) GetProjectTypeForm(ptype string) ([]xproject.PTypeField, error) {
 
 	for _, pdef := range e.projects {
-		if pdef.Slug == ptype {
-			return pdef.NewFormSchemaFields, nil
+		if pdef.def.Slug == ptype {
+			return pdef.def.NewFormSchemaFields, nil
 		}
 	}
 
