@@ -71,10 +71,6 @@
   let api: RootAPI;
 
   const load = () => {
-    // @ts-ignore
-    // const ptypes: object[] = window["__turnix_ptypes__"] || [];
-    // sibarItems = ptypes;
-
     api = new RootAPI();
   };
 
