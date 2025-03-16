@@ -129,6 +129,13 @@ export class RootAPI {
 
     // projects
 
+    projectTypeInstall = (url: string) => {
+        return this.client.post(`/project_type_install`, {
+            url
+        })
+    }
+
+
     listProjectTypes = () => {
         return this.client.get(`/project_types`)
     }
