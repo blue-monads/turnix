@@ -11,7 +11,7 @@ import (
 	"github.com/k0kubun/pp"
 )
 
-func (e *Engine) MountSpaces(g *gin.RouterGroup) {
+func (e *Engine) MountProjectType(g *gin.RouterGroup) {
 
 	e.pLock.RLock()
 	defer e.pLock.RUnlock()
@@ -26,7 +26,7 @@ func (e *Engine) MountSpaces(g *gin.RouterGroup) {
 
 }
 
-func (e *Engine) ServeSpace(name string, ctx *gin.Context) {
+func (e *Engine) ServeProjectType(name string, ctx *gin.Context) {
 	e.pLock.RLock()
 	def := e.projects[name]
 	e.pLock.RUnlock()
@@ -34,7 +34,7 @@ func (e *Engine) ServeSpace(name string, ctx *gin.Context) {
 	def.def.OnProjectRequest(ctx)
 }
 
-func (e *Engine) ServeSpaceFile(name string, ctx *gin.Context) {
+func (e *Engine) ServeProjectTypeFile(name string, ctx *gin.Context) {
 
 	e.pLock.RLock()
 	def := e.projects[name]

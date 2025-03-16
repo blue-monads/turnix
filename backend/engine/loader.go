@@ -93,7 +93,7 @@ func (e *Engine) LoadPtypeWithZip(filePath string) error {
 		return fmt.Errorf("error opening zip file: %w", err)
 	}
 
-	basePath := "/z/projects/" + ptype
+	basePath := "/z/p/" + ptype
 
 	def := &xproject.Defination{
 		Name:          manifest.Name,

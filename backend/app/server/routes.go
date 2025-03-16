@@ -25,16 +25,20 @@ func (a *Server) bindRoutes(e *gin.Engine) {
 
 	projectRoute := e.Group("/z/project")
 
-	a.engine.MountSpaces(projectRoute)
-
-	e.NoRoute(a.noRoute)
+	a.engine.MountProjectType(projectRoute)
 
 	root.Any("/projects/:ptype", func(ctx *gin.Context) {
 		ptype := ctx.Param("ptype")
-		a.engine.ServeSpace(ptype, ctx)
+		a.engine.ServeProjectType(ptype, ctx)
+	})
+
+	root.Any("/p/:ptype/*file", func(ctx *gin.Context) {
+		ptype := ctx.Param("ptype")
+		a.engine.ServeProjectTypeFile(ptype, ctx)
 	})
 
 	e.GET("/ping", a.ping)
+	e.NoRoute(a.noRoute)
 
 }
 

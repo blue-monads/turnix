@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/k0kubun/pp"
 )
 
 func ServeZipContentsWithPrefix(zipfile *zip.ReadCloser, pathPrefixToRemove string) gin.HandlerFunc {
@@ -24,7 +25,11 @@ func ServeZipContentsWithPrefix(zipfile *zip.ReadCloser, pathPrefixToRemove stri
 	}
 
 	return func(c *gin.Context) {
+
 		requestPath := c.Request.URL.Path
+
+		pp.Println("@zipserve/requestPath", requestPath)
+
 		if pathPrefixToRemove != "" && strings.HasPrefix(requestPath, pathPrefixToRemove) {
 			requestPath = strings.TrimPrefix(requestPath, pathPrefixToRemove)
 		}
