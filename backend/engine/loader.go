@@ -2,8 +2,11 @@ package engine
 
 import (
 	"archive/zip"
+	"encoding/json"
 	"fmt"
 	"io/fs"
+	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -71,6 +74,63 @@ func (e *Engine) load() {
 
 	})
 
+}
+
+func (e *Engine) LoadPtypeWithFolder(filePath string) error {
+	// Read the manifest file
+	manifestFile := path.Join(filePath, manifestFileName)
+	fbytes, err := os.ReadFile(manifestFile)
+	if err != nil {
+		return err
+	}
+
+	// Parse manifest
+	manifest := &Manifest{}
+	if err := json.Unmarshal(fbytes, &manifest); err != nil {
+		return fmt.Errorf("error parsing manifest: %w", err)
+	}
+
+	// Get project type from manifest
+	ptype := manifest.Slug
+
+	// Create loaded definition
+	ldef := LoadedDef{
+		defType: defTypeLuaFolder,
+		file:    filePath,
+	}
+
+	// Create base path for project
+	basePath := "/z/p/" + ptype
+
+	root, err := os.OpenRoot(filePath)
+	if err != nil {
+		return err
+	}
+
+	// Create project definition
+	def := &xproject.Defination{
+		Name:          manifest.Name,
+		Slug:          manifest.Slug,
+		Info:          manifest.Info,
+		OnPageRequest: ServeFolderContentsWithPrefix(root, basePath),
+		OnProjectRequest: func(ctx *gin.Context) {
+
+		},
+		OnClose: func() error {
+			return root.Close()
+		},
+		LinkPattern: basePath,
+	}
+
+	// Assign definition to loaded definition
+	ldef.def = def
+
+	// Register the project in the engine
+	e.pLock.Lock()
+	e.projects[ptype] = &ldef
+	e.pLock.Unlock()
+
+	return nil
 }
 
 func (e *Engine) LoadPtypeWithZip(filePath string) error {

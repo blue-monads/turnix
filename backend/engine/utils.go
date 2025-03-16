@@ -17,6 +17,60 @@ import (
 	"github.com/k0kubun/pp"
 )
 
+func ServeFolderContentsWithPrefix(root *os.Root, pathPrefixToRemove string) gin.HandlerFunc {
+	// Create a root filesystem from the base folder to prevent path traversal
+
+	return func(c *gin.Context) {
+		requestPath := c.Request.URL.Path
+		if pathPrefixToRemove != "" && strings.HasPrefix(requestPath, pathPrefixToRemove) {
+			requestPath = strings.TrimPrefix(requestPath, pathPrefixToRemove)
+		}
+
+		requestPath = strings.TrimPrefix(requestPath, "/")
+
+		// Open the file using the root filesystem to prevent path traversal
+		file, err := root.Open(requestPath)
+		if err != nil {
+			if os.IsNotExist(err) {
+				c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open file"})
+				log.Printf("Error opening file: %v", err)
+			}
+			return
+		}
+		defer file.Close()
+
+		// Get file info to check if it's a directory
+		stat, err := file.Stat()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get file info"})
+			log.Printf("Error getting file info: %v", err)
+			return
+		}
+
+		// Don't serve directories
+		if stat.IsDir() {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Cannot serve directories"})
+			return
+		}
+
+		// Set content type based on file extension
+		contentType := mime.TypeByExtension(filepath.Ext(requestPath))
+		if contentType != "" {
+			c.Writer.Header().Set("Content-Type", contentType)
+		}
+
+		// Set content length
+		c.Writer.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size()))
+
+		// Copy the file contents to the response
+		_, err = io.Copy(c.Writer, file)
+		if err != nil {
+			log.Printf("Error serving file: %v", err)
+		}
+	}
+}
 func ServeZipContentsWithPrefix(zipfile *zip.ReadCloser, pathPrefixToRemove string) gin.HandlerFunc {
 
 	fileMap := make(map[string]*zip.File)
@@ -31,7 +85,7 @@ func ServeZipContentsWithPrefix(zipfile *zip.ReadCloser, pathPrefixToRemove stri
 
 		pp.Println("@zipserve/requestPath", requestPath)
 
-		if strings.HasPrefix(requestPath, pathPrefixToRemove) {
+		if requestPath != "" && strings.HasPrefix(requestPath, pathPrefixToRemove) {
 			requestPath = strings.TrimPrefix(requestPath, pathPrefixToRemove)
 		}
 
