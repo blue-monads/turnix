@@ -119,6 +119,7 @@ func (e *Engine) LoadPtypeWithFolder(filePath string) error {
 		Info:          manifest.Info,
 		OnPageRequest: ServeFolderContentsWithPrefix(root, basePath),
 		OnProjectRequest: func(ctx *gin.Context) {
+			pp.Println("@onProjectRequest", ctx.Request.URL.Path)
 
 		},
 		OnClose: func() error {
@@ -166,7 +167,7 @@ func (e *Engine) LoadPtypeWithZip(filePath string) error {
 		Info:          manifest.Info,
 		OnPageRequest: ServeZipContentsWithPrefix(r, basePath),
 		OnProjectRequest: func(ctx *gin.Context) {
-			// fixme => impl
+			pp.Println("@onProjectRequest", ctx.Request.URL.Path)
 		},
 		OnClose: func() error {
 			return r.Close()
