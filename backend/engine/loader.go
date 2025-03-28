@@ -4,10 +4,8 @@ import (
 	"archive/zip"
 	"encoding/json"
 	"fmt"
-	"io/fs"
 	"os"
 	"path"
-	"path/filepath"
 	"strings"
 
 	"github.com/blue-monads/turnix/backend/xtypes/xproject"
@@ -49,35 +47,21 @@ type Route struct {
 
 func (e *Engine) load() {
 
-	filepath.WalkDir(e.installPath, func(path string, d fs.DirEntry, err error) error {
-		pp.Println("@curr_path", path)
+	files, err := os.ReadDir(e.installPath)
+	if err != nil {
+		panic(err)
+	}
 
-		if d.IsDir() {
-			err = e.LoadPtypeWithFolder(path)
-			if err != nil {
-				pp.Println("@skipping_folder", path, err)
-				return nil
-			}
-
-			return nil
+	for _, file := range files {
+		if file.IsDir() {
+			e.LoadPtypeWithFolder(path.Join(e.installPath, file.Name()))
 		}
 
-		if strings.Contains(path, "__downloading_") {
-			pp.Println("@skipping_downloading", path)
-			return nil
+		if strings.HasSuffix(file.Name(), ".zip") {
+			e.LoadPtypeWithZip(path.Join(e.installPath, file.Name()))
 		}
 
-		if strings.HasSuffix(path, ".zip") {
-			err = e.LoadPtypeWithZip(path)
-			if err != nil {
-				pp.Println("@skipping_zip", path, err)
-				return nil
-			}
-		}
-
-		return nil
-
-	})
+	}
 
 }
 

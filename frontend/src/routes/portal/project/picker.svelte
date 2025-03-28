@@ -54,7 +54,7 @@
           <div class="flex flex-row gap-4">
             <a
               href={data.is_external
-                ? `/z/x/${data["ptype"]}`
+                ? `/z/p/${data["ptype"]}`
                 : `/z/pages/portal/projects/${data["ptype"]}`}
               class="underline text-blue-500 text-sm self-center"
               onclick={() => {
@@ -92,7 +92,16 @@
       {/each}
     </div>
 
-    <div class="flex justify-end px-10 py-2">
+    <div class="flex justify-end items-center px-10 py-2 gap-2">
+      <a
+        href="/z/pages/portal/project/installed"
+        class="text-sm text-gray-800"
+        onclick={() => {
+          modalStore.close();
+        }}
+      >
+        Installed
+      </a>
       <a
         href="/z/pages/portal/store"
         class="btn btn-sm variant-filled"

@@ -64,6 +64,8 @@ func ServeFolderContentsWithPrefix(root *os.Root, pathPrefixToRemove string) gin
 		// Set content length
 		c.Writer.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size()))
 
+		pp.Println("@serveFolderContentsWithPrefix/final_boss", requestPath)
+
 		// Copy the file contents to the response
 		_, err = io.Copy(c.Writer, file)
 		if err != nil {
