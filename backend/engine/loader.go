@@ -26,14 +26,15 @@ type LoadedDef struct {
 }
 
 type Manifest struct {
-	Name     string         `json:"name"`
-	Slug     string         `json:"slug"`
-	Info     string         `json:"info"`
-	Type     string         `json:"type"`
-	Format   string         `json:"format"`
-	Tags     []string       `json:"tags"`
-	Routes   []Route        `json:"routes"`
-	Services map[string]any `json:"services"`
+	Name        string         `json:"name"`
+	Slug        string         `json:"slug"`
+	Info        string         `json:"info"`
+	Type        string         `json:"type"`
+	Format      string         `json:"format"`
+	Tags        []string       `json:"tags"`
+	Routes      []Route        `json:"routes"`
+	Services    map[string]any `json:"services"`
+	ServeFolder string         `json:"serve_folder"`
 }
 
 type Route struct {
@@ -96,12 +97,14 @@ func (e *Engine) LoadPtypeWithFolder(filePath string) error {
 		return err
 	}
 
+	serveFolder := manifest.ServeFolder
+
 	// Create project definition
 	def := &xproject.Defination{
 		Name:          manifest.Name,
 		Slug:          manifest.Slug,
 		Info:          manifest.Info,
-		OnPageRequest: ServeFolderContentsWithPrefix(root, basePath),
+		OnPageRequest: ServeFolderContentsWithPrefix(root, basePath, serveFolder),
 		OnProjectRequest: func(ctx *gin.Context) {
 			pp.Println("@onProjectRequest", ctx.Request.URL.Path)
 
@@ -143,13 +146,15 @@ func (e *Engine) LoadPtypeWithZip(filePath string) error {
 		return fmt.Errorf("error opening zip file: %w", err)
 	}
 
+	serveFolder := manifest.ServeFolder
+
 	basePath := "/z/p/" + ptype
 
 	def := &xproject.Defination{
 		Name:          manifest.Name,
 		Slug:          manifest.Slug,
 		Info:          manifest.Info,
-		OnPageRequest: ServeZipContentsWithPrefix(r, basePath),
+		OnPageRequest: ServeZipContentsWithPrefix(r, basePath, serveFolder),
 		OnProjectRequest: func(ctx *gin.Context) {
 			pp.Println("@onProjectRequest", ctx.Request.URL.Path)
 		},

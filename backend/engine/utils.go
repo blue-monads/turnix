@@ -10,6 +10,7 @@ import (
 	"mime"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -17,7 +18,7 @@ import (
 	"github.com/k0kubun/pp"
 )
 
-func ServeFolderContentsWithPrefix(root *os.Root, pathPrefixToRemove string) gin.HandlerFunc {
+func ServeFolderContentsWithPrefix(root *os.Root, pathPrefixToRemove, servePath string) gin.HandlerFunc {
 	// Create a root filesystem from the base folder to prevent path traversal
 
 	return func(c *gin.Context) {
@@ -27,6 +28,7 @@ func ServeFolderContentsWithPrefix(root *os.Root, pathPrefixToRemove string) gin
 		}
 
 		requestPath = strings.TrimPrefix(requestPath, "/")
+		requestPath = path.Join(servePath, requestPath)
 
 		// Open the file using the root filesystem to prevent path traversal
 		file, err := root.Open(requestPath)
@@ -73,7 +75,7 @@ func ServeFolderContentsWithPrefix(root *os.Root, pathPrefixToRemove string) gin
 		}
 	}
 }
-func ServeZipContentsWithPrefix(zipfile *zip.ReadCloser, pathPrefixToRemove string) gin.HandlerFunc {
+func ServeZipContentsWithPrefix(zipfile *zip.ReadCloser, pathPrefixToRemove, servePath string) gin.HandlerFunc {
 
 	fileMap := make(map[string]*zip.File)
 	for _, f := range zipfile.File {
@@ -96,6 +98,8 @@ func ServeZipContentsWithPrefix(zipfile *zip.ReadCloser, pathPrefixToRemove stri
 		if requestPath == "" {
 			requestPath = "index.html"
 		}
+
+		requestPath = path.Join(servePath, requestPath)
 
 		file, exists := fileMap[requestPath]
 		if !exists {
