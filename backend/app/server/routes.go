@@ -111,6 +111,7 @@ func (a *Server) apiRoutes(root *gin.RouterGroup) {
 
 	apiv1.GET("/project_types", a.accessMiddleware(a.ListProjectTypes))
 	apiv1.GET("/project_types/:ptype/form", a.accessMiddleware(a.GetProjectTypeForm))
+	apiv1.GET("/project_types/:ptype/reload", a.accessMiddleware(a.GetProjectTypeReload))
 	apiv1.GET("/project_types/:ptype", a.accessMiddleware(a.GetProjectType))
 
 	// project hook

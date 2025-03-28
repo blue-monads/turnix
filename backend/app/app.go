@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -29,12 +28,13 @@ type App struct {
 }
 
 type Options struct {
-	DB              *database.DB
-	Signer          *signer.Signer
-	ProjectBuilders map[string]xproject.Builder
-	LocalSocket     string
-	DevMode         bool
-	BasePath        string
+	DB                 *database.DB
+	Signer             *signer.Signer
+	ProjectBuilders    map[string]xproject.Builder
+	LocalSocket        string
+	DevMode            bool
+	BasePath           string
+	ProjectInstallPath string
 }
 
 func New(opts Options) *App {
@@ -68,7 +68,7 @@ func New(opts Options) *App {
 	e := engine.New(engine.Options{
 		App:                app,
 		Defs:               app.projects,
-		ProjectInstallPath: fmt.Sprint(opts.BasePath, "/installs"),
+		ProjectInstallPath: opts.ProjectInstallPath,
 	})
 
 	app.controller = controller.New(app.db, e)

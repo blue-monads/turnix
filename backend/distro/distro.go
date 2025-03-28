@@ -1,6 +1,10 @@
 package distro
 
 import (
+	"os"
+	"path"
+	"strings"
+
 	"github.com/blue-monads/turnix/backend/app"
 	"github.com/blue-monads/turnix/backend/registry"
 	"github.com/blue-monads/turnix/backend/services/database"
@@ -9,10 +13,12 @@ import (
 )
 
 type Options struct {
-	MasterSecret string
-	HttpPort     string
-	LocalSocket  string
-	DatabaseFile string
+	BasePath           string
+	MasterSecret       string
+	HttpPort           string
+	LocalSocket        string
+	DatabaseFile       string
+	ProjectInstallPath string
 }
 
 type DistroApp struct {
@@ -40,13 +46,33 @@ func NewAppWithOptions(opts Options) (*DistroApp, error) {
 
 	signer := signer.New([]byte(opts.MasterSecret))
 
+	basePath := opts.BasePath
+	if basePath == "" {
+		wd, err := os.Getwd()
+		if err != nil {
+			return nil, err
+		}
+
+		basePath = path.Join(wd, ".turnix")
+	}
+
+	pappPath := opts.ProjectInstallPath
+	if pappPath == "" {
+		pappPath = path.Join(basePath, "papps")
+	}
+
+	if strings.HasPrefix(pappPath, "./") {
+		pappPath = path.Join(basePath, pappPath)
+	}
+
 	as := app.New(app.Options{
-		DB:              db,
-		Signer:          signer,
-		ProjectBuilders: registry.GetAll(),
-		LocalSocket:     opts.LocalSocket,
-		DevMode:         true,
-		BasePath:        "./tmp",
+		DB:                 db,
+		Signer:             signer,
+		ProjectBuilders:    registry.GetAll(),
+		LocalSocket:        opts.LocalSocket,
+		DevMode:            true,
+		BasePath:           basePath,
+		ProjectInstallPath: pappPath,
 	})
 
 	return &DistroApp{

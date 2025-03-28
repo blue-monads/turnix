@@ -145,6 +145,11 @@ export class RootAPI {
         return this.client.get(`/project_types/${ptype}/form`)
     }
 
+
+    getProjectTypeReload = (ptype: string) => {
+        return this.client.get(`/project_types/${ptype}/reload`)
+    }
+
     getProjectType = (ptype: string) => {
         return this.client.get<ProjectDef>(`/project_types/${ptype}`)
     }

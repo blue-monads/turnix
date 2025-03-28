@@ -25,6 +25,16 @@ func (a *Server) GetProjectTypeForm(claim *signer.AccessClaim, ctx *gin.Context)
 	return a.cProject.GetProjectTypeForm(ctx.Param("ptype"))
 }
 
+func (a *Server) GetProjectTypeReload(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	err := a.cProject.GetProjectTypeReload(ctx.Param("ptype"))
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
 func (a *Server) listProjects(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	return a.cProject.ListProjects(claim.UserId, ctx.Query("ptype"))

@@ -132,6 +132,11 @@ func (e *Engine) GetProjectType(ptype string) (*models.ProjectTypes, error) {
 	return nil, errors.New("not found")
 }
 
+func (e *Engine) GetProjectTypeReload(ptype string) error {
+	e.InformPtypeUpdated(ptype)
+	return nil
+}
+
 func (e *Engine) GetProjectTypeForm(ptype string) ([]xproject.PTypeField, error) {
 
 	for _, pdef := range e.projects {

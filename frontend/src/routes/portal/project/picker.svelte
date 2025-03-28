@@ -73,6 +73,20 @@
             >
               new
             </a>
+
+            <button class="hover:bg-gray-100 p-1"
+            onclick={async () => {
+              let api: RootAPI = $modalStore[0].meta["api"];
+              await api.getProjectTypeReload(data["ptype"]);
+              load();
+            }}
+            
+            >
+
+                <SvgIcon className="w-4 h-4" name="arrow-path" />
+            </button>
+
+
           </div>
         </div>
       {/each}

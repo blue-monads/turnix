@@ -41,6 +41,10 @@ func (a *ProjectController) GetProjectTypeForm(ptype string) ([]xproject.PTypeFi
 	return a.engine.GetProjectTypeForm(ptype)
 }
 
+func (a *ProjectController) GetProjectTypeReload(ptype string) error {
+	return a.engine.GetProjectTypeReload(ptype)
+}
+
 func (a *ProjectController) ListProjects(userId int64, ptype string) ([]models.Project, error) {
 	ownpjs, err := a.db.ListOwnProjects(userId, ptype)
 	if err != nil {
