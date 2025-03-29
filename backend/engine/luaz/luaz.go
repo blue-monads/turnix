@@ -90,7 +90,7 @@ func (l *Luaz) Handle(ctx *gin.Context, relativePath string) {
 			continue
 		}
 
-		if route.Method != ctx.Request.Method {
+		if route.Method != "ANY" && route.Method != ctx.Request.Method {
 			continue
 		}
 
