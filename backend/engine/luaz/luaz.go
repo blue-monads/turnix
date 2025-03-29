@@ -86,16 +86,16 @@ func (l *Luaz) Handle(ctx *gin.Context, relativePath string) {
 			continue
 		}
 
-		if route.Type != "http" {
-			continue
-		}
-
 		if route.Method != "ANY" && route.Method != ctx.Request.Method {
 			continue
 		}
 
 		isEqual, params := compareRoutes(route.Path, relativePath)
 		if !isEqual {
+			continue
+		}
+
+		if route.Type != "http" {
 			continue
 		}
 
