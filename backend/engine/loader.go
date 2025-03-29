@@ -114,7 +114,7 @@ func (e *Engine) LoadPtypeWithFolder(filePath string) error {
 
 	linkPattern := manifest.LinkPattern
 	if linkPattern == "" {
-		linkPattern = basePath
+		linkPattern = fmt.Sprintf("%s?pid={PID}", basePath)
 	}
 
 	pp.Println("LoadPtypeWithFolder/4")
@@ -206,7 +206,7 @@ func (e *Engine) LoadPtypeWithZip(filePath string) error {
 	basePath := "/z/p/" + ptype
 	linkPattern := manifest.LinkPattern
 	if linkPattern == "" {
-		linkPattern = basePath
+		linkPattern = fmt.Sprintf("%s?pid={PID}", basePath)
 	}
 
 	serverFile := manifest.ServerFile
