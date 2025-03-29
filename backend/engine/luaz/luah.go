@@ -29,8 +29,8 @@ func (l *LuaH) Close() error {
 	return nil
 }
 
-func (l *LuaH) Handle(ctx *gin.Context) {
-	handler := l.L.GetGlobal("handler")
+func (l *LuaH) Handle(ctx *gin.Context, handlerName string, params map[string]string) {
+	handler := l.L.GetGlobal(handlerName)
 	ctxt := l.L.NewTable()
 
 	l.L.SetFuncs(ctxt, map[string]lua.LGFunction{
@@ -39,6 +39,14 @@ func (l *LuaH) Handle(ctx *gin.Context) {
 		},
 		"type": func(l *lua.LState) int {
 			l.Push(lua.LString("http"))
+			return 1
+		},
+		"params": func(l *lua.LState) int {
+			pt := l.NewTable()
+			for k, v := range params {
+				pt.RawSetString(k, lua.LString(v))
+			}
+			l.Push(pt)
 			return 1
 		},
 	})

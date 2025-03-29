@@ -103,10 +103,10 @@ type Manifest struct {
 }
 
 type Route struct {
-	Name     string            `json:"name"`
-	Type     string            `json:"type"` // authed_http, http, ws
-	Method   string            `json:"method"`
-	Path     string            `json:"path"`
-	Handlers map[string]string `json:"handlers"`
-	Options  map[string]any    `json:"options"`
+	Name    string         `json:"name"`
+	Type    string         `json:"type"` // authed_http, http, ws
+	Method  string         `json:"method"`
+	Path    string         `json:"path"`
+	Handler string         `json:"handler"`
+	Options map[string]any `json:"options"`
 }

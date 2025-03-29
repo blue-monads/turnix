@@ -139,7 +139,8 @@ func (e *Engine) LoadPtypeWithFolder(filePath string) error {
 		OnPageRequest: ServeFolderContentsWithPrefix(root, basePath, serveFolder),
 		OnProjectRequest: func(ctx *gin.Context) {
 			pp.Println("@onProjectRequest", ctx.Request.URL.Path)
-			lexecutor.Handle(ctx)
+			relativePath := strings.TrimPrefix(ctx.Request.URL.Path, basePath)
+			lexecutor.Handle(ctx, relativePath)
 		},
 		OnClose: func() error {
 
@@ -221,7 +222,8 @@ func (e *Engine) LoadPtypeWithZip(filePath string) error {
 		OnPageRequest: ServeZipContentsWithPrefix(r, basePath, serveFolder),
 		OnProjectRequest: func(ctx *gin.Context) {
 			pp.Println("@onProjectRequest", ctx.Request.URL.Path)
-			lexecutor.Handle(ctx)
+			relativePath := strings.TrimPrefix(ctx.Request.URL.Path, basePath)
+			lexecutor.Handle(ctx, relativePath)
 		},
 		OnClose: func() error {
 			return r.Close()
