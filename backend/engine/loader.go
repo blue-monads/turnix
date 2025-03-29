@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/blue-monads/turnix/backend/engine/luaz"
+	"github.com/blue-monads/turnix/backend/xtypes/models"
 	"github.com/blue-monads/turnix/backend/xtypes/xproject"
 	"github.com/gin-gonic/gin"
 	"github.com/k0kubun/pp"
@@ -25,29 +26,6 @@ type LoadedDef struct {
 	def     *xproject.Defination
 	defType uint8
 	file    string
-}
-
-type Manifest struct {
-	Name        string         `json:"name"`
-	Slug        string         `json:"slug"`
-	Info        string         `json:"info"`
-	Type        string         `json:"type"`
-	Format      string         `json:"format"`
-	Tags        []string       `json:"tags"`
-	Routes      []Route        `json:"routes"`
-	LinkPattern string         `json:"link_pattern"`
-	ServerFile  string         `json:"server_file"`
-	Services    map[string]any `json:"services"`
-	ServeFolder string         `json:"serve_folder"`
-}
-
-type Route struct {
-	Name     string            `json:"name"`
-	Type     string            `json:"type"` // authed_http, http, ws
-	Method   string            `json:"method"`
-	Path     string            `json:"path"`
-	Handlers map[string]string `json:"handlers"`
-	Options  map[string]any    `json:"options"`
 }
 
 func (e *Engine) load() {
@@ -87,7 +65,7 @@ func (e *Engine) LoadPtypeWithFolder(filePath string) error {
 	pp.Println("LoadPtypeWithFolder/2")
 
 	// Parse manifest
-	manifest := &Manifest{}
+	manifest := &models.Manifest{}
 	if err := json.Unmarshal(fbytes, &manifest); err != nil {
 		return fmt.Errorf("error parsing manifest: %w", err)
 	}
@@ -183,7 +161,7 @@ func (e *Engine) LoadPtypeWithFolder(filePath string) error {
 
 func (e *Engine) LoadPtypeWithZip(filePath string) error {
 
-	manifest := &Manifest{}
+	manifest := &models.Manifest{}
 	err := ReadManifestFromZip(filePath, manifest)
 	if err != nil {
 		fmt.Println(err)
