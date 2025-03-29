@@ -114,7 +114,7 @@ func (e *Engine) LoadPtypeWithFolder(filePath string) error {
 
 	linkPattern := manifest.LinkPattern
 	if linkPattern == "" {
-		linkPattern = path.Join(basePath, serveFolder)
+		linkPattern = basePath
 	}
 
 	pp.Println("LoadPtypeWithFolder/4")
