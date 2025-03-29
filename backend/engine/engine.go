@@ -66,14 +66,66 @@ func (e *Engine) Start() error {
 
 func (e *Engine) eventLoop() {
 
+	loadApp := func(ptype string) {
+		e.pLock.RLock()
+		ldef := e.projects[ptype]
+		e.pLock.RUnlock()
+
+		if ldef == nil {
+			return
+		}
+
+		if ldef.defType == defTypeNative {
+			// cannot reload native type
+			return
+		}
+
+		if ldef.def.OnClose != nil {
+			ldef.def.OnClose()
+		}
+
+		if ldef.defType == defTypeLuaZip {
+			e.LoadPtypeWithZip(ldef.file)
+		}
+
+		if ldef.defType == defTypeLuaFolder {
+			e.LoadPtypeWithFolder(ldef.file)
+		}
+
+	}
+
+	unloadApp := func(ptype string) {
+		e.pLock.Lock()
+		ldef := e.projects[ptype]
+		delete(e.projects, ptype)
+		e.pLock.Unlock()
+
+		if ldef == nil {
+			return
+		}
+
+		if ldef.defType == defTypeNative {
+			// cannot unload native type
+			return
+		}
+
+		if ldef.def.OnClose != nil {
+			ldef.def.OnClose()
+		}
+
+	}
+
 	for {
 		select {
 		case ptype := <-e.addPtypeChan:
 			pp.Println("@addPtypeChan", ptype)
+			loadApp(ptype)
 		case ptype := <-e.updatePtypeChan:
 			pp.Println("@updatePtypeChan", ptype)
+			loadApp(ptype)
 		case ptype := <-e.removePtypeChan:
 			pp.Println("@removePtypeChan", ptype)
+			unloadApp(ptype)
 		}
 	}
 
