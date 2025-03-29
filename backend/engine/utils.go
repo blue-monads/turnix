@@ -27,8 +27,16 @@ func ServeFolderContentsWithPrefix(root *os.Root, pathPrefixToRemove, servePath 
 			requestPath = strings.TrimPrefix(requestPath, pathPrefixToRemove)
 		}
 
+		if requestPath == "" {
+			requestPath = "index.html"
+		}
+
+		pp.Println("@serveFolderContentsWithPrefix/requestPath1", requestPath)
+
 		requestPath = strings.TrimPrefix(requestPath, "/")
 		requestPath = path.Join(servePath, requestPath)
+
+		pp.Println("@serveFolderContentsWithPrefix/requestPath2", requestPath)
 
 		// Open the file using the root filesystem to prevent path traversal
 		file, err := root.Open(requestPath)

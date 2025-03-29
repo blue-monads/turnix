@@ -9,21 +9,22 @@ import (
 	"github.com/blue-monads/turnix/backend/xtypes/models"
 	"github.com/blue-monads/turnix/backend/xtypes/xproject"
 	"github.com/k0kubun/pp"
+	"github.com/rs/zerolog"
 )
 
 type Options struct {
 	App                xtypes.App
 	Defs               map[string]*xproject.Defination
+	BasePath           string
 	ProjectInstallPath string
+	Logger             zerolog.Logger
 }
 
 type Engine struct {
-	app         xtypes.App
-	globalJS    []byte
-	projects    map[string]*LoadedDef
-	pLock       sync.RWMutex
-	installPath string
-
+	opts     Options
+	globalJS []byte
+	projects map[string]*LoadedDef
+	pLock    sync.RWMutex
 	// control
 	addPtypeChan    chan string
 	removePtypeChan chan string
@@ -46,11 +47,10 @@ func New(opts Options) *Engine {
 		projects:        defs,
 		globalJS:        []byte(``),
 		pLock:           sync.RWMutex{},
-		app:             opts.App,
 		addPtypeChan:    make(chan string),
 		removePtypeChan: make(chan string),
 		updatePtypeChan: make(chan string),
-		installPath:     opts.ProjectInstallPath,
+		opts:            opts,
 	}
 
 	go e.eventLoop()
@@ -150,5 +150,5 @@ func (e *Engine) GetProjectTypeForm(ptype string) ([]xproject.PTypeField, error)
 }
 
 func (e *Engine) InstallPath() string {
-	return e.installPath
+	return e.opts.ProjectInstallPath
 }
