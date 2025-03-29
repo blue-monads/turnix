@@ -35,7 +35,9 @@ func (l *LuaH) Handle(ctx *gin.Context, handlerName string, params map[string]st
 
 	l.L.SetFuncs(ctxt, map[string]lua.LGFunction{
 		"request": func(l *lua.LState) int {
-			return 0
+			table := binds.HttpModule(l, ctx)
+			l.Push(table)
+			return 1
 		},
 		"type": func(l *lua.LState) int {
 			l.Push(lua.LString("http"))

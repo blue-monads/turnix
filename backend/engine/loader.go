@@ -127,6 +127,7 @@ func (e *Engine) LoadPtypeWithFolder(filePath string) error {
 		},
 		Code:          string(svrFileBytes),
 		WorkingFolder: path.Join(e.opts.BasePath, "wd"),
+		Manifest:      manifest,
 	})
 
 	pp.Println("LoadPtypeWithFolder/7")
@@ -213,6 +214,7 @@ func (e *Engine) LoadPtypeWithZip(filePath string) error {
 		},
 		Code:          string(svrFileBytes),
 		WorkingFolder: path.Join(e.opts.BasePath, "wd"),
+		Manifest:      manifest,
 	})
 
 	def := &xproject.Defination{
