@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/k0kubun/pp"
 	lua "github.com/yuin/gopher-lua"
 )
 
@@ -13,17 +14,22 @@ type BluaDb struct {
 	db *sql.DB
 }
 
-func (b *BluaDb) Bind(l *lua.LState) error {
-	tb := l.NewTable()
+func (b *BluaDb) Bind(l *lua.LState) int {
 
+	tb := l.NewTable()
 	query := func(l *lua.LState) int {
-		query := l.CheckString(1)
-		rows, err := b.db.Query(query)
+
+		queryString := l.CheckString(1)
+
+		pp.Println("@queryString", queryString)
+
+		rows, err := b.db.Query(queryString)
 		if err != nil {
 			l.Push(lua.LNil)
 			l.Push(lua.LString(err.Error()))
 			return 2
 		}
+
 		defer rows.Close()
 
 		columns, err := rows.Columns()
@@ -51,9 +57,12 @@ func (b *BluaDb) Bind(l *lua.LState) error {
 				return 2
 			}
 
+			pp.Println(columns, values)
+
 			// Create a table for this row
 			entry := l.NewTable()
 			for i, col := range columns {
+				pp.Println(col, values[i])
 				entry.RawSetString(col, ToArbitraryValue(l, values[i]))
 			}
 			result.Append(entry)
@@ -66,14 +75,18 @@ func (b *BluaDb) Bind(l *lua.LState) error {
 		}
 
 		l.Push(result)
-		return 1
+		l.Push(lua.LNil)
+		return 2
 	}
 
 	l.SetFuncs(tb, map[string]lua.LGFunction{
 		"query": query,
 	})
 
-	return nil
+	l.Push(tb)
+
+	return 1
+
 }
 
 // ToArbitraryValue converts Go values to Lua values
