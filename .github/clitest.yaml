@@ -1,0 +1,23 @@
+name: CI Test - Go Test
+
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  citest:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5 
+      with:
+        go-version: '1.24'
+
+    - name: Run CI Test (citest)
+      run: |
+        echo "Running citest"
+        go test -timeout 30s -v  ./cmd/citest/*.go

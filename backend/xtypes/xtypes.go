@@ -3,8 +3,6 @@ package xtypes
 import (
 	"github.com/blue-monads/turnix/backend/xtypes/services/xsockd"
 
-	"github.com/blue-monads/turnix/backend/xtypes/xengine"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,5 +22,5 @@ type App interface {
 	GetServer() any
 	GetSigner() any
 
-	GetEngine() xengine.XEngine
+	GetEngine() any
 }

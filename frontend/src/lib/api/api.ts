@@ -129,6 +129,13 @@ export class RootAPI {
 
     // projects
 
+    projectTypeInstall = (url: string) => {
+        return this.client.post(`/project_type_install`, {
+            url
+        })
+    }
+
+
     listProjectTypes = () => {
         return this.client.get(`/project_types`)
     }
@@ -136,6 +143,11 @@ export class RootAPI {
 
     getProjectTypeForm = (ptype: string) => {
         return this.client.get(`/project_types/${ptype}/form`)
+    }
+
+
+    getProjectTypeReload = (ptype: string) => {
+        return this.client.get(`/project_types/${ptype}/reload`)
     }
 
     getProjectType = (ptype: string) => {

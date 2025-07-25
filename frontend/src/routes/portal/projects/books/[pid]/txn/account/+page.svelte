@@ -1,6 +1,6 @@
 <script lang="ts">
   import SvgIcon from "$lib/compo/icons/SvgIcon.svelte";
-  import Transactions from "$lib/container/books/Transactions.svelte";
+  //  import Transactions from "$lib/container/books/Transactions.svelte";
   import { AppBar, getModalStore } from "@skeletonlabs/skeleton";
 
   import { params } from "$lib/params";
@@ -8,9 +8,10 @@
   import { getContext } from "svelte";
   import type { RootAPI } from "$lib/api";
   import { Loader } from "$lib/compo";
-  import type { TxnLine } from "$lib/container/books/txntype";
   import { formatResponse } from "../format";
   import { page } from "$app/stores";
+  import type { TxnLine } from "../sub/txntype";
+  import Transactions from "../sub/Transactions.svelte";
 
   const pid = $page.params["pid"];
   const aid = $params["aid"];
@@ -87,6 +88,6 @@
   <Loader />
 {:else}
   {#key data}
-    <Transactions {accountsIndex} lineData={data} pid={pid} />
+    <Transactions {accountsIndex} lineData={data} {pid} />
   {/key}
 {/if}

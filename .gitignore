@@ -3,3 +3,4 @@ backend/foo.db
 data.db
 tmp/
 cmd/play/play.db
+backend/engine/luaz/binds/test.db

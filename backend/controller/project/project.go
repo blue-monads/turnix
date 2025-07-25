@@ -2,8 +2,12 @@ package project
 
 import (
 	"fmt"
+	"os"
+	"path"
 
+	"github.com/blue-monads/turnix/backend/engine"
 	"github.com/blue-monads/turnix/backend/services/database"
+	xutils "github.com/blue-monads/turnix/backend/utils"
 	"github.com/blue-monads/turnix/backend/xtypes/models"
 	"github.com/blue-monads/turnix/backend/xtypes/xproject"
 )
@@ -11,69 +15,34 @@ import (
 // this layer (controller) should not have claim and gin context
 
 type ProjectController struct {
-	db       *database.DB
-	projects map[string]*xproject.Defination
+	db          *database.DB
+	engine      *engine.Engine
+	installPath string
 }
 
-func NewProjectController(db *database.DB, projects map[string]*xproject.Defination) *ProjectController {
+func NewProjectController(db *database.DB, engine *engine.Engine) *ProjectController {
 
 	return &ProjectController{
-		db:       db,
-		projects: projects,
+		db:          db,
+		engine:      engine,
+		installPath: engine.InstallPath(),
 	}
 }
 
 func (a *ProjectController) ListProjectTypes() ([]models.ProjectTypes, error) {
-	pdefs := make([]models.ProjectTypes, 0)
-
-	for _, pdef := range a.projects {
-		pdefs = append(pdefs, models.ProjectTypes{
-			Name:               pdef.Name,
-			Ptype:              pdef.Slug,
-			Icon:               pdef.Icon,
-			Info:               pdef.Info,
-			IsExternal:         pdef.LinkPattern != "",
-			Slug:               pdef.Slug,
-			ProjectLinkPattern: pdef.LinkPattern,
-			BaseLink:           fmt.Sprintf("/z/pages/portal/projects/%s", pdef.Slug),
-		})
-
-	}
-
-	return pdefs, nil
+	return a.engine.ListProjectTypes()
 }
 
 func (a *ProjectController) GetProjectType(ptype string) (*models.ProjectTypes, error) {
-
-	for _, pdef := range a.projects {
-
-		if pdef.Slug == ptype {
-			return &models.ProjectTypes{
-				Name:       pdef.Name,
-				Ptype:      pdef.Slug,
-				Slug:       pdef.Slug,
-				Info:       pdef.Info,
-				Icon:       pdef.Icon,
-				IsExternal: pdef.AssetData != nil,
-			}, nil
-		}
-
-	}
-
-	return nil, nil
+	return a.engine.GetProjectType(ptype)
 }
 
 func (a *ProjectController) GetProjectTypeForm(ptype string) ([]xproject.PTypeField, error) {
+	return a.engine.GetProjectTypeForm(ptype)
+}
 
-	for _, pdef := range a.projects {
-
-		if pdef.Slug == ptype {
-			return pdef.NewFormSchemaFields, nil
-		}
-
-	}
-
-	return nil, nil
+func (a *ProjectController) GetProjectTypeReload(ptype string) error {
+	return a.engine.GetProjectTypeReload(ptype)
 }
 
 func (a *ProjectController) ListProjects(userId int64, ptype string) ([]models.Project, error) {
@@ -100,13 +69,9 @@ func (a *ProjectController) AddProject(userId int64, data *models.Project) (int6
 		return 0, err
 	}
 
-	ptype := a.projects[data.Ptype]
-
-	if ptype.OnInit != nil {
-		err = ptype.OnInit(id)
-		if err != nil {
-			return 0, err
-		}
+	err = a.engine.OnInit(data.Ptype, id)
+	if err != nil {
+		return 0, err
 	}
 
 	return id, nil
@@ -153,4 +118,48 @@ func (a *ProjectController) UpdateProjectHook(userId int64, pid int64, id int64,
 
 func (a *ProjectController) GetProjectHook(userId int64, pid int64, id int64) (*models.ProjectHook, error) {
 	return a.db.GetProjectHook(userId, pid, id)
+}
+
+// project_type install
+
+type ManifestMini struct {
+	Slug string `json:"slug"`
+}
+
+func (a *ProjectController) InstallProjectType(userId int64, url string) error {
+
+	os.MkdirAll(a.installPath, 0766)
+
+	randstr, err := xutils.GenerateRandomString(10)
+	if err != nil {
+		return err
+	}
+
+	tempFileName := fmt.Sprint(a.installPath, "/__downloading_", randstr)
+
+	err = engine.DownloadFile(url, tempFileName)
+	if err != nil {
+		os.Remove(tempFileName)
+		return err
+	}
+
+	mf := ManifestMini{}
+
+	err = engine.ReadManifestFromZip(tempFileName, &mf)
+	if err != nil {
+		os.Remove(tempFileName)
+		return err
+	}
+
+	finalFileName := fmt.Sprintf("%s.zip", path.Join(a.installPath, mf.Slug))
+	err = os.Rename(tempFileName, finalFileName)
+	if err != nil {
+		os.Remove(tempFileName)
+		os.Remove(finalFileName)
+		return err
+	}
+
+	a.engine.InformPtypeAdded(mf.Slug)
+
+	return nil
 }

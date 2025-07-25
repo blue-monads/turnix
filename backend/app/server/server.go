@@ -15,7 +15,8 @@ import (
 	"github.com/blue-monads/turnix/backend/controller/common"
 	"github.com/blue-monads/turnix/backend/controller/project"
 	"github.com/blue-monads/turnix/backend/controller/self"
-	"github.com/blue-monads/turnix/backend/engine/pool"
+	"github.com/blue-monads/turnix/backend/engine"
+	"github.com/blue-monads/turnix/backend/extras/gojaEngine/pool"
 	"github.com/blue-monads/turnix/backend/services/database"
 	"github.com/blue-monads/turnix/backend/services/signer"
 	"github.com/blue-monads/turnix/backend/xtypes/xproject"
@@ -29,8 +30,6 @@ import (
 type Server struct {
 	db         *database.DB
 	signer     *signer.Signer
-	globalJS   []byte
-	projects   map[string]*xproject.Defination
 	rootLogger zerolog.Logger
 
 	localSocket string
@@ -39,6 +38,8 @@ type Server struct {
 	devMode bool
 
 	// controllers
+
+	engine *engine.Engine
 
 	cAuth    *auth.AuthController
 	cProject *project.ProjectController
@@ -51,29 +52,24 @@ type Server struct {
 }
 
 type Options struct {
-	DB              *database.DB
-	Signer          *signer.Signer
-	ProjectBuilders map[string]*xproject.Defination
-	Controller      *controller.RootController
-	LocalSocket     string
-	DevMode         bool
+	DB          *database.DB
+	Signer      *signer.Signer
+	Defs        map[string]*xproject.Defination
+	Controller  *controller.RootController
+	LocalSocket string
+	DevMode     bool
+	Engine      *engine.Engine
 }
 
 func New(opts Options) *Server {
-
-	out, err := project.BuildGlobalJS(opts.ProjectBuilders)
-	if err != nil {
-		panic(err)
-	}
 
 	// opts.ProjectBuilders["abc"] = &xproject.Defination{}
 
 	s := &Server{
 		db:          opts.DB,
 		signer:      opts.Signer,
+		engine:      opts.Engine,
 		rootLogger:  zerolog.New(os.Stdout).With().Str("service", "server").Logger(),
-		projects:    opts.ProjectBuilders,
-		globalJS:    out,
 		cAuth:       opts.Controller.GetAuthController(),
 		cProject:    opts.Controller.GetProjectController(),
 		cSelf:       opts.Controller.GetSelfController(),
@@ -112,6 +108,11 @@ func (a *Server) Start(port string) error {
 	r.Use(limits.RequestSizeLimiter(100 * 1024 * 1024))
 
 	a.bindRoutes(r)
+
+	err = a.engine.Start()
+	if err != nil {
+		return err
+	}
 
 	go func() {
 		time.Sleep(time.Second * 2)

@@ -25,6 +25,16 @@ func (a *Server) GetProjectTypeForm(claim *signer.AccessClaim, ctx *gin.Context)
 	return a.cProject.GetProjectTypeForm(ctx.Param("ptype"))
 }
 
+func (a *Server) GetProjectTypeReload(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+
+	err := a.cProject.GetProjectTypeReload(ctx.Param("ptype"))
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
 func (a *Server) listProjects(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
 
 	return a.cProject.ListProjects(claim.UserId, ctx.Query("ptype"))
@@ -339,4 +349,24 @@ func (a *Server) getProjectPlugin(claim *signer.AccessClaim, ctx *gin.Context) (
 	id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
 
 	return a.cProject.GetProjectPlugin(claim.UserId, pid, id)
+}
+
+type InstallOptions struct {
+	Url string `json:"url,omitempty"`
+}
+
+func (a *Server) installProjectType(claim *signer.AccessClaim, ctx *gin.Context) (any, error) {
+	data := InstallOptions{}
+	err := ctx.Bind(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	err = a.cProject.InstallProjectType(claim.UserId, data.Url)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+
 }

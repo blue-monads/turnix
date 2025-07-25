@@ -53,7 +53,9 @@
           </div>
           <div class="flex flex-row gap-4">
             <a
-              href={ data.is_external ? `/z/x/${data['ptype']}` : `/z/pages/portal/projects/${data['ptype']}`  }
+              href={data.is_external
+                ? `/z/p/${data["ptype"]}`
+                : `/z/pages/portal/projects/${data["ptype"]}`}
               class="underline text-blue-500 text-sm self-center"
               onclick={() => {
                 modalStore.close();
@@ -71,10 +73,45 @@
             >
               new
             </a>
+
+            <button class="hover:bg-gray-100 p-1"
+            onclick={async () => {
+              let api: RootAPI = $modalStore[0].meta["api"];
+              await api.getProjectTypeReload(data["ptype"]);
+              load();
+            }}
+            
+            >
+
+                <SvgIcon className="w-4 h-4" name="arrow-path" />
+            </button>
+
+
           </div>
         </div>
       {/each}
     </div>
+
+    <div class="flex justify-end items-center px-10 py-2 gap-2">
+      <a
+        href="/z/pages/portal/project/installed"
+        class="text-sm text-gray-800"
+        onclick={() => {
+          modalStore.close();
+        }}
+      >
+        Installed
+      </a>
+      <a
+        href="/z/pages/portal/store"
+        class="btn btn-sm variant-filled"
+        onclick={() => {
+          modalStore.close();
+        }}
+      >
+        <SvgIcon name={"shopping-bag"} className="w-5 h-5" />
+        Store
+      </a>
+    </div>
   </div>
 {/if}
-

@@ -39,6 +39,7 @@ type Defination struct {
 	OnInit           func(pid int64) error
 	IsInitilized     func(pid int64) (bool, error)
 	OnDeInit         func(pid int64) error
+	OnClose          func() error
 }
 
 type PTypeField struct {

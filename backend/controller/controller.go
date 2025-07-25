@@ -5,8 +5,8 @@ import (
 	"github.com/blue-monads/turnix/backend/controller/common"
 	"github.com/blue-monads/turnix/backend/controller/project"
 	"github.com/blue-monads/turnix/backend/controller/self"
+	"github.com/blue-monads/turnix/backend/engine"
 	"github.com/blue-monads/turnix/backend/services/database"
-	"github.com/blue-monads/turnix/backend/xtypes/xproject"
 )
 
 type RootController struct {
@@ -16,10 +16,10 @@ type RootController struct {
 	common  *common.CommonController
 }
 
-func New(db *database.DB, projects map[string]*xproject.Defination) *RootController {
+func New(db *database.DB, engine *engine.Engine) *RootController {
 	return &RootController{
 		auth:    auth.NewAuthController(db),
-		project: project.NewProjectController(db, projects),
+		project: project.NewProjectController(db, engine),
 		self:    self.NewSelfController(db),
 		common:  common.New(db),
 	}

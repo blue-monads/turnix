@@ -1,6 +1,9 @@
 package devmode
 
 import (
+	"os"
+	"path"
+
 	_ "github.com/mattn/go-sqlite3"
 
 	// modules
@@ -10,7 +13,24 @@ import (
 
 func Run() {
 
-	app, err := distro.NewApp()
+	opts := distro.Options{
+		MasterSecret:       "A_long_HARD_Token",
+		HttpPort:           ":7703",
+		LocalSocket:        "/tmp/turnix.sock",
+		DatabaseFile:       "./data.db",
+		BasePath:           "./tmp",
+		ProjectInstallPath: "./papps",
+	}
+
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	appsPath := path.Join(wd, "backend/engine/papps")
+	opts.ProjectInstallPath = appsPath
+
+	app, err := distro.NewAppWithOptions(opts)
 	if err != nil {
 		panic(err)
 	}

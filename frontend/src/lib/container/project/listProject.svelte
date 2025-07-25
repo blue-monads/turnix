@@ -19,17 +19,21 @@
   let ptypesMap: Record<string, any> = $state({});
 
   const load = async () => {
-    const resp = await api.listProjects(ptype);
+    const resp1 = api.listProjects(ptype);
+    const resp2 = await api.listProjectTypes()
+
+    const resp = await resp1;
+
     if (resp.status !== 200) {
       return;
     }
 
-    const ptypes = ((globalThis as any).__turnix_ptypes__ || []) as Record<
-      string,
-      any
-    >[];
-    const nextPtypesMap: Record<string, any> = {};
+    if (resp2.status !== 200) {
+      return;
+    }
 
+    const nextPtypesMap: Record<string, any> = {};
+    const ptypes = resp2.data;
     for (const ptype of ptypes) {
       nextPtypesMap[ptype.slug] = ptype;
     }
