@@ -129,7 +129,7 @@ func (ac *AutoCapture) Init() error {
 // main cdc functions to handle inserts, updates, and deletes
 
 func (ac *AutoCapture) cdcRowToJson(tableName string, etype int8, id int64) (string, error) {
-	ac.logger.Info("Capturing %s for table: %s, id: %d", etype, tableName, id)
+	ac.logger.Info("Capturing %d for table: %s, id: %d", slog.Any("etype", etype), slog.String("tableName", tableName), slog.Int64("id", id))
 
 	if etype == 3 {
 		return "{}", nil
