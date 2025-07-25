@@ -27,16 +27,14 @@ type CaptureOptions struct {
 }
 
 type AutoCapture struct {
-	db      *sql.DB
-	logger  slog.Logger
-	counter int64
+	db     *sql.DB
+	logger slog.Logger
 }
 
 func NewAutoCapture(logger slog.Logger) *AutoCapture {
 	return &AutoCapture{
-		db:      nil,
-		logger:  logger,
-		counter: 0,
+		db:     nil,
+		logger: logger,
 	}
 }
 
