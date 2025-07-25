@@ -35,3 +35,6 @@ start_test_server:
 
 test:
 	go test -timeout 30s -v -run ^TestBinds$ github.com/blue-monads/turnix/backend/engine/luaz/binds
+
+citest:
+	go test -timeout 30s -v  github.com/blue-monads/turnix/cmd/citest
