@@ -90,6 +90,30 @@ func (ac *AutoCapture) Init() error {
 	return nil
 }
 
+func (ac *AutoCapture) TriggerRebuild(tables []string) error {
+	ac.logger.Info("Triggering rebuild of some tables", "tables", tables)
+
+	for _, table := range tables {
+		ac.logger.Info("Rebuilding CDC triggers for table", "table", table)
+		columns, err := ac.getTableColumns(table)
+		if err != nil {
+			ac.logger.Error("Failed to get table columns", "table", table, "error", err)
+			return err
+		}
+		ddls := ac.buildCaptureDDL2(table, columns)
+		for _, tmpl := range ddls {
+			_, err := ac.db.Exec(tmpl)
+			if err != nil {
+				ac.logger.Error("Failed to execute DDL", "ddl", tmpl, "error", err)
+				return err
+			}
+			ac.logger.Debug("Executed DDL", "ddl", tmpl)
+		}
+	}
+
+	return nil
+}
+
 // private
 
 func (ac *AutoCapture) getTableSchemas() ([]TableSchema, error) {

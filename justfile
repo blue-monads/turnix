@@ -37,4 +37,4 @@ test:
 	go test -timeout 30s -v -run ^TestBinds$ github.com/blue-monads/turnix/backend/engine/luaz/binds
 
 citest:
-	go test -timeout 30s -v  ./cmd/citest/*.go
+	./ci.sh
