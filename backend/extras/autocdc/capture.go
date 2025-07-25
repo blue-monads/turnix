@@ -91,7 +91,7 @@ func (ac *AutoCapture) Init() error {
 }
 
 func (ac *AutoCapture) TriggerRebuild(tables []string) error {
-	ac.logger.Info("Triggering rebuild of all CDC tables")
+	ac.logger.Info("Triggering rebuild of some tables", "tables", tables)
 
 	for _, table := range tables {
 		ac.logger.Info("Rebuilding CDC triggers for table", "table", table)
