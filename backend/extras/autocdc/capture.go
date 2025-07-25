@@ -11,7 +11,7 @@ import (
 	"github.com/mattn/go-sqlite3"
 )
 
-// AutoCapture captures changes in sqlite database tables and notifies about them.
+// AutoCapture captures changes in sqlite database tables.
 
 type TableSchema struct {
 	Type     string  `json:"type" db:"type,omitempty"`
@@ -173,7 +173,7 @@ func (ac *AutoCapture) getTableSchemas() ([]TableSchema, error) {
 	return schemas, nil
 }
 
-func (ac *AutoCapture) queryRowData(tableName string, id int64) (map[string]interface{}, error) {
+func (ac *AutoCapture) queryRowData(tableName string, id int64) (map[string]any, error) {
 	selectQuery := fmt.Sprintf("SELECT * FROM %s WHERE id = ?", tableName)
 	rows, err := ac.db.Query(selectQuery, id)
 	if err != nil {
@@ -193,8 +193,8 @@ func (ac *AutoCapture) queryRowData(tableName string, id int64) (map[string]inte
 	}
 
 	// Prepare interface slice for scanning
-	values := make([]interface{}, len(columns))
-	valuePtrs := make([]interface{}, len(columns))
+	values := make([]any, len(columns))
+	valuePtrs := make([]any, len(columns))
 	for i := range values {
 		valuePtrs[i] = &values[i]
 	}
@@ -206,7 +206,7 @@ func (ac *AutoCapture) queryRowData(tableName string, id int64) (map[string]inte
 	}
 
 	// Convert to map
-	result := make(map[string]interface{})
+	result := make(map[string]any)
 	for i, col := range columns {
 		result[col] = values[i]
 	}
