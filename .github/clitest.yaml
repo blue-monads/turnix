@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - dev
+      - main
 jobs:
   citest:
     runs-on: ubuntu-latest
