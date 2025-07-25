@@ -1,14 +1,18 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"time"
 
-	sqlite3 "github.com/mattn/go-sqlite3"
+	"github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3"
 )
+
+var globalDB *sql.DB // Global reference to access DB from custom functions
 
 // CDCEvent represents a change data capture event
 type CDCEvent struct {
@@ -19,11 +23,68 @@ type CDCEvent struct {
 	NewData   map[string]interface{} `json:"new_data,omitempty"`
 }
 
-// Custom function for INSERT operations - registered with SQLite
-func cdcInsertToJson(tableName string, newRowJson string) string {
-	var newData map[string]interface{}
-	if err := json.Unmarshal([]byte(newRowJson), &newData); err != nil {
-		log.Printf("Error unmarshaling new row data: %v", err)
+// Helper function to query row data by ID
+func queryRowData(tableName string, id int64) (map[string]interface{}, error) {
+	if globalDB == nil {
+		return nil, fmt.Errorf("database connection not available")
+	}
+
+	// First, get column names for the table
+	columnQuery := fmt.Sprintf("PRAGMA table_info(%s)", tableName)
+	rows, err := globalDB.Query(columnQuery)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get table info: %v", err)
+	}
+	defer rows.Close()
+
+	var columns []string
+	for rows.Next() {
+		var cid int
+		var name, dataType string
+		var notNull, pk int
+		var defaultValue interface{}
+
+		err := rows.Scan(&cid, &name, &dataType, &notNull, &defaultValue, &pk)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan column info: %v", err)
+		}
+		columns = append(columns, name)
+	}
+
+	if len(columns) == 0 {
+		return nil, fmt.Errorf("no columns found for table %s", tableName)
+	}
+
+	// Build dynamic SELECT query
+	selectQuery := fmt.Sprintf("SELECT * FROM %s WHERE id = ?", tableName)
+	row := globalDB.QueryRow(selectQuery, id)
+
+	// Prepare interface slice for scanning
+	values := make([]interface{}, len(columns))
+	valuePtrs := make([]interface{}, len(columns))
+	for i := range values {
+		valuePtrs[i] = &values[i]
+	}
+
+	err = row.Scan(valuePtrs...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to scan row: %v", err)
+	}
+
+	// Convert to map
+	result := make(map[string]interface{})
+	for i, col := range columns {
+		result[col] = values[i]
+	}
+
+	return result, nil
+}
+
+// Custom function for INSERT operations - only needs table name and ID
+func cdcInsertToJson(tableName string, id int64) string {
+	newData, err := queryRowData(tableName, id)
+	if err != nil {
+		log.Printf("Error querying new row data: %v", err)
 		return ""
 	}
 
@@ -44,17 +105,15 @@ func cdcInsertToJson(tableName string, newRowJson string) string {
 	return string(jsonBytes)
 }
 
-// Custom function for UPDATE operations - registered with SQLite
-func cdcUpdateToJson(tableName string, oldRowJson string, newRowJson string) string {
-	var oldData, newData map[string]interface{}
-
-	if err := json.Unmarshal([]byte(oldRowJson), &oldData); err != nil {
-		log.Printf("Error unmarshaling old row data: %v", err)
-		return ""
-	}
-
-	if err := json.Unmarshal([]byte(newRowJson), &newData); err != nil {
-		log.Printf("Error unmarshaling new row data: %v", err)
+// Custom function for UPDATE operations - needs table name and ID
+// For updates, we capture the NEW data (since trigger is AFTER UPDATE)
+func cdcUpdateToJson(tableName string, id int64) string {
+	// Note: Since this is AFTER UPDATE, we can only get the NEW data
+	// If you need OLD data, you'd need to capture it before the update
+	// or use a BEFORE trigger to store it temporarily
+	newData, err := queryRowData(tableName, id)
+	if err != nil {
+		log.Printf("Error querying updated row data: %v", err)
 		return ""
 	}
 
@@ -62,8 +121,8 @@ func cdcUpdateToJson(tableName string, oldRowJson string, newRowJson string) str
 		Operation: "UPDATE",
 		Table:     tableName,
 		Timestamp: time.Now().UTC().Format(time.RFC3339),
-		OldData:   oldData,
 		NewData:   newData,
+		// OldData would need to be captured in a BEFORE trigger if needed
 	}
 
 	jsonBytes, err := json.Marshal(event)
@@ -76,12 +135,12 @@ func cdcUpdateToJson(tableName string, oldRowJson string, newRowJson string) str
 	return string(jsonBytes)
 }
 
-// Custom function for DELETE operations - registered with SQLite
-func cdcDeleteToJson(tableName string, oldRowJson string) string {
-	var oldData map[string]interface{}
-
-	if err := json.Unmarshal([]byte(oldRowJson), &oldData); err != nil {
-		log.Printf("Error unmarshaling old row data: %v", err)
+// For DELETE, we capture data before deletion using BEFORE trigger
+func cdcDeleteToJson(tableName string, id int64) string {
+	// Since this is a BEFORE DELETE trigger, we can still query the data
+	oldData, err := queryRowData(tableName, id)
+	if err != nil {
+		log.Printf("Error querying row data before delete: %v", err)
 		return ""
 	}
 
@@ -102,6 +161,67 @@ func cdcDeleteToJson(tableName string, oldRowJson string) string {
 	return string(jsonBytes)
 }
 
+// For UPDATE, we need to capture OLD data before the change
+// This function will be called from BEFORE UPDATE trigger
+func cdcUpdateBeforeToJson(tableName string, id int64) string {
+	// Capture the OLD data before update
+	oldData, err := queryRowData(tableName, id)
+	if err != nil {
+		log.Printf("Error querying old row data: %v", err)
+		return ""
+	}
+
+	// Store old data temporarily (you might want to use a proper cache/storage)
+	// For now, we'll just return it to be stored in a temp table
+	jsonBytes, err := json.Marshal(oldData)
+	if err != nil {
+		log.Printf("Error marshaling old data: %v", err)
+		return ""
+	}
+
+	return string(jsonBytes)
+}
+
+// Enhanced UPDATE function that captures both OLD and NEW data
+func cdcUpdateAfterToJson(tableName string, id int64) string {
+	// Get NEW data after update
+	newData, err := queryRowData(tableName, id)
+	if err != nil {
+		log.Printf("Error querying updated row data: %v", err)
+		return ""
+	}
+
+	// For now, we'll just capture NEW data
+	// To get OLD data, we'd need a more complex setup with temp storage
+	event := CDCEvent{
+		Operation: "UPDATE",
+		Table:     tableName,
+		Timestamp: time.Now().UTC().Format(time.RFC3339),
+		NewData:   newData,
+		// OldData: would need temp storage between BEFORE and AFTER triggers
+	}
+
+	jsonBytes, err := json.Marshal(event)
+	if err != nil {
+		log.Printf("Error marshaling UPDATE event: %v", err)
+		return ""
+	}
+
+	fmt.Printf("CDC UPDATE: %s\n", string(jsonBytes))
+	return string(jsonBytes)
+}
+
+func init() {
+
+	conn, err := globalDB.Conn(context.TODO())
+	if err != nil {
+		log.Printf("Error getting DB connection: %v", err)
+		return
+	}
+	defer conn.Close()
+
+}
+
 // Register custom functions with SQLite
 func registerCustomFunctions() error {
 	sql.Register("sqlite3_with_cdc_functions",
@@ -112,9 +232,19 @@ func registerCustomFunctions() error {
 					return fmt.Errorf("failed to register cdcInsertToJson: %v", err)
 				}
 
-				// Register cdcUpdateToJson function
+				// Register cdcUpdateToJson function (simple version)
 				if err := conn.RegisterFunc("cdcUpdateToJson", cdcUpdateToJson, true); err != nil {
 					return fmt.Errorf("failed to register cdcUpdateToJson: %v", err)
+				}
+
+				// Register BEFORE UPDATE function for capturing old data
+				if err := conn.RegisterFunc("cdcUpdateBeforeToJson", cdcUpdateBeforeToJson, true); err != nil {
+					return fmt.Errorf("failed to register cdcUpdateBeforeToJson: %v", err)
+				}
+
+				// Register AFTER UPDATE function
+				if err := conn.RegisterFunc("cdcUpdateAfterToJson", cdcUpdateAfterToJson, true); err != nil {
+					return fmt.Errorf("failed to register cdcUpdateAfterToJson: %v", err)
 				}
 
 				// Register cdcDeleteToJson function
@@ -131,6 +261,9 @@ func registerCustomFunctions() error {
 
 // Create sample table and triggers using custom functions
 func setupDatabase(db *sql.DB) error {
+	// Store global reference for custom functions
+	globalDB = db
+
 	// Create sample users table
 	_, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS users (
@@ -140,12 +273,28 @@ func setupDatabase(db *sql.DB) error {
 			age INTEGER,
 			department TEXT,
 			salary REAL,
+			status TEXT DEFAULT 'active',
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		)
 	`)
 	if err != nil {
 		return fmt.Errorf("failed to create users table: %v", err)
+	}
+
+	// Create products table to show it works with any table
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS products (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			price REAL,
+			category TEXT,
+			in_stock BOOLEAN DEFAULT 1,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to create products table: %v", err)
 	}
 
 	// Create CDC log table
@@ -165,6 +314,9 @@ func setupDatabase(db *sql.DB) error {
 		"DROP TRIGGER IF EXISTS users_insert_trigger",
 		"DROP TRIGGER IF EXISTS users_update_trigger",
 		"DROP TRIGGER IF EXISTS users_delete_trigger",
+		"DROP TRIGGER IF EXISTS products_insert_trigger",
+		"DROP TRIGGER IF EXISTS products_update_trigger",
+		"DROP TRIGGER IF EXISTS products_delete_trigger",
 	}
 
 	for _, drop := range dropTriggers {
@@ -174,86 +326,56 @@ func setupDatabase(db *sql.DB) error {
 		}
 	}
 
-	// Create triggers using our custom functions
-	// These triggers dynamically capture ALL columns without hardcoding
+	// Create simple triggers that only pass table name and ID
 	triggers := []string{
-		// INSERT trigger - captures all NEW row data
+		// Users table triggers - ONLY table name and ID!
 		`CREATE TRIGGER users_insert_trigger
 		 AFTER INSERT ON users
 		 FOR EACH ROW
 		 BEGIN
 		   INSERT INTO cdc_log (event_data) 
-		   VALUES (
-		     cdcInsertToJson(
-		       'users',
-		       json_object(
-		         'id', NEW.id,
-		         'name', NEW.name,
-		         'email', NEW.email,
-		         'age', NEW.age,
-		         'department', NEW.department,
-		         'salary', NEW.salary,
-		         'created_at', NEW.created_at,
-		         'updated_at', NEW.updated_at
-		       )
-		     )
-		   );
+		   VALUES (cdcInsertToJson('users', NEW.id));
 		 END`,
 
-		// UPDATE trigger - captures both OLD and NEW row data
 		`CREATE TRIGGER users_update_trigger
 		 AFTER UPDATE ON users
 		 FOR EACH ROW
 		 BEGIN
 		   INSERT INTO cdc_log (event_data) 
-		   VALUES (
-		     cdcUpdateToJson(
-		       'users',
-		       json_object(
-		         'id', OLD.id,
-		         'name', OLD.name,
-		         'email', OLD.email,
-		         'age', OLD.age,
-		         'department', OLD.department,
-		         'salary', OLD.salary,
-		         'created_at', OLD.created_at,
-		         'updated_at', OLD.updated_at
-		       ),
-		       json_object(
-		         'id', NEW.id,
-		         'name', NEW.name,
-		         'email', NEW.email,
-		         'age', NEW.age,
-		         'department', NEW.department,
-		         'salary', NEW.salary,
-		         'created_at', NEW.created_at,
-		         'updated_at', NEW.updated_at
-		       )
-		     )
-		   );
+		   VALUES (cdcUpdateAfterToJson('users', NEW.id));
 		 END`,
 
-		// DELETE trigger - captures OLD row data
 		`CREATE TRIGGER users_delete_trigger
-		 AFTER DELETE ON users
+		 BEFORE DELETE ON users
 		 FOR EACH ROW
 		 BEGIN
 		   INSERT INTO cdc_log (event_data) 
-		   VALUES (
-		     cdcDeleteToJson(
-		       'users',
-		       json_object(
-		         'id', OLD.id,
-		         'name', OLD.name,
-		         'email', OLD.email,
-		         'age', OLD.age,
-		         'department', OLD.department,
-		         'salary', OLD.salary,
-		         'created_at', OLD.created_at,
-		         'updated_at', OLD.updated_at
-		       )
-		     )
-		   );
+		   VALUES (cdcDeleteToJson('users', OLD.id));
+		 END`,
+
+		// Products table triggers - same pattern, only table name and ID!
+		`CREATE TRIGGER products_insert_trigger
+		 AFTER INSERT ON products
+		 FOR EACH ROW
+		 BEGIN
+		   INSERT INTO cdc_log (event_data) 
+		   VALUES (cdcInsertToJson('products', NEW.id));
+		 END`,
+
+		`CREATE TRIGGER products_update_trigger
+		 AFTER UPDATE ON products
+		 FOR EACH ROW
+		 BEGIN
+		   INSERT INTO cdc_log (event_data) 
+		   VALUES (cdcUpdateAfterToJson('products', NEW.id));
+		 END`,
+
+		`CREATE TRIGGER products_delete_trigger
+		 BEFORE DELETE ON products
+		 FOR EACH ROW
+		 BEGIN
+		   INSERT INTO cdc_log (event_data) 
+		   VALUES (cdcDeleteToJson('products', OLD.id));
 		 END`,
 	}
 
@@ -272,27 +394,35 @@ func setupDatabase(db *sql.DB) error {
 func simulateOperations(db *sql.DB) error {
 	fmt.Println("\n=== Simulating Database Operations ===")
 
-	// Insert operation
-	fmt.Println("1. Inserting new user...")
+	// Insert operations
+	fmt.Println("1. Inserting users...")
 	_, err := db.Exec(`
-		INSERT INTO users (name, email, age, department, salary) 
-		VALUES ('John Doe', 'john@example.com', 30, 'Engineering', 75000.50)
+		INSERT INTO users (name, email, age, department, salary, status) 
+		VALUES ('John Doe', 'john@example.com', 30, 'Engineering', 75000.50, 'active')
 	`)
 	if err != nil {
 		return fmt.Errorf("failed to insert user: %v", err)
 	}
 
-	// Another insert with different data
-	fmt.Println("2. Inserting another user...")
 	_, err = db.Exec(`
-		INSERT INTO users (name, email, age, department, salary) 
-		VALUES ('Jane Smith', 'jane@example.com', 28, 'Marketing', 65000.00)
+		INSERT INTO users (name, email, age, department, salary, status) 
+		VALUES ('Jane Smith', 'jane@example.com', 28, 'Marketing', 65000.00, 'active')
 	`)
 	if err != nil {
 		return fmt.Errorf("failed to insert second user: %v", err)
 	}
 
-	// Update operation
+	// Insert products
+	fmt.Println("2. Inserting products...")
+	_, err = db.Exec(`
+		INSERT INTO products (name, price, category, in_stock) 
+		VALUES ('Laptop', 999.99, 'Electronics', 1)
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to insert product: %v", err)
+	}
+
+	// Update operations
 	fmt.Println("3. Updating user...")
 	_, err = db.Exec(`
 		UPDATE users 
@@ -306,14 +436,33 @@ func simulateOperations(db *sql.DB) error {
 		return fmt.Errorf("failed to update user: %v", err)
 	}
 
-	// Delete operation
-	fmt.Println("4. Deleting user...")
+	fmt.Println("4. Updating product...")
+	_, err = db.Exec(`
+		UPDATE products 
+		SET price = 899.99, in_stock = 0 
+		WHERE name = 'Laptop'
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to update product: %v", err)
+	}
+
+	// Delete operations
+	fmt.Println("5. Deleting user...")
 	_, err = db.Exec(`
 		DELETE FROM users 
 		WHERE email = 'jane@example.com'
 	`)
 	if err != nil {
 		return fmt.Errorf("failed to delete user: %v", err)
+	}
+
+	fmt.Println("6. Deleting product...")
+	_, err = db.Exec(`
+		DELETE FROM products 
+		WHERE name = 'Laptop'
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to delete product: %v", err)
 	}
 
 	return nil
@@ -332,6 +481,7 @@ func displayStoredCDCEvents(db *sql.DB) error {
 	defer rows.Close()
 
 	fmt.Println("\n=== Stored CDC Events ===")
+	eventCount := 0
 	for rows.Next() {
 		var id int
 		var eventData, createdAt string
@@ -341,7 +491,8 @@ func displayStoredCDCEvents(db *sql.DB) error {
 			return fmt.Errorf("failed to scan row: %v", err)
 		}
 
-		fmt.Printf("\nEvent ID: %d (Stored at: %s)\n", id, createdAt)
+		eventCount++
+		fmt.Printf("\nEvent #%d (ID: %d, Stored: %s)\n", eventCount, id, createdAt)
 
 		// Pretty print JSON
 		var prettyJSON map[string]interface{}
@@ -353,32 +504,7 @@ func displayStoredCDCEvents(db *sql.DB) error {
 		}
 	}
 
-	return rows.Err()
-}
-
-// Show current users table state
-func showCurrentUsers(db *sql.DB) error {
-	rows, err := db.Query(`SELECT id, name, email, age, department, salary FROM users`)
-	if err != nil {
-		return fmt.Errorf("failed to query users: %v", err)
-	}
-	defer rows.Close()
-
-	fmt.Println("\n=== Current Users Table ===")
-	for rows.Next() {
-		var id, age int
-		var name, email, department string
-		var salary float64
-
-		err := rows.Scan(&id, &name, &email, &age, &department, &salary)
-		if err != nil {
-			return fmt.Errorf("failed to scan user row: %v", err)
-		}
-
-		fmt.Printf("ID: %d, Name: %s, Email: %s, Age: %d, Dept: %s, Salary: %.2f\n",
-			id, name, email, age, department, salary)
-	}
-
+	fmt.Printf("\nTotal CDC events captured: %d\n", eventCount)
 	return rows.Err()
 }
 
@@ -412,15 +538,10 @@ func main() {
 		log.Fatal("Failed to simulate operations:", err)
 	}
 
-	// Show current state of users table
-	if err := showCurrentUsers(db); err != nil {
-		log.Fatal("Failed to show current users:", err)
-	}
-
 	// Display all CDC events that were captured and stored
 	if err := displayStoredCDCEvents(db); err != nil {
 		log.Fatal("Failed to display stored CDC events:", err)
 	}
 
-	fmt.Println("\nCDC example with custom registered functions completed successfully!")
+	fmt.Println("\nCDC example with dynamic data querying completed successfully!")
 }
