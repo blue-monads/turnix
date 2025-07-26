@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 const navs = [
   {
@@ -21,7 +22,17 @@ export default function PortalLayout({
     <>
       <nav className="bg-white border border-gray-200 dark:border-gray-700 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-800 shadow">
         <div className="container flex flex-wrap justify-between items-center mx-auto">
-          <a href="/pages/portal" className="flex items-center">
+          <a href="/pages/portal" className="flex items-center gap-1">
+
+            <Image
+              className="dark:invert p-1 border "
+              src="/logo.png"
+              alt="Turnix Logo"
+              width={42}
+              height={42}
+              priority
+            />
+
             <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
               Turnix Portal
             </span>
