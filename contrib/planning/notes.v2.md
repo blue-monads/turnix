@@ -4,11 +4,12 @@
 
 ## ROUTES:
  /z/startup/
- /z/preload/spaces/<space_type>/
  /z/pages/startup/
  /z/pages/portal/spaces/<space_type>/
  /z/spaces/<space_type>/
  /z/api/spaces/<space_type>/
+ /z/portal_auth_redirrect -> if spaces should be authed then it should redirrect with /z/portal_auth_redirrect?redirect_url=""&space=mnop
+
 ## TABLE:
  zSpaceXXX
  zspace_pid_xxx
