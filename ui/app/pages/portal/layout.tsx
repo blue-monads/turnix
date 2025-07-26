@@ -40,6 +40,19 @@ export default function PortalLayout({
 
           <div className="flex gap-2 items-center ">
             <div className="flex-none h-full text-center flex items-center justify-center">
+
+              <div className="flex items-center justify-center mr-2">
+                <button
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none"
+
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+                  </svg>
+
+                </button>
+              </div>
+
               <div className="flex space-x-3 items-center px-1">
                 <div className="flex-none flex justify-center ">
                   <div className="w-8 h-8 flex ">
@@ -48,25 +61,9 @@ export default function PortalLayout({
                 </div>
                 <div className="hidden md:block text-sm md:text-md text-black dark:text-white">John Doe</div>
               </div>
-            </div>
 
-            <div className="flex items-center">
-              <button
-                id="menu-toggle"
-                type="button"
-                className="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 md:hidden"
-                onClick={() => setShowMenu(!showMenu)}
-              >
-                <span className="sr-only">Open main menu</span>
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h16m-7 6h7"
-                  />
-                </svg>
-              </button>
+              {/* Notification icon */}
+              
             </div>
 
           </div>
