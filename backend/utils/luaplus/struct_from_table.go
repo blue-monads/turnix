@@ -138,7 +138,12 @@ func setField(dst reflect.Value, lv lua.LValue) error {
 	case reflect.Struct:
 		return setStruct(dst, lv)
 	case reflect.Interface:
-		dst.Set(reflect.ValueOf(luaToAny(lv)))
+		val := luaToAny(lv)
+		if val == nil {
+			dst.Set(reflect.Zero(dst.Type()))
+		} else {
+			dst.Set(reflect.ValueOf(val))
+		}
 		return nil
 	default:
 		return fmt.Errorf("unsupported kind %s", dst.Kind())
@@ -373,6 +378,15 @@ func luaToAny(lv lua.LValue) any {
 			}
 			return out
 		}
+
+		isEmpty := true
+		v.ForEach(func(k, val lua.LValue) {
+			isEmpty = false
+		})
+		if isEmpty {
+			return nil
+		}
+
 		out := make(map[string]any)
 		v.ForEach(func(k, val lua.LValue) {
 			if key, ok := k.(lua.LString); ok {

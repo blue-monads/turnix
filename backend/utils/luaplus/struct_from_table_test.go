@@ -16,6 +16,9 @@ type TargetStruct struct {
 	Nested   TargetNested   `lua:"nested"`
 	SkipMe   string         `lua:"-"`
 	Pointer  *int           `lua:"pointer"`
+	AnySlice any            `lua:"any_slice"`
+	AnyEmpty any            `lua:"any_empty"`
+	AnyMap   any            `lua:"any_map"`
 }
 
 type TargetNested struct {
@@ -46,6 +49,21 @@ func TestMapToStruct(t *testing.T) {
 	table.RawSetString("nested", nestedTable)
 
 	table.RawSetString("pointer", lua.LNumber(123))
+
+	// AnySlice: Lua array to []any
+	anySliceTable := L.NewTable()
+	anySliceTable.Append(lua.LString("hello"))
+	anySliceTable.Append(lua.LNumber(42))
+	table.RawSetString("any_slice", anySliceTable)
+
+	// AnyEmpty: Empty Lua table to nil
+	anyEmptyTable := L.NewTable()
+	table.RawSetString("any_empty", anyEmptyTable)
+
+	// AnyMap: Lua table to map[string]any
+	anyMapTable := L.NewTable()
+	anyMapTable.RawSetString("foo", lua.LString("bar"))
+	table.RawSetString("any_map", anyMapTable)
 
 	var target TargetStruct
 	err := MapToStruct(L, table, &target)
@@ -84,6 +102,23 @@ func TestMapToStruct(t *testing.T) {
 		} else {
 			t.Errorf("expected Pointer value 123, got %d", *target.Pointer)
 		}
+	}
+
+	// Verify AnySlice
+	sliceVal, ok := target.AnySlice.([]any)
+	if !ok || len(sliceVal) != 2 || sliceVal[0] != "hello" || sliceVal[1] != 42.0 {
+		t.Errorf("expected AnySlice to be []any{\"hello\", 42.0}, got %v", target.AnySlice)
+	}
+
+	// Verify AnyEmpty
+	if target.AnyEmpty != nil {
+		t.Errorf("expected AnyEmpty to be nil, got %v", target.AnyEmpty)
+	}
+
+	// Verify AnyMap
+	mapVal, ok := target.AnyMap.(map[string]any)
+	if !ok || mapVal["foo"] != "bar" {
+		t.Errorf("expected AnyMap to be map[string]any{\"foo\": \"bar\"}, got %v", target.AnyMap)
 	}
 }
 
