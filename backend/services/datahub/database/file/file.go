@@ -20,9 +20,6 @@ import (
 	"github.com/upper/db/v4"
 )
 
-//go:embed file_schema.sql
-var FileSchemaSQL string
-
 var refIdGen, _ = nanoid.ASCII(16)
 
 const BlobSizeLimit = 1024 * 1024 * 5 // 5MB
