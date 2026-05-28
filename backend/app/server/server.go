@@ -46,6 +46,8 @@ type Option struct {
 	CoreHub  *corehub.CoreHub
 
 	Logger *slog.Logger
+
+	OnStart func()
 }
 
 func NewServer(opt Option) *Server {
@@ -122,6 +124,10 @@ func (s *Server) Start() error {
 		err = s.opt.BuddyHub.Start()
 		if err != nil {
 			panic(err)
+		}
+
+		if s.opt.OnStart != nil {
+			s.opt.OnStart()
 		}
 
 	}()

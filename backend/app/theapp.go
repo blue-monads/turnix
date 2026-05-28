@@ -29,6 +29,7 @@ type Option struct {
 	AppOpts  *xtypes.AppOptions
 	Mailer   mailer.Mailer
 	BuddyHub *buddyhub.BuddyHub
+	OnStart  func()
 
 	WorkingFolderBase string
 }
@@ -103,6 +104,7 @@ func New(opt Option) *App {
 		BuddyHub:    opt.BuddyHub,
 		Logger:      opt.Logger,
 		ExecId:      execId,
+		OnStart:     opt.OnStart,
 	})
 
 	happ.server = server
