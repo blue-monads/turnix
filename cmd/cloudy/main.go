@@ -4,9 +4,13 @@ import (
 	"os"
 
 	"github.com/blue-monads/potatoverse/backend/distro/cloudy"
+	turso_libs "github.com/tursodatabase/turso-go-platform-libs"
+	turso "turso.tech/database/tursogo"
 )
 
 func main() {
+
+	turso.InitLibrary(turso_libs.LoadTursoLibraryConfig{LoadStrategy: "mixed"})
 
 	masterSecret := os.Getenv("CLOUDY_MASTER_SECRET")
 	if masterSecret == "" {
