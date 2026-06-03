@@ -184,7 +184,7 @@ func (db *DB) Init(transport datahub.BuddyTransport) error {
 
 	qq.Println("@db_debug_info", debugInfo)
 
-	if db.lazySyncer != nil {
+	if db.lazySyncer != nil && transport != nil {
 		if err := db.lazySyncer.Start(transport); err != nil {
 			return err
 		}
