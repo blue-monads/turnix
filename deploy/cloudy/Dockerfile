@@ -1,13 +1,7 @@
 # Builder stage
-FROM golang:1.25-bullseye AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
-
-# Install build dependencies for CGO (if needed) and certs
-RUN apt-get update && \
-	DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-		ca-certificates gcc libc6-dev build-essential && \
-	rm -rf /var/lib/apt/lists/*
 
 # Copy go mod files
 COPY go.mod go.sum ./
@@ -36,4 +30,4 @@ WORKDIR /app
 COPY --from=builder /app/cloudy .
 
 # Set the entrypoint
-ENTRYPOINT ["./cloudy"]
+ENTRYPOINT ["/app/cloudy"]
