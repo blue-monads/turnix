@@ -16,10 +16,13 @@ COPY . .
 RUN GOOS=linux go build -o cloudy ./cmd/cloudy
 
 # Final stage - lightweight Alpine
-FROM alpine:latest
+FROM ubuntu:24.04
 
 # Install ca-certificates and runtime GCC support for Turso shared library
-RUN apk --no-cache add ca-certificates libgcc
+RUN apt-get update && \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+		ca-certificates libgcc-s1 && \
+	rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
