@@ -13,7 +13,7 @@ RUN go mod download
 COPY . .
 
 # Build the cloudy binary
-RUN CGO_ENABLED=0 GOOS=linux go build -o cloudy ./cmd/cloudy
+RUN GOOS=linux go build -o cloudy ./cmd/cloudy
 
 # Final stage - lightweight Alpine
 FROM alpine:latest
