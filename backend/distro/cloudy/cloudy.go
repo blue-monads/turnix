@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"log/slog"
-	"path/filepath"
 
 	"github.com/blue-monads/potatoverse/backend/app"
 	_ "github.com/blue-monads/potatoverse/backend/distro"
@@ -13,6 +12,7 @@ import (
 	"github.com/blue-monads/potatoverse/backend/services/mailer/stdio"
 	"github.com/blue-monads/potatoverse/backend/services/signer"
 	"github.com/blue-monads/potatoverse/backend/xtypes"
+	"github.com/k0kubun/pp"
 	turso "turso.tech/database/tursogo"
 )
 
@@ -38,13 +38,17 @@ func New(config *Config) (*CloudyApp, error) {
 
 	ctx := context.Background()
 
+	bootstrap := true
+
 	db, err := turso.NewTursoSyncDb(ctx, turso.TursoSyncDbConfig{
-		Path:      filepath.Join(config.WorkingDir, "cloudy.db"),
-		RemoteUrl: config.TursoRemoteURL,
-		AuthToken: config.TursoAuthToken,
+		Path:             "aa.db",
+		RemoteUrl:        config.TursoRemoteURL,
+		AuthToken:        config.TursoAuthToken,
+		BootstrapIfEmpty: &bootstrap,
 	})
 
 	if err != nil {
+		pp.Print("@")
 		return nil, err
 	}
 
