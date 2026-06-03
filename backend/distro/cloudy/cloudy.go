@@ -9,6 +9,7 @@ import (
 	"github.com/blue-monads/potatoverse/backend/app"
 	_ "github.com/blue-monads/potatoverse/backend/distro"
 	"github.com/blue-monads/potatoverse/backend/engine/hubs/repohub"
+	"github.com/blue-monads/potatoverse/backend/services/buddyhub"
 	"github.com/blue-monads/potatoverse/backend/services/datahub/database"
 	"github.com/blue-monads/potatoverse/backend/services/mailer/stdio"
 	"github.com/blue-monads/potatoverse/backend/services/signer"
@@ -96,6 +97,8 @@ func (a *CloudyApp) Build() error {
 		Repos:        repohub.Default,
 	}
 
+	bhub := buddyhub.NewBuddyHub(appOpts, logger)
+
 	m := stdio.NewMailer(logger.With("module", "mailer"))
 
 	var happ *app.App
@@ -107,7 +110,7 @@ func (a *CloudyApp) Build() error {
 		AppOpts:           appOpts,
 		Mailer:            m,
 		WorkingFolderBase: appOpts.WorkingDir,
-		BuddyHub:          nil,
+		BuddyHub:          bhub,
 		OnStart: func() {
 
 			a.onBuild <- struct{}{}
@@ -145,6 +148,8 @@ func (a *CloudyApp) Run() error {
 	go a.dbSyncer()
 
 	qq.Println("@app_started")
+
+	<-context.Background().Done()
 
 	return nil
 

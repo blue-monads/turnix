@@ -47,7 +47,7 @@ require (
 
 // replace github.com/psanford/sqlite3vfs => ../sqlite3vfs
 
-replace github.com/upper/db/v4 => github.com/blue-monads/db/v4 v4.0.0-20260603092554-163e6c1e70de
+replace github.com/upper/db/v4 => github.com/blue-monads/db/v4 v4.0.0-20260603100951-4326bc51fc3c
 
 require (
 	github.com/FactomProject/basen v0.0.0-20150613233007-fe3947df716e // indirect
