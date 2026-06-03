@@ -78,9 +78,14 @@ func NewDB(file string, logger *slog.Logger) (*DB, error) {
 
 func AutoMigrate(sess upperdb.Session) error {
 
-	exists, _ := sess.Collection("Users").Exists()
+	exists, err := sess.Collection("Users").Exists()
+
+	qq.Println("@table_exists_err", err)
 
 	if !exists {
+
+		qq.Println("@migrating_tables")
+
 		driver := sess.Driver().(*sql.DB)
 
 		buf := bytes.Buffer{}

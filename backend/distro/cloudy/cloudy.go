@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"log/slog"
+	"time"
 
 	"github.com/blue-monads/potatoverse/backend/app"
 	_ "github.com/blue-monads/potatoverse/backend/distro"
@@ -11,6 +12,7 @@ import (
 	"github.com/blue-monads/potatoverse/backend/services/datahub/database"
 	"github.com/blue-monads/potatoverse/backend/services/mailer/stdio"
 	"github.com/blue-monads/potatoverse/backend/services/signer"
+	"github.com/blue-monads/potatoverse/backend/utils/qq"
 	"github.com/blue-monads/potatoverse/backend/xtypes"
 	"github.com/k0kubun/pp"
 	turso "turso.tech/database/tursogo"
@@ -50,6 +52,17 @@ func New(config *Config) (*CloudyApp, error) {
 	if err != nil {
 		pp.Print("@")
 		return nil, err
+	}
+
+	pulled, err := db.Pull(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if pulled {
+		log.Println("Pulled latest changes from remote database")
+	} else {
+		log.Println("No changes to pull from remote database")
 	}
 
 	return &CloudyApp{
@@ -110,6 +123,9 @@ func (a *CloudyApp) Build() error {
 }
 
 func (a *CloudyApp) Run() error {
+
+	qq.Println("@starting_build")
+
 	if err := a.Build(); err != nil {
 		return err
 	}
@@ -126,6 +142,27 @@ func (a *CloudyApp) Run() error {
 		return err
 	}
 
+	go a.dbSyncer()
+
+	qq.Println("@app_started")
+
 	return nil
+
+}
+
+func (a *CloudyApp) dbSyncer() {
+
+	for {
+
+		qq.Println("@remote_syncing")
+
+		err := a.tursoDB.Push(context.Background())
+		if err != nil {
+			log.Println("Error syncing database:", err)
+		}
+
+		// Sleep for a while before the next sync
+		time.Sleep(5 * time.Second)
+	}
 
 }
