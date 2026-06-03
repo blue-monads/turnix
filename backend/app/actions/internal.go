@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/blue-monads/potatoverse/backend/services/datahub/dbmodels"
+	xutils "github.com/blue-monads/potatoverse/backend/utils"
 	"github.com/blue-monads/potatoverse/backend/utils/qq"
 )
 
@@ -21,6 +22,11 @@ func (c *Controller) AddNormalUserDirect(name, password, email string) (*dbmodel
 
 func (c *Controller) AddUserDirect(name, password, email, utype string) (*dbmodels.User, error) {
 
+	hashedPassword, err := xutils.HashPassword(password)
+	if err != nil {
+		return nil, err
+	}
+
 	uid, err := c.database.GetUserOps().AddUser(&dbmodels.User{
 		ID:         0,
 		Name:       name,
@@ -30,7 +36,7 @@ func (c *Controller) AddUserDirect(name, password, email, utype string) (*dbmode
 		Username:   &name,
 		Email:      email,
 		IsVerified: true,
-		Password:   password,
+		Password:   hashedPassword,
 	})
 	if err != nil {
 		return nil, err
