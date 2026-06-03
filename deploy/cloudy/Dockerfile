@@ -18,8 +18,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o cloudy ./cmd/cloudy
 # Final stage - lightweight Alpine
 FROM alpine:latest
 
-# Install ca-certificates for HTTPS
-RUN apk --no-cache add ca-certificates
+# Install ca-certificates and runtime GCC support for Turso shared library
+RUN apk --no-cache add ca-certificates libgcc
 
 WORKDIR /app
 
