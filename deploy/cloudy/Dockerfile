@@ -29,18 +29,8 @@ WORKDIR /app
 # Copy the binary from builder
 COPY --from=builder /app/cloudy .
 
-# write start.sh
-RUN echo '#!/bin/bash\n\
-set -e\n\
-\n\
-pwd\n\
-ls -la\n\
-echo "Starting cloudy"\n\
-# Start cloudy with the provided arguments\n\
-exec ./cloudy "$@"
-echo "Cloudy exited with code $?"\n\
-sleep Infinity ' > start.sh && \
-	chmod +x start.sh
+COPY --from=builder /app/deploy/cloudy/start.sh .
+
 
 # Set the entrypoint
 ENTRYPOINT ["./start.sh"]
