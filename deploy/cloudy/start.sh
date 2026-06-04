@@ -11,7 +11,7 @@ ldd /app/cloudy
 
 
 echo "Starting cloudy"
-exec ./cloudy "$@"
+exec /app/cloudy
 echo "Cloudy exited with code $?"
 
 
