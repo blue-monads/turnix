@@ -27,6 +27,8 @@ func NewDummyBuddyHub() IBuddyHub {
 	return &DummyBuddyHub{}
 }
 
+var _ IBuddyHub = (*DummyBuddyHub)(nil)
+
 type DummyBuddyHub struct{}
 
 func (dbh *DummyBuddyHub) GetHQTunnelDomain() string {
