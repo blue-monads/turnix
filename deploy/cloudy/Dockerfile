@@ -21,7 +21,10 @@ FROM debian:bookworm
 # Install ca-certificates and runtime GCC support for Turso shared library
 RUN apt-get update && \
 	DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-		ca-certificates libgcc-s1 && \
+		ca-certificates \ 
+		libgcc-s1 \
+		file \
+		&& \
 	rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
