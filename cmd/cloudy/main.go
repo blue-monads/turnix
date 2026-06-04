@@ -27,12 +27,18 @@ func main() {
 		panic("TURSO_REMOTE_URL env variable is required")
 	}
 
+	serveDomain := os.Getenv("CLOUDY_DOMAIN")
+	if serveDomain == "" {
+		panic("CLOUDY_DOMAIN env variable is required")
+	}
+
 	capp, err := cloudy.New(&cloudy.Config{
 		Port:           8080,
 		WorkingDir:     "./cloudy_data",
 		MasterSecret:   masterSecret,
 		TursoAuthToken: tursoAuthToken,
 		TursoRemoteURL: tursoRemoteURL,
+		Domain:         serveDomain,
 	})
 	if err != nil {
 		panic(err)

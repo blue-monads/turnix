@@ -25,6 +25,7 @@ type Config struct {
 	MasterSecret   string
 	TursoAuthToken string
 	TursoRemoteURL string
+	Domain         string
 }
 
 type CloudyApp struct {
@@ -95,6 +96,11 @@ func (a *CloudyApp) Build() error {
 		MasterSecret: a.config.MasterSecret,
 		Name:         "Cloudy",
 		Repos:        repohub.Default,
+		Hosts: []xtypes.Host{
+			xtypes.Host{
+				Name: a.config.Domain,
+			},
+		},
 	}
 
 	bhub := buddyhub.NewDummyBuddyHub()
