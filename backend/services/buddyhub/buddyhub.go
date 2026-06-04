@@ -16,6 +16,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var _ IBuddyHub = (*BuddyHub)(nil)
+
 type Options struct {
 	Logger *slog.Logger
 	App    xtypes.App

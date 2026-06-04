@@ -42,7 +42,7 @@ type Option struct {
 	SiteName    string
 	LocalSocket string
 
-	BuddyHub *buddyhub.BuddyHub
+	BuddyHub buddyhub.IBuddyHub
 	CoreHub  *corehub.CoreHub
 
 	Logger *slog.Logger

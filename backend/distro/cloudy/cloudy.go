@@ -97,7 +97,7 @@ func (a *CloudyApp) Build() error {
 		Repos:        repohub.Default,
 	}
 
-	bhub := buddyhub.NewBuddyHub(appOpts, logger)
+	bhub := buddyhub.NewDummyBuddyHub()
 
 	m := stdio.NewMailer(logger.With("module", "mailer"))
 

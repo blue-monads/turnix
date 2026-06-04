@@ -28,7 +28,7 @@ type Option struct {
 	Signer   *signer.Signer
 	AppOpts  *xtypes.AppOptions
 	Mailer   mailer.Mailer
-	BuddyHub *buddyhub.BuddyHub
+	BuddyHub buddyhub.IBuddyHub
 	OnStart  func()
 
 	WorkingFolderBase string
