@@ -30,4 +30,4 @@ WORKDIR /app
 COPY --from=builder /app/cloudy .
 
 # Set the entrypoint
-ENTRYPOINT ["pwd && ls -la && ./cloudy"]
+ENTRYPOINT ["bash", "-c", "pwd && ls -la && ./cloudy"]
