@@ -1,5 +1,5 @@
 # Builder stage
-FROM golang:1.25-alpine AS builder
+FROM golang:1.25-bookworm AS builder
 
 WORKDIR /app
 
@@ -15,8 +15,8 @@ COPY . .
 # Build the cloudy binary
 RUN GOOS=linux go build -o cloudy ./cmd/cloudy
 
-# Final stage - lightweight Alpine
-FROM ubuntu:24.04
+
+FROM debian:bookworm
 
 # Install ca-certificates and runtime GCC support for Turso shared library
 RUN apt-get update && \
