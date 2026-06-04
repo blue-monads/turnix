@@ -31,6 +31,8 @@ COPY --from=builder /app/cloudy .
 
 COPY --from=builder /app/deploy/cloudy/start.sh .
 
+# Ensure start.sh is executable
+RUN chmod +x start.sh
 
 # Set the entrypoint
 ENTRYPOINT ["./start.sh"]
