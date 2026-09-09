@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/blue-monads/potatoverse/backend/distro/cloudy"
 	turso_libs "github.com/tursodatabase/turso-go-platform-libs"
@@ -32,8 +33,18 @@ func main() {
 		panic("CLOUDY_DOMAIN env variable is required")
 	}
 
+	port := os.Getenv("CLOUDY_PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	portInt, err := strconv.Atoi(port)
+	if err != nil {
+		panic("CLOUDY_PORT env variable must be an integer")
+	}
+
 	capp, err := cloudy.New(&cloudy.Config{
-		Port:           8080,
+		Port:           portInt,
 		WorkingDir:     "./cloudy_data",
 		MasterSecret:   masterSecret,
 		TursoAuthToken: tursoAuthToken,
