@@ -33,7 +33,8 @@ type CloudyApp struct {
 	tursoDB *turso.TursoSyncDb
 	config  *Config
 
-	app xtypes.App
+	subApps map[string]*SubApp
+	mainApp xtypes.App
 
 	onBuild chan struct{}
 }
@@ -45,7 +46,7 @@ func New(config *Config) (*CloudyApp, error) {
 	bootstrap := true
 
 	db, err := turso.NewTursoSyncDb(ctx, turso.TursoSyncDbConfig{
-		Path:             "aa.db",
+		Path:             "main.db",
 		RemoteUrl:        config.TursoRemoteURL,
 		AuthToken:        config.TursoAuthToken,
 		BootstrapIfEmpty: &bootstrap,
@@ -125,7 +126,7 @@ func (a *CloudyApp) Build() error {
 		},
 	})
 
-	a.app = happ
+	a.mainApp = happ
 
 	return nil
 
@@ -142,7 +143,7 @@ func (a *CloudyApp) Run() error {
 	var err error
 
 	go func() {
-		err = a.app.Start()
+		err = a.mainApp.Start()
 	}()
 
 	<-a.onBuild
