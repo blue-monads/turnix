@@ -22,12 +22,11 @@ import (
 )
 
 type Server struct {
-	ctrl   *actions.Controller
-	router *gin.Engine
-	signer *signer.Signer
-	engine *engine.Engine
-	opt    Option
-
+	ctrl        *actions.Controller
+	router      *gin.Engine
+	signer      *signer.Signer
+	engine      *engine.Engine
+	opt         Option
 	buddyRoutes *rtbuddy.BuddyRouteServer
 }
 
@@ -41,6 +40,7 @@ type Option struct {
 	GlobalJS    string
 	SiteName    string
 	LocalSocket string
+	BaseRouter  *gin.Engine
 
 	BuddyHub buddyhub.IBuddyHub
 	CoreHub  *corehub.CoreHub
@@ -69,7 +69,11 @@ func (s *Server) Start() error {
 		return err
 	}
 
-	s.router = gin.Default()
+	if s.opt.BaseRouter != nil {
+		s.router = s.opt.BaseRouter
+	} else {
+		s.router = gin.Default()
+	}
 
 	enableCOmpression :=
 		os.Getenv("FRONTEND_DEV_SERVER") == "" &&

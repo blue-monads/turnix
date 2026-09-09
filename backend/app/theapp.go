@@ -12,6 +12,7 @@ import (
 	"github.com/blue-monads/potatoverse/backend/engine"
 	xutils "github.com/blue-monads/potatoverse/backend/utils"
 	"github.com/blue-monads/potatoverse/backend/utils/qq"
+	"github.com/gin-gonic/gin"
 
 	"github.com/blue-monads/potatoverse/backend/services/buddyhub"
 	"github.com/blue-monads/potatoverse/backend/services/corehub"
@@ -23,13 +24,14 @@ import (
 )
 
 type Option struct {
-	Database datahub.Database
-	Logger   *slog.Logger
-	Signer   *signer.Signer
-	AppOpts  *xtypes.AppOptions
-	Mailer   mailer.Mailer
-	BuddyHub buddyhub.IBuddyHub
-	OnStart  func()
+	Database   datahub.Database
+	Logger     *slog.Logger
+	Signer     *signer.Signer
+	AppOpts    *xtypes.AppOptions
+	Mailer     mailer.Mailer
+	BuddyHub   buddyhub.IBuddyHub
+	BaseRouter *gin.Engine
+	OnStart    func()
 
 	WorkingFolderBase string
 }
@@ -105,6 +107,7 @@ func New(opt Option) *App {
 		Logger:      opt.Logger,
 		ExecId:      execId,
 		OnStart:     opt.OnStart,
+		BaseRouter:  opt.BaseRouter,
 	})
 
 	happ.server = server
