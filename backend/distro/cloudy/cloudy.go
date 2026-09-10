@@ -2,22 +2,34 @@ package cloudy
 
 import (
 	"context"
+	_ "embed"
+	"fmt"
 	"log"
-	"log/slog"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
 	"time"
 
-	"github.com/blue-monads/potatoverse/backend/app"
 	_ "github.com/blue-monads/potatoverse/backend/distro"
-	"github.com/blue-monads/potatoverse/backend/engine/hubs/repohub"
-	"github.com/blue-monads/potatoverse/backend/services/buddyhub"
-	"github.com/blue-monads/potatoverse/backend/services/datahub/database"
-	"github.com/blue-monads/potatoverse/backend/services/mailer/stdio"
-	"github.com/blue-monads/potatoverse/backend/services/signer"
+	xutils "github.com/blue-monads/potatoverse/backend/utils"
 	"github.com/blue-monads/potatoverse/backend/utils/qq"
-	"github.com/blue-monads/potatoverse/backend/xtypes"
-	"github.com/k0kubun/pp"
+	"github.com/gin-gonic/gin"
+	"github.com/hako/branca"
 	turso "turso.tech/database/tursogo"
 )
+
+//go:embed cloudy.sql
+var schemaSQL string
+
+type SMTPConfig struct {
+	Host     string
+	Port     int
+	Username string
+	Password string
+	From     string
+	FromName string
+}
 
 type Config struct {
 	Port           int
@@ -26,34 +38,39 @@ type Config struct {
 	TursoAuthToken string
 	TursoRemoteURL string
 	Domain         string
+	PublicBaseURL  string
+	SMTP           SMTPConfig
 }
 
 type CloudyApp struct {
 	rootCtx context.Context
 	tursoDB *turso.TursoSyncDb
+	store   *Store
 	config  *Config
+	router  *gin.Engine
+	mailer  *smtpSender
+	branca  *branca.Branca
 
+	mu      sync.RWMutex
 	subApps map[string]*SubApp
-	mainApp xtypes.App
-
-	onBuild chan struct{}
 }
 
 func New(config *Config) (*CloudyApp, error) {
-
 	ctx := context.Background()
 
-	bootstrap := true
+	if err := os.MkdirAll(config.WorkingDir, 0o755); err != nil {
+		return nil, err
+	}
 
+	bootstrap := true
 	db, err := turso.NewTursoSyncDb(ctx, turso.TursoSyncDbConfig{
-		Path:             "main.db",
+		Path:             filepath.Join(config.WorkingDir, "main.db"),
 		RemoteUrl:        config.TursoRemoteURL,
 		AuthToken:        config.TursoAuthToken,
 		BootstrapIfEmpty: &bootstrap,
+		Namespace:        "main",
 	})
-
 	if err != nil {
-		pp.Print("@")
 		return nil, err
 	}
 
@@ -61,120 +78,166 @@ func New(config *Config) (*CloudyApp, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	if pulled {
-		log.Println("Pulled latest changes from remote database")
+		log.Println("Pulled latest changes from remote main.db")
 	} else {
-		log.Println("No changes to pull from remote database")
+		log.Println("No changes to pull for main.db")
 	}
 
 	return &CloudyApp{
 		rootCtx: ctx,
 		tursoDB: db,
 		config:  config,
-		onBuild: make(chan struct{}),
+		subApps: make(map[string]*SubApp),
+		mailer:  newSMTPSender(config.SMTP),
+		branca:  newBranca(config.MasterSecret),
 	}, nil
-
 }
 
 func (a *CloudyApp) Build() error {
+	if a.router != nil {
+		return nil
+	}
 
-	db, err := a.tursoDB.Connect(a.rootCtx)
+	sqlDB, err := a.tursoDB.Connect(a.rootCtx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	logger := slog.Default()
-
-	adb, err := database.FromSqlHandle(db, logger)
+	store, err := newStore(sqlDB)
 	if err != nil {
-		log.Fatal(err)
+		return err
+	}
+	a.store = store
+
+	if err := a.ensureSchema(); err != nil {
+		return err
 	}
 
-	appOpts := &xtypes.AppOptions{
-		Port:         8080,
-		WorkingDir:   a.config.WorkingDir,
-		MasterSecret: a.config.MasterSecret,
-		Name:         "Cloudy",
-		Repos:        repohub.Default,
-		Hosts: []xtypes.Host{
-			xtypes.Host{
-				Name: a.config.Domain,
-			},
-		},
-	}
-
-	bhub := buddyhub.NewDummyBuddyHub()
-
-	m := stdio.NewMailer(logger.With("module", "mailer"))
-
-	var happ *app.App
-
-	happ = app.New(app.Option{
-		Database:          adb,
-		Logger:            logger,
-		Signer:            signer.New([]byte(a.config.MasterSecret)),
-		AppOpts:           appOpts,
-		Mailer:            m,
-		WorkingFolderBase: appOpts.WorkingDir,
-		BuddyHub:          bhub,
-		OnStart: func() {
-
-			a.onBuild <- struct{}{}
-			log.Println("Cloudy is running on port", appOpts.Port)
-
-		},
-	})
-
-	a.mainApp = happ
-
+	router := gin.Default()
+	router.Use(a.tenantRouteMW())
+	a.registerBaseRouter(router)
+	a.router = router
 	return nil
-
 }
 
 func (a *CloudyApp) Run() error {
-
-	qq.Println("@starting_build")
+	qq.Println("@starting_cloudy")
 
 	if err := a.Build(); err != nil {
 		return err
 	}
 
-	var err error
+	go a.dbSyncer()
 
-	go func() {
-		err = a.mainApp.Start()
-	}()
+	addr := fmt.Sprintf(":%d", a.config.Port)
+	log.Println("Cloudy listening on", addr, "domain", normalizeDomain(a.config.Domain))
+	return a.router.Run(addr)
+}
 
-	<-a.onBuild
+func (a *CloudyApp) ensureSchema() error {
+	if err := a.store.execSchema(schemaSQL); err != nil {
+		return err
+	}
 
+	return nil
+}
+
+func (a *CloudyApp) dbSyncer() {
+	for {
+		ctx := context.Background()
+		qq.Println("@remote_syncing")
+
+		if _, err := a.tursoDB.Pull(ctx); err != nil {
+			log.Println("Error pulling main.db:", err)
+		}
+		if err := a.tursoDB.Push(ctx); err != nil {
+			log.Println("Error pushing main.db:", err)
+		}
+
+		a.mu.RLock()
+		subs := make([]*SubApp, 0, len(a.subApps))
+		for _, sub := range a.subApps {
+			subs = append(subs, sub)
+		}
+		a.mu.RUnlock()
+
+		for _, sub := range subs {
+			if err := sub.Sync(ctx); err != nil {
+				log.Printf("Error syncing tenant %s: %v", sub.Name, err)
+			}
+		}
+
+		time.Sleep(5 * time.Second)
+	}
+}
+
+func (a *CloudyApp) listUsers() ([]*User, error) {
+	return a.store.listUsers()
+}
+
+func (a *CloudyApp) getUserByTenant(tenantKey string) (*User, error) {
+	return a.store.getUserByTenant(tenantKey)
+}
+
+func (a *CloudyApp) getUserByEmail(email string) (*User, error) {
+	return a.store.getUserByEmail(email)
+}
+
+func (a *CloudyApp) getUserByID(id int64) (*User, error) {
+	return a.store.getUserByID(id)
+}
+
+func (a *CloudyApp) insertUser(fullname, email, passwordHash, tenantKey, pricingTier, utype string, verified bool) (*User, error) {
+	return a.store.insertUser(fullname, email, passwordHash, tenantKey, pricingTier, utype, verified)
+}
+
+func (a *CloudyApp) markUserVerified(id int64) error {
+	return a.store.markUserVerified(id)
+}
+
+func (a *CloudyApp) updateUserPassword(id int64, passwordHash string) error {
+	return a.store.updateUserPassword(id, passwordHash)
+}
+
+func (a *CloudyApp) tenantExists(tenantKey string) bool {
+	return a.store.tenantExists(tenantKey)
+}
+
+func (a *CloudyApp) publicBaseURL() string {
+	if a.config.PublicBaseURL != "" {
+		return strings.TrimRight(a.config.PublicBaseURL, "/")
+	}
+	return fmt.Sprintf("http://%s:%d", normalizeDomain(a.config.Domain), a.config.Port)
+}
+
+func (a *CloudyApp) sendVerificationEmail(user *User) error {
+	token, err := a.encodeClaim(&Claim{
+		UserID:    user.ID,
+		Email:     user.Email,
+		UType:     user.UType,
+		TenantKey: user.TenantKey,
+		Purpose:   purposeVerify,
+	})
 	if err != nil {
 		return err
 	}
 
-	go a.dbSyncer()
+	verifyURL := fmt.Sprintf("%s/zz/cloudy/verify?token=%s", a.publicBaseURL(), token)
+	subject := "Verify your Cloudy account"
+	text := fmt.Sprintf("Hi %s,\n\nVerify your account for tenant %s:\n%s\n", user.Fullname, user.TenantKey, verifyURL)
+	html := fmt.Sprintf(
+		`<p>Hi %s,</p><p>Verify your account for tenant <strong>%s</strong>:</p><p><a href="%s">Verify email</a></p>`,
+		user.Fullname, user.TenantKey, verifyURL,
+	)
 
-	qq.Println("@app_started")
-
-	<-context.Background().Done()
-
-	return nil
-
+	return a.sendMail(user.Email, subject, text, html)
 }
 
-func (a *CloudyApp) dbSyncer() {
+func normalizeDomain(domain string) string {
+	return strings.TrimPrefix(domain, "*.")
+}
 
-	for {
-
-		qq.Println("@remote_syncing")
-
-		err := a.tursoDB.Push(context.Background())
-		if err != nil {
-			log.Println("Error syncing database:", err)
-		}
-
-		// Sleep for a while before the next sync
-		time.Sleep(5 * time.Second)
-	}
-
+func hashSignupPassword(password string) (string, error) {
+	return xutils.HashPassword(password)
 }

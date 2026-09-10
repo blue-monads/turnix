@@ -43,6 +43,14 @@ func main() {
 		panic("CLOUDY_PORT env variable must be an integer")
 	}
 
+	smtpPort := 587
+	if p := os.Getenv("SMTP_PORT"); p != "" {
+		smtpPort, err = strconv.Atoi(p)
+		if err != nil {
+			panic("SMTP_PORT env variable must be an integer")
+		}
+	}
+
 	capp, err := cloudy.New(&cloudy.Config{
 		Port:           portInt,
 		WorkingDir:     "./cloudy_data",
@@ -50,12 +58,17 @@ func main() {
 		TursoAuthToken: tursoAuthToken,
 		TursoRemoteURL: tursoRemoteURL,
 		Domain:         serveDomain,
+		PublicBaseURL:  os.Getenv("CLOUDY_PUBLIC_BASE_URL"),
+		SMTP: cloudy.SMTPConfig{
+			Host:     os.Getenv("SMTP_HOST"),
+			Port:     smtpPort,
+			Username: os.Getenv("SMTP_USERNAME"),
+			Password: os.Getenv("SMTP_PASSWORD"),
+			From:     os.Getenv("SMTP_FROM"),
+			FromName: os.Getenv("SMTP_FROM_NAME"),
+		},
 	})
 	if err != nil {
-		panic(err)
-	}
-
-	if err := capp.Build(); err != nil {
 		panic(err)
 	}
 
