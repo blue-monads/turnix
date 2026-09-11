@@ -2,9 +2,9 @@
 CREATE TABLE IF NOT EXISTS GlobalConfig (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   key TEXT NOT NULL DEFAULT '', 
-  "group" TEXT NOT NULL DEFAULT '',
+  ggroup TEXT NOT NULL DEFAULT '',
   value TEXT NOT NULL DEFAULT '',
-  unique("group", key)
+  unique(ggroup, key)
 );
 
 CREATE TABLE IF NOT EXISTS UserGroups (
@@ -20,9 +20,9 @@ CREATE TABLE IF NOT EXISTS UserGroups (
 CREATE TABLE IF NOT EXISTS UserGroupConfig (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   key TEXT NOT NULL DEFAULT '', 
-  "group" TEXT NOT NULL DEFAULT '',
+  ugroup TEXT NOT NULL DEFAULT '',
   value TEXT NOT NULL DEFAULT '',
-  unique("group", key)
+  unique(ugroup, key)
 );
 
 
