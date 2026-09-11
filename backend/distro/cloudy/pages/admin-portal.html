@@ -110,6 +110,7 @@
           cell.append(actionBtn("Load", () => loadApp(u.tenant_key)));
         }
         cell.append(
+          actionBtn("Users", () => { location.href = "sub-users.html?for_tenant_id=" + encodeURIComponent(u.id); }),
           actionBtn(u.is_disabled ? "Enable" : "Disable", () => setDisabled(u.id, u.tenant_key, !u.is_disabled)),
           actionBtn(u.is_lazy_loaded ? "Eager" : "Lazy", () => setLazy(u.id, u.tenant_key, !u.is_lazy_loaded)),
           actionBtn("Open", () => window.open(Cloudy.tenantURL(session, u.tenant_key), "_blank")),

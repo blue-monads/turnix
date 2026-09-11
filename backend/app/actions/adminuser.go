@@ -73,6 +73,12 @@ func (c *Controller) ActivateUser(id int64) error {
 	})
 }
 
+func (c *Controller) SetUserPassword(id int64, passwordHash string) error {
+	return c.database.GetUserOps().UpdateUser(id, map[string]any{
+		"password": passwordHash,
+	})
+}
+
 func (c *Controller) DeleteUser(id int64) error {
 	return c.database.GetUserOps().DeleteUser(id)
 }

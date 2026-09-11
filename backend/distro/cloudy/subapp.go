@@ -199,6 +199,19 @@ func (s *SubApp) IsReady() bool {
 	return s.ready
 }
 
+func (s *SubApp) Controller() (*actions.Controller, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.App == nil {
+		return nil, fmt.Errorf("tenant %q is not loaded", s.Name)
+	}
+	ctrl, ok := s.App.Controller().(*actions.Controller)
+	if !ok || ctrl == nil {
+		return nil, fmt.Errorf("tenant %q controller unavailable", s.Name)
+	}
+	return ctrl, nil
+}
+
 func (s *SubApp) Unload() {
 	s.mu.Lock()
 	defer s.mu.Unlock()

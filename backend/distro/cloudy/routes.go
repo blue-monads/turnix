@@ -80,6 +80,10 @@ func (a *CloudyApp) registerBaseRouter(router *gin.Engine) {
 	authed.GET("/me", a.handleMe)
 	authed.POST("/apps/:name/load", a.loadApp)
 	authed.GET("/apps/:name/open", a.redirectToApp)
+	authed.GET("/sub-users", a.handleListSubUsers)
+	authed.POST("/sub-users", a.handleAddSubUser)
+	authed.POST("/sub-users/:id/reset-password", a.handleResetSubUserPassword)
+	authed.POST("/sub-users/:id/disable", a.handleSetSubUserDisabled)
 
 	// admin
 	admin := authed.Group("/", a.adminMiddleware())
