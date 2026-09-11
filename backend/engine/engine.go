@@ -49,6 +49,8 @@ type Engine struct {
 
 	reloadPackageIds chan int64
 	fullReload       chan struct{}
+	stopEloop        chan struct{}
+	stopOnce         sync.Once
 }
 
 type EngineOption struct {
@@ -79,6 +81,7 @@ func NewEngine(opt EngineOption) *Engine {
 		riLock:           sync.RWMutex{},
 		reloadPackageIds: make(chan int64, 20),
 		fullReload:       make(chan struct{}, 1),
+		stopEloop:        make(chan struct{}),
 
 		eventHub: nil,
 		repoHub:  repohub.NewRepoHub(opt.Repos, elogger.With("service", "repo_hub"), opt.HttpPort),
@@ -152,6 +155,19 @@ func (e *Engine) Start(app xtypes.App) error {
 	time.Sleep(2 * time.Second)
 
 	return nil
+}
+
+func (e *Engine) Close() {
+	e.stopOnce.Do(func() {
+		close(e.stopEloop)
+	})
+	if e.eventHub != nil {
+		e.eventHub.Stop()
+	}
+	if e.capHub != nil {
+		e.capHub.Close()
+	}
+	e.runtime.CloseAll()
 }
 
 func (e *Engine) ServeSpaceFile(ctx *gin.Context) {

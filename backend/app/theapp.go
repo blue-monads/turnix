@@ -185,6 +185,27 @@ func (h *App) Start() error {
 
 }
 
+func (h *App) Close() error {
+	if h.engine != nil {
+		h.engine.Close()
+	}
+	if h.db != nil {
+		return h.db.Close()
+	}
+
+	h.coreHub = nil
+	h.engine = nil
+	h.db = nil
+	h.signer = nil
+	h.logger = nil
+	h.ctrl = nil
+	h.AppOpts = nil
+	h.sockd = nil
+	h.server = nil
+
+	return nil
+}
+
 // shared methods for App
 
 func (h *App) Database() datahub.Database {

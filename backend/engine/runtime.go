@@ -56,6 +56,17 @@ func (r *Runtime) ClearExecs(spaceIds ...int64) {
 	}
 }
 
+func (r *Runtime) CloseAll() {
+	r.activeExecsLock.Lock()
+	defer r.activeExecsLock.Unlock()
+	for id, exec := range r.activeExecs {
+		if exec != nil && exec.Executor != nil {
+			exec.Executor.Cleanup()
+		}
+		delete(r.activeExecs, id)
+	}
+}
+
 func (r *Runtime) GetExec(spaceid int64) (*RunningExec, error) {
 	r.activeExecsLock.RLock()
 	e := r.activeExecs[spaceid]

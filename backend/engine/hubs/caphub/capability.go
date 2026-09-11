@@ -77,6 +77,20 @@ func (gh *CapabilityHub) Init(app xtypes.App) error {
 	return nil
 }
 
+func (gh *CapabilityHub) Close() {
+	if gh == nil {
+		return
+	}
+	gh.glock.Lock()
+	defer gh.glock.Unlock()
+	for _, cap := range gh.goodies {
+		if cap != nil {
+			_ = cap.Close()
+		}
+	}
+	gh.goodies = make(map[string]xcapability.Capability)
+}
+
 func (gh *CapabilityHub) GetDebugData(name string) map[string]any {
 	builder, ok := gh.builders[name]
 	if !ok {

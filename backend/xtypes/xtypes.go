@@ -11,6 +11,7 @@ type App interface {
 	ExecId() string
 	Init() error
 	Start() error
+	Close() error
 	Database() datahub.Database
 	Signer() *signer.Signer
 	Logger() *slog.Logger

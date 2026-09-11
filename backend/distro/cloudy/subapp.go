@@ -212,6 +212,13 @@ func (s *SubApp) Controller() (*actions.Controller, error) {
 func (s *SubApp) Unload() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+
+	if s.App != nil {
+		if err := s.App.Close(); err != nil {
+			log.Printf("tenant %s: app close: %v", s.Name, err)
+		}
+	}
+
 	if s.tursoDB != nil {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		if err := s.tursoDB.Push(ctx); err != nil {

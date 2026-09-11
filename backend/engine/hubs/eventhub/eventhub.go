@@ -136,5 +136,8 @@ func (e *EventHub) needsProcessing(installId int64, name string) bool {
 }
 
 func (e *EventHub) Stop() {
+	if e == nil || e.eslayer == nil {
+		return
+	}
 	e.eslayer.Stop()
 }

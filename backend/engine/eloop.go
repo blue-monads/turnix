@@ -34,18 +34,22 @@ func (e *Engine) startEloop() {
 	sTimer := time.NewTicker(time.Second * 2)
 	defer sTimer.Stop()
 
-	for range sTimer.C {
-		if pendingFullReload() {
-			e.loadRoutingIndex()
-			readAllPendingPackageIds()
-			continue
-		}
+	for {
+		select {
+		case <-e.stopEloop:
+			return
+		case <-sTimer.C:
+			if pendingFullReload() {
+				e.loadRoutingIndex()
+				readAllPendingPackageIds()
+				continue
+			}
 
-		packageIds := readAllPendingPackageIds()
-		if len(packageIds) > 0 {
-			e.loadRoutingIndexForPackages(packageIds...)
+			packageIds := readAllPendingPackageIds()
+			if len(packageIds) > 0 {
+				e.loadRoutingIndexForPackages(packageIds...)
+			}
 		}
-
 	}
 
 }
