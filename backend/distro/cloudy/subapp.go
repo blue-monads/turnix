@@ -199,6 +199,21 @@ func (s *SubApp) IsReady() bool {
 	return s.ready
 }
 
+func (s *SubApp) Unload() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.tursoDB != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		if err := s.tursoDB.Push(ctx); err != nil {
+			log.Printf("tenant %s: unload push: %v", s.Name, err)
+		}
+		cancel()
+	}
+	s.App = nil
+	s.Engine = nil
+	s.ready = false
+}
+
 func seedTenantApp(happ *app.App, name, password, email string) error {
 	ctrl := happ.Controller().(*actions.Controller)
 

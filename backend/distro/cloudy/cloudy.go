@@ -233,6 +233,14 @@ func (a *CloudyApp) updateUserPassword(id int64, passwordHash string) error {
 	return a.store.updateUserPassword(id, passwordHash)
 }
 
+func (a *CloudyApp) setUserDisabled(id int64, disabled bool) error {
+	return a.store.setUserDisabled(id, disabled)
+}
+
+func (a *CloudyApp) setUserLazyLoaded(id int64, lazy bool) error {
+	return a.store.setUserLazyLoaded(id, lazy)
+}
+
 func (a *CloudyApp) tenantExists(tenantKey string) bool {
 	return a.store.tenantExists(tenantKey)
 }

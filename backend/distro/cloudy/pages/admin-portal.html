@@ -31,6 +31,7 @@
                 <th>Email</th>
                 <th>Role</th>
                 <th>Status</th>
+                <th>Flags</th>
                 <th></th>
               </tr>
             </thead>
@@ -90,16 +91,27 @@
         if (u.is_verified) status.push("verified");
         else status.push("unverified");
         if (u.loaded) status.push("loaded");
+        else status.push("unloaded");
+        const flags = [];
+        flags.push(u.is_lazy_loaded ? "lazy" : "eager");
+        if (u.is_disabled) flags.push("disabled");
         tr.innerHTML =
           "<td>" + esc(u.tenant_key) + "</td>" +
           "<td>" + esc(u.fullname) + "</td>" +
           "<td>" + esc(u.email) + "</td>" +
           "<td><span class='badge'>" + esc(u.utype) + "</span></td>" +
           "<td>" + esc(status.join(" · ")) + "</td>" +
+          "<td>" + esc(flags.join(" · ")) + "</td>" +
           "<td class='actions'></td>";
         const cell = tr.querySelector("td:last-child");
+        if (u.loaded) {
+          cell.append(actionBtn("Unload", () => unloadApp(u.tenant_key)));
+        } else if (!u.is_disabled) {
+          cell.append(actionBtn("Load", () => loadApp(u.tenant_key)));
+        }
         cell.append(
-          actionBtn("Load", () => loadApp(u.tenant_key)),
+          actionBtn(u.is_disabled ? "Enable" : "Disable", () => setDisabled(u.id, u.tenant_key, !u.is_disabled)),
+          actionBtn(u.is_lazy_loaded ? "Eager" : "Lazy", () => setLazy(u.id, u.tenant_key, !u.is_lazy_loaded)),
           actionBtn("Open", () => window.open(Cloudy.tenantURL(session, u.tenant_key), "_blank")),
           actionBtn("Reset pw", () => resetPassword(u.id, u.email)),
         );
@@ -130,6 +142,50 @@
           headers: Cloudy.headers(),
         });
         setMsg("Loaded " + name, true);
+        await refreshHealth();
+        await loadUsers();
+      } catch (err) {
+        setMsg(err.message);
+      }
+    }
+
+    async function unloadApp(name) {
+      try {
+        await Cloudy.api("/zz/cloudy/apps/" + encodeURIComponent(name) + "/unload", {
+          method: "POST",
+          headers: Cloudy.headers(),
+        });
+        setMsg("Unloaded " + name, true);
+        await refreshHealth();
+        await loadUsers();
+      } catch (err) {
+        setMsg(err.message);
+      }
+    }
+
+    async function setDisabled(id, tenant, disabled) {
+      try {
+        await Cloudy.api("/zz/cloudy/users/" + id + "/disable", {
+          method: "POST",
+          headers: Cloudy.headers(true),
+          body: JSON.stringify({ is_disabled: disabled }),
+        });
+        setMsg((disabled ? "Disabled" : "Enabled") + " " + tenant, true);
+        await refreshHealth();
+        await loadUsers();
+      } catch (err) {
+        setMsg(err.message);
+      }
+    }
+
+    async function setLazy(id, tenant, lazy) {
+      try {
+        await Cloudy.api("/zz/cloudy/users/" + id + "/lazy", {
+          method: "POST",
+          headers: Cloudy.headers(true),
+          body: JSON.stringify({ is_lazy_loaded: lazy }),
+        });
+        setMsg(tenant + " is now " + (lazy ? "lazy-loaded" : "eager"), true);
         await loadUsers();
       } catch (err) {
         setMsg(err.message);

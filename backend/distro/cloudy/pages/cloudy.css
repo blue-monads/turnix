@@ -35,8 +35,12 @@ body.page {
 }
 
 .shell.wide {
-  width: min(980px, 100%);
+  width: min(1180px, 100%);
   margin: 0 auto;
+}
+
+td.actions {
+  white-space: nowrap;
 }
 
 .top {

@@ -137,6 +137,22 @@ func (s *Store) updateUserPassword(id int64, passwordHash string) error {
 	})
 }
 
+func (s *Store) setUserDisabled(id int64, disabled bool) error {
+	now := time.Now().UTC()
+	return s.users().Find(db.Cond{"id": id}).Update(map[string]any{
+		"is_disabled": disabled,
+		"updated_at":  now,
+	})
+}
+
+func (s *Store) setUserLazyLoaded(id int64, lazy bool) error {
+	now := time.Now().UTC()
+	return s.users().Find(db.Cond{"id": id}).Update(map[string]any{
+		"is_lazy_loaded": lazy,
+		"updated_at":     now,
+	})
+}
+
 func (s *Store) tenantExists(tenantKey string) bool {
 	u, err := s.getUserByTenant(tenantKey)
 	return err == nil && u != nil

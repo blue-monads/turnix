@@ -56,6 +56,14 @@ type resetPasswordRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type setDisabledRequest struct {
+	IsDisabled bool `json:"is_disabled"`
+}
+
+type setLazyRequest struct {
+	IsLazyLoaded bool `json:"is_lazy_loaded"`
+}
+
 func (a *CloudyApp) registerBaseRouter(router *gin.Engine) {
 	r := router.Group("/zz/cloudy")
 
@@ -78,6 +86,9 @@ func (a *CloudyApp) registerBaseRouter(router *gin.Engine) {
 	admin.GET("/users", a.handleListUsers)
 	admin.POST("/users", a.handleAddUser)
 	admin.POST("/users/:id/reset-password", a.handleResetPassword)
+	admin.POST("/users/:id/disable", a.handleSetDisabled)
+	admin.POST("/users/:id/lazy", a.handleSetLazy)
+	admin.POST("/apps/:name/unload", a.unloadApp)
 
 	r.GET("/pages", a.servePages)
 	r.GET("/pages/*filepath", a.servePages)
@@ -417,6 +428,76 @@ func (a *CloudyApp) handleResetPassword(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"ok": true, "user_id": user.ID})
 }
 
+func (a *CloudyApp) handleSetDisabled(c *gin.Context) {
+	var req setDisabledRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	id, err := parseIDParam(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user id"})
+		return
+	}
+
+	user, err := a.getUserByID(id)
+	if err != nil || user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+
+	if err := a.setUserDisabled(user.ID, req.IsDisabled); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	unloaded := false
+	if req.IsDisabled {
+		unloaded = a.unloadSubApp(user.TenantKey)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"ok":          true,
+		"user_id":     user.ID,
+		"tenant":      user.TenantKey,
+		"is_disabled": req.IsDisabled,
+		"unloaded":    unloaded,
+	})
+}
+
+func (a *CloudyApp) handleSetLazy(c *gin.Context) {
+	var req setLazyRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	id, err := parseIDParam(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user id"})
+		return
+	}
+
+	user, err := a.getUserByID(id)
+	if err != nil || user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+
+	if err := a.setUserLazyLoaded(user.ID, req.IsLazyLoaded); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"ok":             true,
+		"user_id":        user.ID,
+		"tenant":         user.TenantKey,
+		"is_lazy_loaded": req.IsLazyLoaded,
+	})
+}
+
 func (a *CloudyApp) redirectToApp(c *gin.Context) {
 	name := strings.ToLower(c.Param("name"))
 	claim := getClaim(c)
@@ -458,6 +539,25 @@ func (a *CloudyApp) loadApp(c *gin.Context) {
 	})
 }
 
+func (a *CloudyApp) unloadApp(c *gin.Context) {
+	name := strings.ToLower(c.Param("name"))
+	if err := validateTenantSlug(name); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if !a.tenantExists(name) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "tenant not found"})
+		return
+	}
+
+	unloaded := a.unloadSubApp(name)
+	c.JSON(http.StatusOK, gin.H{
+		"tenant":   name,
+		"unloaded": unloaded,
+	})
+}
+
 func (a *CloudyApp) tenantRouteMW() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		host := stripHostPort(c.Request.Host)
@@ -480,6 +580,11 @@ func (a *CloudyApp) tenantRouteMW() gin.HandlerFunc {
 			return
 		}
 
+		if sub.Engine == nil {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "tenant is not loaded"})
+			c.Abort()
+			return
+		}
 		sub.Engine.ServeHTTP(c.Writer, c.Request)
 		c.Abort()
 	}
@@ -598,6 +703,21 @@ func (a *CloudyApp) ensureSubApp(name string) (*SubApp, error) {
 	}
 
 	return sub, nil
+}
+
+func (a *CloudyApp) unloadSubApp(name string) bool {
+	a.mu.Lock()
+	sub, ok := a.subApps[name]
+	if ok {
+		delete(a.subApps, name)
+	}
+	a.mu.Unlock()
+	if !ok {
+		return false
+	}
+	log.Printf("unloading tenant %s", name)
+	sub.Unload()
+	return true
 }
 
 func (a *CloudyApp) parseTenantHost(host string) (tenant string, isMain bool) {
