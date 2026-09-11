@@ -1,6 +1,6 @@
 # Cloudy
 
-Thin multi-tenant edge: `main.db` + host proxy to tenant potatoverse apps. No manager app.
+Cloudy is a multi-tenant server for Potatoverse. Main tenant user info is stored in one database, and each tenant has its own database for potatoverse app states. It is using Turso as the database.
 
 ## Auth
 
