@@ -167,17 +167,7 @@ func (a *CloudyApp) handleSignUp(c *gin.Context) {
 		return
 	}
 
-	utype := UTypeNormal
-	existing, err := a.listUsers()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	if len(existing) == 0 {
-		utype = UTypeAdmin
-	}
-
-	user, err := a.insertUser(req.Name, req.Email, passwordHash, tenant, req.PricingTier, utype, false)
+	user, err := a.insertUser(req.Name, req.Email, passwordHash, tenant, req.PricingTier, UTypeNormal, false)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
