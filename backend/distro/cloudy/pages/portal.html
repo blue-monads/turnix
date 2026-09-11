@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal · Cloudy</title>
+  <link rel="stylesheet" href="cloudy.css">
+</head>
+<body class="page">
+  <div class="shell wide">
+    <div class="top">
+      <div class="brand">Cloudy · Portal</div>
+      <div class="meta" id="who"></div>
+    </div>
+    <div class="stack">
+      <div class="card">
+        <h1 id="title">Your tenant</h1>
+        <p class="lede" id="lede">Loading…</p>
+        <p id="url" class="lede"></p>
+        <div class="actions">
+          <button type="button" id="load">Load app</button>
+          <button type="button" class="secondary" id="open">Open app</button>
+        </div>
+        <p id="msg" class="msg"></p>
+        <p class="foot">
+          <a id="adminLink" href="admin-portal.html" hidden>Admin portal</a>
+          <a href="#" id="out">Sign out</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  <script src="cloudy.js"></script>
+  <script>
+    const msg = document.getElementById("msg");
+    let session = null;
+
+    document.getElementById("out").addEventListener("click", (e) => {
+      e.preventDefault();
+      Cloudy.signOut();
+    });
+
+    function setMsg(text, ok) {
+      msg.className = "msg " + (ok ? "ok" : "err");
+      msg.textContent = text || "";
+    }
+
+    Cloudy.requireSession().then((data) => {
+      if (!data) return;
+      session = data;
+      const user = data.user || {};
+      document.getElementById("title").textContent = user.tenant_key || "Tenant";
+      document.getElementById("who").textContent = (user.email || "") + " · " + (user.utype || "");
+      document.getElementById("lede").textContent =
+        (user.fullname || "") + (user.pricing_tier ? " · " + user.pricing_tier : "");
+      document.getElementById("url").textContent = data.url || "";
+      if (user.utype === "admin") document.getElementById("adminLink").hidden = false;
+    });
+
+    document.getElementById("load").addEventListener("click", async () => {
+      if (!session) return;
+      const name = session.user.tenant_key;
+      try {
+        const data = await Cloudy.api("/zz/cloudy/apps/" + encodeURIComponent(name) + "/load", {
+          method: "POST",
+          headers: Cloudy.headers(),
+        });
+        setMsg("App loaded" + (data.ready ? " and ready" : ""), true);
+      } catch (err) {
+        setMsg(err.message);
+      }
+    });
+
+    document.getElementById("open").addEventListener("click", () => {
+      if (!session) return;
+      window.open(session.url, "_blank");
+    });
+  </script>
+</body>
+</html>

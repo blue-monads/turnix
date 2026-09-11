@@ -38,7 +38,7 @@ type SubApp struct {
 	startErr  error
 }
 
-func NewSubApp(ctx context.Context, config *Config, name string, bootstrap bool, m mailer.Mailer) (*SubApp, error) {
+func NewSubApp(ctx context.Context, config *Config, name string, bootstrap bool, m mailer.Mailer, remote tenantRemote) (*SubApp, error) {
 	tenantDir := filepath.Join(config.WorkingDir, "tenants", name)
 	if err := os.MkdirAll(tenantDir, 0o755); err != nil {
 		return nil, err
@@ -46,10 +46,10 @@ func NewSubApp(ctx context.Context, config *Config, name string, bootstrap bool,
 
 	tursoDB, err := turso.NewTursoSyncDb(ctx, turso.TursoSyncDbConfig{
 		Path:             filepath.Join(tenantDir, "app.db"),
-		RemoteUrl:        config.TursoRemoteURL,
-		AuthToken:        config.TursoAuthToken,
+		RemoteUrl:        remote.URL,
+		AuthToken:        remote.AuthToken,
 		BootstrapIfEmpty: &bootstrap,
-		Namespace:        name,
+		Namespace:        remote.Namespace,
 	})
 	if err != nil {
 		return nil, err

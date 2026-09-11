@@ -24,12 +24,7 @@ func newStore(sqlDB *sql.DB) (*Store, error) {
 }
 
 func (s *Store) users() db.Collection {
-	return s.sess.Collection("Users")
-}
-
-func (s *Store) execSchema(ddl string) error {
-	_, err := s.sql.Exec(ddl)
-	return err
+	return s.sess.Collection("CloudyUsers")
 }
 
 func (s *Store) listUsers() ([]*User, error) {

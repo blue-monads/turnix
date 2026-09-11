@@ -2,11 +2,13 @@ package cloudy
 
 import (
 	"fmt"
+	"io/fs"
 	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -78,7 +80,34 @@ func (a *CloudyApp) registerBaseRouter(router *gin.Engine) {
 	admin.POST("/users", a.handleAddUser)
 	admin.POST("/users/:id/reset-password", a.handleResetPassword)
 
-	router.GET("/", a.handleIndex)
+	r.GET("/pages", a.servePages)
+	r.GET("/pages/*filepath", a.servePages)
+}
+
+func (a *CloudyApp) servePages(c *gin.Context) {
+	rel := strings.TrimPrefix(path.Clean("/"+strings.TrimPrefix(c.Param("filepath"), "/")), "/")
+	if rel == "" || rel == "." {
+		c.Redirect(http.StatusFound, "/zz/cloudy/pages/login.html")
+		return
+	}
+
+	fullPath := path.Join("pages", rel)
+	if fullPath != "pages" && !strings.HasPrefix(fullPath, "pages/") {
+		c.Status(http.StatusNotFound)
+		return
+	}
+
+	f, err := fs.Stat(pageFiles, fullPath)
+	if (err != nil || f.IsDir()) && path.Ext(rel) == "" {
+		fullPath = path.Join("pages", rel+".html")
+		f, err = fs.Stat(pageFiles, fullPath)
+	}
+	if err != nil || f.IsDir() {
+		c.Status(http.StatusNotFound)
+		return
+	}
+
+	c.FileFromFS(fullPath, http.FS(pageFiles))
 }
 
 func (a *CloudyApp) handleIndex(c *gin.Context) {
@@ -204,9 +233,16 @@ func (a *CloudyApp) handleLogin(c *gin.Context) {
 }
 
 func (a *CloudyApp) handleMe(c *gin.Context) {
+	user := getUser(c)
+	domain := normalizeDomain(a.config.Domain)
+	host := fmt.Sprintf("%s.%s", user.TenantKey, domain)
 	c.JSON(http.StatusOK, gin.H{
-		"user":  getUser(c),
-		"claim": getClaim(c),
+		"user":   user,
+		"claim":  getClaim(c),
+		"domain": domain,
+		"port":   a.config.Port,
+		"host":   host,
+		"url":    fmt.Sprintf("http://%s:%d", host, a.config.Port),
 	})
 }
 
@@ -467,7 +503,12 @@ func (a *CloudyApp) tenantRouteMW() gin.HandlerFunc {
 }
 
 func (a *CloudyApp) provisionTenant(user *User, adminPassword string) (*SubApp, error) {
-	sub, err := NewSubApp(a.rootCtx, a.config, user.TenantKey, true, a.mailer)
+	remote, err := a.tenantRemote(user.TenantKey)
+	if err != nil {
+		return nil, fmt.Errorf("provision tenant database: %w", err)
+	}
+
+	sub, err := NewSubApp(a.rootCtx, a.config, user.TenantKey, true, a.mailer, remote)
 	if err != nil {
 		return nil, err
 	}
@@ -520,7 +561,12 @@ func (a *CloudyApp) ensureSubApp(name string) (*SubApp, error) {
 		bootstrap = false
 	}
 
-	sub, err := NewSubApp(a.rootCtx, a.config, name, bootstrap, a.mailer)
+	remote, err := a.tenantRemote(name)
+	if err != nil {
+		return nil, fmt.Errorf("resolve tenant database: %w", err)
+	}
+
+	sub, err := NewSubApp(a.rootCtx, a.config, name, bootstrap, a.mailer, remote)
 	if err != nil {
 		return nil, err
 	}

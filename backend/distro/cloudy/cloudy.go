@@ -2,7 +2,7 @@ package cloudy
 
 import (
 	"context"
-	_ "embed"
+	"embed"
 	"fmt"
 	"log"
 	"os"
@@ -19,8 +19,11 @@ import (
 	turso "turso.tech/database/tursogo"
 )
 
-//go:embed cloudy.sql
-var schemaSQL string
+//go:embed all:migrations
+var migrationFS embed.FS
+
+//go:embed all:pages
+var pageFiles embed.FS
 
 type SMTPConfig struct {
 	Host     string
@@ -37,9 +40,15 @@ type Config struct {
 	MasterSecret   string
 	TursoAuthToken string
 	TursoRemoteURL string
-	Domain         string
-	PublicBaseURL  string
-	SMTP           SMTPConfig
+
+	// Turso platform API, used to provision one database per tenant.
+	TursoAPIToken string
+	TursoOrg      string
+	TursoGroup    string
+	TursoDBPrefix string
+
+	Domain string
+	SMTP   SMTPConfig
 }
 
 type CloudyApp struct {
@@ -50,6 +59,7 @@ type CloudyApp struct {
 	router  *gin.Engine
 	mailer  *smtpSender
 	branca  *branca.Branca
+	turso   *tursoAPI
 
 	mu      sync.RWMutex
 	subApps map[string]*SubApp
@@ -68,7 +78,7 @@ func New(config *Config) (*CloudyApp, error) {
 		RemoteUrl:        config.TursoRemoteURL,
 		AuthToken:        config.TursoAuthToken,
 		BootstrapIfEmpty: &bootstrap,
-		Namespace:        "main",
+		//		Namespace:        "main",
 	})
 	if err != nil {
 		return nil, err
@@ -84,6 +94,11 @@ func New(config *Config) (*CloudyApp, error) {
 		log.Println("No changes to pull for main.db")
 	}
 
+	tapi := newTursoAPI(config)
+	if tapi == nil {
+		log.Println("warning: TURSO_API_TOKEN/TURSO_ORG not set, tenant databases will not be provisioned")
+	}
+
 	return &CloudyApp{
 		rootCtx: ctx,
 		tursoDB: db,
@@ -91,7 +106,21 @@ func New(config *Config) (*CloudyApp, error) {
 		subApps: make(map[string]*SubApp),
 		mailer:  newSMTPSender(config.SMTP),
 		branca:  newBranca(config.MasterSecret),
+		turso:   tapi,
 	}, nil
+}
+
+// tenantRemote provisions (or looks up) the tenant's Turso database and returns
+// the sync target for it.
+func (a *CloudyApp) tenantRemote(tenant string) (tenantRemote, error) {
+	if a.turso == nil {
+		return tenantRemote{
+			URL:       a.config.TursoRemoteURL,
+			AuthToken: a.config.TursoAuthToken,
+			Namespace: tenant,
+		}, nil
+	}
+	return a.turso.ensureTenantDB(a.rootCtx, tenant)
 }
 
 func (a *CloudyApp) Build() error {
@@ -99,18 +128,10 @@ func (a *CloudyApp) Build() error {
 		return nil
 	}
 
-	sqlDB, err := a.tursoDB.Connect(a.rootCtx)
-	if err != nil {
+	if err := a.initStore(); err != nil {
 		return err
 	}
-
-	store, err := newStore(sqlDB)
-	if err != nil {
-		return err
-	}
-	a.store = store
-
-	if err := a.ensureSchema(); err != nil {
+	if err := a.store.migrate(); err != nil {
 		return err
 	}
 
@@ -133,14 +154,6 @@ func (a *CloudyApp) Run() error {
 	addr := fmt.Sprintf(":%d", a.config.Port)
 	log.Println("Cloudy listening on", addr, "domain", normalizeDomain(a.config.Domain))
 	return a.router.Run(addr)
-}
-
-func (a *CloudyApp) ensureSchema() error {
-	if err := a.store.execSchema(schemaSQL); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (a *CloudyApp) dbSyncer() {
@@ -205,9 +218,6 @@ func (a *CloudyApp) tenantExists(tenantKey string) bool {
 }
 
 func (a *CloudyApp) publicBaseURL() string {
-	if a.config.PublicBaseURL != "" {
-		return strings.TrimRight(a.config.PublicBaseURL, "/")
-	}
 	return fmt.Sprintf("http://%s:%d", normalizeDomain(a.config.Domain), a.config.Port)
 }
 

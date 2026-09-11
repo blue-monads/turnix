@@ -57,8 +57,11 @@ func main() {
 		MasterSecret:   masterSecret,
 		TursoAuthToken: tursoAuthToken,
 		TursoRemoteURL: tursoRemoteURL,
+		TursoAPIToken:  os.Getenv("TURSO_API_TOKEN"),
+		TursoOrg:       os.Getenv("TURSO_ORG"),
+		TursoGroup:     os.Getenv("TURSO_GROUP"),
+		TursoDBPrefix:  os.Getenv("TURSO_DB_PREFIX"),
 		Domain:         serveDomain,
-		PublicBaseURL:  os.Getenv("CLOUDY_PUBLIC_BASE_URL"),
 		SMTP: cloudy.SMTPConfig{
 			Host:     os.Getenv("SMTP_HOST"),
 			Port:     smtpPort,
@@ -70,6 +73,18 @@ func main() {
 	})
 	if err != nil {
 		panic(err)
+	}
+
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "migrate":
+			if err := capp.Migrate(); err != nil {
+				panic(err)
+			}
+			return
+		default:
+			panic("unknown command: " + os.Args[1])
+		}
 	}
 
 	if err := capp.Run(); err != nil {
