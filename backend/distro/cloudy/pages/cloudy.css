@@ -61,6 +61,22 @@ td.actions {
   gap: 8px;
 }
 
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.card-head .lede {
+  margin-bottom: 0;
+}
+
+.card-head #refresh {
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
 button.secondary {
   background: var(--card);
   color: var(--ink);
@@ -198,6 +214,9 @@ td button {
 .foot {
   margin-top: 16px;
   font-size: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
 }
 
 a { color: var(--accent); }

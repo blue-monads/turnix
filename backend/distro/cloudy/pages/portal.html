@@ -20,15 +20,15 @@
         <div class="actions">
           <button type="button" id="load">Load app</button>
           <button type="button" class="secondary" id="open">Open app</button>
-          <a href="sub-users.html">App users</a>
+          <button type="button" class="secondary" id="users">App users</button>
         </div>
         <p id="msg" class="msg"></p>
-        <p class="foot">
-          <a id="adminLink" href="admin-portal.html" hidden>Admin portal</a>
-          <a href="#" id="out">Sign out</a>
-        </p>
       </div>
     </div>
+    <p class="foot">
+      <a id="adminLink" href="admin-portal.html" hidden>Admin portal</a>
+      <a href="#" id="out">Sign out</a>
+    </p>
   </div>
   <script src="cloudy.js"></script>
   <script>
@@ -74,6 +74,10 @@
     document.getElementById("open").addEventListener("click", () => {
       if (!session) return;
       window.open(session.url, "_blank");
+    });
+
+    document.getElementById("users").addEventListener("click", () => {
+      location.href = "sub-users.html";
     });
   </script>
 </body>
