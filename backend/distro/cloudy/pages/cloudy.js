@@ -32,6 +32,32 @@ window.Cloudy = {
     return data;
   },
 
+  async download(path, filename) {
+    const res = await fetch(path, { headers: this.headers() });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || res.statusText || "download failed");
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    return filename;
+  },
+
+  exportFilename(tenant) {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return tenant + "-app-" + y + "-" + m + "-" + day + ".db";
+  },
+
   afterLogin(user, token) {
     this.setToken(token);
     location.href = this.page(user && user.utype === "admin" ? "admin-portal.html" : "portal.html");

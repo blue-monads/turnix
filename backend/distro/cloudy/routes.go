@@ -1,6 +1,7 @@
 package cloudy
 
 import (
+	"context"
 	"fmt"
 	"io/fs"
 	"log"
@@ -79,6 +80,7 @@ func (a *CloudyApp) registerBaseRouter(router *gin.Engine) {
 	authed := r.Group("/", a.authMiddleware())
 	authed.GET("/me", a.handleMe)
 	authed.POST("/apps/:name/load", a.loadApp)
+	authed.GET("/apps/:name/export", a.exportApp)
 	authed.GET("/apps/:name/open", a.redirectToApp)
 	authed.GET("/sub-users", a.handleListSubUsers)
 	authed.POST("/sub-users", a.handleAddSubUser)
@@ -541,6 +543,43 @@ func (a *CloudyApp) loadApp(c *gin.Context) {
 		"tenant": name,
 		"ready":  sub.IsReady(),
 	})
+}
+
+func (a *CloudyApp) exportApp(c *gin.Context) {
+	name := strings.ToLower(c.Param("name"))
+	if err := validateTenantSlug(name); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	claim := getClaim(c)
+	if claim.UType != UTypeAdmin && claim.TenantKey != name {
+		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+		return
+	}
+	if !a.tenantExists(name) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "tenant not found"})
+		return
+	}
+
+	dbPath := filepath.Join(a.config.WorkingDir, "tenants", name, "app.db")
+	if _, err := os.Stat(dbPath); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "database file not found"})
+		return
+	}
+
+	a.mu.RLock()
+	sub := a.subApps[name]
+	a.mu.RUnlock()
+	if sub != nil {
+		ctx, cancel := context.WithTimeout(c.Request.Context(), 20*time.Second)
+		if err := sub.Checkpoint(ctx); err != nil {
+			log.Printf("tenant %s: export checkpoint: %v", name, err)
+		}
+		cancel()
+	}
+
+	c.FileAttachment(dbPath, name+"-app-"+time.Now().Format("2006-01-02")+".db")
 }
 
 func (a *CloudyApp) unloadApp(c *gin.Context) {

@@ -118,6 +118,7 @@
           actionBtn(u.is_disabled ? "Enable" : "Disable", () => setDisabled(u.id, u.tenant_key, !u.is_disabled)),
           actionBtn(u.is_lazy_loaded ? "Eager" : "Lazy", () => setLazy(u.id, u.tenant_key, !u.is_lazy_loaded)),
           actionBtn("Open", () => window.open(Cloudy.tenantURL(session, u.tenant_key), "_blank")),
+          actionBtn("Export DB", () => exportDB(u.tenant_key)),
           actionBtn("Reset pw", () => resetPassword(u.id, u.email)),
         );
         rows.appendChild(tr);
@@ -163,6 +164,19 @@
         setMsg("Unloaded " + name, true);
         await refreshHealth();
         await loadUsers();
+      } catch (err) {
+        setMsg(err.message);
+      }
+    }
+
+    async function exportDB(name) {
+      try {
+        const filename = Cloudy.exportFilename(name);
+        await Cloudy.download(
+          "/zz/cloudy/apps/" + encodeURIComponent(name) + "/export",
+          filename,
+        );
+        setMsg("Exported " + filename, true);
       } catch (err) {
         setMsg(err.message);
       }

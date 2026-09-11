@@ -21,6 +21,7 @@
           <button type="button" id="load">Load app</button>
           <button type="button" class="secondary" id="open">Open app</button>
           <button type="button" class="secondary" id="users">App users</button>
+          <button type="button" class="secondary" id="export">Export DB</button>
         </div>
         <p id="msg" class="msg"></p>
       </div>
@@ -78,6 +79,21 @@
 
     document.getElementById("users").addEventListener("click", () => {
       location.href = "sub-users.html";
+    });
+
+    document.getElementById("export").addEventListener("click", async () => {
+      if (!session) return;
+      const name = session.user.tenant_key;
+      try {
+        const filename = Cloudy.exportFilename(name);
+        await Cloudy.download(
+          "/zz/cloudy/apps/" + encodeURIComponent(name) + "/export",
+          filename,
+        );
+        setMsg("Exported " + filename, true);
+      } catch (err) {
+        setMsg(err.message);
+      }
     });
   </script>
 </body>

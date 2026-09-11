@@ -193,6 +193,13 @@ func (s *SubApp) WaitReady(timeout time.Duration) error {
 	}
 }
 
+func (s *SubApp) Checkpoint(ctx context.Context) error {
+	if s == nil || s.tursoDB == nil {
+		return nil
+	}
+	return s.tursoDB.Checkpoint(ctx)
+}
+
 func (s *SubApp) IsReady() bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
