@@ -3,6 +3,7 @@ package cloudy
 import (
 	"fmt"
 	"io/fs"
+	"log"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -503,33 +504,55 @@ func (a *CloudyApp) tenantRouteMW() gin.HandlerFunc {
 }
 
 func (a *CloudyApp) provisionTenant(user *User, adminPassword string) (*SubApp, error) {
+
+	log.Println("provisionTenant/1", user.TenantKey)
+
 	remote, err := a.tenantRemote(user.TenantKey)
 	if err != nil {
+		log.Println("provisionTenant/2", err)
 		return nil, fmt.Errorf("provision tenant database: %w", err)
 	}
 
+	log.Println("provisionTenant/3", remote)
+
 	sub, err := NewSubApp(a.rootCtx, a.config, user.TenantKey, true, a.mailer, remote)
 	if err != nil {
+		log.Println("provisionTenant/4", err)
 		return nil, err
 	}
 
+	log.Println("provisionTenant/5")
+
 	a.mu.Lock()
 	if existing, ok := a.subApps[user.TenantKey]; ok {
+		log.Println("provisionTenant/6", existing)
 		a.mu.Unlock()
 		if err := existing.WaitReady(30 * time.Second); err != nil {
+			log.Println("provisionTenant/7", err)
 			return nil, err
 		}
+
+		log.Println("provisionTenant/8", existing)
 		return existing, nil
 	}
+
+	log.Println("provisionTenant/9")
+
 	a.subApps[user.TenantKey] = sub
 	a.mu.Unlock()
 
+	log.Println("provisionTenant/10")
+
 	if err := sub.Load(a.rootCtx, user.Fullname, adminPassword, user.Email); err != nil {
+		log.Println("provisionTenant/11", err)
 		a.mu.Lock()
 		delete(a.subApps, user.TenantKey)
 		a.mu.Unlock()
 		return nil, err
 	}
+
+	log.Println("provisionTenant/12")
+
 	return sub, nil
 }
 

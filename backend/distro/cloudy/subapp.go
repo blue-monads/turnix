@@ -92,19 +92,19 @@ func (s *SubApp) Load(ctx context.Context, adminName, adminPassword, adminEmail 
 
 	db, err := s.tursoDB.Connect(ctx)
 	if err != nil {
-		return err
+		return fmt.Errorf("tenant %s: connect: %w", s.Name, err)
 	}
 
 	logger := slog.Default().With("tenant", s.Name)
 
 	adb, err := database.FromSqlHandle(db, logger)
 	if err != nil {
-		return err
+		return fmt.Errorf("tenant %s: open database: %w", s.Name, err)
 	}
 
 	port, err := freePort()
 	if err != nil {
-		return err
+		return fmt.Errorf("tenant %s: free port: %w", s.Name, err)
 	}
 	s.Port = port
 
@@ -141,7 +141,7 @@ func (s *SubApp) Load(ctx context.Context, adminName, adminPassword, adminEmail 
 	})
 
 	if err := seedTenantApp(happ, adminName, adminPassword, adminEmail); err != nil {
-		return err
+		return fmt.Errorf("tenant %s: seed: %w", s.Name, err)
 	}
 
 	s.App = happ
@@ -149,7 +149,7 @@ func (s *SubApp) Load(ctx context.Context, adminName, adminPassword, adminEmail 
 	go func() {
 		if err := happ.Start(); err != nil {
 			log.Printf("tenant %s start error: %v", s.Name, err)
-			s.markReady(err)
+			s.markReady(fmt.Errorf("tenant %s: start: %w", s.Name, err))
 		}
 	}()
 
@@ -205,17 +205,17 @@ func seedTenantApp(happ *app.App, name, password, email string) error {
 
 	ugroups, err := ctrl.ListUserGroups()
 	if err != nil {
-		return err
+		return fmt.Errorf("list user groups: %w", err)
 	}
 	if len(ugroups) > 0 {
 		return nil
 	}
 
 	if err := ctrl.AddUserGroup("admin", "Admin group"); err != nil {
-		return err
+		return fmt.Errorf("add admin group: %w", err)
 	}
 	if err := ctrl.AddUserGroup("normal", "Normal group"); err != nil {
-		return err
+		return fmt.Errorf("add normal group: %w", err)
 	}
 
 	if name == "" {
@@ -228,8 +228,11 @@ func seedTenantApp(happ *app.App, name, password, email string) error {
 		email = "admin@localhost"
 	}
 
-	_, err = ctrl.AddAdminUserDirect(name, password, email)
-	return err
+	if _, err := ctrl.AddAdminUserDirect(name, password, email); err != nil {
+		return fmt.Errorf("add admin user %q: %w", email, err)
+	}
+
+	return nil
 }
 
 func freePort() (int, error) {
