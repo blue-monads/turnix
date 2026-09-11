@@ -34,6 +34,7 @@ type Option struct {
 	OnStart    func()
 
 	WorkingFolderBase string
+	RunPortNoBind     bool
 }
 
 var _ xtypes.App = (*App)(nil)
@@ -95,19 +96,20 @@ func New(opt Option) *App {
 	happ.coreHub = corehub.NewCoreHub(happ)
 
 	server := server.NewServer(server.Option{
-		Port:        opt.AppOpts.Port,
-		Ctrl:        happ.ctrl,
-		Signer:      opt.Signer,
-		Engine:      engine,
-		Hosts:       hosts,
-		LocalSocket: opt.AppOpts.SocketFile,
-		SiteName:    opt.AppOpts.Name,
-		CoreHub:     happ.coreHub,
-		BuddyHub:    opt.BuddyHub,
-		Logger:      opt.Logger,
-		ExecId:      execId,
-		OnStart:     opt.OnStart,
-		BaseRouter:  opt.BaseRouter,
+		Port:          opt.AppOpts.Port,
+		Ctrl:          happ.ctrl,
+		Signer:        opt.Signer,
+		Engine:        engine,
+		Hosts:         hosts,
+		LocalSocket:   opt.AppOpts.SocketFile,
+		SiteName:      opt.AppOpts.Name,
+		CoreHub:       happ.coreHub,
+		BuddyHub:      opt.BuddyHub,
+		Logger:        opt.Logger,
+		ExecId:        execId,
+		OnStart:       opt.OnStart,
+		BaseRouter:    opt.BaseRouter,
+		RunPortNoBind: opt.RunPortNoBind,
 	})
 
 	happ.server = server

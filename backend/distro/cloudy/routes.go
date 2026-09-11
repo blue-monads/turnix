@@ -6,8 +6,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -454,7 +452,6 @@ func (a *CloudyApp) loadApp(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"tenant": name,
-		"port":   sub.Port,
 		"ready":  sub.IsReady(),
 	})
 }
@@ -475,20 +472,7 @@ func (a *CloudyApp) tenantRouteMW() gin.HandlerFunc {
 			return
 		}
 
-		target, err := url.Parse(fmt.Sprintf("http://127.0.0.1:%d", sub.Port))
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			c.Abort()
-			return
-		}
-
-		proxy := httputil.NewSingleHostReverseProxy(target)
-		proxy.Rewrite = func(r *httputil.ProxyRequest) {
-			r.SetURL(target)
-			r.SetXForwarded()
-			r.Out.Host = r.In.Host
-		}
-		proxy.ServeHTTP(c.Writer, c.Request)
+		sub.Engine.ServeHTTP(c.Writer, c.Request)
 		c.Abort()
 	}
 }

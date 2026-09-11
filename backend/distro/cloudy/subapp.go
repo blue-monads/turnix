@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
-	"net"
 	"os"
 	"path/filepath"
 	"sync"
@@ -19,13 +18,14 @@ import (
 	"github.com/blue-monads/potatoverse/backend/services/mailer"
 	"github.com/blue-monads/potatoverse/backend/services/signer"
 	"github.com/blue-monads/potatoverse/backend/xtypes"
+	"github.com/gin-gonic/gin"
 	turso "turso.tech/database/tursogo"
 )
 
 type SubApp struct {
-	Name string
-	App  xtypes.App
-	Port int
+	Name   string
+	App    xtypes.App
+	Engine *gin.Engine
 
 	tursoDB *turso.TursoSyncDb
 	config  *Config
@@ -102,18 +102,12 @@ func (s *SubApp) Load(ctx context.Context, adminName, adminPassword, adminEmail 
 		return fmt.Errorf("tenant %s: open database: %w", s.Name, err)
 	}
 
-	port, err := freePort()
-	if err != nil {
-		return fmt.Errorf("tenant %s: free port: %w", s.Name, err)
-	}
-	s.Port = port
-
 	baseDomain := normalizeDomain(s.config.Domain)
 	tenantHost := fmt.Sprintf("%s.%s", s.Name, baseDomain)
 	workDir := filepath.Join(s.config.WorkingDir, "tenants", s.Name)
 
 	appOpts := &xtypes.AppOptions{
-		Port:         port,
+		Port:         0,
 		WorkingDir:   workDir,
 		MasterSecret: s.config.MasterSecret,
 		Name:         fmt.Sprintf("Cloudy/%s", s.Name),
@@ -125,6 +119,8 @@ func (s *SubApp) Load(ctx context.Context, adminName, adminPassword, adminEmail 
 	}
 
 	bhub := buddyhub.NewDummyBuddyHub()
+	tenantEngine := gin.New()
+	tenantEngine.Use(gin.Logger(), gin.Recovery())
 
 	happ := app.New(app.Option{
 		Database:          adb,
@@ -134,9 +130,11 @@ func (s *SubApp) Load(ctx context.Context, adminName, adminPassword, adminEmail 
 		Mailer:            s.mailer,
 		WorkingFolderBase: workDir,
 		BuddyHub:          bhub,
+		BaseRouter:        tenantEngine,
+		RunPortNoBind:     true,
 		OnStart: func() {
 			s.markReady(nil)
-			log.Printf("tenant %s listening on :%d", s.Name, port)
+			log.Printf("tenant %s ready for in-process HTTP", s.Name)
 		},
 	})
 
@@ -145,6 +143,7 @@ func (s *SubApp) Load(ctx context.Context, adminName, adminPassword, adminEmail 
 	}
 
 	s.App = happ
+	s.Engine = tenantEngine
 
 	go func() {
 		if err := happ.Start(); err != nil {
@@ -233,13 +232,4 @@ func seedTenantApp(happ *app.App, name, password, email string) error {
 	}
 
 	return nil
-}
-
-func freePort() (int, error) {
-	l, err := net.Listen("tcp", "127.0.0.1:0")
-	if err != nil {
-		return 0, err
-	}
-	defer l.Close()
-	return l.Addr().(*net.TCPAddr).Port, nil
 }

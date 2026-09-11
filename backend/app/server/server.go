@@ -42,6 +42,8 @@ type Option struct {
 	LocalSocket string
 	BaseRouter  *gin.Engine
 
+	RunPortNoBind bool
+
 	BuddyHub buddyhub.IBuddyHub
 	CoreHub  *corehub.CoreHub
 
@@ -135,6 +137,10 @@ func (s *Server) Start() error {
 		}
 
 	}()
+
+	if s.opt.RunPortNoBind {
+		return nil
+	}
 
 	return s.router.Run(fmt.Sprintf(":%d", s.opt.Port))
 
