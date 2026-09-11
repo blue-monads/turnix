@@ -27,7 +27,7 @@ func (c *Controller) AddUserDirect(name, password, email, utype string) (*dbmode
 		return nil, err
 	}
 
-	uid, err := c.database.GetUserOps().AddUser(&dbmodels.User{
+	_, err = c.database.GetUserOps().AddUser(&dbmodels.User{
 		ID:         0,
 		Name:       name,
 		Bio:        "This is a normal user.",
@@ -42,7 +42,9 @@ func (c *Controller) AddUserDirect(name, password, email, utype string) (*dbmode
 		return nil, err
 	}
 
-	return c.database.GetUserOps().GetUser(uid)
+	// email, not the insert rowid: turso reassigns rowids when it rebases local
+	// writes onto changes pulled from the remote.
+	return c.database.GetUserOps().GetUserByEmail(email)
 }
 
 // app fingerprint

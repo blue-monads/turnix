@@ -181,9 +181,9 @@ func (a *CloudyApp) dbSyncer() {
 		ctx := context.Background()
 		qq.Println("@remote_syncing")
 
-		if _, err := a.tursoDB.Pull(ctx); err != nil {
-			log.Println("Error pulling main.db:", err)
-		}
+		// push only. a pull rolls local writes back and replays them on top of
+		// the remote, which moves rowids under in-flight requests, so we only
+		// pull when a database is loaded and this process is its sole writer.
 		if err := a.tursoDB.Push(ctx); err != nil {
 			log.Println("Error pushing main.db:", err)
 		}
@@ -196,8 +196,11 @@ func (a *CloudyApp) dbSyncer() {
 		a.mu.RUnlock()
 
 		for _, sub := range subs {
-			if err := sub.Sync(ctx); err != nil {
-				log.Printf("Error syncing tenant %s: %v", sub.Name, err)
+			if !sub.IsReady() {
+				continue
+			}
+			if err := sub.Push(ctx); err != nil {
+				log.Printf("Error pushing tenant %s: %v", sub.Name, err)
 			}
 		}
 

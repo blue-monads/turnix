@@ -64,18 +64,8 @@ func NewSubApp(ctx context.Context, config *Config, name string, bootstrap bool,
 	}, nil
 }
 
-func (s *SubApp) Sync(ctx context.Context) error {
-	pulled, err := s.tursoDB.Pull(ctx)
-	if err != nil {
-		return err
-	}
-	if pulled {
-		log.Printf("tenant %s: pulled remote changes", s.Name)
-	}
-	if err := s.tursoDB.Push(ctx); err != nil {
-		return err
-	}
-	return nil
+func (s *SubApp) Push(ctx context.Context) error {
+	return s.tursoDB.Push(ctx)
 }
 
 func (s *SubApp) Load(ctx context.Context, adminName, adminPassword, adminEmail string) error {
@@ -241,15 +231,21 @@ func seedTenantApp(happ *app.App, name, password, email string) error {
 	if err != nil {
 		return fmt.Errorf("list user groups: %w", err)
 	}
-	if len(ugroups) > 0 {
-		return nil
+	if len(ugroups) == 0 {
+		if err := ctrl.AddUserGroup("admin", "Admin group"); err != nil {
+			return fmt.Errorf("add admin group: %w", err)
+		}
+		if err := ctrl.AddUserGroup("normal", "Normal group"); err != nil {
+			return fmt.Errorf("add normal group: %w", err)
+		}
 	}
 
-	if err := ctrl.AddUserGroup("admin", "Admin group"); err != nil {
-		return fmt.Errorf("add admin group: %w", err)
+	users, err := ctrl.ListUsers(0, 1)
+	if err != nil {
+		return fmt.Errorf("list users: %w", err)
 	}
-	if err := ctrl.AddUserGroup("normal", "Normal group"); err != nil {
-		return fmt.Errorf("add normal group: %w", err)
+	if len(users) > 0 {
+		return nil
 	}
 
 	if name == "" {
