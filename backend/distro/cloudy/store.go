@@ -91,15 +91,17 @@ func (s *Store) insertUser(fullname, email, passwordHash, tenantKey, pricingTier
 
 	now := time.Now().UTC()
 	u := &User{
-		Fullname:    fullname,
-		Email:       email,
-		Password:    passwordHash,
-		TenantKey:   tenantKey,
-		UType:       utype,
-		PricingTier: pricingTier,
-		IsVerified:  verified,
-		CreatedAt:   &now,
-		UpdatedAt:   &now,
+		Fullname:     fullname,
+		Email:        email,
+		Password:     passwordHash,
+		TenantKey:    tenantKey,
+		UType:        utype,
+		PricingTier:  pricingTier,
+		IsVerified:   verified,
+		IsLazyLoaded: true,
+		IsDisabled:   false,
+		CreatedAt:    &now,
+		UpdatedAt:    &now,
 	}
 
 	res, err := s.users().Insert(u)

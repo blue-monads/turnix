@@ -320,16 +320,18 @@ func (a *CloudyApp) handleListUsers(c *gin.Context) {
 	for _, u := range users {
 		_, loaded := a.subApps[u.TenantKey]
 		out = append(out, gin.H{
-			"id":           u.ID,
-			"fullname":     u.Fullname,
-			"email":        u.Email,
-			"tenant_key":   u.TenantKey,
-			"utype":        u.UType,
-			"pricing_tier": u.PricingTier,
-			"is_verified":  u.IsVerified,
-			"created_at":   u.CreatedAt,
-			"updated_at":   u.UpdatedAt,
-			"loaded":       loaded,
+			"id":             u.ID,
+			"fullname":       u.Fullname,
+			"email":          u.Email,
+			"tenant_key":     u.TenantKey,
+			"utype":          u.UType,
+			"pricing_tier":   u.PricingTier,
+			"is_verified":    u.IsVerified,
+			"is_lazy_loaded": u.IsLazyLoaded,
+			"is_disabled":    u.IsDisabled,
+			"created_at":     u.CreatedAt,
+			"updated_at":     u.UpdatedAt,
+			"loaded":         loaded,
 		})
 	}
 	c.JSON(http.StatusOK, gin.H{"users": out})
@@ -467,7 +469,13 @@ func (a *CloudyApp) tenantRouteMW() gin.HandlerFunc {
 
 		sub, err := a.ensureSubApp(tenant)
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "unknown tenant"})
+			status := http.StatusNotFound
+			msg := "unknown tenant"
+			if strings.Contains(err.Error(), "disabled") {
+				status = http.StatusForbidden
+				msg = "tenant is disabled"
+			}
+			c.JSON(status, gin.H{"error": msg})
 			c.Abort()
 			return
 		}
@@ -531,6 +539,20 @@ func (a *CloudyApp) provisionTenant(user *User, adminPassword string) (*SubApp, 
 }
 
 func (a *CloudyApp) ensureSubApp(name string) (*SubApp, error) {
+	rec, err := a.getUserByTenant(name)
+	if err != nil {
+		return nil, err
+	}
+	if rec == nil {
+		return nil, fmt.Errorf("tenant %q not registered", name)
+	}
+	if rec.IsDisabled {
+		return nil, fmt.Errorf("tenant %q is disabled", name)
+	}
+	if !rec.IsVerified {
+		return nil, fmt.Errorf("tenant %q is not verified", name)
+	}
+
 	a.mu.RLock()
 	if sub, ok := a.subApps[name]; ok {
 		a.mu.RUnlock()
@@ -540,17 +562,6 @@ func (a *CloudyApp) ensureSubApp(name string) (*SubApp, error) {
 		return sub, nil
 	}
 	a.mu.RUnlock()
-
-	rec, err := a.getUserByTenant(name)
-	if err != nil {
-		return nil, err
-	}
-	if rec == nil {
-		return nil, fmt.Errorf("tenant %q not registered", name)
-	}
-	if !rec.IsVerified {
-		return nil, fmt.Errorf("tenant %q is not verified", name)
-	}
 
 	dbPath := filepath.Join(a.config.WorkingDir, "tenants", name, "app.db")
 	bootstrap := true

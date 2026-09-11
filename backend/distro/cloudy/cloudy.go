@@ -149,6 +149,8 @@ func (a *CloudyApp) Run() error {
 		return err
 	}
 
+	a.loadEagerSubApps()
+
 	go a.dbSyncer()
 
 	addr := fmt.Sprintf(":%d", a.config.Port)
@@ -182,6 +184,24 @@ func (a *CloudyApp) dbSyncer() {
 		}
 
 		time.Sleep(5 * time.Second)
+	}
+}
+
+func (a *CloudyApp) loadEagerSubApps() {
+	users, err := a.listUsers()
+	if err != nil {
+		log.Println("Error listing tenants for eager load:", err)
+		return
+	}
+
+	for _, u := range users {
+		if u.IsDisabled || u.IsLazyLoaded || !u.IsVerified {
+			continue
+		}
+		log.Printf("eager loading tenant %s", u.TenantKey)
+		if _, err := a.ensureSubApp(u.TenantKey); err != nil {
+			log.Printf("Error eager loading tenant %s: %v", u.TenantKey, err)
+		}
 	}
 }
 
