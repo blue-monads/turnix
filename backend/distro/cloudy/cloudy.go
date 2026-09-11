@@ -4,6 +4,7 @@ import (
 	"context"
 	"embed"
 	"fmt"
+	"html/template"
 	"log"
 	"os"
 	"path/filepath"
@@ -24,6 +25,23 @@ var migrationFS embed.FS
 
 //go:embed all:pages
 var pageFiles embed.FS
+
+//go:embed templates/verify.html
+var verifyTmplFS embed.FS
+
+var verifyTmpl = template.Must(template.ParseFS(verifyTmplFS, "templates/verify.html"))
+
+type verifyPage struct {
+	OK            bool
+	Title         string
+	Message       string
+	Tenant        string
+	Host          string
+	URL           string
+	AdminName     string
+	AdminPassword string
+	LoginURL      string
+}
 
 type SMTPConfig struct {
 	Host     string
@@ -221,6 +239,24 @@ func (a *CloudyApp) getUserByID(id int64) (*User, error) {
 	return a.store.getUserByID(id)
 }
 
+// resolveClaimUser looks up the account a token was issued for. Row ids shift
+// when turso rebases local writes during a pull, so the email wins over the id.
+func (a *CloudyApp) resolveClaimUser(claim *Claim) (*User, error) {
+	if claim == nil {
+		return nil, nil
+	}
+	if claim.Email != "" {
+		user, err := a.getUserByEmail(claim.Email)
+		if err != nil {
+			return nil, err
+		}
+		if user != nil {
+			return user, nil
+		}
+	}
+	return a.getUserByID(claim.UserID)
+}
+
 func (a *CloudyApp) insertUser(fullname, email, passwordHash, tenantKey, pricingTier, utype string, verified bool) (*User, error) {
 	return a.store.insertUser(fullname, email, passwordHash, tenantKey, pricingTier, utype, verified)
 }
@@ -278,4 +314,19 @@ func normalizeDomain(domain string) string {
 
 func hashSignupPassword(password string) (string, error) {
 	return xutils.HashPassword(password)
+}
+
+func (a *CloudyApp) loginPageURL() string {
+	return "/zz/cloudy/pages/login.html"
+}
+
+func (a *CloudyApp) renderVerify(c *gin.Context, status int, page verifyPage) {
+	if page.LoginURL == "" {
+		page.LoginURL = a.loginPageURL()
+	}
+	c.Status(status)
+	c.Header("Content-Type", "text/html; charset=utf-8")
+	if err := verifyTmpl.Execute(c.Writer, page); err != nil {
+		log.Println("render verify page:", err)
+	}
 }

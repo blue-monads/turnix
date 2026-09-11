@@ -104,21 +104,20 @@ func (s *Store) insertUser(fullname, email, passwordHash, tenantKey, pricingTier
 		UpdatedAt:    &now,
 	}
 
-	res, err := s.users().Insert(u)
+	if _, err := s.users().Insert(u); err != nil {
+		return nil, err
+	}
+
+	// tenant_key is unique, and unlike the insert rowid it survives turso
+	// rebasing local writes onto changes pulled from the remote.
+	created, err := s.getUserByTenant(tenantKey)
 	if err != nil {
 		return nil, err
 	}
-	id, ok := res.ID().(int64)
-	if !ok {
-		// sqlite sometimes returns int
-		switch v := res.ID().(type) {
-		case int:
-			id = int64(v)
-		default:
-			return nil, fmt.Errorf("unexpected insert id type %T", res.ID())
-		}
+	if created == nil || created.Email != email {
+		return nil, fmt.Errorf("could not read back created user for tenant %q", tenantKey)
 	}
-	return s.getUserByID(id)
+	return created, nil
 }
 
 func (s *Store) markUserVerified(id int64) error {

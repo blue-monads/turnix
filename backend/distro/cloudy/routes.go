@@ -255,58 +255,80 @@ func (a *CloudyApp) handleMe(c *gin.Context) {
 func (a *CloudyApp) handleVerify(c *gin.Context) {
 	token := c.Query("token")
 	if token == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "token is required"})
+		a.renderVerify(c, http.StatusBadRequest, verifyPage{
+			Title:   "Verification failed",
+			Message: "This link is missing a token. Use the link from your email.",
+		})
 		return
 	}
 
 	claim, err := a.decodeClaim(token)
 	if err != nil || claim.Purpose != purposeVerify {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid or expired token"})
+		a.renderVerify(c, http.StatusBadRequest, verifyPage{
+			Title:   "Verification failed",
+			Message: "This link is invalid or has expired. Sign up again or request a new email.",
+		})
 		return
 	}
 
-	user, err := a.getUserByID(claim.UserID)
+	user, err := a.resolveClaimUser(claim)
 	if err != nil || user == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		a.renderVerify(c, http.StatusNotFound, verifyPage{
+			Title:   "Verification failed",
+			Message: "We could not find this account.",
+		})
 		return
 	}
 
 	if !user.IsVerified {
 		if err := a.markUserVerified(user.ID); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			a.renderVerify(c, http.StatusInternalServerError, verifyPage{
+				Title:   "Verification failed",
+				Message: "Could not mark this account as verified. Try again later.",
+			})
 			return
 		}
 		user.IsVerified = true
 	}
+
+	host := fmt.Sprintf("%s.%s", user.TenantKey, normalizeDomain(a.config.Domain))
+	tenantURL := fmt.Sprintf("http://%s:%d", host, a.config.Port)
 
 	a.mu.RLock()
 	existing, alreadyLoaded := a.subApps[user.TenantKey]
 	a.mu.RUnlock()
 	if alreadyLoaded {
 		_ = existing.WaitReady(30 * time.Second)
-		host := fmt.Sprintf("%s.%s", user.TenantKey, normalizeDomain(a.config.Domain))
-		c.JSON(http.StatusOK, gin.H{
-			"user": user,
-			"host": host,
-			"url":  fmt.Sprintf("http://%s:%d", host, a.config.Port),
+		a.renderVerify(c, http.StatusOK, verifyPage{
+			OK:      true,
+			Title:   "You're verified",
+			Message: "Your email is confirmed. Sign in to Cloudy or open your tenant app.",
+			Tenant:  user.TenantKey,
+			Host:    host,
+			URL:     tenantURL,
 		})
 		return
 	}
 
 	adminPass, err := xutils.GenerateRandomString(20)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		a.renderVerify(c, http.StatusInternalServerError, verifyPage{
+			Title:   "Verification failed",
+			Message: "Could not finish setting up your tenant. Try again later.",
+		})
 		return
 	}
 
-	sub, err := a.provisionTenant(user, adminPass)
+	_, err = a.provisionTenant(user, adminPass)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		a.renderVerify(c, http.StatusInternalServerError, verifyPage{
+			Title:   "Verification failed",
+			Message: "Your email is verified, but the tenant app could not start: " + err.Error(),
+			Tenant:  user.TenantKey,
+		})
 		return
 	}
 
-	host := fmt.Sprintf("%s.%s", user.TenantKey, normalizeDomain(a.config.Domain))
-	tenantURL := fmt.Sprintf("http://%s:%d", host, a.config.Port)
 	_ = a.sendMail(user.Email, "Your Cloudy tenant is ready",
 		fmt.Sprintf("Hi %s,\n\nTenant %s is ready.\nURL: %s\nAdmin user: %s\nAdmin password: %s\n",
 			user.Fullname, user.TenantKey, tenantURL, user.Fullname, adminPass),
@@ -314,12 +336,15 @@ func (a *CloudyApp) handleVerify(c *gin.Context) {
 			user.Fullname, user.TenantKey, tenantURL, tenantURL, user.Fullname, adminPass),
 	)
 
-	c.JSON(http.StatusOK, gin.H{
-		"user":           user,
-		"host":           host,
-		"url":            tenantURL,
-		"ready":          sub.IsReady(),
-		"admin_password": adminPass,
+	a.renderVerify(c, http.StatusOK, verifyPage{
+		OK:            true,
+		Title:         "You're verified",
+		Message:       "Your email is confirmed and your tenant is ready.",
+		Tenant:        user.TenantKey,
+		Host:          host,
+		URL:           tenantURL,
+		AdminName:     user.Fullname,
+		AdminPassword: adminPass,
 	})
 }
 

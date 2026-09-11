@@ -89,7 +89,7 @@ func (a *CloudyApp) authMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		user, err := a.getUserByID(claim.UserID)
+		user, err := a.resolveClaimUser(claim)
 		if err != nil || user == nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
 			c.Abort()
@@ -102,6 +102,7 @@ func (a *CloudyApp) authMiddleware() gin.HandlerFunc {
 		}
 
 		// refresh utype from db in case it changed
+		claim.UserID = user.ID
 		claim.UType = user.UType
 		claim.TenantKey = user.TenantKey
 		claim.Email = user.Email
