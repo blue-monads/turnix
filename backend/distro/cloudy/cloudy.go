@@ -230,6 +230,22 @@ func (a *CloudyApp) listTeams() ([]*Team, error) {
 	return a.store.listTeams()
 }
 
+func (a *CloudyApp) getTeamByID(id int64) (*Team, error) {
+	return a.store.getTeamByID(id)
+}
+
+func (a *CloudyApp) getTeamsForUser(userID int64) ([]*Team, error) {
+	return a.store.getTeamsForUser(userID)
+}
+
+func (a *CloudyApp) isUserInTeam(userID, teamID int64) (bool, error) {
+	return a.store.isUserInTeam(userID, teamID)
+}
+
+func (a *CloudyApp) getPotatoInstancesByTeamID(teamID int64) ([]*TeamPotatoInstance, error) {
+	return a.store.getPotatoInstancesByTeamID(teamID)
+}
+
 func (a *CloudyApp) listPotatoInstances() ([]*TeamPotatoInstance, error) {
 	return a.store.listPotatoInstances()
 }
@@ -266,8 +282,12 @@ func (a *CloudyApp) resolveClaimUser(claim *Claim) (*User, error) {
 	return a.getUserByID(claim.UserID)
 }
 
-func (a *CloudyApp) insertUserWithTeamAndInstance(fullname, email, passwordHash, slug, utype string, verified bool) (*User, *Team, *TeamPotatoInstance, error) {
-	return a.store.insertUserWithTeamAndInstance(fullname, email, passwordHash, slug, utype, verified)
+func (a *CloudyApp) insertUserWithTeam(fullname, email, passwordHash, teamName, utype string, verified bool) (*User, *Team, error) {
+	return a.store.insertUserWithTeam(fullname, email, passwordHash, teamName, utype, verified)
+}
+
+func (a *CloudyApp) createPotatoInstance(teamID int64, slug, description string) (*TeamPotatoInstance, error) {
+	return a.store.createPotatoInstance(teamID, slug, description)
 }
 
 func (a *CloudyApp) markUserVerified(id int64) error {
@@ -290,12 +310,11 @@ func (a *CloudyApp) publicBaseURL() string {
 	return fmt.Sprintf("http://%s:%d", normalizeDomain(a.config.Domain), a.config.Port)
 }
 
-func (a *CloudyApp) sendVerificationEmail(user *User, slug string) error {
+func (a *CloudyApp) sendVerificationEmail(user *User, teamName string) error {
 	token, err := a.encodeClaim(&Claim{
 		UserID:  user.ID,
 		Email:   user.Email,
 		UType:   user.UType,
-		Slug:    slug,
 		Purpose: purposeVerify,
 	})
 	if err != nil {
@@ -304,10 +323,10 @@ func (a *CloudyApp) sendVerificationEmail(user *User, slug string) error {
 
 	verifyURL := fmt.Sprintf("%s/zz/cloudy/verify?token=%s", a.publicBaseURL(), token)
 	subject := "Verify your Cloudy account"
-	text := fmt.Sprintf("Hi %s,\n\nVerify your account for instance %s:\n%s\n", user.Fullname, slug, verifyURL)
+	text := fmt.Sprintf("Hi %s,\n\nVerify your account for team %s:\n%s\n", user.Fullname, teamName, verifyURL)
 	html := fmt.Sprintf(
-		`<p>Hi %s,</p><p>Verify your account for instance <strong>%s</strong>:</p><p><a href="%s">Verify email</a></p>`,
-		user.Fullname, slug, verifyURL,
+		`<p>Hi %s,</p><p>Verify your account for team <strong>%s</strong>:</p><p><a href="%s">Verify email</a></p>`,
+		user.Fullname, teamName, verifyURL,
 	)
 
 	return a.sendMail(user.Email, subject, text, html)

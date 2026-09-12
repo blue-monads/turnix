@@ -60,7 +60,7 @@ window.Cloudy = {
 
   afterLogin(user, token) {
     this.setToken(token);
-    location.href = this.page(user && user.utype === "admin" ? "admin-portal.html" : "portal.html");
+    location.href = this.page(user && user.utype === "admin" ? "admin/portal.html" : "portal.html");
   },
 
   tenantURL(session, tenant) {

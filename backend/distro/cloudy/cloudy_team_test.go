@@ -45,8 +45,8 @@ func TestTeamStructure(t *testing.T) {
 		}
 	}
 
-	// Insert user with team and instance
-	user, team, inst, err := store.insertUserWithTeamAndInstance("Alice Smith", "alice@example.com", "secret_hash", "acme-corp", UTypeNormal, true)
+	// Insert user with team (user is added to CloudyTeamMembers, no instance created upon signup)
+	user, team, err := store.insertUserWithTeam("Alice Smith", "alice@example.com", "secret_hash", "acme-team", UTypeNormal, true)
 	if err != nil {
 		t.Fatalf("insert user with team: %v", err)
 	}
@@ -54,11 +54,44 @@ func TestTeamStructure(t *testing.T) {
 	if user.ID == 0 || user.Email != "alice@example.com" {
 		t.Fatalf("unexpected user: %+v", user)
 	}
-	if team.ID == 0 || team.OwnerID != user.ID || team.Name != "acme-corp" {
+	if team.ID == 0 || team.OwnerID != user.ID || team.Name != "acme-team" {
 		t.Fatalf("unexpected team: %+v", team)
 	}
-	if inst.ID == 0 || inst.TeamID != team.ID || inst.Slug != "acme-corp" {
+
+	// Verify user is added to the team (CloudyTeamMembers)
+	inTeam, err := store.isUserInTeam(user.ID, team.ID)
+	if err != nil || !inTeam {
+		t.Fatalf("expected user %d to be in team %d", user.ID, team.ID)
+	}
+
+	// Verify user's teams list contains team
+	uTeams, err := store.getTeamsForUser(user.ID)
+	if err != nil || len(uTeams) != 1 || uTeams[0].ID != team.ID {
+		t.Fatalf("expected user teams to contain team %d, got %+v", team.ID, uTeams)
+	}
+
+	// Verify no instance exists yet for user
+	pInst, _, err := store.getPrimaryInstanceForUser(user.ID)
+	if err != nil {
+		t.Fatalf("get primary instance error: %v", err)
+	}
+	if pInst != nil {
+		t.Fatalf("expected no instance upon signup, got %+v", pInst)
+	}
+
+	// User creates subapp instance for team (instance is added to team in CloudyTeamPotatoInstances)
+	inst, err := store.createPotatoInstance(team.ID, "acme-app", "Acme Main App")
+	if err != nil {
+		t.Fatalf("create potato instance: %v", err)
+	}
+	if inst.ID == 0 || inst.TeamID != team.ID || inst.Slug != "acme-app" {
 		t.Fatalf("unexpected instance: %+v", inst)
+	}
+
+	// Verify instance is linked to team
+	tInsts, err := store.getPotatoInstancesByTeamID(team.ID)
+	if err != nil || len(tInsts) != 1 || tInsts[0].ID != inst.ID {
+		t.Fatalf("expected team instances to contain instance %d, got %+v", inst.ID, tInsts)
 	}
 
 	// Lookup primary instance
@@ -66,8 +99,8 @@ func TestTeamStructure(t *testing.T) {
 	if err != nil {
 		t.Fatalf("get primary instance: %v", err)
 	}
-	if pInst == nil || pInst.Slug != "acme-corp" {
-		t.Fatalf("expected primary instance slug acme-corp, got %+v", pInst)
+	if pInst == nil || pInst.Slug != "acme-app" {
+		t.Fatalf("expected primary instance slug acme-app, got %+v", pInst)
 	}
 	if pTeam == nil || pTeam.ID != team.ID {
 		t.Fatalf("expected primary team id %d, got %+v", team.ID, pTeam)

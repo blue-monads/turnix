@@ -14,26 +14,38 @@
     </div>
     <div class="stack">
       <div class="card">
-        <h1 id="title">Your Potato Instance</h1>
-        <p class="lede" id="lede">Loading…</p>
-        <p id="url" class="lede"></p>
-        <div class="actions">
-          <button type="button" id="load">Load app</button>
-          <button type="button" class="secondary" id="open">Open app</button>
-          <button type="button" class="secondary" id="users">App users</button>
-          <button type="button" class="secondary" id="export">Export DB</button>
+        <div class="card-head">
+          <div>
+            <h1>Your Teams</h1>
+            <p class="lede" id="lede">Loading…</p>
+          </div>
+          <button type="button" class="secondary" id="refresh">Refresh</button>
         </div>
         <p id="msg" class="msg"></p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Team Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
       </div>
     </div>
     <p class="foot">
-      <a id="adminLink" href="admin-portal.html" hidden>Admin portal</a>
+      <a id="adminLink" href="admin/portal.html" hidden>Admin portal</a>
       <a href="#" id="out">Sign out</a>
     </p>
   </div>
   <script src="cloudy.js"></script>
   <script>
     const msg = document.getElementById("msg");
+    const rows = document.getElementById("rows");
     let session = null;
 
     document.getElementById("out").addEventListener("click", (e) => {
@@ -46,54 +58,58 @@
       msg.textContent = text || "";
     }
 
-    Cloudy.requireSession().then((data) => {
+    function esc(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function actionBtn(label, fn, cls) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = cls || "secondary";
+      b.textContent = label;
+      b.addEventListener("click", fn);
+      return b;
+    }
+
+    async function loadTeams() {
+      try {
+        const data = await Cloudy.api("/zz/cloudy/my-teams", { headers: Cloudy.headers() });
+        rows.innerHTML = "";
+        const teams = data.teams || [];
+        document.getElementById("lede").textContent = teams.length + " team(s) found";
+        teams.forEach((t) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td>" + esc(t.id) + "</td>" +
+            "<td><strong>" + esc(t.name) + "</strong></td>" +
+            "<td>" + esc(t.description) + "</td>" +
+            "<td class='actions'></td>";
+          const cell = tr.querySelector("td:last-child");
+          cell.append(
+            actionBtn("Add user", () => { alert("Add user functionality coming soon."); }),
+            actionBtn("Browse", () => { location.href = "teams.html?id=" + encodeURIComponent(t.id); }, "primary")
+          );
+          rows.appendChild(tr);
+        });
+      } catch (err) {
+        setMsg(err.message);
+      }
+    }
+
+    Cloudy.requireSession().then(async (data) => {
       if (!data) return;
       session = data;
       const user = data.user || {};
-      const slug = data.slug || (data.claim ? data.claim.slug : "") || "Instance";
-      document.getElementById("title").textContent = slug;
       document.getElementById("who").textContent = (user.email || "") + " · " + (user.utype || "");
-      document.getElementById("lede").textContent = user.fullname || "";
-      document.getElementById("url").textContent = data.url || "";
       if (user.utype === "admin") document.getElementById("adminLink").hidden = false;
+      await loadTeams();
     });
 
-    document.getElementById("load").addEventListener("click", async () => {
-      if (!session) return;
-      const name = session.slug || (session.claim ? session.claim.slug : "");
-      try {
-        const data = await Cloudy.api("/zz/cloudy/apps/" + encodeURIComponent(name) + "/load", {
-          method: "POST",
-          headers: Cloudy.headers(),
-        });
-        setMsg("App loaded" + (data.ready ? " and ready" : ""), true);
-      } catch (err) {
-        setMsg(err.message);
-      }
-    });
-
-    document.getElementById("open").addEventListener("click", () => {
-      if (!session) return;
-      window.open(session.url, "_blank");
-    });
-
-    document.getElementById("users").addEventListener("click", () => {
-      location.href = "sub-users.html";
-    });
-
-    document.getElementById("export").addEventListener("click", async () => {
-      if (!session) return;
-      const name = session.slug || (session.claim ? session.claim.slug : "");
-      try {
-        const filename = Cloudy.exportFilename(name);
-        await Cloudy.download(
-          "/zz/cloudy/apps/" + encodeURIComponent(name) + "/export",
-          filename,
-        );
-        setMsg("Exported " + filename, true);
-      } catch (err) {
-        setMsg(err.message);
-      }
+    document.getElementById("refresh").addEventListener("click", async () => {
+      await loadTeams();
     });
   </script>
 </body>

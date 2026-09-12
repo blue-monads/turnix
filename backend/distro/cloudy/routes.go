@@ -31,6 +31,7 @@ var reservedTenants = map[string]bool{
 }
 
 type signUpRequest struct {
+	TeamName string `json:"team_name"`
 	Tenant   string `json:"tenant"`
 	Slug     string `json:"slug"`
 	Name     string `json:"name" binding:"required"`
@@ -75,6 +76,9 @@ func (a *CloudyApp) registerBaseRouter(router *gin.Engine) {
 	// authed
 	authed := r.Group("/", a.authMiddleware())
 	authed.GET("/me", a.handleMe)
+	authed.GET("/my-teams", a.handleMyTeams)
+	authed.GET("/teams/:id", a.handleGetTeam)
+	authed.POST("/teams/:id/instances", a.handleCreateInstance)
 	authed.POST("/apps/:name/load", a.loadApp)
 	authed.GET("/apps/:name/export", a.exportApp)
 	authed.GET("/apps/:name/open", a.redirectToApp)
@@ -162,18 +166,15 @@ func (a *CloudyApp) handleSignUp(c *gin.Context) {
 		return
 	}
 
-	slug := req.Slug
-	if slug == "" {
-		slug = req.Tenant
+	teamName := strings.TrimSpace(req.TeamName)
+	if teamName == "" {
+		teamName = strings.TrimSpace(req.Slug)
 	}
-	slug = strings.ToLower(strings.TrimSpace(slug))
-	if err := validateTenantSlug(slug); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if teamName == "" {
+		teamName = strings.TrimSpace(req.Tenant)
 	}
-	if a.slugExists(slug) {
-		c.JSON(http.StatusConflict, gin.H{"error": "instance slug already exists"})
-		return
+	if teamName == "" {
+		teamName = req.Name + "'s Team"
 	}
 
 	passwordHash, err := hashSignupPassword(req.Password)
@@ -182,22 +183,21 @@ func (a *CloudyApp) handleSignUp(c *gin.Context) {
 		return
 	}
 
-	user, team, inst, err := a.insertUserWithTeamAndInstance(req.Name, req.Email, passwordHash, slug, UTypeNormal, false)
+	user, team, err := a.insertUserWithTeam(req.Name, req.Email, passwordHash, teamName, UTypeNormal, false)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := a.sendVerificationEmail(user, inst.Slug); err != nil {
+	if err := a.sendVerificationEmail(user, team.Name); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "user created but failed to send verification email: " + err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"user":     user,
-		"team":     team,
-		"instance": inst,
-		"message":  "check your email to verify before logging in",
+		"user":    user,
+		"team":    team,
+		"message": "check your email to verify before logging in",
 	})
 }
 
@@ -326,6 +326,15 @@ func (a *CloudyApp) handleVerify(c *gin.Context) {
 		}
 	}
 
+	if slug == "" {
+		a.renderVerify(c, http.StatusOK, verifyPage{
+			OK:      true,
+			Title:   "You're verified",
+			Message: "Your email is confirmed. You can now sign in to your team portal.",
+		})
+		return
+	}
+
 	host := fmt.Sprintf("%s.%s", slug, normalizeDomain(a.config.Domain))
 	tenantURL := fmt.Sprintf("http://%s:%d", host, a.config.Port)
 
@@ -440,18 +449,118 @@ func (a *CloudyApp) handleListTeams(c *gin.Context) {
 	})
 }
 
-func (a *CloudyApp) handleAddUser(c *gin.Context) {
-	var req addUserRequest
+func (a *CloudyApp) handleMyTeams(c *gin.Context) {
+	u := getUser(c)
+	if u == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	teams, err := a.getTeamsForUser(u.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"teams": teams})
+}
+
+func (a *CloudyApp) handleGetTeam(c *gin.Context) {
+	u := getUser(c)
+	claim := getClaim(c)
+	if u == nil || claim == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	id, err := parseIDParam(c.Param("id"))
+	if err != nil || id <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid team id"})
+		return
+	}
+
+	if claim.UType != UTypeAdmin {
+		inTeam, err := a.isUserInTeam(u.ID, id)
+		if err != nil || !inTeam {
+			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+			return
+		}
+	}
+
+	team, err := a.getTeamByID(id)
+	if err != nil || team == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "team not found"})
+		return
+	}
+
+	insts, err := a.getPotatoInstancesByTeamID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	a.mu.RLock()
+	defer a.mu.RUnlock()
+
+	outInsts := make([]gin.H, 0, len(insts))
+	for _, inst := range insts {
+		sub, loaded := a.subApps[inst.Slug]
+		ready := false
+		if sub != nil {
+			ready = sub.IsReady()
+		}
+		outInsts = append(outInsts, gin.H{
+			"id":          inst.ID,
+			"slug":        inst.Slug,
+			"description": inst.Description,
+			"team_id":     inst.TeamID,
+			"loaded":      loaded,
+			"ready":       ready,
+			"created_at":  inst.CreatedAt,
+			"updated_at":  inst.UpdatedAt,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"team":      team,
+		"instances": outInsts,
+	})
+}
+
+type createInstanceRequest struct {
+	Slug        string `json:"slug" binding:"required"`
+	Description string `json:"description"`
+}
+
+func (a *CloudyApp) handleCreateInstance(c *gin.Context) {
+	u := getUser(c)
+	claim := getClaim(c)
+	if u == nil || claim == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	teamID, err := parseIDParam(c.Param("id"))
+	if err != nil || teamID <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid team id"})
+		return
+	}
+
+	if claim.UType != UTypeAdmin {
+		inTeam, err := a.isUserInTeam(u.ID, teamID)
+		if err != nil || !inTeam {
+			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+			return
+		}
+	}
+
+	var req createInstanceRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	slug := req.Slug
-	if slug == "" {
-		slug = req.Tenant
-	}
-	slug = strings.ToLower(strings.TrimSpace(slug))
+	slug := strings.ToLower(strings.TrimSpace(req.Slug))
 	if err := validateTenantSlug(slug); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -459,6 +568,33 @@ func (a *CloudyApp) handleAddUser(c *gin.Context) {
 	if a.slugExists(slug) {
 		c.JSON(http.StatusConflict, gin.H{"error": "instance slug already exists"})
 		return
+	}
+
+	inst, err := a.createPotatoInstance(teamID, slug, req.Description)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"ok":       true,
+		"instance": inst,
+	})
+}
+
+func (a *CloudyApp) handleAddUser(c *gin.Context) {
+	var req addUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	teamName := strings.TrimSpace(req.Slug)
+	if teamName == "" {
+		teamName = strings.TrimSpace(req.Tenant)
+	}
+	if teamName == "" {
+		teamName = req.Name + "'s Team"
 	}
 
 	utype := req.UType
@@ -476,23 +612,22 @@ func (a *CloudyApp) handleAddUser(c *gin.Context) {
 		return
 	}
 
-	user, team, inst, err := a.insertUserWithTeamAndInstance(req.Name, req.Email, passwordHash, slug, utype, req.Verified)
+	user, team, err := a.insertUserWithTeam(req.Name, req.Email, passwordHash, teamName, utype, req.Verified)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	if !user.IsVerified {
-		if err := a.sendVerificationEmail(user, inst.Slug); err != nil {
+		if err := a.sendVerificationEmail(user, team.Name); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "user created but failed to send verification email: " + err.Error()})
 			return
 		}
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"user":     user,
-		"team":     team,
-		"instance": inst,
+		"user": user,
+		"team": team,
 	})
 }
 

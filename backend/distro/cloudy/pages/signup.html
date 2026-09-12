@@ -11,13 +11,13 @@
     <div class="brand">Cloudy</div>
     <div class="card">
       <h1>Create an account</h1>
-      <p class="lede">Pick a team instance slug. We’ll email you a verification link before you can sign in.</p>
+      <p class="lede">Enter your details and team name. We’ll email you a verification link before you can sign in.</p>
       <form id="form">
         <label>Name
           <input name="name" autocomplete="name" required>
         </label>
-        <label>Instance Slug
-          <input name="slug" autocomplete="off" required pattern="[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?" placeholder="acme">
+        <label>Team Name
+          <input name="team_name" autocomplete="off" placeholder="Acme Team">
         </label>
         <label>Email
           <input name="email" type="email" autocomplete="email" required>
@@ -43,7 +43,7 @@
       btn.disabled = true;
       const body = {
         name: form.name.value.trim(),
-        slug: form.slug.value.trim().toLowerCase(),
+        team_name: form.team_name.value.trim(),
         email: form.email.value.trim(),
         password: form.password.value,
       };
