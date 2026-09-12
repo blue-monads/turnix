@@ -31,11 +31,11 @@ var reservedTenants = map[string]bool{
 }
 
 type signUpRequest struct {
-	Tenant      string `json:"tenant" binding:"required"`
-	Name        string `json:"name" binding:"required"`
-	Email       string `json:"email" binding:"required"`
-	Password    string `json:"password" binding:"required"`
-	PricingTier string `json:"pricing_tier"`
+	Tenant   string `json:"tenant"`
+	Slug     string `json:"slug"`
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 type loginRequest struct {
@@ -44,13 +44,13 @@ type loginRequest struct {
 }
 
 type addUserRequest struct {
-	Tenant      string `json:"tenant" binding:"required"`
-	Name        string `json:"name" binding:"required"`
-	Email       string `json:"email" binding:"required"`
-	Password    string `json:"password" binding:"required"`
-	UType       string `json:"utype"`
-	PricingTier string `json:"pricing_tier"`
-	Verified    bool   `json:"verified"`
+	Tenant   string `json:"tenant"`
+	Slug     string `json:"slug"`
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	UType    string `json:"utype"`
+	Verified bool   `json:"verified"`
 }
 
 type resetPasswordRequest struct {
@@ -59,10 +59,6 @@ type resetPasswordRequest struct {
 
 type setDisabledRequest struct {
 	IsDisabled bool `json:"is_disabled"`
-}
-
-type setLazyRequest struct {
-	IsLazyLoaded bool `json:"is_lazy_loaded"`
 }
 
 func (a *CloudyApp) registerBaseRouter(router *gin.Engine) {
@@ -90,10 +86,10 @@ func (a *CloudyApp) registerBaseRouter(router *gin.Engine) {
 	// admin
 	admin := authed.Group("/", a.adminMiddleware())
 	admin.GET("/users", a.handleListUsers)
+	admin.GET("/teams", a.handleListTeams)
 	admin.POST("/users", a.handleAddUser)
 	admin.POST("/users/:id/reset-password", a.handleResetPassword)
 	admin.POST("/users/:id/disable", a.handleSetDisabled)
-	admin.POST("/users/:id/lazy", a.handleSetLazy)
 	admin.POST("/apps/:name/unload", a.unloadApp)
 
 	r.GET("/pages", a.servePages)
@@ -154,8 +150,8 @@ func (a *CloudyApp) handleHealth(c *gin.Context) {
 
 func (a *CloudyApp) handleSignUpInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"fields":      []string{"tenant", "name", "email", "password", "pricing_tier"},
-		"tenant_host": fmt.Sprintf("<tenant>.%s", normalizeDomain(a.config.Domain)),
+		"fields":      []string{"slug", "name", "email", "password"},
+		"tenant_host": fmt.Sprintf("<slug>.%s", normalizeDomain(a.config.Domain)),
 	})
 }
 
@@ -166,13 +162,17 @@ func (a *CloudyApp) handleSignUp(c *gin.Context) {
 		return
 	}
 
-	tenant := strings.ToLower(strings.TrimSpace(req.Tenant))
-	if err := validateTenantSlug(tenant); err != nil {
+	slug := req.Slug
+	if slug == "" {
+		slug = req.Tenant
+	}
+	slug = strings.ToLower(strings.TrimSpace(slug))
+	if err := validateTenantSlug(slug); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if a.tenantExists(tenant) {
-		c.JSON(http.StatusConflict, gin.H{"error": "tenant already exists"})
+	if a.slugExists(slug) {
+		c.JSON(http.StatusConflict, gin.H{"error": "instance slug already exists"})
 		return
 	}
 
@@ -182,20 +182,22 @@ func (a *CloudyApp) handleSignUp(c *gin.Context) {
 		return
 	}
 
-	user, err := a.insertUser(req.Name, req.Email, passwordHash, tenant, req.PricingTier, UTypeNormal, false)
+	user, team, inst, err := a.insertUserWithTeamAndInstance(req.Name, req.Email, passwordHash, slug, UTypeNormal, false)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := a.sendVerificationEmail(user); err != nil {
+	if err := a.sendVerificationEmail(user, inst.Slug); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "user created but failed to send verification email: " + err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"user":    user,
-		"message": "check your email to verify before logging in",
+		"user":     user,
+		"team":     team,
+		"instance": inst,
+		"message":  "check your email to verify before logging in",
 	})
 }
 
@@ -215,17 +217,27 @@ func (a *CloudyApp) handleLogin(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid email or password"})
 		return
 	}
+	if user.IsDisabled {
+		c.JSON(http.StatusForbidden, gin.H{"error": "account is disabled"})
+		return
+	}
 	if !user.IsVerified {
 		c.JSON(http.StatusForbidden, gin.H{"error": "email not verified"})
 		return
 	}
 
+	slug := ""
+	inst, _, err := a.getPrimaryInstanceForUser(user.ID)
+	if err == nil && inst != nil {
+		slug = inst.Slug
+	}
+
 	token, err := a.encodeClaim(&Claim{
-		UserID:    user.ID,
-		Email:     user.Email,
-		UType:     user.UType,
-		TenantKey: user.TenantKey,
-		Purpose:   purposeAccess,
+		UserID:  user.ID,
+		Email:   user.Email,
+		UType:   user.UType,
+		Slug:    slug,
+		Purpose: purposeAccess,
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -235,20 +247,35 @@ func (a *CloudyApp) handleLogin(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,
 		"user":  user,
+		"slug":  slug,
 	})
 }
 
 func (a *CloudyApp) handleMe(c *gin.Context) {
 	user := getUser(c)
+	claim := getClaim(c)
+	slug := claim.Slug
+	if slug == "" {
+		inst, _, err := a.getPrimaryInstanceForUser(user.ID)
+		if err == nil && inst != nil {
+			slug = inst.Slug
+		}
+	}
 	domain := normalizeDomain(a.config.Domain)
-	host := fmt.Sprintf("%s.%s", user.TenantKey, domain)
+	host := ""
+	url := ""
+	if slug != "" {
+		host = fmt.Sprintf("%s.%s", slug, domain)
+		url = fmt.Sprintf("http://%s:%d", host, a.config.Port)
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"user":   user,
-		"claim":  getClaim(c),
+		"claim":  claim,
+		"slug":   slug,
 		"domain": domain,
 		"port":   a.config.Port,
 		"host":   host,
-		"url":    fmt.Sprintf("http://%s:%d", host, a.config.Port),
+		"url":    url,
 	})
 }
 
@@ -291,11 +318,19 @@ func (a *CloudyApp) handleVerify(c *gin.Context) {
 		user.IsVerified = true
 	}
 
-	host := fmt.Sprintf("%s.%s", user.TenantKey, normalizeDomain(a.config.Domain))
+	slug := claim.Slug
+	if slug == "" {
+		inst, _, _ := a.getPrimaryInstanceForUser(user.ID)
+		if inst != nil {
+			slug = inst.Slug
+		}
+	}
+
+	host := fmt.Sprintf("%s.%s", slug, normalizeDomain(a.config.Domain))
 	tenantURL := fmt.Sprintf("http://%s:%d", host, a.config.Port)
 
 	a.mu.RLock()
-	existing, alreadyLoaded := a.subApps[user.TenantKey]
+	existing, alreadyLoaded := a.subApps[slug]
 	a.mu.RUnlock()
 	if alreadyLoaded {
 		_ = existing.WaitReady(30 * time.Second)
@@ -303,7 +338,7 @@ func (a *CloudyApp) handleVerify(c *gin.Context) {
 			OK:      true,
 			Title:   "You're verified",
 			Message: "Your email is confirmed. Sign in to Cloudy or open your tenant app.",
-			Tenant:  user.TenantKey,
+			Tenant:  slug,
 			Host:    host,
 			URL:     tenantURL,
 		})
@@ -319,28 +354,28 @@ func (a *CloudyApp) handleVerify(c *gin.Context) {
 		return
 	}
 
-	_, err = a.provisionTenant(user, adminPass)
+	_, err = a.provisionTenant(user, slug, adminPass)
 	if err != nil {
 		a.renderVerify(c, http.StatusInternalServerError, verifyPage{
 			Title:   "Verification failed",
 			Message: "Your email is verified, but the tenant app could not start: " + err.Error(),
-			Tenant:  user.TenantKey,
+			Tenant:  slug,
 		})
 		return
 	}
 
-	_ = a.sendMail(user.Email, "Your Cloudy tenant is ready",
-		fmt.Sprintf("Hi %s,\n\nTenant %s is ready.\nURL: %s\nAdmin user: %s\nAdmin password: %s\n",
-			user.Fullname, user.TenantKey, tenantURL, user.Fullname, adminPass),
-		fmt.Sprintf(`<p>Hi %s,</p><p>Tenant <strong>%s</strong> is ready.</p><p>URL: <a href="%s">%s</a></p><p>Admin user: %s<br/>Admin password: <code>%s</code></p>`,
-			user.Fullname, user.TenantKey, tenantURL, tenantURL, user.Fullname, adminPass),
+	_ = a.sendMail(user.Email, "Your Cloudy instance is ready",
+		fmt.Sprintf("Hi %s,\n\nInstance %s is ready.\nURL: %s\nAdmin user: %s\nAdmin password: %s\n",
+			user.Fullname, slug, tenantURL, user.Fullname, adminPass),
+		fmt.Sprintf(`<p>Hi %s,</p><p>Instance <strong>%s</strong> is ready.</p><p>URL: <a href="%s">%s</a></p><p>Admin user: %s<br/>Admin password: <code>%s</code></p>`,
+			user.Fullname, slug, tenantURL, tenantURL, user.Fullname, adminPass),
 	)
 
 	a.renderVerify(c, http.StatusOK, verifyPage{
 		OK:            true,
 		Title:         "You're verified",
-		Message:       "Your email is confirmed and your tenant is ready.",
-		Tenant:        user.TenantKey,
+		Message:       "Your email is confirmed and your tenant app is ready.",
+		Tenant:        slug,
 		Host:          host,
 		URL:           tenantURL,
 		AdminName:     user.Fullname,
@@ -355,28 +390,54 @@ func (a *CloudyApp) handleListUsers(c *gin.Context) {
 		return
 	}
 
-	a.mu.RLock()
-	defer a.mu.RUnlock()
-
 	out := make([]gin.H, 0, len(users))
 	for _, u := range users {
-		_, loaded := a.subApps[u.TenantKey]
+		inst, team, _ := a.getPrimaryInstanceForUser(u.ID)
+		slug := ""
+		teamName := ""
+		loaded := false
+		if inst != nil {
+			slug = inst.Slug
+			a.mu.RLock()
+			_, loaded = a.subApps[slug]
+			a.mu.RUnlock()
+		}
+		if team != nil {
+			teamName = team.Name
+		}
 		out = append(out, gin.H{
-			"id":             u.ID,
-			"fullname":       u.Fullname,
-			"email":          u.Email,
-			"tenant_key":     u.TenantKey,
-			"utype":          u.UType,
-			"pricing_tier":   u.PricingTier,
-			"is_verified":    u.IsVerified,
-			"is_lazy_loaded": u.IsLazyLoaded,
-			"is_disabled":    u.IsDisabled,
-			"created_at":     u.CreatedAt,
-			"updated_at":     u.UpdatedAt,
-			"loaded":         loaded,
+			"id":          u.ID,
+			"fullname":    u.Fullname,
+			"email":       u.Email,
+			"utype":       u.UType,
+			"is_verified": u.IsVerified,
+			"is_disabled": u.IsDisabled,
+			"slug":        slug,
+			"team_name":   teamName,
+			"loaded":      loaded,
+			"created_at":  u.CreatedAt,
+			"updated_at":  u.UpdatedAt,
 		})
 	}
 	c.JSON(http.StatusOK, gin.H{"users": out})
+}
+
+func (a *CloudyApp) handleListTeams(c *gin.Context) {
+	teams, err := a.listTeams()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	insts, err := a.listPotatoInstances()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"teams":     teams,
+		"instances": insts,
+	})
 }
 
 func (a *CloudyApp) handleAddUser(c *gin.Context) {
@@ -386,13 +447,17 @@ func (a *CloudyApp) handleAddUser(c *gin.Context) {
 		return
 	}
 
-	tenant := strings.ToLower(strings.TrimSpace(req.Tenant))
-	if err := validateTenantSlug(tenant); err != nil {
+	slug := req.Slug
+	if slug == "" {
+		slug = req.Tenant
+	}
+	slug = strings.ToLower(strings.TrimSpace(slug))
+	if err := validateTenantSlug(slug); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if a.tenantExists(tenant) {
-		c.JSON(http.StatusConflict, gin.H{"error": "tenant already exists"})
+	if a.slugExists(slug) {
+		c.JSON(http.StatusConflict, gin.H{"error": "instance slug already exists"})
 		return
 	}
 
@@ -411,20 +476,24 @@ func (a *CloudyApp) handleAddUser(c *gin.Context) {
 		return
 	}
 
-	user, err := a.insertUser(req.Name, req.Email, passwordHash, tenant, req.PricingTier, utype, req.Verified)
+	user, team, inst, err := a.insertUserWithTeamAndInstance(req.Name, req.Email, passwordHash, slug, utype, req.Verified)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	if !user.IsVerified {
-		if err := a.sendVerificationEmail(user); err != nil {
+		if err := a.sendVerificationEmail(user, inst.Slug); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "user created but failed to send verification email: " + err.Error()})
 			return
 		}
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"user": user})
+	c.JSON(http.StatusCreated, gin.H{
+		"user":     user,
+		"team":     team,
+		"instance": inst,
+	})
 }
 
 func (a *CloudyApp) handleResetPassword(c *gin.Context) {
@@ -485,59 +554,29 @@ func (a *CloudyApp) handleSetDisabled(c *gin.Context) {
 
 	unloaded := false
 	if req.IsDisabled {
-		unloaded = a.unloadSubApp(user.TenantKey)
+		inst, _, _ := a.getPrimaryInstanceForUser(user.ID)
+		if inst != nil {
+			unloaded = a.unloadSubApp(inst.Slug)
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"ok":          true,
 		"user_id":     user.ID,
-		"tenant":      user.TenantKey,
 		"is_disabled": req.IsDisabled,
 		"unloaded":    unloaded,
-	})
-}
-
-func (a *CloudyApp) handleSetLazy(c *gin.Context) {
-	var req setLazyRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	id, err := parseIDParam(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user id"})
-		return
-	}
-
-	user, err := a.getUserByID(id)
-	if err != nil || user == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
-		return
-	}
-
-	if err := a.setUserLazyLoaded(user.ID, req.IsLazyLoaded); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"ok":             true,
-		"user_id":        user.ID,
-		"tenant":         user.TenantKey,
-		"is_lazy_loaded": req.IsLazyLoaded,
 	})
 }
 
 func (a *CloudyApp) redirectToApp(c *gin.Context) {
 	name := strings.ToLower(c.Param("name"))
 	claim := getClaim(c)
-	if claim.UType != UTypeAdmin && claim.TenantKey != name {
+	if claim.UType != UTypeAdmin && claim.Slug != name {
 		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
 		return
 	}
-	if !a.tenantExists(name) {
-		c.JSON(http.StatusNotFound, gin.H{"error": "tenant not found"})
+	if !a.slugExists(name) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "instance not found"})
 		return
 	}
 
@@ -553,7 +592,7 @@ func (a *CloudyApp) loadApp(c *gin.Context) {
 	}
 
 	claim := getClaim(c)
-	if claim.UType != UTypeAdmin && claim.TenantKey != name {
+	if claim.UType != UTypeAdmin && claim.Slug != name {
 		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
 		return
 	}
@@ -578,12 +617,12 @@ func (a *CloudyApp) exportApp(c *gin.Context) {
 	}
 
 	claim := getClaim(c)
-	if claim.UType != UTypeAdmin && claim.TenantKey != name {
+	if claim.UType != UTypeAdmin && claim.Slug != name {
 		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
 		return
 	}
-	if !a.tenantExists(name) {
-		c.JSON(http.StatusNotFound, gin.H{"error": "tenant not found"})
+	if !a.slugExists(name) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "instance not found"})
 		return
 	}
 
@@ -614,8 +653,8 @@ func (a *CloudyApp) unloadApp(c *gin.Context) {
 		return
 	}
 
-	if !a.tenantExists(name) {
-		c.JSON(http.StatusNotFound, gin.H{"error": "tenant not found"})
+	if !a.slugExists(name) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "instance not found"})
 		return
 	}
 
@@ -638,10 +677,10 @@ func (a *CloudyApp) tenantRouteMW() gin.HandlerFunc {
 		sub, err := a.ensureSubApp(tenant)
 		if err != nil {
 			status := http.StatusNotFound
-			msg := "unknown tenant"
+			msg := "unknown instance"
 			if strings.Contains(err.Error(), "disabled") {
 				status = http.StatusForbidden
-				msg = "tenant is disabled"
+				msg = "instance is disabled"
 			}
 			c.JSON(status, gin.H{"error": msg})
 			c.Abort()
@@ -649,7 +688,7 @@ func (a *CloudyApp) tenantRouteMW() gin.HandlerFunc {
 		}
 
 		if sub.Engine == nil {
-			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "tenant is not loaded"})
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "instance is not loaded"})
 			c.Abort()
 			return
 		}
@@ -658,72 +697,66 @@ func (a *CloudyApp) tenantRouteMW() gin.HandlerFunc {
 	}
 }
 
-func (a *CloudyApp) provisionTenant(user *User, adminPassword string) (*SubApp, error) {
+func (a *CloudyApp) provisionTenant(user *User, slug string, adminPassword string) (*SubApp, error) {
+	log.Println("provisionTenant/1", slug)
 
-	log.Println("provisionTenant/1", user.TenantKey)
-
-	remote, err := a.tenantRemote(user.TenantKey)
+	remote, err := a.tenantRemote(slug)
 	if err != nil {
 		log.Println("provisionTenant/2", err)
 		return nil, fmt.Errorf("provision tenant database: %w", err)
 	}
 
-	log.Println("provisionTenant/3", remote)
-
-	sub, err := NewSubApp(a.rootCtx, a.config, user.TenantKey, true, a.mailer, remote)
+	sub, err := NewSubApp(a.rootCtx, a.config, slug, true, a.mailer, remote)
 	if err != nil {
 		log.Println("provisionTenant/4", err)
 		return nil, err
 	}
 
-	log.Println("provisionTenant/5")
-
 	a.mu.Lock()
-	if existing, ok := a.subApps[user.TenantKey]; ok {
-		log.Println("provisionTenant/6", existing)
+	if existing, ok := a.subApps[slug]; ok {
 		a.mu.Unlock()
 		if err := existing.WaitReady(30 * time.Second); err != nil {
-			log.Println("provisionTenant/7", err)
 			return nil, err
 		}
-
-		log.Println("provisionTenant/8", existing)
 		return existing, nil
 	}
 
-	log.Println("provisionTenant/9")
-
-	a.subApps[user.TenantKey] = sub
+	a.subApps[slug] = sub
 	a.mu.Unlock()
 
-	log.Println("provisionTenant/10")
-
 	if err := sub.Load(a.rootCtx, user.Fullname, adminPassword, user.Email); err != nil {
-		log.Println("provisionTenant/11", err)
 		a.mu.Lock()
-		delete(a.subApps, user.TenantKey)
+		delete(a.subApps, slug)
 		a.mu.Unlock()
 		return nil, err
 	}
-
-	log.Println("provisionTenant/12")
 
 	return sub, nil
 }
 
 func (a *CloudyApp) ensureSubApp(name string) (*SubApp, error) {
-	rec, err := a.getUserByTenant(name)
+	inst, err := a.getPotatoInstanceBySlug(name)
 	if err != nil {
 		return nil, err
 	}
-	if rec == nil {
-		return nil, fmt.Errorf("tenant %q not registered", name)
+	if inst == nil || inst.IsDeleted {
+		return nil, fmt.Errorf("instance %q not found", name)
 	}
-	if rec.IsDisabled {
-		return nil, fmt.Errorf("tenant %q is disabled", name)
+
+	team, err := a.store.getTeamByID(inst.TeamID)
+	if err != nil || team == nil || team.IsDeleted {
+		return nil, fmt.Errorf("team for instance %q not active", name)
 	}
-	if !rec.IsVerified {
-		return nil, fmt.Errorf("tenant %q is not verified", name)
+
+	owner, err := a.getUserByID(team.OwnerID)
+	if err != nil || owner == nil {
+		return nil, fmt.Errorf("owner for instance %q not found", name)
+	}
+	if owner.IsDisabled {
+		return nil, fmt.Errorf("owner for instance %q is disabled", name)
+	}
+	if !owner.IsVerified {
+		return nil, fmt.Errorf("owner for instance %q is not verified", name)
 	}
 
 	a.mu.RLock()
@@ -763,7 +796,7 @@ func (a *CloudyApp) ensureSubApp(name string) (*SubApp, error) {
 	a.subApps[name] = sub
 	a.mu.Unlock()
 
-	if err := sub.Load(a.rootCtx, rec.Fullname, "", rec.Email); err != nil {
+	if err := sub.Load(a.rootCtx, owner.Fullname, "", owner.Email); err != nil {
 		a.mu.Lock()
 		delete(a.subApps, name)
 		a.mu.Unlock()
@@ -800,48 +833,37 @@ func (a *CloudyApp) parseTenantHost(host string) (tenant string, isMain bool) {
 		if sub == "" || strings.Contains(sub, ".") {
 			return "", true
 		}
-		if strings.HasPrefix(sub, "zz-") || reservedTenants[sub] {
+		if reservedTenants[sub] {
 			return "", true
 		}
 		return sub, false
 	}
 
-	if before, ok := strings.CutSuffix(host, ".localhost"); ok && before != "" && !strings.Contains(before, ".") {
-		if reservedTenants[before] || strings.HasPrefix(before, "zz-") {
-			return "", true
-		}
-		return before, false
-	}
-
 	return "", true
 }
 
-func stripHostPort(hostport string) string {
-	host, _, err := net.SplitHostPort(hostport)
-	if err != nil {
-		return hostport
+func validateTenantSlug(slug string) error {
+	if slug == "" {
+		return fmt.Errorf("slug is required")
 	}
-	return host
-}
-
-func validateTenantSlug(name string) error {
-	if name == "" {
-		return fmt.Errorf("tenant is required")
+	if reservedTenants[slug] {
+		return fmt.Errorf("slug %q is reserved", slug)
 	}
-	if reservedTenants[name] {
-		return fmt.Errorf("tenant name is reserved")
-	}
-	if strings.HasPrefix(name, "zz-") || strings.HasPrefix(name, "buddy-") {
-		return fmt.Errorf("tenant name prefix is reserved")
-	}
-	if !tenantSlugRe.MatchString(name) {
-		return fmt.Errorf("tenant must be lowercase alphanumeric with optional hyphens")
+	if !tenantSlugRe.MatchString(slug) {
+		return fmt.Errorf("slug must be lowercase alphanumeric with hyphens, 2-63 chars")
 	}
 	return nil
 }
 
+func stripHostPort(host string) string {
+	if h, _, err := net.SplitHostPort(host); err == nil {
+		return h
+	}
+	return host
+}
+
 func parseIDParam(s string) (int64, error) {
 	var id int64
-	_, err := fmt.Sscan(s, &id)
+	_, err := fmt.Sscanf(s, "%d", &id)
 	return id, err
 }

@@ -186,29 +186,39 @@ func (a *CloudyApp) resolveSubUserTenant(c *gin.Context) (string, error) {
 
 	raw := strings.TrimSpace(c.Query("for_tenant_id"))
 	if raw == "" {
-		if claim.TenantKey == "" {
-			return "", fmt.Errorf("no tenant on this account")
+		raw = strings.TrimSpace(c.Query("for_slug"))
+	}
+
+	if raw == "" {
+		if claim.Slug != "" {
+			return claim.Slug, nil
 		}
-		return claim.TenantKey, nil
+		inst, _, err := a.getPrimaryInstanceForUser(claim.UserID)
+		if err != nil || inst == nil {
+			return "", fmt.Errorf("no instance on this account")
+		}
+		return inst.Slug, nil
 	}
 
 	if claim.UType != UTypeAdmin {
 		return "", errSubUserAdminRequired
 	}
 
-	id, err := parseIDParam(raw)
-	if err != nil || id <= 0 {
-		return "", fmt.Errorf("invalid for_tenant_id")
+	// Admin can pass either numeric ID or slug string
+	if a.slugExists(raw) {
+		return raw, nil
 	}
 
-	user, err := a.getUserByID(id)
-	if err != nil {
-		return "", err
+	id, err := parseIDParam(raw)
+	if err != nil || id <= 0 {
+		return "", fmt.Errorf("invalid for_tenant_id or slug")
 	}
-	if user == nil {
-		return "", fmt.Errorf("tenant not found")
+
+	inst, _, err := a.getPrimaryInstanceForUser(id)
+	if err != nil || inst == nil {
+		return "", fmt.Errorf("instance not found for user")
 	}
-	return user.TenantKey, nil
+	return inst.Slug, nil
 }
 
 func subUserJSON(u *dbmodels.User) gin.H {
@@ -253,5 +263,5 @@ func writeSubUserErr(c *gin.Context, err error) {
 
 var (
 	errSubUserUnauthorized  = fmt.Errorf("unauthorized")
-	errSubUserAdminRequired = fmt.Errorf("admin required to use for_tenant_id")
+	errSubUserAdminRequired = fmt.Errorf("admin required to specify another tenant or instance")
 )

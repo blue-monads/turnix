@@ -23,11 +23,11 @@ const (
 )
 
 type Claim struct {
-	UserID    int64  `json:"uid"`
-	Email     string `json:"email"`
-	UType     string `json:"utype"`
-	TenantKey string `json:"tenant_key"`
-	Purpose   string `json:"purpose"`
+	UserID  int64  `json:"uid"`
+	Email   string `json:"email"`
+	UType   string `json:"utype"`
+	Slug    string `json:"slug,omitempty"`
+	Purpose string `json:"purpose"`
 }
 
 func newBranca(masterSecret string) *branca.Branca {
@@ -57,6 +57,7 @@ func (a *CloudyApp) decodeClaim(token string) (*Claim, error) {
 	if claim.UserID == 0 || (claim.UType != UTypeAdmin && claim.UType != UTypeNormal) {
 		return nil, fmt.Errorf("invalid claim")
 	}
+
 	return claim, nil
 }
 
@@ -95,16 +96,20 @@ func (a *CloudyApp) authMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		if user.IsDisabled {
+			c.JSON(http.StatusForbidden, gin.H{"error": "account disabled"})
+			c.Abort()
+			return
+		}
 		if !user.IsVerified {
 			c.JSON(http.StatusForbidden, gin.H{"error": "email not verified"})
 			c.Abort()
 			return
 		}
 
-		// refresh utype from db in case it changed
+		// refresh claim from db in case it changed
 		claim.UserID = user.ID
 		claim.UType = user.UType
-		claim.TenantKey = user.TenantKey
 		claim.Email = user.Email
 
 		c.Set(ctxClaimKey, claim)

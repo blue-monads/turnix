@@ -96,7 +96,6 @@ func New(config *Config) (*CloudyApp, error) {
 		RemoteUrl:        config.TursoRemoteURL,
 		AuthToken:        config.TursoAuthToken,
 		BootstrapIfEmpty: &bootstrap,
-		//		Namespace:        "main",
 	})
 	if err != nil {
 		return nil, err
@@ -181,9 +180,6 @@ func (a *CloudyApp) dbSyncer() {
 		ctx := context.Background()
 		qq.Println("@remote_syncing")
 
-		// push only. a pull rolls local writes back and replays them on top of
-		// the remote, which moves rowids under in-flight requests, so we only
-		// pull when a database is loaded and this process is its sole writer.
 		if err := a.tursoDB.Push(ctx); err != nil {
 			log.Println("Error pushing main.db:", err)
 		}
@@ -209,19 +205,19 @@ func (a *CloudyApp) dbSyncer() {
 }
 
 func (a *CloudyApp) loadEagerSubApps() {
-	users, err := a.listUsers()
+	insts, err := a.listPotatoInstances()
 	if err != nil {
-		log.Println("Error listing tenants for eager load:", err)
+		log.Println("Error listing potato instances for eager load:", err)
 		return
 	}
 
-	for _, u := range users {
-		if u.IsDisabled || u.IsLazyLoaded || !u.IsVerified {
+	for _, inst := range insts {
+		if inst.IsDeleted {
 			continue
 		}
-		log.Printf("eager loading tenant %s", u.TenantKey)
-		if _, err := a.ensureSubApp(u.TenantKey); err != nil {
-			log.Printf("Error eager loading tenant %s: %v", u.TenantKey, err)
+		log.Printf("eager loading subapp instance %s", inst.Slug)
+		if _, err := a.ensureSubApp(inst.Slug); err != nil {
+			log.Printf("Error eager loading subapp instance %s: %v", inst.Slug, err)
 		}
 	}
 }
@@ -230,8 +226,20 @@ func (a *CloudyApp) listUsers() ([]*User, error) {
 	return a.store.listUsers()
 }
 
-func (a *CloudyApp) getUserByTenant(tenantKey string) (*User, error) {
-	return a.store.getUserByTenant(tenantKey)
+func (a *CloudyApp) listTeams() ([]*Team, error) {
+	return a.store.listTeams()
+}
+
+func (a *CloudyApp) listPotatoInstances() ([]*TeamPotatoInstance, error) {
+	return a.store.listPotatoInstances()
+}
+
+func (a *CloudyApp) getPotatoInstanceBySlug(slug string) (*TeamPotatoInstance, error) {
+	return a.store.getPotatoInstanceBySlug(slug)
+}
+
+func (a *CloudyApp) getPrimaryInstanceForUser(userID int64) (*TeamPotatoInstance, *Team, error) {
+	return a.store.getPrimaryInstanceForUser(userID)
 }
 
 func (a *CloudyApp) getUserByEmail(email string) (*User, error) {
@@ -242,8 +250,6 @@ func (a *CloudyApp) getUserByID(id int64) (*User, error) {
 	return a.store.getUserByID(id)
 }
 
-// resolveClaimUser looks up the account a token was issued for. Row ids shift
-// when turso rebases local writes during a pull, so the email wins over the id.
 func (a *CloudyApp) resolveClaimUser(claim *Claim) (*User, error) {
 	if claim == nil {
 		return nil, nil
@@ -260,8 +266,8 @@ func (a *CloudyApp) resolveClaimUser(claim *Claim) (*User, error) {
 	return a.getUserByID(claim.UserID)
 }
 
-func (a *CloudyApp) insertUser(fullname, email, passwordHash, tenantKey, pricingTier, utype string, verified bool) (*User, error) {
-	return a.store.insertUser(fullname, email, passwordHash, tenantKey, pricingTier, utype, verified)
+func (a *CloudyApp) insertUserWithTeamAndInstance(fullname, email, passwordHash, slug, utype string, verified bool) (*User, *Team, *TeamPotatoInstance, error) {
+	return a.store.insertUserWithTeamAndInstance(fullname, email, passwordHash, slug, utype, verified)
 }
 
 func (a *CloudyApp) markUserVerified(id int64) error {
@@ -276,25 +282,21 @@ func (a *CloudyApp) setUserDisabled(id int64, disabled bool) error {
 	return a.store.setUserDisabled(id, disabled)
 }
 
-func (a *CloudyApp) setUserLazyLoaded(id int64, lazy bool) error {
-	return a.store.setUserLazyLoaded(id, lazy)
-}
-
-func (a *CloudyApp) tenantExists(tenantKey string) bool {
-	return a.store.tenantExists(tenantKey)
+func (a *CloudyApp) slugExists(slug string) bool {
+	return a.store.slugExists(slug)
 }
 
 func (a *CloudyApp) publicBaseURL() string {
 	return fmt.Sprintf("http://%s:%d", normalizeDomain(a.config.Domain), a.config.Port)
 }
 
-func (a *CloudyApp) sendVerificationEmail(user *User) error {
+func (a *CloudyApp) sendVerificationEmail(user *User, slug string) error {
 	token, err := a.encodeClaim(&Claim{
-		UserID:    user.ID,
-		Email:     user.Email,
-		UType:     user.UType,
-		TenantKey: user.TenantKey,
-		Purpose:   purposeVerify,
+		UserID:  user.ID,
+		Email:   user.Email,
+		UType:   user.UType,
+		Slug:    slug,
+		Purpose: purposeVerify,
 	})
 	if err != nil {
 		return err
@@ -302,10 +304,10 @@ func (a *CloudyApp) sendVerificationEmail(user *User) error {
 
 	verifyURL := fmt.Sprintf("%s/zz/cloudy/verify?token=%s", a.publicBaseURL(), token)
 	subject := "Verify your Cloudy account"
-	text := fmt.Sprintf("Hi %s,\n\nVerify your account for tenant %s:\n%s\n", user.Fullname, user.TenantKey, verifyURL)
+	text := fmt.Sprintf("Hi %s,\n\nVerify your account for instance %s:\n%s\n", user.Fullname, slug, verifyURL)
 	html := fmt.Sprintf(
-		`<p>Hi %s,</p><p>Verify your account for tenant <strong>%s</strong>:</p><p><a href="%s">Verify email</a></p>`,
-		user.Fullname, user.TenantKey, verifyURL,
+		`<p>Hi %s,</p><p>Verify your account for instance <strong>%s</strong>:</p><p><a href="%s">Verify email</a></p>`,
+		user.Fullname, slug, verifyURL,
 	)
 
 	return a.sendMail(user.Email, subject, text, html)

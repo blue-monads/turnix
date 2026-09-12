@@ -14,7 +14,7 @@
     </div>
     <div class="stack">
       <div class="card">
-        <h1 id="title">Your tenant</h1>
+        <h1 id="title">Your Potato Instance</h1>
         <p class="lede" id="lede">Loading…</p>
         <p id="url" class="lede"></p>
         <div class="actions">
@@ -50,17 +50,17 @@
       if (!data) return;
       session = data;
       const user = data.user || {};
-      document.getElementById("title").textContent = user.tenant_key || "Tenant";
+      const slug = data.slug || (data.claim ? data.claim.slug : "") || "Instance";
+      document.getElementById("title").textContent = slug;
       document.getElementById("who").textContent = (user.email || "") + " · " + (user.utype || "");
-      document.getElementById("lede").textContent =
-        (user.fullname || "") + (user.pricing_tier ? " · " + user.pricing_tier : "");
+      document.getElementById("lede").textContent = user.fullname || "";
       document.getElementById("url").textContent = data.url || "";
       if (user.utype === "admin") document.getElementById("adminLink").hidden = false;
     });
 
     document.getElementById("load").addEventListener("click", async () => {
       if (!session) return;
-      const name = session.user.tenant_key;
+      const name = session.slug || (session.claim ? session.claim.slug : "");
       try {
         const data = await Cloudy.api("/zz/cloudy/apps/" + encodeURIComponent(name) + "/load", {
           method: "POST",
@@ -83,7 +83,7 @@
 
     document.getElementById("export").addEventListener("click", async () => {
       if (!session) return;
-      const name = session.user.tenant_key;
+      const name = session.slug || (session.claim ? session.claim.slug : "");
       try {
         const filename = Cloudy.exportFilename(name);
         await Cloudy.download(
